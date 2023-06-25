@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 14:00:41 by jusohn            #+#    #+#             */
-/*   Updated: 2023/06/17 14:17:18 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/06/25 21:36:50 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,9 @@ t_token* realloc_tokens(t_token* tokens, t_size current_size, t_size new_size) {
     new_tokens = ft_calloc(new_size, sizeof(t_token));
     if (!new_tokens) 
     {
-        fprintf(stderr, "Memory allocation error\n");
+        write(STD_ERR, MALLOC_ERR, ft_strlen(MALLOC_ERR));
+        write(STD_ERR, "\n", 1);
+        // fprintf(stderr, "Memory allocation error\n");
         return (0);
     }
     copy_size = current_size < new_size ? current_size : new_size;
@@ -42,7 +44,9 @@ t_token* realloc_tokens(t_token* tokens, t_size current_size, t_size new_size) {
         new_tokens[i].value = (char *) malloc(value_length * sizeof(char));
         if (!new_tokens[i].value)
         {
-            fprintf(stderr, "Memory allocation error\n");
+            write(STD_ERR, MALLOC_ERR, ft_strlen(MALLOC_ERR));
+            write(STD_ERR, "\n", 1);
+            // fprintf(stderr, "Memory allocation error\n");
             // Free already allocated strings and memory
             for (size_t j = 0; j < i; j++) {
                 free(new_tokens[j].value);

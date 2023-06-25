@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 16:18:24 by jusohn            #+#    #+#             */
-/*   Updated: 2023/06/17 13:57:47 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/06/25 21:35:46 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,8 @@ typedef struct  s_ast_node
 
 # define FT_TRUE					1
 # define FT_FALSE					0
+
+# define MALLOC_ERR					"malloc() error."
 
 /* ================== MEMORY_UTILS ================== */
 void		ft_bzero(void *s, t_size n);

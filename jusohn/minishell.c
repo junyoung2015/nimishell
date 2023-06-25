@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 16:18:10 by jusohn            #+#    #+#             */
-/*   Updated: 2023/06/17 14:01:35 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/06/25 21:32:01 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void print_ast(t_ast_node *node, int depth, const char *indent)
 {
 	if (node == NULL)
 	{
-		printf("%*s[%s]\n", depth * 4, "", indent);
+		printf("%*s[%s]\n", depth * 6, "", indent);
 		return ;
 	}
 	print_ast(node->right, depth + 1, "/");
