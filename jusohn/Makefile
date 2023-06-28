@@ -44,14 +44,14 @@ endif
 # ------------- RULES  -------------- #
 
 # $(MAKE) fclean
+all:
+	$(MAKE) readline
+	$(MAKE) mini
+
 readline:
 	tar -xzf ./readline-8.2.tar.gz
 	cd readline-8.2 && sh ./configure --prefix="$$(cd .. && pwd)" && make && make install
 	touch $@
-
-all:
-	$(MAKE) readline
-	$(MAKE) mini
 
 mini: $(NAME)
 
