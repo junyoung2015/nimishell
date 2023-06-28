@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 16:18:24 by jusohn            #+#    #+#             */
-/*   Updated: 2023/06/25 21:35:46 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/06/27 20:00:22 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,11 @@ typedef enum	e_token_type
 	TOKEN_DOLLAR_SIGN,
 	TOKEN_ENV_VAR,
 	TOKEN_WORD,
+	TOKEN_STR_LITERAL,
 	TOKEN_WHITESPACE,
+	TOKEN_OPERATOR,
+	TOKEN_SQ_STR,
+	TOKEN_DQ_STR,
 	TOKEN_EOL
 }	t_token_type;
 
