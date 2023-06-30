@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 16:18:24 by jusohn            #+#    #+#             */
-/*   Updated: 2023/06/27 20:00:22 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/06/30 13:47:31 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,10 @@ typedef enum	e_token_type
 	TOKEN_WILDCARD,
 	TOKEN_L_PARENTHESIS,
 	TOKEN_R_PARNTHESIS,
-	TOKEN_REDIR,
 	TOKEN_REDIR_IN,
 	TOKEN_REDIR_OUT,
 	TOKEN_HEREDOC,
 	TOKEN_REDIR_APPEND,
-	TOKEN_S_QUOTE,
-	TOKEN_D_QUOTE,
 	TOKEN_DOLLAR_SIGN,
 	TOKEN_ENV_VAR,
 	TOKEN_WORD,
@@ -58,7 +55,7 @@ typedef enum	e_token_type
 	TOKEN_OPERATOR,
 	TOKEN_SQ_STR,
 	TOKEN_DQ_STR,
-	TOKEN_EOL
+	TOKEN_SUBSHELL,
 }	t_token_type;
 
 typedef struct  s_token

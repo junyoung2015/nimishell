@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 14:24:11 by jusohn            #+#    #+#             */
-/*   Updated: 2023/06/28 15:44:54 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/06/30 13:39:23 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,6 @@ void categorize_tokens(t_token *tokens, t_size num_tokens)
             tokens[i].type = TOKEN_REDIR_IN;
         else if (ft_strcmp(tokens[i].value, ">") == 0)
             tokens[i].type = TOKEN_REDIR_OUT;
-        else if (ft_strcmp(tokens[i].value, ">>") == 0)
-            tokens[i].type = TOKEN_REDIR_APPEND;
-        else if (ft_strcmp(tokens[i].value, "'") == 0)
-            tokens[i].type = TOKEN_S_QUOTE;
-        else if (ft_strcmp(tokens[i].value, "\"") == 0)
-            tokens[i].type = TOKEN_D_QUOTE;
-        else if (ft_strcmp(tokens[i].value, "$") == 0)
-            tokens[i].type = TOKEN_DOLLAR_SIGN; 
         else if (ft_strcmp(tokens[i].value, " ") == 0)
             tokens[i].type = TOKEN_WHITESPACE;
         else if (ft_strncmp(tokens[i].value, "$", 1) == 0)

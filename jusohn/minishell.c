@@ -6,22 +6,22 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 16:18:10 by jusohn            #+#    #+#             */
-/*   Updated: 2023/06/28 15:38:17 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/06/30 13:39:43 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 /* ================== UTILS ================== */
-	// void	free_tokens(t_token **tokens)
-	// {
-	// 	t_size	i;
+// void	free_tokens(t_token **tokens)
+// {
+// 	t_size	i;
 
-	// 	i = 0;
-	// 	while (tokens[i])
-	// 		free(tokens[i]++);
-	// 	// free(tokens);
-	// }
+// 	i = 0;
+// 	while (tokens[i])
+// 		free(tokens[i]++);
+// 	// free(tokens);
+// }	
 
 /* =================== MISC ================== */
 void	update_exit_status(int code)
@@ -89,10 +89,11 @@ int	main(void)
 				tokens = tokenize(line, &num_tokens);
 				if (!tokens)
 					return (0);
-				// categorize_tokens(tokens, num_tokens);
+				categorize_tokens(tokens, num_tokens);
 				// ast = parse_tokens(tokens, num_tokens);
 				// print_ast(ast, 0, "");
 				// status = execute_ast(ast);
+				printf("num of tokens: %llu\n", num_tokens);	
 			}
 			if (tokens && DEBUG)
 				for (t_size i = 0; i < num_tokens; i++)
