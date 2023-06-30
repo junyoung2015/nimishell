@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 14:00:41 by jusohn            #+#    #+#             */
-/*   Updated: 2023/06/28 15:42:48 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/06/30 13:58:49 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ t_bool  is_meta_char(char ch)
 	return (FT_FALSE);
 }
 
-t_token	*create_token(t_token_type type, const char *buffer, int buffer_length)
+t_token	*create_token(t_token_type type, const char *buffer, int buf_len)
 {
 	t_token	*new_token;
 	
@@ -77,14 +77,29 @@ t_token	*create_token(t_token_type type, const char *buffer, int buffer_length)
 		return (0);
 	new_token->type = type;
 	// Allocate memory for the token value and copy the buffer content
-	new_token->value = (char *) ft_calloc(buffer_length + 1, sizeof(char));
+	new_token->value = (char *) ft_calloc(buf_len + 1, sizeof(char));
 	if (!new_token->value)
 	{
 		free(new_token);
 		return (0);
 	}
-	ft_strlcpy(new_token->value, buffer, buffer_length + 1);
-	// new_token->value[buffer_length] = '\0';
+	ft_strlcpy(new_token->value, buffer, buf_len + 1);
+	// new_token->value[buf_len] = '\0';
+	return (new_token);
+}
+
+t_token *split_word(char *start, char **input)
+{
+	t_token	*new_token;
+
+	while (**input && !is_meta_char(*input))
+		input++;
+	new_token = create_token(TOKEN_WORD, start, *input - start);
+	// TODO: free tokens
+	// TODO: malloc err
+	if (!new_token)
+		return (0);
+	(*input)--;
 	return (new_token);
 }
 
@@ -103,6 +118,7 @@ t_token *tokenize(const char *input, t_size *num_tokens)
 	token_idx = 0;
 	start = (char *) input;
 	tokens = ft_calloc(alloced, sizeof(t_token));
+	// TODO: malloc err
 	if (!tokens)
 		return (0);
 	while (*input)
@@ -117,6 +133,7 @@ t_token *tokenize(const char *input, t_size *num_tokens)
 				while (*input && *input != quote)
 					input++;
 				// when closing quote is not found, TODO: free tokens
+				// TODO: call error_exit() with correct exit status, with 'syntax error' msg
 				if (!*input)
 					return (0);
 				type = TOKEN_DQ_STR;
@@ -126,6 +143,7 @@ t_token *tokenize(const char *input, t_size *num_tokens)
 			new_token = create_token(type, start, input - start + 1);
 			// TODO: free tokens
 			if (!new_token)
+			// TODO: malloc err
 				return (0);
 		}
 		else
@@ -134,6 +152,7 @@ t_token *tokenize(const char *input, t_size *num_tokens)
 				input++;
 			new_token = create_token(TOKEN_WORD, start, input - start);
 			// TODO: free tokens
+			// TODO: malloc err
 			if (!new_token)
 				return (0);
 			input--;
@@ -144,6 +163,7 @@ t_token *tokenize(const char *input, t_size *num_tokens)
 		{
 			alloced *= 2;
 			tokens = realloc_tokens(tokens, token_idx, alloced);
+			// TODO: malloc err
 			if (!tokens)
 				return (0);
 		}
@@ -151,6 +171,7 @@ t_token *tokenize(const char *input, t_size *num_tokens)
 		start = input;
 	}
 	tokens = realloc_tokens(tokens, alloced, token_idx);
+	// TODO: malloc err
 	if (!tokens)
 		return (0);
 	*num_tokens = token_idx;
