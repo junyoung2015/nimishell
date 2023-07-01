@@ -66,14 +66,16 @@ void print_tokens(t_token *tokens, t_size num_tokens)
 
 int	main(int ac, char **av, char **env)
 {
+	(void) ac;
+	(void) av;
 	char		*line;
 	t_token		*tokens;
 	t_size		num_tokens;
 	t_node	*ast;
 	int			status;
 
-	if (DEBUG)
-		atexit(chk_leaks);
+	// if (DEBUG)
+	// 	atexit(chk_leaks);
 	// TODO: display_logo();
 	g_info.env = env;
 	tokens = 0;
