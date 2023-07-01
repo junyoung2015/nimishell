@@ -25,7 +25,7 @@ void	sig_handler(int signal)
 
 # ifdef DEBUG
 
-void print_ast(t_ast_node *node, int depth, const char *indent)
+void print_ast(t_node *node, int depth, const char *indent)
 {
 	if (node == NULL)
 	{
@@ -64,17 +64,18 @@ void print_tokens(t_token *tokens, t_size num_tokens)
 
 # endif
 
-int	main(void)
+int	main(int ac, char **av, char **env)
 {
 	char		*line;
 	t_token		*tokens;
 	t_size		num_tokens;
-	t_ast_node	*ast;
-	// int			status;
+	t_node	*ast;
+	int			status;
 
 	if (DEBUG)
 		atexit(chk_leaks);
 	// TODO: display_logo();
+	g_info.env = env;
 	tokens = 0;
 	ast = 0;
 	signal(SIGINT, sig_handler);
@@ -94,7 +95,10 @@ int	main(void)
 					return (0);
 				categorize_tokens(tokens, num_tokens);
 				ast = parse_tokens(tokens, num_tokens);
-				print_ast(ast, 0, "");
+				if (ast && DEBUG)
+					print_ast(ast, 0, "");
+				g_info.root = ast;
+				status = execute(g_info.root);
 				// TODO: execute and check status
 				// status = execute_ast(ast);
 				printf("num of tokens: %llu\n", num_tokens);	
@@ -105,7 +109,7 @@ int	main(void)
 			// 	update_exit_status(status);
 			free_tokens(tokens, num_tokens);
 			tokens = 0;
-			free_ast(ast);
+			// free_ast(ast);
 			free(line);
 			line = 0;
 		}

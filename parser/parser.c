@@ -12,10 +12,10 @@
 
 #include "minishell.h"
 
-t_ast_node *create_ast_node(t_ast_node_type type)
+t_node *create_node(t_node_type type)
 {
-	t_ast_node	*new_node;
-	new_node = (t_ast_node *) ft_calloc(1, sizeof(t_ast_node));
+	t_node	*new_node;
+	new_node = (t_node *) ft_calloc(1, sizeof(t_node));
 	if (!new_node)
 		return (0);
 	new_node->type = type;
@@ -27,7 +27,7 @@ t_ast_node *create_ast_node(t_ast_node_type type)
 	return (new_node);
 }
 
-void append_child_node(t_ast_node *parent, t_ast_node *child)
+void append_child_node(t_node *parent, t_node *child)
 {
 	if (!parent->left)
 		parent->left = child;
@@ -42,13 +42,13 @@ void append_child_node(t_ast_node *parent, t_ast_node *child)
 	}
 }
 
-t_ast_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
+t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 {
-	t_ast_node	*cmd_node;
+	t_node	*cmd_node;
 
 	if (*token_idx >= num_tokens || (*tokens)[*token_idx].type != TOKEN_WORD)
 		return (0);
-	cmd_node = create_ast_node(AST_COMMAND);
+	cmd_node = create_node(AST_COMMAND);
 	if (!cmd_node)
 		return (0);
 	// skip the command token
@@ -78,11 +78,11 @@ t_ast_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 	return (cmd_node);
 }
 
-t_ast_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)
+t_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)
 {
-    t_ast_node  *left_node;
-	t_ast_node *right_node;
-	t_ast_node *pipe_node;
+    t_node  *left_node;
+	t_node *right_node;
+	t_node *pipe_node;
 
 	left_node = parse_cmd(tokens, token_idx, num_tokens);
     if (*token_idx < num_tokens && (*tokens)[*token_idx].type == TOKEN_PIPE)
@@ -97,7 +97,7 @@ t_ast_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)
 			right_node = parse_pipe(tokens, token_idx, num_tokens);
 			if (!right_node)
 				return (0);
-			pipe_node = create_ast_node(AST_PIPE);
+			pipe_node = create_node(AST_PIPE);
 			if (!pipe_node)
 				return (0);
 			pipe_node->left = left_node;
@@ -108,11 +108,11 @@ t_ast_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)
     return (left_node); // Just a single command without a pipe
 }
 
-// t_ast_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)
+// t_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)
 // {
-// 	t_ast_node  *right_node;
-// 	t_ast_node  *left_node;
-// 	t_ast_node  *pipe_node;
+// 	t_node  *right_node;
+// 	t_node  *left_node;
+// 	t_node  *pipe_node;
 
 // 	left_node = parse_cmd(tokens, token_idx, num_tokens);
 // 	if (!left_node)
@@ -128,7 +128,7 @@ t_ast_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)
 // 			if (!right_node)
 // 				return (0);
 // 			// Create a new pipe node
-// 			pipe_node = create_ast_node(AST_PIPE);
+// 			pipe_node = create_node(AST_PIPE);
 // 			if (!pipe_node)
 // 				return (0);
 // 			// Add the left and right command nodes as children to the pipe node
@@ -148,7 +148,7 @@ t_ast_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)
 // 			if (!right_node)
 // 				return (0);
 // 			// create a new node
-// 			pipe_node = create_ast_node(AST_COMMAND);
+// 			pipe_node = create_node(AST_COMMAND);
 // 			if (!pipe_node)
 // 				return (0);
 // 			pipe_node->left = left_node;
@@ -165,9 +165,9 @@ t_ast_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)
  * 
  * @param tokens 
  * @param num_tokens 
- * @return t_ast_node* 
+ * @return t_node* 
  */
-t_ast_node *parse_tokens(t_token *tokens, t_size num_tokens)
+t_node *parse_tokens(t_token *tokens, t_size num_tokens)
 {
 	t_size	token_idx;
 
@@ -175,7 +175,7 @@ t_ast_node *parse_tokens(t_token *tokens, t_size num_tokens)
 	return (parse_pipe(&tokens, &token_idx, num_tokens));
 }
 
-void free_ast(t_ast_node *root)
+void free_ast(t_node *root)
 {
 	// t_size i;
 
