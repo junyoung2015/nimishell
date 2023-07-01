@@ -36,7 +36,6 @@ typedef long long					t_ssize;
 
 typedef enum	e_token_type
 {
-	TOKEN_UNKNOWN,
 	TOKEN_PIPE,
 	TOKEN_AND,
 	TOKEN_OR,
@@ -50,7 +49,6 @@ typedef enum	e_token_type
 	TOKEN_DOLLAR_SIGN,
 	TOKEN_ENV_VAR,
 	TOKEN_WORD,
-	TOKEN_STR_LITERAL,
 	TOKEN_WHITESPACE,
 	TOKEN_OPERATOR,
 	TOKEN_SQ_STR,
@@ -84,6 +82,7 @@ typedef struct  s_ast_node
 	t_size				num_args;
 	struct s_ast_node	*left;
 	struct s_ast_node	*right;
+	int					pipe_open;
 }   t_ast_node;
 
 /* ================== MACRO ================== */
@@ -99,8 +98,8 @@ typedef struct  s_ast_node
 # define EXIT_NOT_EXECUTABLE		126
 # define EXIT_CMD_NOT_FOUND			127
 
-# define FT_TRUE					1
-# define FT_FALSE					0
+# define TRUE					1
+# define FALSE					0
 
 # define MALLOC_ERR					"malloc() error."
 
@@ -114,7 +113,7 @@ void		*ft_memcpy(void *dst, const void *src, t_size n);
 int			ft_strcmp(const char *s1, const char *s2);
 int			ft_strncmp(const char *s1, const char *s2, t_size n);
 t_size		ft_strlen(const char *str);
-size_t		ft_strlcpy(char *dst, const char *src, size_t dstsize);
+t_size		ft_strlcpy(char *dst, const char *src, t_size dstsize);
 int			ft_isalnum(int c);
 
 /* ================ STR_UTILS_CREATE ================ */
@@ -122,18 +121,18 @@ char		*ft_strtrim(char *str, char c);
 char		*ft_strdup(char *src);
 
 /* ================== TOKENIZER ================== */
-t_token 	*tokenize(const char *input, t_size *num_tokens);
+t_token 	*tokenize(char *input, t_size *num_tokens);
 void 		print_tokens(t_token *tokens, t_size num_tokens);
 void 		categorize_tokens(t_token *tokens, t_size num_tokens);
 
 /* ================== LEXER ================== */
 t_token		*create_token(t_token_type type, const char *buffer, int buffer_length);
+int			free_tokens(t_token *tokens, t_size size);
 
 /* ================== PARSER ================== */
 t_ast_node	*parse_tokens(t_token *tokens, t_size num_tokens);
 void		free_ast(t_ast_node *root);
 
 /* ================== EXECUTOR ================== */
-int			execute_ast(t_ast_node *root);
 
 # endif
