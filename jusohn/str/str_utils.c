@@ -46,10 +46,10 @@ t_size	ft_strlen(const char *str)
 	return (idx);
 }
 
-size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
+t_size	ft_strlcpy(char *dst, const char *src, t_size dstsize)
 {
-	size_t	idx;
-	size_t	cp_size;
+	t_size	idx;
+	t_size	cp_size;
 
 	idx = 0;
 	cp_size = dstsize;

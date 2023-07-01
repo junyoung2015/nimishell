@@ -1,30 +1,32 @@
 CC = cc
-CFLAGS = -Wall -Wextra -fsanitize=address -g2 #-Werror # 
-READLINE_OPT = -L./lib/ -lreadline
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2
+
+### readline on Mac ###
+# READLINE_OPT = -L./lib/ -lreadline
+### readline on jusohn's WSL ###
+READLINE_OPT = -L./lib/ -lreadline -lncurses
+
 NAME = minishell
+
 # -------------- DIRS  -------------- #
 INCLUDES = ./includes/
 INCLUDE_READLINE = ./include/
-EXECUTOR_DIR = ./executor/
 LEXER_DIR = ./lexer/
 MEMORY_DIR = ./memory/
 PARSER_DIR = ./parser/
 STR_DIR = ./str/
-TOKENIZER_DIR = ./tokenizer/
 
 # -------------- SRCS  -------------- #
 SRCS = ./minishell.c						\
-		$(EXECUTOR_DIR)executor.c			\
 		$(LEXER_DIR)lexer.c					\
+		$(LEXER_DIR)tokenizer.c				\
 		$(MEMORY_DIR)mem_utils.c			\
 		$(PARSER_DIR)parser.c				\
 		$(STR_DIR)str_utils.c				\
-		$(STR_DIR)str_utils_create.c		\
-		$(TOKENIZER_DIR)tokenizer.c
+		$(STR_DIR)str_utils_create.c
 
 # ----------- BONUS SRCS  ----------- #
 # BO_SRCS = ./minishell_bonus.c
-
 HEADER = minishell.h
 # BO_HEADER = minishell_bonus.h
 
@@ -53,13 +55,14 @@ readline:
 	cd readline-8.2 && sh ./configure --prefix="$$(cd .. && pwd)" && make && make install
 	touch $@
 
+### make minishell, without re-make of readline ###
 mini: $(NAME)
 
 bonus: $(BO_SRCS) $(INCLUDES)$(BO_HEADER)
 	@$(MAKE) BONUS=1 all
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(READLINE_OPT) $(OBJS) -o $@
+	$(CC) $(CFLAGS) $(OBJS) -o $@ $(READLINE_OPT) 
 
 # $(BONUS): $(BO_OBJS)
 # 	$(CC) $(CFLAGS) $(BO_OBJS) -o $@
@@ -67,21 +70,8 @@ $(NAME): $(OBJS)
 %.o: %.c $(INCLUDES)$(HEADER)
 	$(CC) $(CFLAGS) -I$(INCLUDES) -I$(INCLUDE_READLINE) -c $< -o $@
 
-# re:
-# 	make fclean
-# 	make all
-
-# clean:
-# 	rm -rf ${OBJS} ${BO_OBJS}
-
-# fclean:
-# 	make clean
-# 	rm -rf ${NAME} ${BONUS}
-
 norm:
 	norm ${SRCS} ${BO_SRCS} ${INCLUDES}
-
-# all: readline
 
 clean:
 	rm -rf tmp
