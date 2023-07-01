@@ -24,6 +24,7 @@ SRCS = ./minishell.c						\
 		$(MEMORY_DIR)mem_utils.c			\
 		$(PARSER_DIR)parser.c				\
 		$(STR_DIR)str_utils.c				\
+		$(STR_DIR)str_split.c				\
 		$(STR_DIR)str_utils_create.c
 
 # ----------- BONUS SRCS  ----------- #
