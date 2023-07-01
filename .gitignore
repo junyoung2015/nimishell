@@ -121,3 +121,6 @@ Temporary Items
 
 # readline
 readline*
+lib*
+share*
+minishell

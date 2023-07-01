@@ -1,10 +1,9 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2
 
 ### readline on Mac ###
-# READLINE_OPT = -L./lib/ -lreadline
+READLINE_OPT = -L./lib/ -lreadline
 ### readline on jusohn's WSL ###
-READLINE_OPT = -L./lib/ -lreadline -lncurses
+#READLINE_OPT = -L./lib/ -lreadline -lncurses
 
 NAME = minishell
 
@@ -25,8 +24,16 @@ SRCS = ./minishell.c						\
 		$(PARSER_DIR)parser.c				\
 		$(STR_DIR)str_utils.c				\
 		$(STR_DIR)str_split.c				\
-		$(STR_DIR)str_utils_create.c
+		$(STR_DIR)str_utils_create.c		\
+		$(EXECUTE_DIR)command.c				\
+		$(EXECUTE_DIR)err.c					\
+		$(EXECUTE_DIR)execute.c				\
+		$(EXECUTE_DIR)execve.c				\
+		$(EXECUTE_DIR)open.c				\
+		$(EXECUTE_DIR)pipe.c				\
+		$(EXECUTE_DIR)redir.c
 
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2  -I$(INCLUDES) -I$(INCLUDE_READLINE)
 # ----------- BONUS SRCS  ----------- #
 # BO_SRCS = ./minishell_bonus.c
 HEADER = minishell.h execute.h
@@ -64,13 +71,14 @@ bonus: $(BO_SRCS) $(INCLUDES)$(BO_HEADER)
 	@$(MAKE) BONUS=1 all
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $@ $(READLINE_OPT) 
+	$(CC) $(CFLAGS) -I$(INCLUDES) -I$(INCLUDE_READLINE) $(OBJS) -o $@ $(READLINE_OPT) 
 
 # $(BONUS): $(BO_OBJS)
 # 	$(CC) $(CFLAGS) $(BO_OBJS) -o $@
 
 %.o: %.c $(INCLUDES)$(HEADER)
 	$(CC) $(CFLAGS) -I$(INCLUDES) -I$(INCLUDE_READLINE) -c $< -o $@
+# $(CC) $(CFLAGS) -I$(INCLUDES) -I$(INCLUDE_READLINE) -c $< -o $@
 
 norm:
 	norm ${SRCS} ${BO_SRCS} ${INCLUDES}
