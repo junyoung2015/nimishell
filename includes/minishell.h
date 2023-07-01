@@ -128,6 +128,7 @@ int			ft_isalnum(int c);
 /* ================ STR_UTILS_CREATE ================ */
 char		*ft_strtrim(char *str, char c);
 char		*ft_strdup(char *src);
+char		**ft_split(char const *str, char c)
 
 /* ================== TOKENIZER ================== */
 t_token 	*tokenize(char *input, t_size *num_tokens);
