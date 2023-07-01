@@ -8,10 +8,11 @@ void	open_pipe(t_pipe_info *info)
 
 void	connect_pipe(t_node *node, t_pipe_info *info)
 {
-	if ((node->pipe_open >> 0) & 1)
+	// printf("%d\n", node->pipe_open);
+	if ((node->pipe_open >> 1) & 1)
 		if (dup2(info->fd, STDIN_FILENO) < 0)
 			err();
-	if ((node->pipe_open >> 1) & 1)
+	if ((node->pipe_open >> 0) & 1)
 		if (dup2(info->pipe[1], STDOUT_FILENO) < 0)
 			err();
 	close(info->fd);
