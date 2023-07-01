@@ -118,3 +118,6 @@ Temporary Items
 #*.tgz
 *.zip
 *.7z
+
+# readline
+readline*

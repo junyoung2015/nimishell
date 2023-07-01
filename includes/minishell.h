@@ -62,7 +62,7 @@ typedef struct  s_token
   char			*value;
 }   t_token;
 
-typedef enum e_ast_node_type
+typedef enum e_node_type
 {
     AST_UNKNOWN,
     AST_COMMAND,
@@ -73,17 +73,26 @@ typedef enum e_ast_node_type
     AST_REDIR_APPEND,
 	AST_HEREDOC,
 	AST_SUBSHELL
-} t_ast_node_type;
+} t_node_type;
 
-typedef struct  s_ast_node
+typedef struct  s_node
 {
-	t_ast_node_type		type;
+	t_node_type		type;
 	char				**cmd_args;
 	t_size				num_args;
-	struct s_ast_node	*left;
-	struct s_ast_node	*right;
+	struct s_node	*left;
+	struct s_node	*right;
 	int					pipe_open;
-}   t_ast_node;
+}   t_node;
+
+typedef struct s_global_info
+{
+	char	**env;
+	char 	**path;
+	t_node	*root;
+} t_global_info;
+
+t_global_info	g_info;
 
 /* ================== MACRO ================== */
 # define STD_IN						0
@@ -130,9 +139,10 @@ t_token		*create_token(t_token_type type, const char *buffer, int buffer_length)
 int			free_tokens(t_token *tokens, t_size size);
 
 /* ================== PARSER ================== */
-t_ast_node	*parse_tokens(t_token *tokens, t_size num_tokens);
-void		free_ast(t_ast_node *root);
+t_node	*parse_tokens(t_token *tokens, t_size num_tokens);
+void		free_ast(t_node *root);
 
 /* ================== EXECUTOR ================== */
+int			execute(t_node *root);
 
 # endif

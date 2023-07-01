@@ -11,6 +11,7 @@ NAME = minishell
 # -------------- DIRS  -------------- #
 INCLUDES = ./includes/
 INCLUDE_READLINE = ./include/
+EXECUTE_DIR	= ./execute/
 LEXER_DIR = ./lexer/
 MEMORY_DIR = ./memory/
 PARSER_DIR = ./parser/
@@ -27,7 +28,7 @@ SRCS = ./minishell.c						\
 
 # ----------- BONUS SRCS  ----------- #
 # BO_SRCS = ./minishell_bonus.c
-HEADER = minishell.h
+HEADER = minishell.h execute.h
 # BO_HEADER = minishell_bonus.h
 
 # -------------- OBJS  -------------- #
