@@ -14,7 +14,7 @@
 # define MINISHELL_H
 
 # ifndef DEBUG
-#	define DEBUG						1
+#	define DEBUG					1
 # endif
 
 /* ================ INCLUDES ================= */
@@ -36,6 +36,7 @@ typedef long long					t_ssize;
 
 typedef enum	e_token_type
 {
+	TOKEN_UNKNOWN,
 	TOKEN_PIPE,
 	TOKEN_AND,
 	TOKEN_OR,
@@ -45,7 +46,7 @@ typedef enum	e_token_type
 	TOKEN_REDIR_IN,
 	TOKEN_REDIR_OUT,
 	TOKEN_HEREDOC,
-	TOKEN_REDIR_APPEND,
+	TOKEN_APPEND,
 	TOKEN_DOLLAR_SIGN,
 	TOKEN_ENV_VAR,
 	TOKEN_WORD,

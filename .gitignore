@@ -88,6 +88,7 @@ Temporary Items
 
 ### VisualStudioCode ###
 .vscode/*
+*.code-workspace
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
@@ -105,7 +106,7 @@ Temporary Items
 .history
 .ionide
 
-#       Custom      #
+###       Custom      ###
 # Documents
 #*.pdf
 *.txt
@@ -123,4 +124,6 @@ Temporary Items
 readline*
 lib*
 share*
+
+# $(NAME)
 minishell
