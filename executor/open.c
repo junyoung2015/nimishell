@@ -1,29 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   command.c                                          :+:      :+:    :+:   */
+/*   open.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/01 22:05:28 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/01 22:12:56 by sejinkim         ###   ########.fr       */
+/*   Created: 2023/07/01 22:05:47 by sejinkim          #+#    #+#             */
+/*   Updated: 2023/07/02 16:45:20 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execute.h"
+#include "executor.h"
 
-void	command(t_node *node, t_pipe_info *info)
+int	open_rdonly(char *filename)
 {
-	// int		fd;
+	int	fd;
 
-	info->pid = fork();
-	if (info->pid < 0)
+	fd = open(filename, O_RDONLY);
+	if (fd < 0)
 		err();
-	else if (!info->pid)
-	{
-		connect_pipe(node, info);
-		ft_execve(node);
-	}
-	close_pipe(node, info);
-	info->fork_cnt += 1;
+	return (fd);
+}
+
+int	open_wronly_trunc(char *filename)
+{
+	int	fd;
+
+	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fd < 0)
+		err();
+	return (fd);
+}
+
+int	open_wronly_append(char *filename)
+{
+	int	fd;
+
+	fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (fd < 0)
+		err();
+	return (fd);
 }

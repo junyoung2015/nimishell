@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execute.c                                          :+:      :+:    :+:   */
+/*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/01 22:28:53 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/02 16:45:20 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execute.h"
+#include "executor.h"
 
 void	run_cmd(t_node *root, t_pipe_info *info)
 {
@@ -40,12 +40,12 @@ void	preorder_traversal(t_node *root, t_pipe_info *info)
 	preorder_traversal(root->right, info);
 }
 
-int	execute(t_node *root)
+int	executor(t_node *root)
 {
 	int			status;
 	t_pipe_info	info;
 	size_t		i;
-	
+
 	info.fork_cnt = 0;
 	info.fd = -1;
 	preorder_traversal(root, &info);

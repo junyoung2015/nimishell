@@ -144,6 +144,6 @@ t_node	*parse_tokens(t_token *tokens, t_size num_tokens);
 void		free_ast(t_node *root);
 
 /* ================== EXECUTOR ================== */
-int			execute(t_node *root);
+int			executor(t_node *root);
 
 # endif

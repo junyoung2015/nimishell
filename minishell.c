@@ -100,7 +100,7 @@ int	main(int ac, char **av, char **env)
 				if (ast && DEBUG)
 					print_ast(ast, 0, "");
 				g_info.root = ast;
-				status = execute(g_info.root);
+				status = executor(g_info.root);
 				// TODO: execute and check status
 				// status = execute_ast(ast);
 				printf("num of tokens: %llu\n", num_tokens);	

@@ -1,43 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   open.c                                             :+:      :+:    :+:   */
+/*   command.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/01 22:05:47 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/01 22:05:47 by sejinkim         ###   ########.fr       */
+/*   Created: 2023/07/01 22:05:28 by sejinkim          #+#    #+#             */
+/*   Updated: 2023/07/02 16:45:20 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execute.h"
+#include "executor.h"
 
-int	open_rdonly(char *filename)
+void	command(t_node *node, t_pipe_info *info)
 {
-	int	fd;
+	// int		fd;
 
-	fd = open(filename, O_RDONLY);
-	if (fd < 0)
+	info->pid = fork();
+	if (info->pid < 0)
 		err();
-	return (fd);
-}
-
-int	open_wronly_trunc(char *filename)
-{
-	int	fd;
-
-	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd < 0)
-		err();
-	return (fd);
-}
-
-int	open_wronly_append(char *filename)
-{
-	int	fd;
-
-	fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	if (fd < 0)
-		err();
-	return (fd);
+	else if (!info->pid)
+	{
+		connect_pipe(node, info);
+		ft_execve(node);
+	}
+	close_pipe(node, info);
+	info->fork_cnt += 1;
 }
