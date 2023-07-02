@@ -2,6 +2,6 @@
 	"files.associations": {
 		"minishell.h": "c",
 		"lexer.h": "c",
-		"execute.h": "c"
+		"executor.h": "c"
 	}
 }

@@ -10,7 +10,7 @@ NAME = minishell
 # -------------- DIRS  -------------- #
 INCLUDES = ./includes/
 INCLUDE_READLINE = ./include/
-EXECUTE_DIR	= ./execute/
+EXECUTOR_DIR	= ./executor/
 LEXER_DIR = ./lexer/
 MEMORY_DIR = ./memory/
 PARSER_DIR = ./parser/
@@ -25,18 +25,18 @@ SRCS = ./minishell.c						\
 		$(STR_DIR)str_utils.c				\
 		$(STR_DIR)str_split.c				\
 		$(STR_DIR)str_utils_create.c		\
-		$(EXECUTE_DIR)command.c				\
-		$(EXECUTE_DIR)err.c					\
-		$(EXECUTE_DIR)execute.c				\
-		$(EXECUTE_DIR)execve.c				\
-		$(EXECUTE_DIR)open.c				\
-		$(EXECUTE_DIR)pipe.c				\
-		$(EXECUTE_DIR)redir.c
+		$(EXECUTOR_DIR)command.c				\
+		$(EXECUTOR_DIR)err.c					\
+		$(EXECUTOR_DIR)executor.c				\
+		$(EXECUTOR_DIR)execve.c				\
+		$(EXECUTOR_DIR)open.c				\
+		$(EXECUTOR_DIR)pipe.c				\
+		$(EXECUTOR_DIR)redir.c
 
 CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2  -I$(INCLUDES) -I$(INCLUDE_READLINE)
 # ----------- BONUS SRCS  ----------- #
 # BO_SRCS = ./minishell_bonus.c
-HEADER = minishell.h execute.h
+HEADER = minishell.h executor.h
 # BO_HEADER = minishell_bonus.h
 
 # -------------- OBJS  -------------- #

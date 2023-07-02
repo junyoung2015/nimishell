@@ -6,11 +6,11 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 21:50:47 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/01 22:05:52 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/02 16:45:20 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "execute.h"
+#include "executor.h"
 
 void	redir_in(t_node *node, t_pipe_info *info)
 {
