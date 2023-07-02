@@ -36,8 +36,16 @@ void print_ast(t_node *node, int depth, const char *indent)
 	printf("%*c", depth * 6, 1);
 	if (node->type == AST_PIPE)
 		printf("|");
+	else if (node->type == AST_REDIR_IN)
+		printf("<");
+	else if (node->type == AST_HEREDOC)
+		printf("<<");
+	else if (node->type == AST_REDIR_OUT)
+		printf(">");
+	else if (node->type == AST_REDIR_APPEND)
+		printf(">>");
 	for (t_size i = 0; i < node->num_args; i++)
-		printf("%s ", node->cmd_args[i]);
+		printf("[%s] ", node->cmd_args[i]);
 	printf("\n");
 	print_ast(node->left, depth + 1, "\\");
 }

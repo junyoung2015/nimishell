@@ -32,14 +32,7 @@ void append_child_node(t_node *parent, t_node *child)
 	if (!parent->left)
 		parent->left = child;
 	else if (!parent->right)
-	{
 		parent->right = child;
-	}
-	else
-	{
-		// TODO: figure out how to handle errors
-		// Error: More than 2 children are not supported
-	}
 }
 
 t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
@@ -66,6 +59,7 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 		cmd_node->cmd_args[cmd_node->num_args] = ft_strdup((*tokens)[*token_idx].value);
 		if (!cmd_node->cmd_args[cmd_node->num_args])
 		{
+			// TODO: remove for loop
 			for (t_size i = 0; i < cmd_node->num_args; i++)
 				free(cmd_node->cmd_args[i++]);
 			free(cmd_node);
@@ -78,86 +72,81 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 	return (cmd_node);
 }
 
-t_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)
+t_node *parse_redir(t_token **tokens, t_size *token_idx, t_size num_tokens)
 {
-    t_node  *left_node;
-	t_node *right_node;
-	t_node *pipe_node;
+    t_node	*left_node;
+	t_node	*right_node;
+	t_node	*redir_node;
+	t_node_type redir_type;
 
 	left_node = parse_cmd(tokens, token_idx, num_tokens);
+    
+	if (*token_idx < num_tokens && ((*tokens)[*token_idx].type == \
+		TOKEN_REDIR_IN || (*tokens)[*token_idx].type == TOKEN_REDIR_OUT))
+	{
+		if ((*tokens)[*token_idx].type == TOKEN_REDIR_IN)
+			redir_type = AST_REDIR_IN;
+		else if ((*tokens)[*token_idx].type == TOKEN_REDIR_OUT)
+			redir_type = AST_REDIR_OUT;
+		(*token_idx)++;
+		right_node = parse_cmd(tokens, token_idx, num_tokens);
+		if (!right_node)
+			return (0);
+		redir_node = create_node(redir_type);
+		if (!redir_node)
+			return (0);
+		redir_node->left = left_node;
+		redir_node->right = right_node;
+		return (redir_node);
+    }
+    return (left_node);
+}
+t_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)
+{
+    t_node	*left_node;
+	t_node	*right_node;
+	t_node	*pipe_node;
+
+	left_node = parse_redir(tokens, token_idx, num_tokens);
+    
     if (*token_idx < num_tokens && (*tokens)[*token_idx].type == TOKEN_PIPE)
 	{
-		if (*token_idx < num_tokens && (*tokens)[*token_idx].type == TOKEN_WHITESPACE)
-		{
-			(*token_idx)++;
-		}
-		else
-		{
-			(*token_idx)++;
-			right_node = parse_pipe(tokens, token_idx, num_tokens);
-			if (!right_node)
-				return (0);
-			pipe_node = create_node(AST_PIPE);
-			if (!pipe_node)
-				return (0);
-			pipe_node->left = left_node;
-			pipe_node->right = right_node;
-			return (pipe_node);
-		}
+		(*token_idx)++;
+		right_node = parse_pipe(tokens, token_idx, num_tokens);
+		if (!right_node)
+			return (0);
+
+		pipe_node = create_node(AST_PIPE);
+		if (!pipe_node)
+			return (0);
+		pipe_node->left = left_node;
+		pipe_node->right = right_node;
+		return (pipe_node);
     }
-    return (left_node); // Just a single command without a pipe
+    return (left_node);
 }
 
 // t_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)
 // {
-// 	t_node  *right_node;
-// 	t_node  *left_node;
-// 	t_node  *pipe_node;
+//     t_node	*left_node;
+// 	t_node	*right_node;
+// 	t_node	*pipe_node;
 
 // 	left_node = parse_cmd(tokens, token_idx, num_tokens);
-// 	if (!left_node)
-// 		return (0);
-// 	// Check for pipe token
-// 	while (*token_idx < num_tokens)
+//     if (*token_idx < num_tokens && (*tokens)[*token_idx].type == TOKEN_PIPE)
 // 	{
-// 		if ((*tokens)[*token_idx].type == TOKEN_PIPE)
-// 		{
-// 			// Skip the pipe token
-// 			(*token_idx)++;
-// 			right_node = parse_cmd(tokens, token_idx, num_tokens);
-// 			if (!right_node)
-// 				return (0);
-// 			// Create a new pipe node
-// 			pipe_node = create_node(AST_PIPE);
-// 			if (!pipe_node)
-// 				return (0);
-// 			// Add the left and right command nodes as children to the pipe node
-// 			pipe_node->left = left_node;
-// 			pipe_node->right = right_node;
-// 			// The new pipe node becomes the left node for the next iteration
-// 			left_node = pipe_node;
-// 		}
-// 		else if ((*tokens)[*token_idx].type == TOKEN_WHITESPACE)
-// 		{
-// 			(*token_idx)++;
-// 		}
-// 		else
-// 		{
-// 			right_node = parse_pipe(tokens, token_idx, num_tokens);
-// 			(*token_idx)++;
-// 			if (!right_node)
-// 				return (0);
-// 			// create a new node
-// 			pipe_node = create_node(AST_COMMAND);
-// 			if (!pipe_node)
-// 				return (0);
-// 			pipe_node->left = left_node;
-// 			pipe_node->right = right_node;
-// 			// The new pipe node becomes the left node for the next iteration
-// 			left_node = pipe_node;
-// 		}
-// 	}
-// 	return (left_node);
+// 		(*token_idx)++;
+// 		right_node = parse_pipe(tokens, token_idx, num_tokens);
+// 		if (!right_node)
+// 			return (0);
+// 		pipe_node = create_node(AST_PIPE);
+// 		if (!pipe_node)
+// 			return (0);
+// 		pipe_node->left = left_node;
+// 		pipe_node->right = right_node;
+// 		return (pipe_node);
+//     }
+//     return (left_node);
 // }
 
 /**

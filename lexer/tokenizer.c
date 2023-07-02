@@ -16,7 +16,6 @@ int	free_tokens(t_token *tokens, t_size size)
 {
 	t_size	i;
 
-
 	i = 0;
 	if (size != 0)
 		while (i < size)
@@ -65,7 +64,32 @@ t_token* realloc_tokens(t_token* tokens, t_size current_size, t_size new_size)
 	return (new_tokens);
 }
 
-t_bool  is_meta_char(char ch)
+t_bool	is_dmeta_ch(char ch)
+{
+	return (ch == '|' || ch == '>' || ch == '<' || ch == '&');
+}
+
+// t_bool	is_not_dmeta_ch(char ch)
+// {
+// 	return (!(ch == '|' || ch == '>' || ch == '<' || ch == '&'));
+// }
+
+t_bool	is_dmeta_str(char *str)
+{
+	if (!(is_dmeta_ch(0[str]) && is_dmeta_ch(1[str])))
+		return (FALSE);
+	if (ft_strncmp(str, "<<", 2) == 0)
+		return (TRUE);
+	else if (ft_strncmp(str, ">>", 2) == 0)
+		return (TRUE);
+	else if (ft_strncmp(str, "||", 2) == 0)
+		return (TRUE);
+	else if (ft_strncmp(str, "&&", 2) == 0)
+		return (TRUE);
+	return (FALSE);
+}
+
+t_bool	is_meta_ch(char ch)
 {
 	return (ch == '|' || ch == '>' || ch == '<' || ch == '$' || ch == '\'' || \
 		ch == '"' || ch == '(' || ch == ')' || ch == '&' || ch == '\t' || \
@@ -81,11 +105,6 @@ t_bool	is_squote(char ch)
 {
 	return (ch == '\'');
 }
-
-// t_bool	is_env_var(char ch)
-// {
-// 	return (ch);
-// }
 
 t_token	*create_token(t_token_type type, const char *buffer, int buf_len)
 {
@@ -109,103 +128,77 @@ t_token	*create_token(t_token_type type, const char *buffer, int buf_len)
 
 t_token	*split_until(char *start, char **input, int (*cmp)(char ch), t_token_type type)
 {
+	t_bool	is_quote;
 	t_token	*new_token;
 
-	// if (type == TOKEN_DOLLAR_SIGN && **input)
-	// {
-	// 	(*input)++;
-	// 	if (**input && **input == '(')
-	// 	{
-
-	// 	}
-	// 	else if (**input && is_env_var(**input))
-	// 	{
-
-	// 	}
-	// 	else 
-	// 	{
-
-	// 	}
-	// }
-	// else
-	// {
-		while (**input && !cmp(**input))
-			(*input)++;
-		new_token = create_token(type, start, *input - start);
-		// TODO: free tokens
-		// TODO: malloc err
-		if (!new_token)
-			return (0);
-		(*input)--;
-	// }
-	return (new_token);
-}
-
-t_token *split_word(char *start, char **input)
-{
-	t_token	*new_token;
-
-	while (**input && !is_meta_char(**input))
+	is_quote = FALSE;
+	if (cmp == is_dquote || cmp == is_squote)
+		is_quote = TRUE;
+	(*input)++;
+	while (**input && !cmp(**input))
 		(*input)++;
-	new_token = create_token(TOKEN_WORD, start, *input - start);
+	new_token = create_token(type, start, *input - start + is_quote);
 	// TODO: free tokens
 	// TODO: malloc err
 	if (!new_token)
 		return (0);
-	(*input)--;
+	if (!(**input) || (cmp != is_dquote && cmp != is_squote))
+		(*input)--;
 	return (new_token);
 }
 
 t_token *tokenize(char *input, t_size *num_tokens)
 {
-	t_size		    alloced;
-	t_size		    token_idx;
-	t_token		    *tokens;
-	t_token         *new_token;
+	t_size			alloced;
+	t_size			token_idx;
+	t_token			*tokens;
+	t_token			*new_token;
 	t_token_type	type;
-	char            *start;
+	char			*start;
 
 	alloced = 2;
 	token_idx = 0;
-	start = (char *) input;
+	start = input;
 	tokens = ft_calloc(alloced, sizeof(t_token));
 	// TODO: malloc err
 	if (!tokens)
 		return (0);
 	while (*input)
 	{
-		if (is_meta_char(*input))
+		new_token = 0;
+		if (is_meta_ch(*input))
 		{
-			type = TOKEN_OPERATOR;
-			if (is_dquote(*input))
+			if (*input != ' ')
 			{
-				new_token = split_until(start, &input, is_dquote, TOKEN_DQ_STR);
+				type = TOKEN_OPERATOR;
+				if (is_dquote(*input))
+					new_token = split_until(start, &input, is_dquote, TOKEN_DQ_STR);
+				else if (is_squote(*input))
+					new_token = split_until(start, &input, is_squote, TOKEN_SQ_STR);
+				else if (is_dmeta_str(input))
+					new_token = create_token(type, start, (input++) - start + 2);
+				else
+					new_token = create_token(type, start, input - start + 1);
+				// else if (*input == '$')
+				// {
+				// 	new_token = split_until(start, &input, )
+				// }
+				// TODO: free tokens
+				if (!new_token)
+				// TODO: malloc err
+					return (0);
 			}
-			else if (is_squote(*input))
-			{
-				new_token = split_until(start, &input, is_squote, TOKEN_SQ_STR);
-			}
-			// else if (*input == '$')
-			// {
-			// 	new_token = split_until(start, &input, )
-			// }
-			else
-				new_token = create_token(type, start, input - start + 1);
-			// TODO: free tokens
-			if (!new_token)
-			// TODO: malloc err
-				return (0);
 		}
 		else
 		{
-			new_token = split_until(start, &input, is_meta_char, TOKEN_WORD);
+			new_token = split_until(start, &input, is_meta_ch, TOKEN_WORD);
 			// TODO: free tokens
 			// TODO: malloc err
 			if (!new_token)
 				return (0);
-			// input--;
 		}
-		tokens[token_idx++] = *new_token;
+		if (new_token)
+			tokens[token_idx++] = *new_token;
 		free(new_token);
 		if (alloced <= token_idx + 1)
 		{
