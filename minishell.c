@@ -90,7 +90,7 @@ int	main(int ac, char **av, char **env)
 	g_info.env = env;
 	tokens = 0;
 	ast = 0;
-	signal(SIGINT, sig_handler);
+	// signal(SIGINT, sig_handler);
 	while (TRUE)
 	{
 		line = readline("minishell> ");
