@@ -26,6 +26,7 @@ t_node *create_node(t_node_type type)
 	new_node->left = 0;
 	new_node->right = 0;
 	new_node->pipe_open = 0;
+	new_node->parent_type = AST_UNSET;
 	return (new_node);
 }
 

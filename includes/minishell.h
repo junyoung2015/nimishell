@@ -65,7 +65,7 @@ typedef struct  s_token
 
 typedef enum e_node_type
 {
-    AST_UNKNOWN,
+    AST_UNSET,
     AST_COMMAND,
     AST_ARGUMENT,
     AST_PIPE,
@@ -79,11 +79,12 @@ typedef enum e_node_type
 typedef struct  s_node
 {
 	t_node_type		type;
-	char				**cmd_args;
-	t_size				num_args;
+	char			**cmd_args;
+	t_size			num_args;
 	struct s_node	*left;
 	struct s_node	*right;
-	int					pipe_open;
+	int				pipe_open;
+	t_node_type		parent_type;
 }   t_node;
 
 typedef struct s_global_info
