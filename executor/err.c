@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   err.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:26 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/02 16:45:20 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/03 16:44:12 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ void	clear_all(t_node *root)
 		return ;
 	clear_all(root->left);
 	clear_all(root->right);
-	free(root->cmd_args);
+	if (root->cmd_args)
+		free_ptr(root->cmd_args);
 	free(root);
 }
 

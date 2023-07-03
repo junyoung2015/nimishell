@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipe.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/07/03 16:37:25 by jusohn            #+#    #+#             */
+/*   Updated: 2023/07/03 16:47:04 by jusohn           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "executor.h"
 
 void	open_pipe(t_pipe_info *info)
@@ -9,6 +21,8 @@ void	open_pipe(t_pipe_info *info)
 void	connect_pipe(t_node *node, t_pipe_info *info)
 {
 	// printf("%d\n", node->pipe_open);
+	if (!node->pipe_open)
+		return ;
 	if ((node->pipe_open >> 1) & 1)
 		if (dup2(info->fd, STDIN_FILENO) < 0)
 			err();
