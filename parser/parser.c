@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+t_node *parse_redir(t_token **tokens, t_size *token_idx, t_size num_tokens, t_node *left_node);
+
 t_node *create_node(t_node_type type)
 {
 	t_node	*new_node;
@@ -69,53 +71,59 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 		// Move to the next token
 		(*token_idx)++;
 	}
+	if (*token_idx < num_tokens &&
+        ((*tokens)[*token_idx].type == TOKEN_REDIR_IN || (*tokens)[*token_idx].type == TOKEN_REDIR_OUT)) {
+        cmd_node = parse_redir(tokens, token_idx, num_tokens, cmd_node);
+    }
 	return (cmd_node);
 }
 
-t_node *parse_redir(t_token **tokens, t_size *token_idx, t_size num_tokens)
+t_node *parse_redir(t_token **tokens, t_size *token_idx, t_size num_tokens, t_node *left_node)
 {
-    t_node	*left_node;
-	t_node	*right_node;
-	t_node	*redir_node;
-	t_node_type redir_type;
-
-	left_node = parse_cmd(tokens, token_idx, num_tokens);
-    
-	if (*token_idx < num_tokens && ((*tokens)[*token_idx].type == \
-		TOKEN_REDIR_IN || (*tokens)[*token_idx].type == TOKEN_REDIR_OUT))
+    t_node *redir_node;
+    if (*token_idx >= num_tokens)
+        return (left_node);
+    if ((*tokens)[*token_idx].type == TOKEN_REDIR_OUT)
+        redir_node = create_node(AST_REDIR_OUT);
+    else if ((*tokens)[*token_idx].type == TOKEN_REDIR_IN)
+	   redir_node = create_node(AST_REDIR_IN);
+    else
+        return (left_node);
+	if (!redir_node)
+		return (0);
+    (*token_idx)++;
+    if (*token_idx >= num_tokens || (*tokens)[*token_idx].type != TOKEN_WORD)
 	{
-		if ((*tokens)[*token_idx].type == TOKEN_REDIR_IN)
-			redir_type = AST_REDIR_IN;
-		else if ((*tokens)[*token_idx].type == TOKEN_REDIR_OUT)
-			redir_type = AST_REDIR_OUT;
-		(*token_idx)++;
-		right_node = parse_cmd(tokens, token_idx, num_tokens);
-		if (!right_node)
-			return (0);
-		redir_node = create_node(redir_type);
-		if (!redir_node)
-			return (0);
-		redir_node->left = left_node;
-		redir_node->right = right_node;
-		return (redir_node);
+        // TODO: Handle syntax error - expected filename after redirection
+        return (0);
     }
-    return (left_node);
+    redir_node->cmd_args = ft_calloc(2, sizeof(char *));
+    if (!redir_node->cmd_args)
+	{
+        free(redir_node);
+        return (0);
+    }
+    redir_node->cmd_args[0] = ft_strdup((*tokens)[*token_idx].value);
+	if (!redir_node->cmd_args[0])
+		return (0);
+    redir_node->num_args = 1;
+    redir_node->left = left_node;
+    (*token_idx)++;
+    return (redir_node);
 }
+
 t_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)
 {
     t_node	*left_node;
 	t_node	*right_node;
 	t_node	*pipe_node;
-
-	left_node = parse_redir(tokens, token_idx, num_tokens);
-    
+	left_node = parse_cmd(tokens, token_idx, num_tokens);
     if (*token_idx < num_tokens && (*tokens)[*token_idx].type == TOKEN_PIPE)
 	{
 		(*token_idx)++;
 		right_node = parse_pipe(tokens, token_idx, num_tokens);
 		if (!right_node)
 			return (0);
-
 		pipe_node = create_node(AST_PIPE);
 		if (!pipe_node)
 			return (0);
@@ -125,29 +133,6 @@ t_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)
     }
     return (left_node);
 }
-
-// t_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)
-// {
-//     t_node	*left_node;
-// 	t_node	*right_node;
-// 	t_node	*pipe_node;
-
-// 	left_node = parse_cmd(tokens, token_idx, num_tokens);
-//     if (*token_idx < num_tokens && (*tokens)[*token_idx].type == TOKEN_PIPE)
-// 	{
-// 		(*token_idx)++;
-// 		right_node = parse_pipe(tokens, token_idx, num_tokens);
-// 		if (!right_node)
-// 			return (0);
-// 		pipe_node = create_node(AST_PIPE);
-// 		if (!pipe_node)
-// 			return (0);
-// 		pipe_node->left = left_node;
-// 		pipe_node->right = right_node;
-// 		return (pipe_node);
-//     }
-//     return (left_node);
-// }
 
 /**
  * @brief build AST based on the grammar, using array of tokens received
