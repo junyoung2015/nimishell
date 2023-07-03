@@ -25,6 +25,7 @@ void	sig_handler(int signal)
 
 # ifdef DEBUG
 
+// TODO: remove for
 void print_ast(t_node *node, int depth, const char *indent)
 {
 	if (node == NULL)
@@ -33,21 +34,21 @@ void print_ast(t_node *node, int depth, const char *indent)
 		return ;
 	}
 	print_ast(node->right, depth + 1, "/");
-	printf("%*c", depth * 6, 1);
+	printf("%*c", depth * 4, 1);
 	if (node->type == AST_PIPE)
 		printf("|");
-	else if (node->type == AST_REDIR_IN)
-		printf("<");
-	else if (node->type == AST_HEREDOC)
-		printf("<<");
-	else if (node->type == AST_REDIR_OUT)
-		printf(">");
-	else if (node->type == AST_REDIR_APPEND)
-		printf(">>");
-	else if (node->type == AST_SUBSHELL)
-		printf("$()");
+	// else if (node->type == AST_REDIR_IN)
+	// 	printf("<");
+	// else if (node->type == AST_HEREDOC)
+	// 	printf("<<");
+	// else if (node->type == AST_REDIR_OUT)
+	// 	printf(">");
+	// else if (node->type == AST_REDIR_APPEND)
+	// 	printf(">>");
+	// else if (node->type == AST_SUBSHELL)
+	// 	printf("$()");
 	for (t_size i = 0; i < node->num_args; i++)
-		printf("[%s] ", node->cmd_args[i]);
+		printf("[%d][%s] ", node->type, node->cmd_args[i]);
 	printf("\n");
 	print_ast(node->left, depth + 1, "\\");
 }
@@ -67,9 +68,11 @@ void	chk_leaks(void)
 
 void print_tokens(t_token *tokens, t_size num_tokens)
 {
-	for (t_size i = 0; i < num_tokens; i++) {
+	printf("\n================= TOKENS =================\n");
+	printf("num of tokens: %llu\n", num_tokens);
+	for (t_size i = 0; i < num_tokens; i++)
 		printf("token[%llu]: %d, %s\n", i, tokens[i].type, tokens[i].value);
-	}
+	printf("==========================================\n");
 }
 
 # endif
@@ -81,7 +84,7 @@ int	main(int ac, char **av, char **env)
 	char		*line;
 	t_token		*tokens;
 	t_size		num_tokens;
-	t_node	*ast;
+	t_node		*ast;
 	int			status;
 
 	// if (DEBUG)
@@ -90,7 +93,7 @@ int	main(int ac, char **av, char **env)
 	g_info.env = env;
 	tokens = 0;
 	ast = 0;
-	signal(SIGINT, sig_handler);
+	// signal(SIGINT, sig_handler);
 	while (TRUE)
 	{
 		line = readline("minishell> ");
@@ -106,20 +109,21 @@ int	main(int ac, char **av, char **env)
 				if (!tokens)
 					return (0);
 				categorize_tokens(tokens, num_tokens);
+				if (tokens && DEBUG)
+					print_tokens(tokens, num_tokens);
 				ast = parse_tokens(tokens, num_tokens);
 				if (ast && DEBUG)
+				{
+					printf("\n================== AST ==================\n");
 					print_ast(ast, 0, "");
+					printf("=========================================\n");
+				}
 				g_info.root = ast;
 				status = executor(g_info.root);
-				// TODO: execute and check status
-				// status = execute_ast(ast);
-				printf("num of tokens: %llu\n", num_tokens);	
 			}
-			if (tokens && DEBUG)
-				print_tokens(tokens, num_tokens);
 			// if (status)
 			// 	update_exit_status(status);
-			free_tokens(tokens, num_tokens);
+			// free_tokens(tokens, num_tokens);
 			tokens = 0;
 			// free_ast(ast);
 			free(line);
