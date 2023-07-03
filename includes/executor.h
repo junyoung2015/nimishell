@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/03 15:16:50 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/03 21:13:56 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ void	ft_execve(t_node *node);
 void	free_ptr(char **ptr);
 void	clear_all(t_node *root);
 void	err(void);
+void	cmd_not_found(void);
 void	command(t_node *node, t_pipe_info *info);
 
 #endif
