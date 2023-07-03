@@ -106,6 +106,29 @@ t_bool	is_squote(char ch)
 	return (ch == '\'');
 }
 
+t_bool	is_subshell_closed(char *str)
+{
+	t_size	cnt;
+
+	cnt = 0;
+	if (*str == '$')
+		str++;
+	if (*(str + 1) == '(')
+	{
+		while (*str)
+		{
+			if (*str == '(')
+				cnt++;
+			else if (*str == ')')
+				cnt--;
+			str++;
+		}
+	}
+	if (cnt == 0)
+		return (TRUE);
+	return (FALSE);
+}
+
 t_token	*create_token(t_token_type type, const char *buffer, int buf_len)
 {
 	t_token	*new_token;
