@@ -12,8 +12,6 @@
 
 #include "minishell.h"
 
-t_node *parse_redir(t_token **tokens, t_size *token_idx, t_size num_tokens, t_node *left_node);
-
 t_node *create_node(t_node_type type)
 {
 	t_node	*new_node;
@@ -40,77 +38,79 @@ void append_child_node(t_node *parent, t_node *child)
 
 t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 {
-	t_node	*cmd_node;
+    t_node *cmd_node;
+    t_node *redir_in_node;
+    t_node *redir_out_node;
 
-	if (*token_idx >= num_tokens || (*tokens)[*token_idx].type != TOKEN_WORD)
-		return (0);
-	cmd_node = create_node(AST_COMMAND);
-	if (!cmd_node)
-		return (0);
-	// skip the command token
-	// (*token_idx)++;
-	// Allocate memory for cmd_args
-	cmd_node->cmd_args = ft_calloc(num_tokens - *token_idx + 1, sizeof(char *));
-	if (!cmd_node->cmd_args)
-	{
-		free(cmd_node);
-		return (0);
-	}
-	// while next tokens are arguments, append them to the command
-	while (*token_idx < num_tokens && ((*tokens)[*token_idx].type == TOKEN_WORD))
-	{
-		cmd_node->cmd_args[cmd_node->num_args] = ft_strdup((*tokens)[*token_idx].value);
-		if (!cmd_node->cmd_args[cmd_node->num_args])
-		{
-			// TODO: remove for loop
-			for (t_size i = 0; i < cmd_node->num_args; i++)
-				free(cmd_node->cmd_args[i++]);
-			free(cmd_node);
-			return (0);
-		}
-		cmd_node->num_args++;
-		// Move to the next token
-		(*token_idx)++;
-	}
-	if (*token_idx < num_tokens &&
-        ((*tokens)[*token_idx].type == TOKEN_REDIR_IN || (*tokens)[*token_idx].type == TOKEN_REDIR_OUT)) {
-        cmd_node = parse_redir(tokens, token_idx, num_tokens, cmd_node);
-    }
-	return (cmd_node);
-}
-
-t_node *parse_redir(t_token **tokens, t_size *token_idx, t_size num_tokens, t_node *left_node)
-{
-    t_node *redir_node;
-    if (*token_idx >= num_tokens)
-        return (left_node);
-    if ((*tokens)[*token_idx].type == TOKEN_REDIR_OUT)
-        redir_node = create_node(AST_REDIR_OUT);
-    else if ((*tokens)[*token_idx].type == TOKEN_REDIR_IN)
-	   redir_node = create_node(AST_REDIR_IN);
-    else
-        return (left_node);
-	if (!redir_node)
-		return (0);
-    (*token_idx)++;
+	redir_in_node = 0;
+	redir_out_node = 0;
     if (*token_idx >= num_tokens || (*tokens)[*token_idx].type != TOKEN_WORD)
-	{
-        // TODO: Handle syntax error - expected filename after redirection
+        return (0);
+    cmd_node = create_node(AST_COMMAND);
+    if (!cmd_node)
+        return (0);
+    cmd_node->cmd_args = ft_calloc(num_tokens - *token_idx + 1, sizeof(char *));
+    if (!cmd_node->cmd_args)
+    {
+        free(cmd_node);
         return (0);
     }
-    redir_node->cmd_args = ft_calloc(2, sizeof(char *));
-    if (!redir_node->cmd_args)
-	{
-        free(redir_node);
-        return (0);
+    while (*token_idx < num_tokens && ((*tokens)[*token_idx].type == TOKEN_WORD))
+    {
+        cmd_node->cmd_args[cmd_node->num_args] = ft_strdup((*tokens)[*token_idx].value);
+        if (!cmd_node->cmd_args[cmd_node->num_args])
+        {
+            for (t_size i = 0; i < cmd_node->num_args; i++)
+                free(cmd_node->cmd_args[i++]);
+            free(cmd_node);
+            return (0);
+        }
+        cmd_node->num_args++;
+        (*token_idx)++;
     }
-    redir_node->cmd_args[0] = ft_strdup((*tokens)[*token_idx].value);
-	if (!redir_node->cmd_args[0])
-		return (0);
-    redir_node->num_args = 1;
-    redir_node->left = left_node;
-    (*token_idx)++;
-    return (redir_node);
+    while (*token_idx < num_tokens)
+    {
+        t_token_type type = (*tokens)[*token_idx].type;
+
+        if (type == TOKEN_REDIR_IN)
+        {
+            (*token_idx)++;
+            if (*token_idx < num_tokens && (*tokens)[*token_idx].type == TOKEN_WORD)
+            {
+                redir_in_node = create_node(AST_REDIR_IN);
+                if (!redir_in_node)
+                {
+                    free_ast(cmd_node);
+                    return (0);
+                }
+                redir_in_node->cmd_args = ft_calloc(2, sizeof(char *));
+                redir_in_node->cmd_args[0] = ft_strdup((*tokens)[*token_idx].value);
+                redir_in_node->num_args = 1;
+                cmd_node->left = redir_in_node;
+            }
+        }
+        else if (type == TOKEN_REDIR_OUT)
+        {
+            (*token_idx)++;
+            if (*token_idx < num_tokens && (*tokens)[*token_idx].type == TOKEN_WORD)
+            {
+                redir_out_node = create_node(AST_REDIR_OUT);
+                if (!redir_out_node)
+                {
+                    free_ast(cmd_node);
+                    return (0);
+                }
+                redir_out_node->cmd_args = ft_calloc(2, sizeof(char *));
+                redir_out_node->cmd_args[0] = ft_strdup((*tokens)[*token_idx].value);
+                redir_out_node->num_args = 1;
+                cmd_node->right = redir_out_node;
+            }
+        }
+        else
+            break ;
+        (*token_idx)++;
+    }
+    return (cmd_node);
 }
 
 t_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)

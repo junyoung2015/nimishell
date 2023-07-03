@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execve.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:15 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/02 16:45:20 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/03 16:01:48 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ char	*get_filepath(char *filename)
 	char	*filepath;
 	size_t	i;
 
-	if (*filename == '/')
+	if (*filename == '/' || *filename == '.')
 		return (filename);
 	path = get_path(g_info.env);
 	i = 0;
