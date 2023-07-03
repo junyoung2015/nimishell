@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/02 16:45:20 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/03 15:14:09 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@ void	run_cmd(t_node *root, t_pipe_info *info)
 	if (root->type == AST_PIPE)
 		open_pipe(info);
 	else if (root->type == AST_REDIR_IN)
-		redir_in(root, info);
+		redir_in(root);
 	else if (root->type == AST_REDIR_OUT)
-		redir_out(root, info);
+		redir_out(root);
 	else if (root->type == AST_REDIR_APPEND)
-		redir_append(root, info);
+		redir_append(root);
 	else if (root->type == AST_COMMAND)
 		command(root, info);
 }
