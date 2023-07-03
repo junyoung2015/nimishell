@@ -44,6 +44,8 @@ void print_ast(t_node *node, int depth, const char *indent)
 		printf(">");
 	else if (node->type == AST_REDIR_APPEND)
 		printf(">>");
+	else if (node->type == AST_SUBSHELL)
+		printf("$()");
 	for (t_size i = 0; i < node->num_args; i++)
 		printf("[%s] ", node->cmd_args[i]);
 	printf("\n");
@@ -94,7 +96,7 @@ int	main(int ac, char **av, char **env)
 		line = readline("minishell> ");
 		if (line)
 		{
-			if (ft_strcmp(line, "exit") == 0)
+			if (ft_strcmp(line, "exit") == 0 || ft_strcmp(line, "quit") == 0)
 				exit (0);
 			add_history(line);
 			// tokenize the input into an array of tokens
