@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:37:25 by jusohn            #+#    #+#             */
-/*   Updated: 2023/07/03 16:47:04 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/07/03 16:55:04 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ void	connect_pipe(t_node *node, t_pipe_info *info)
 
 void	close_pipe(t_node *node, t_pipe_info *info)
 {
+	if (!node->pipe_open)
+		return ;
 	if ((node->pipe_open >> 0) & 1)
 	{
 		if (info->fd < 0)
