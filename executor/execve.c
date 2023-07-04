@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execve.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:15 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/03 16:01:48 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/07/03 21:16:58 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ char	*get_filepath(char *filename)
 		free(filepath);
 		i++;
 	}
+	cmd_not_found();
 	return (NULL);
 }
 
