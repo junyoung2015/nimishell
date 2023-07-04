@@ -131,5 +131,6 @@ int	main(int ac, char **av, char **env)
 			line = 0;
 		}
 	}
+	exit(status);
 	return (0);
 }
