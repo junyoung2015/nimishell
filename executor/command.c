@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:28 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/04 16:53:15 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/04 18:20:19 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,9 @@ char	*join_path(char *path, char *filename)
 
 t_bool	check_access(char *filepath, char **path)
 {
-	if (!access(filepath, F_OK))
+	if (access(filepath, F_OK) == 0)
 	{
-		if (!access(filepath, X_OK))
+		if (access(filepath, X_OK) == 0)
 			return (TRUE);
 		else
 		{
@@ -78,7 +78,7 @@ char	*get_filepath(char *filename)
 			free_ptr(path);
 			err();		
 		}
-		if (check_access)
+		if (check_access(filepath, path))
 			return (filepath);
 		free(filepath);
 		i++;
