@@ -1,7 +1,7 @@
 CC = cc
 
 ### readline on Mac ###
-READLINE_OPT = -L./lib/ -lreadline
+READLINE_OPT = -L./lib/ -lreadline -lncurses
 ### readline on jusohn's WSL ###
 #READLINE_OPT = -L./lib/ -lreadline -lncurses
 
