@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redir.c                                            :+:      :+:    :+:   */
+/*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 21:50:47 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/04 17:27:42 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/04 18:53:51 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,4 +49,16 @@ void	redir_append(t_node *node)
 		err();
 	if (dup2(fd, STDOUT_FILENO) < 0)
 		err();
+}
+
+void	check_redir(t_node *node, t_pipe_info *info)
+{
+	if (node->left && node->left->type == AST_REDIR_IN)
+		redir_in(node->left);
+	else if (node->left && node->left->type == AST_HEREDOC)
+		heredoc(node->left, info);
+	if (node->right && node->right->type == AST_REDIR_OUT)
+		redir_out(node->right);
+	else if (node->right && node->right->type == AST_REDIR_APPEND)
+		redir_append(node->right);
 }

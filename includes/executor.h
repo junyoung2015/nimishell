@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/04 17:28:53 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/04 19:59:32 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ typedef struct s_pipe_info
 	size_t	fork_cnt;
 	pid_t	pid;
 	int		pipe[2];
-	int		fd;
+	int		prev_pipe_fd;
+	int		stdin_fd;
 }	t_pipe_info;
 
 /* pipe.c */
@@ -36,6 +37,7 @@ void	close_pipe(t_node *node, t_pipe_info *info);
 void	redir_in(t_node *node);
 void	redir_out(t_node *node);
 void	redir_append(t_node *node);
+void	check_redir(t_node *node, t_pipe_info *info);
 
 /* error.c */
 void	free_ptr(char **ptr);
@@ -44,5 +46,6 @@ void	err(void);
 void	cmd_not_found(void);
 
 void	command(t_node *node, t_pipe_info *info);
+void	heredoc(t_node *node, t_pipe_info *info);
 
 #endif

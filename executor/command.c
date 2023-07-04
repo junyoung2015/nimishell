@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:28 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/04 16:53:15 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/04 18:47:46 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ char	*get_filepath(char *filename)
 		free(filepath);
 		i++;
 	}
+	free_ptr(path);
 	cmd_not_found();
 	return (NULL);
 }
@@ -97,12 +98,7 @@ void	command(t_node *node, t_pipe_info *info)
 	else if (!info->pid)
 	{
 		connect_pipe(node, info);
-		if (node->left && node->left->type == AST_REDIR_IN)
-			redir_in(node->left);
-		if (node->right && node->right->type == AST_REDIR_OUT)
-			redir_out(node->right);
-		if (node->right && node->right->type == AST_REDIR_APPEND)
-			redir_append(node->right);
+		check_redir(node, info);
 		filepath = get_filepath(node->cmd_args[0]);
 		if (execve(filepath, node->cmd_args, g_info.env) < 0)
 			err();
