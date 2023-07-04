@@ -11,7 +11,7 @@ jobs:
         steps:
           - run: echo "This job is running on ${{ runner.os }} server by Github."
           - run: echo "Triggered by ${{ github.event_name }}."
-          - run: echo "Branch: ${{ github.ref }}"
+          - run: echo "Branch: ${{ github.ref }}."
           - run: echo "Repository: ${{ github.repository }}"
           - uses: actions/checkout@v3
           - name: Extract and install GNU readline library
