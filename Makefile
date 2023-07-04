@@ -26,12 +26,10 @@ SRCS = ./minishell.c						\
 		$(STR_DIR)str_split.c				\
 		$(STR_DIR)str_utils_create.c		\
 		$(EXECUTOR_DIR)command.c				\
-		$(EXECUTOR_DIR)err.c					\
+		$(EXECUTOR_DIR)error.c					\
 		$(EXECUTOR_DIR)executor.c				\
-		$(EXECUTOR_DIR)execve.c				\
-		$(EXECUTOR_DIR)open.c				\
 		$(EXECUTOR_DIR)pipe.c				\
-		$(EXECUTOR_DIR)redir.c
+		$(EXECUTOR_DIR)redirection.c
 
 CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2  -I$(INCLUDES) -I$(INCLUDE_READLINE)
 # ----------- BONUS SRCS  ----------- #

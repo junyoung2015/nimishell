@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/03 21:13:56 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/04 17:28:53 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,26 +27,22 @@ typedef struct s_pipe_info
 	int		fd;
 }	t_pipe_info;
 
-/* open.c */
-int		open_rdonly(char *filename);
-int		open_wronly_trunc(char *filename);
-int		open_wronly_append(char *filename);
-
 /* pipe.c */
 void	open_pipe(t_pipe_info *info);
 void	connect_pipe(t_node *node, t_pipe_info *info);
 void	close_pipe(t_node *node, t_pipe_info *info);
 
-/* redir.c */
+/* redirection.c */
 void	redir_in(t_node *node);
 void	redir_out(t_node *node);
 void	redir_append(t_node *node);
 
-void	ft_execve(t_node *node);
+/* error.c */
 void	free_ptr(char **ptr);
 void	clear_all(t_node *root);
 void	err(void);
 void	cmd_not_found(void);
+
 void	command(t_node *node, t_pipe_info *info);
 
 #endif
