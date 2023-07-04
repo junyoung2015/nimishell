@@ -2,9 +2,9 @@ name: Minishell Actions
 run-name: Building ${{ github.repository }}
 on:
     push:
-        branches: [master]
+        branches: [main]
     pull_request:
-        branches: [master]
+        branches: [main]
 jobs:
     Minishell-Compliation:
         runs-on: macos-10.15
