@@ -94,7 +94,7 @@ typedef struct s_global_info
 	t_node	*root;
 } t_global_info;
 
-t_global_info	g_info;
+extern t_global_info	g_info;
 
 /* ================== MACRO ================== */
 # define STD_IN						0
