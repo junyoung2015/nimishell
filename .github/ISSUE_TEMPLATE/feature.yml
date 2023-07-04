@@ -4,7 +4,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        작성 예시 : "[FE/BE/COMMON] 블랙홀 무한 연장기능 추가"
+        작성 예시 : "[PARSE] DOC: 명령어 없이 리다이렉션만 들어올 경우에도 실행할 수 있게 REDIR 수정"
   - type: textarea
     id: bug-description
     attributes:
