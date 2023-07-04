@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/03 15:14:09 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/04 20:04:43 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ void	run_cmd(t_node *root, t_pipe_info *info)
 		redir_out(root);
 	else if (root->type == AST_REDIR_APPEND)
 		redir_append(root);
+	else if (root->type == AST_HEREDOC)
+		heredoc(root, info);
 	else if (root->type == AST_COMMAND)
 		command(root, info);
 }
@@ -47,7 +49,7 @@ int	executor(t_node *root)
 	size_t		i;
 
 	info.fork_cnt = 0;
-	info.fd = -1;
+	info.prev_pipe_fd = -1;
 	preorder_traversal(root, &info);
 	waitpid(info.pid, &status, 0);
 	i = 0;
