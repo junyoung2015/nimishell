@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/01 22:05:28 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/07 20:59:57 by jusohn           ###   ########.fr       */
+/*   Created: 2023/07/07 21:55:34 by sejinkim          #+#    #+#             */
+/*   Updated: 2023/07/07 21:55:36 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ char	*get_filepath(char *filename)
 		if (!filepath)
 		{
 			free_ptr(path);
-			err();		
+			err();
 		}
 		if (check_access(filepath, path))
 			return (filepath);
@@ -91,7 +91,7 @@ char	*get_filepath(char *filename)
 void	command(t_node *node, t_pipe_info *info)
 {
 	char	*filepath;
-	
+
 	info->pid = fork();
 	if (info->pid < 0)
 		err();
