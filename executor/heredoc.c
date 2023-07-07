@@ -9,6 +9,7 @@ void	str_copy(char *dst, char *src, size_t size)
 	i = 0;
 	while (src[i] && i + 1 < size)
 	{
+		// printf("dst: %c, src: %c\n", dst[i], src[i]);
 		dst[i] = src[i];
 		i++;
 	}
@@ -35,13 +36,14 @@ static char	*str_join(char *str, char *buf, size_t len)
 
 char	*get_next_line(int fd, size_t *str_len)
 {
-	char	buf[1];
+	char	buf[2];
 	char	*str;
 	size_t	len;
 
 	str = NULL;
 	len = 0;
 	*buf = 0;
+	buf[1] = 0;
 	while (*buf != '\n')
 	{
 		if (read(fd, buf, 1) < 0)
