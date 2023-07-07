@@ -123,6 +123,7 @@ int	main(int ac, char **av, char **env)
 				}
 				g_info.root = ast;
 				status = executor(g_info.root);
+				g_info.exit_code = WEXITSTATUS(status);
 			}
 			// if (status)
 			// 	update_exit_status(status);
