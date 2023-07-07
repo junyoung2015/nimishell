@@ -80,14 +80,18 @@ void	write_heredoc(char *limiter, t_pipe_info *info, int fd)
 void	heredoc(t_node *node, t_pipe_info *info)
 {
 	int	fd;
-	
+
 	if (node->parent_type == AST_COMMAND)
 		return ;
 	// .tmp로 이동
-	fd = open(".heredoc", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	fd = open(".heredoc", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd < 0)
 		err();
 	write_heredoc(node->cmd_args[0], info, fd);
+	close(fd);
+	fd = open(".heredoc", O_RDONLY);
+	if (fd < 0)
+		err();
 	if (dup2(fd, STDIN_FILENO) < 0)
 		err();
 }
