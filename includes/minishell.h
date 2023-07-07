@@ -92,6 +92,7 @@ typedef struct s_global_info
 {
 	char	**env;
 	char 	**path;
+	int		exit_code;
 	t_node	*root;
 } t_global_info;
 
