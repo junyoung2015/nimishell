@@ -15,10 +15,10 @@
 void categorize_tokens(t_token *tokens, t_size num_tokens)
 {
 	t_size	i;
-	t_bool	is_heredoc;
+	// t_bool	is_heredoc;
 
 	i = -1;
-	is_heredoc = FALSE;
+	// is_heredoc = FALSE;
 	while (++i < num_tokens)
 	{
 		if (tokens[i].type == TOKEN_OPERATOR)
@@ -29,11 +29,11 @@ void categorize_tokens(t_token *tokens, t_size num_tokens)
 				tokens[i].type = TOKEN_OR;
 			else if (ft_strcmp(tokens[i].value, "<") == 0)
 				tokens[i].type = TOKEN_REDIR_IN;
-			// else if (ft_strcmp(tokens[i].value, "<<") == 0)
-			// {
-			// 	tokens[i].type = TOKEN_HEREDOC;
-			// 	is_heredoc = TRUE;
-			// }
+			else if (ft_strcmp(tokens[i].value, "<<") == 0)
+			{
+				tokens[i].type = TOKEN_HEREDOC;
+				// is_heredoc = TRUE;
+			}
 			// else if (tokens[i].type == TOKEN_WORD && is_heredoc)
 			// {
 			// 	tokens[i].type = TOKEN_HEREDOC_DELIM;

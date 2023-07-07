@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/04 20:04:43 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/07 21:28:04 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ int	executor(t_node *root)
 
 	info.fork_cnt = 0;
 	info.prev_pipe_fd = -1;
+	info.stdin_fd = STDIN_FILENO;
 	preorder_traversal(root, &info);
 	waitpid(info.pid, &status, 0);
 	i = 0;
