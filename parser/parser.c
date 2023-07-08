@@ -42,11 +42,14 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
     t_node          *redir_in_node;
     t_node          *redir_out_node;
     t_token_type    type;
+    t_node          *heredoc_node;
 
 	redir_in_node = 0;
 	redir_out_node = 0;
-    if (*token_idx >= num_tokens || (*tokens)[*token_idx].type != TOKEN_WORD)
+    if (*token_idx >= num_tokens)
         return (0);
+    // if (*token_idx >= num_tokens || (*tokens)[*token_idx].type != TOKEN_WORD)
+    //     return (0);
     cmd_node = create_node(AST_COMMAND);
     if (!cmd_node)
         return (0);
@@ -72,7 +75,35 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
     while (*token_idx < num_tokens)
     {
         type = (*tokens)[*token_idx].type;
-        if (type == TOKEN_REDIR_IN)
+        if (type == TOKEN_HEREDOC)
+        {
+            (*token_idx)++;
+            if (*token_idx < num_tokens && (*tokens)[*token_idx].type == TOKEN_WORD)
+            {
+                heredoc_node = create_node(AST_HEREDOC);
+                if (!heredoc_node)
+                {
+                    free_ast(cmd_node);
+                    return (0);
+                }
+                heredoc_node->cmd_args = ft_calloc(2, sizeof(char *));
+                heredoc_node->cmd_args[0] = ft_strdup((*tokens)[*token_idx].value);
+                heredoc_node->num_args = 1;
+                if (cmd_node->num_args == 0)
+                {
+                    free(cmd_node);
+                    cmd_node = heredoc_node;
+                    return (cmd_node);
+                }
+                else
+                    cmd_node->left = heredoc_node;
+            }
+            else
+            {
+                // handle error
+            }
+        }
+        else if (type == TOKEN_REDIR_IN)
         {
             (*token_idx)++;
             if (*token_idx < num_tokens && (*tokens)[*token_idx].type == TOKEN_WORD)
@@ -87,6 +118,10 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
                 redir_in_node->cmd_args[0] = ft_strdup((*tokens)[*token_idx].value);
                 redir_in_node->num_args = 1;
                 cmd_node->left = redir_in_node;
+            }
+            else
+            {
+                // handle error
             }
         }
         else if (type == TOKEN_REDIR_OUT)
@@ -104,6 +139,10 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
                 redir_out_node->cmd_args[0] = ft_strdup((*tokens)[*token_idx].value);
                 redir_out_node->num_args = 1;
                 cmd_node->right = redir_out_node;
+            }
+            else
+            {
+                // handle error
             }
         }
         else
