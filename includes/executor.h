@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/04 19:59:32 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/09 17:59:07 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ typedef struct s_pipe_info
 	int		pipe[2];
 	int		prev_pipe_fd;
 	int		stdin_fd;
+	int		stdout_fd;
 }	t_pipe_info;
 
 /* pipe.c */
