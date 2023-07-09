@@ -94,4 +94,5 @@ void	heredoc(t_node *node, t_pipe_info *info)
 		err();
 	if (dup2(fd, STDIN_FILENO) < 0)
 		err();
+	unlink(".heredoc");
 }
