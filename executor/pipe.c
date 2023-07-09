@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:37:25 by jusohn            #+#    #+#             */
-/*   Updated: 2023/07/07 21:00:39 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/07/09 17:58:51 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,6 @@ void	connect_pipe(t_node *node, t_pipe_info *info)
 	// printf("%d\n", node->pipe_open);
 	if (!node->left)
 		return ;
-	if (node->left->type == AST_HEREDOC)
-	{
-		info->stdin_fd = dup(STDIN_FILENO);
-		if (info->stdin_fd < 0)
-			err();
-	}
 	if (!node->pipe_open)
 		return ;
 	if ((node->pipe_open >> 1) & 1)

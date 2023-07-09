@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/09 17:49:03 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/07/09 18:23:25 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,26 @@ void	preorder_traversal(t_node *root, t_pipe_info *info)
 	preorder_traversal(root->right, info);
 }
 
+void	save_std_fd(t_pipe_info *info)
+{
+	info->stdin_fd = dup(STDIN_FILENO);
+	if (info->stdin_fd < 0)
+		err();
+	info->stdout_fd = dup(STDOUT_FILENO);
+	if (info->stdin_fd < 0)
+		err();
+}
+
+void	revert_std_fd(t_pipe_info *info)
+{
+	if (dup2(info->stdin_fd, STDIN_FILENO) < 0)
+		err();
+	if (dup2(info->stdout_fd, STDOUT_FILENO) < 0)
+		err();
+	close(info->stdin_fd);
+	close(info->stdout_fd);
+}
+
 int	executor(t_node *root)
 {
 	int			status;
@@ -52,8 +72,9 @@ int	executor(t_node *root)
 
 	info.fork_cnt = 0;
 	info.prev_pipe_fd = -1;
-	info.stdin_fd = STDIN_FILENO;
+	save_std_fd(&info);
 	preorder_traversal(root, &info);
+	revert_std_fd(&info);
 	if (info.fork_cnt)
 		waitpid(info.pid, &status, 0);
 	i = 0;
