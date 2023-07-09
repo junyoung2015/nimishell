@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/07 22:11:08 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/09 17:49:03 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 void	run_cmd(t_node *root, t_pipe_info *info)
 {
-	if (root->type == AST_PIPE)
+	if (root->type == AST_NULL)
+		return ;
+	else if (root->type == AST_PIPE)
 		open_pipe(info);
 	else if (root->type == AST_REDIR_IN)
 		redir_in(root);
@@ -52,7 +54,8 @@ int	executor(t_node *root)
 	info.prev_pipe_fd = -1;
 	info.stdin_fd = STDIN_FILENO;
 	preorder_traversal(root, &info);
-	waitpid(info.pid, &status, 0);
+	if (info.fork_cnt)
+		waitpid(info.pid, &status, 0);
 	i = 0;
 	while (i + 1 < info.fork_cnt)
 	{

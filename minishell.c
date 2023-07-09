@@ -39,6 +39,8 @@ void print_ast(t_node *node, int depth, const char *indent)
 		printf("|");
 	else if (node->type == AST_HEREDOC)
 		printf("%s", node->cmd_args[0]);
+	else if (node->type == AST_NULL)
+		printf("NULL");
 	// else if (node->type == AST_REDIR_IN)
 	// 	printf("<");
 	// else if (node->type == AST_HEREDOC)

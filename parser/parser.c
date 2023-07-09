@@ -24,7 +24,7 @@ t_node *create_node(t_node_type type)
 	new_node->left = 0;
 	new_node->right = 0;
 	new_node->pipe_open = 0;
-	new_node->parent_type = AST_UNSET;
+	new_node->parent_type = AST_NULL;
 	return (new_node);
 }
 
@@ -148,6 +148,13 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
         else
             break ;
         (*token_idx)++;
+    }
+    // set cmd node to AST_NULL
+    if (cmd_node->num_args == 0)
+    {
+        printf("cmd_node->cmd_args :%p\n", &cmd_node->cmd_args);
+        // free
+        cmd_node->type = AST_NULL;
     }
     return (cmd_node);
 }
