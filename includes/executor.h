@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/09 19:57:20 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/09 20:52:54 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ void	close_pipe(t_node *node, t_pipe_info *info);
 void	redir_in(t_node *node);
 void	redir_out(t_node *node);
 void	redir_append(t_node *node);
-void	check_redir(t_node *node, t_pipe_info *info);
 
 /* error.c */
 void	free_ptr(char **ptr);

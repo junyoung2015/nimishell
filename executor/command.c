@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 21:55:34 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/09 17:35:38 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/07/09 20:52:19 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,6 @@ void	command(t_node *node, t_pipe_info *info)
 	else if (!info->pid)
 	{
 		connect_pipe(node, info);
-		check_redir(node, info);
 		filepath = get_filepath(node->cmd_args[0]);
 		if (execve(filepath, node->cmd_args, g_info.env) < 0)
 			err();
