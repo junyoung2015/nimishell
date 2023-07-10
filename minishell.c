@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+t_global_info g_info;
+
 void	sig_handler(int signal)
 {
 	if (signal != SIGINT)
@@ -21,7 +23,6 @@ void	sig_handler(int signal)
 	rl_replace_line("", 1);
 	rl_redisplay();
 }
-
 
 # ifdef DEBUG
 
@@ -90,6 +91,7 @@ int	main(int ac, char **av, char **env)
 	t_size		num_tokens;
 	t_node		*ast;
 	int			status;
+	// t_global_info	g_info;
 
 	// if (DEBUG)
 	// 	atexit(chk_leaks);

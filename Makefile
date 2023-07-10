@@ -1,9 +1,12 @@
 CC = cc
 
-### readline on Mac ###
-READLINE_OPT = -L./lib/ -lreadline -lncurses
-### readline on jusohn's WSL ###
-#READLINE_OPT = -L./lib/ -lreadline -lncurses
+UNAME := $(uname)
+
+ifeq ($(UNAME), Darwin)
+    READLINE_OPT = -L./lib/ -lreadline
+else
+    READLINE_OPT = -L./lib/ -lreadline -lncurses
+endif
 
 NAME = minishell
 
@@ -25,9 +28,9 @@ SRCS = ./minishell.c						\
 		$(STR_DIR)str_utils.c				\
 		$(STR_DIR)str_split.c				\
 		$(STR_DIR)str_utils_create.c		\
-		$(EXECUTOR_DIR)command.c				\
-		$(EXECUTOR_DIR)error.c					\
-		$(EXECUTOR_DIR)executor.c				\
+		$(EXECUTOR_DIR)command.c			\
+		$(EXECUTOR_DIR)error.c				\
+		$(EXECUTOR_DIR)executor.c			\
 		$(EXECUTOR_DIR)pipe.c				\
 		$(EXECUTOR_DIR)heredoc.c				\
 		$(EXECUTOR_DIR)redirection.c
