@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   command.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 21:55:34 by sejinkim          #+#    #+#             */
 /*   Updated: 2023/07/09 20:52:19 by sejinkim         ###   ########.fr       */
@@ -46,9 +46,9 @@ char	*join_path(char *path, char *filename)
 
 t_bool	check_access(char *filepath, char **path)
 {
-	if (!access(filepath, F_OK))
+	if (access(filepath, F_OK) == 0)
 	{
-		if (!access(filepath, X_OK))
+		if (access(filepath, X_OK) == 0)
 			return (TRUE);
 		else
 		{
