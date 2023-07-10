@@ -43,6 +43,7 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
     t_node          *redir_out_node;
     t_token_type    type;
     t_node          *heredoc_node;
+    t_node          *append_node;
 
 	redir_in_node = 0;
 	redir_out_node = 0;
@@ -89,14 +90,7 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
                 heredoc_node->cmd_args = ft_calloc(2, sizeof(char *));
                 heredoc_node->cmd_args[0] = ft_strdup((*tokens)[*token_idx].value);
                 heredoc_node->num_args = 1;
-                if (cmd_node->num_args == 0)
-                {
-                    free(cmd_node);
-                    cmd_node = heredoc_node;
-                    return (cmd_node);
-                }
-                else
-                    cmd_node->left = heredoc_node;
+                cmd_node->left = heredoc_node;
             }
             else
             {
@@ -111,6 +105,7 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
                 redir_in_node = create_node(AST_REDIR_IN);
                 if (!redir_in_node)
                 {
+                    free(cmd_node->cmd_args);
                     free_ast(cmd_node);
                     return (0);
                 }
@@ -132,6 +127,7 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
                 redir_out_node = create_node(AST_REDIR_OUT);
                 if (!redir_out_node)
                 {
+                    free(cmd_node->cmd_args);
                     free_ast(cmd_node);
                     return (0);
                 }
@@ -145,17 +141,35 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
                 // handle error
             }
         }
+        else if (type == TOKEN_APPEND)
+        {
+            (*token_idx)++;
+            if (*token_idx < num_tokens && (*tokens)[*token_idx].type == TOKEN_WORD)
+            {
+                append_node = create_node(AST_REDIR_APPEND);
+                if (!append_node)
+                {
+                    free(cmd_node->cmd_args);
+                    free_ast(cmd_node);
+                    return (0);
+                }
+                append_node->cmd_args = ft_calloc(2, sizeof(char *));
+                append_node->cmd_args[0] = ft_strdup((*tokens)[*token_idx].value);
+                append_node->num_args = 1;
+                cmd_node->right = append_node;
+            }
+            else
+            {
+                // handle error
+            }
+        }
         else
             break ;
         (*token_idx)++;
     }
-    // set cmd node to AST_NULL
+    // set cmd node to AST_NULL if no cmd is given (e.g. raw HEREDOC '<< EOF')
     if (cmd_node->num_args == 0)
-    {
-        printf("cmd_node->cmd_args :%p\n", &cmd_node->cmd_args);
-        // free
         cmd_node->type = AST_NULL;
-    }
     return (cmd_node);
 }
 
