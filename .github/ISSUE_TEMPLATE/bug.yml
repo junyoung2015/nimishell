@@ -35,7 +35,7 @@ body:
     attributes:
       label: 시스템 환경 (선택 사항)
       description: 현재 버그가 발생한 시스템 환경을 적어주세요. 
-      render: shell
+      render: shell-script
       placeholder: OS, 브라우저 등을 적어주세요.
     validations:
       required: false

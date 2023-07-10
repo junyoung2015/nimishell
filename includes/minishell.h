@@ -46,6 +46,7 @@ typedef enum	e_token_type
 	TOKEN_REDIR_IN,
 	TOKEN_REDIR_OUT,
 	TOKEN_HEREDOC,
+    TOKEN_HEREDOC_DELIM,
 	TOKEN_APPEND,
 	TOKEN_DOLLAR_SIGN,
 	TOKEN_ENV_VAR,
@@ -65,7 +66,7 @@ typedef struct  s_token
 
 typedef enum e_node_type
 {
-    AST_UNSET,
+    AST_NULL,
     AST_COMMAND,
     AST_ARGUMENT,
     AST_PIPE,
@@ -91,6 +92,7 @@ typedef struct s_global_info
 {
 	char	**env;
 	char 	**path;
+	int		exit_code;
 	t_node	*root;
 } t_global_info;
 
