@@ -26,7 +26,7 @@ body:
     attributes:
       label: 대체 방안 (선택 사항)
       description: 상기한 방법 외에 다른 대안이 있다면 적어주세요. 
-      render: shell
+      render: shell-script
       placeholder: 설명을 적어주세요.
     validations:
       required: false

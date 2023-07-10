@@ -32,6 +32,7 @@ SRCS = ./minishell.c						\
 		$(EXECUTOR_DIR)error.c				\
 		$(EXECUTOR_DIR)executor.c			\
 		$(EXECUTOR_DIR)pipe.c				\
+		$(EXECUTOR_DIR)heredoc.c				\
 		$(EXECUTOR_DIR)redirection.c
 
 CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2  -I$(INCLUDES) -I$(INCLUDE_READLINE)

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/01 22:05:28 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/04 18:20:19 by jusohn           ###   ########.fr       */
+/*   Created: 2023/07/07 21:55:34 by sejinkim          #+#    #+#             */
+/*   Updated: 2023/07/09 20:52:19 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,13 +76,14 @@ char	*get_filepath(char *filename)
 		if (!filepath)
 		{
 			free_ptr(path);
-			err();		
+			err();
 		}
 		if (check_access(filepath, path))
 			return (filepath);
 		free(filepath);
 		i++;
 	}
+	free_ptr(path);
 	cmd_not_found();
 	return (NULL);
 }
@@ -90,19 +91,13 @@ char	*get_filepath(char *filename)
 void	command(t_node *node, t_pipe_info *info)
 {
 	char	*filepath;
-	
+
 	info->pid = fork();
 	if (info->pid < 0)
 		err();
 	else if (!info->pid)
 	{
 		connect_pipe(node, info);
-		if (node->left && node->left->type == AST_REDIR_IN)
-			redir_in(node->left);
-		if (node->right && node->right->type == AST_REDIR_OUT)
-			redir_out(node->right);
-		if (node->right && node->right->type == AST_REDIR_APPEND)
-			redir_append(node->right);
 		filepath = get_filepath(node->cmd_args[0]);
 		if (execve(filepath, node->cmd_args, g_info.env) < 0)
 			err();

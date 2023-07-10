@@ -38,6 +38,10 @@ void print_ast(t_node *node, int depth, const char *indent)
 	printf("%*c", depth * 4, 1);
 	if (node->type == AST_PIPE)
 		printf("|");
+	else if (node->type == AST_HEREDOC)
+		printf("%s", node->cmd_args[0]);
+	else if (node->type == AST_NULL)
+		printf("NULL");
 	// else if (node->type == AST_REDIR_IN)
 	// 	printf("<");
 	// else if (node->type == AST_HEREDOC)
@@ -123,6 +127,7 @@ int	main(int ac, char **av, char **env)
 				}
 				g_info.root = ast;
 				status = executor(g_info.root);
+				g_info.exit_code = WEXITSTATUS(status);
 			}
 			// if (status)
 			// 	update_exit_status(status);
