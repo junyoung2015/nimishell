@@ -134,7 +134,7 @@ t_bool	is_subshell_closed(char *str)
 				cnt--;
 			str++;
 		}
-	}ge
+	}
 	if (cnt == 0)
 		return (TRUE);
 	return (FALSE);

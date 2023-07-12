@@ -34,6 +34,15 @@ typedef int							t_bool;
 typedef unsigned long long			t_size;
 typedef long long					t_ssize;
 
+typedef enum e_token_state
+{
+	NORMAL,
+	SQUOTE,
+	DQUOTE,
+	META_CH,
+	END,
+} t_token_state;
+
 typedef enum	e_token_type
 {
 	TOKEN_UNKNOWN,
