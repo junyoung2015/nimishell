@@ -6,11 +6,21 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 14:00:41 by jusohn            #+#    #+#             */
-/*   Updated: 2023/06/30 13:58:49 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/07/12 22:42:55 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+typedef t_token* (*tokenizer_fn)(char **, t_token_state *);
+t_token *tokenize_normal(char **input, t_token_state *state);
+// t_token *tokenize_esc(char **input, t_token_state *state);
+t_token *tokenize_squote(char **input, t_token_state *state);
+t_token *tokenize_dquote(char **input, t_token_state *state);
+// t_token *tokenize_subshell(char **input, t_token_state *state);
+t_token *tokenize_meta(char **input, t_token_state *state);
+t_token *tokenize_whitespace(char **input, t_token_state *state);
+// t_token *tokenize_operator(char **input, t_token_state *state);
 
 int	free_tokens(t_token *tokens, t_size size)
 {
@@ -69,11 +79,6 @@ t_bool	is_dmeta_ch(char ch)
 	return (ch == '|' || ch == '>' || ch == '<' || ch == '&');
 }
 
-// t_bool	is_not_dmeta_ch(char ch)
-// {
-// 	return (!(ch == '|' || ch == '>' || ch == '<' || ch == '&'));
-// }
-
 t_bool	is_dmeta_str(char *str)
 {
 	if (!(is_dmeta_ch(0[str]) && is_dmeta_ch(1[str])))
@@ -106,6 +111,12 @@ t_bool	is_squote(char ch)
 	return (ch == '\'');
 }
 
+t_bool	is_space(char ch)
+{
+	return (ch == ' ' || ch == '\t' || ch == '\f' || ch == '\n' || \
+		ch == '\v' || ch == '\r');
+}
+
 t_bool	is_subshell_closed(char *str)
 {
 	t_size	cnt;
@@ -123,7 +134,7 @@ t_bool	is_subshell_closed(char *str)
 				cnt--;
 			str++;
 		}
-	}
+	}ge
 	if (cnt == 0)
 		return (TRUE);
 	return (FALSE);
@@ -231,6 +242,167 @@ t_token *tokenize(char *input, t_size *num_tokens)
 		}
 		input++;
 		start = input;
+	}
+	tokens = realloc_tokens(tokens, alloced, token_idx);
+	// TODO: malloc err
+	if (!tokens)
+		return (0);
+	*num_tokens = token_idx;
+	return (tokens);
+}
+
+t_token*	tokenize_normal(char **input, t_token_state *state)
+{
+    char	*start;
+	t_token	*new_token;
+
+	start = *input;
+	new_token = split_until(start, &start, is_meta_ch, TOKEN_WORD);
+	if (!new_token)
+		return (0);
+    if (*start == '\0')
+        *state = END;
+    else if (is_space(*start))
+    {
+		tokenize_whitespace(input, state);
+		// *state = NORMAL;
+	}
+    else
+        *state = META_CH;
+    return (new_token);
+}
+
+
+t_token *tokenize_squote(char **input, t_token_state *state)
+{
+	char	*start;
+	t_token	*new_token;
+
+	start = *input;
+    // increment str to skip initial quote
+    // (*str)++;
+    // find end of string or next single quote
+    while (**input != '\0' && **input != '\'')
+        (*input)++;
+    // new_token = create_token(TOKEN_SQ_STR, start + 1, *input - start - 1);
+    new_token = create_token(TOKEN_SQ_STR, start, *input - start + 1);
+	if (!new_token)
+		return (0);
+    if (**input == '\0')
+        *state = END;
+    else
+        *state = NORMAL;
+    return (new_token);
+}
+
+t_token *tokenize_dquote(char **input, t_token_state *state)
+{
+	char	*start;
+	t_token	*new_token;
+
+	start = *input;
+    // increment str to skip initial quote
+    // (*str)++;
+    // find end of string or next single quote
+    while (**input != '\0' && **input != '\'')
+        (*input)++;
+    // new_token = create_token(TOKEN_DQ_STR, start + 1, *input - start - 1);
+    new_token = create_token(TOKEN_DQ_STR, start, *input - start + 1);
+	if (!new_token)
+		return (0);
+    if (**input == '\0')
+        *state = END;
+    else
+        *state = NORMAL;
+    return (new_token);
+}
+
+t_token_type	get_dmeta_type(char *str)
+{
+	t_token_type	type;
+
+	if (ft_strncmp(str, "<<", 2) == 0)
+		type = TOKEN_HEREDOC;
+	else if (ft_strncmp(str, ">>", 2) == 0)
+		type = TOKEN_APPEND;
+	else if (ft_strncmp(str, "||", 2) == 0)
+		type = TOKEN_OR;
+	else if (ft_strncmp(str, "&&", 2) == 0)
+		type = TOKEN_AND;
+	else
+		type = TOKEN_WORD;
+	return (type);
+}
+
+t_token* tokenize_meta(char **str, t_token_state *state)
+{
+    char	*start;
+	t_token	*new_token;
+
+	start = *str;
+	if (is_dquote(*start))
+		new_token = tokenize_squote(str, state);
+	else if (is_squote(*start))
+		new_token = tokenize_dquote(str, state);
+	else if (is_dmeta_str(start))
+		new_token = create_token(get_dmeta_type(start), start, 2);
+	else
+		new_token = create_token(TOKEN_OPERATOR, start, 1);
+	*state = NORMAL;
+	return (new_token);
+}
+
+t_token* tokenize_whitespace(char **str, t_token_state *state)
+{
+    while (is_space(**str))
+        (*str)++;
+    if (**str == '\0')
+        *state = END;
+    else
+        *state = NORMAL;
+    return (0);
+}
+
+t_token *tokenize_cmd(char *input, t_size *num_tokens)
+{
+	t_size				alloced;
+	t_size				token_idx;
+	t_token				*tokens;
+	t_token				*new_token;
+	t_token_state		state;
+	const tokenizer_fn	tokenizers[] = {
+		tokenize_normal,
+		tokenize_squote,
+		tokenize_dquote,
+		tokenize_meta,
+	};
+
+	state = NORMAL;
+	alloced = 2;
+	token_idx = 0;
+	tokens = ft_calloc(alloced, sizeof(t_token));
+	if (!tokens)
+		return (0);
+	while (*input)
+	{
+		new_token = tokenizers[state](&input, &state);
+		if (!new_token)
+		{
+			// handle syntax error
+			// free tokens here...? or main?
+			return (0);
+		}
+		tokens[token_idx++] = *new_token;
+		free(new_token);
+		if (alloced <= token_idx + 1)
+		{
+			alloced *= 2;
+			tokens = realloc_tokens(tokens, token_idx, alloced);
+			// TODO: malloc err
+			if (!tokens)
+				return (0);
+		}
+		input++;
 	}
 	tokens = realloc_tokens(tokens, alloced, token_idx);
 	// TODO: malloc err
