@@ -52,6 +52,8 @@ char	*get_next_line(int fd, size_t *str_len)
 				free(str);
 			err();
 		}
+		if (*buf == 0)
+			return (0);
 		str = str_join(str, buf, len++);
 	}
 	*str_len = len;
