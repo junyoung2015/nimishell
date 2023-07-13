@@ -91,6 +91,7 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
                 heredoc_node->num_args = 1;
                 if (cmd_node->num_args == 0)
                 {
+                    free(cmd_node->cmd_args);
                     free(cmd_node);
                     cmd_node = heredoc_node;
                     return (cmd_node);
