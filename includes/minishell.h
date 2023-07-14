@@ -68,6 +68,17 @@ typedef enum	e_token_type
 	TOKEN_SUBSHELL,
 }	t_token_type;
 
+typedef enum	e_builtin
+{
+	ECHO,
+	CD,
+	PWD,
+	EXPORT,
+	UNSET,
+	ENV,
+	EXIT,
+}	t_builtin;
+
 typedef struct  s_token
 {
   t_token_type	type;
