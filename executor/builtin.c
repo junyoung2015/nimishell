@@ -2,6 +2,6 @@
 
 void	builtin(t_node *node, t_pipe_info *info)
 {
-	if ()
+	if (node->builtin == EXPORT)
 		export(node);
 }
