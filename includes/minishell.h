@@ -66,6 +66,7 @@ typedef enum	e_token_type
 	TOKEN_SQ_STR,
 	TOKEN_DQ_STR,
 	TOKEN_SUBSHELL,
+	TOKEN_ERROR,
 }	t_token_type;
 
 typedef enum	e_builtin
