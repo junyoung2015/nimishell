@@ -135,7 +135,7 @@ int	main(int ac, char **av, char **envp)
 			}
 			// if (status)
 			// 	update_exit_status(status);
-			// free_tokens(tokens, num_tokens);
+			free_tokens(tokens, num_tokens);
 			tokens = 0;
 			// free_ast(ast);
 			free(line);

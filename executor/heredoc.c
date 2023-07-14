@@ -9,7 +9,6 @@ void	str_copy(char *dst, char *src, size_t size)
 	i = 0;
 	while (src[i] && i + 1 < size)
 	{
-		// printf("dst: %c, src: %c\n", dst[i], src[i]);
 		dst[i] = src[i];
 		i++;
 	}
@@ -22,11 +21,7 @@ static char	*str_join(char *str, char *buf, size_t len)
 
 	ret = malloc(sizeof(char) * (len + 2));
 	if (!ret)
-	{
-		if (str)
-			free(str);
-		err();
-	}
+		err2(str);
 	str_copy(ret, str, len + 1);
 	str_copy(ret + len, buf, 2);
 	if (str)
@@ -47,11 +42,9 @@ char	*get_next_line(int fd, size_t *str_len)
 	while (*buf != '\n')
 	{
 		if (read(fd, buf, 1) < 0)
-		{
-			if (str)
-				free(str);
-			err();
-		}
+			err2(str);
+		if (*buf == 0)
+			return (str);
 		str = str_join(str, buf, len++);
 	}
 	*str_len = len;
@@ -74,7 +67,8 @@ void	write_heredoc(char *limiter, t_pipe_info *info, int fd)
 		write(g_info.stdin_fd, "heredoc> ", 9);
 		str = get_next_line(g_info.stdin_fd, &str_len);
 	}
-	free(str);
+	if (str)
+		free(str);
 }
 
 void	heredoc(t_node *node, t_pipe_info *info)

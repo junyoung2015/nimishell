@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:37:25 by jusohn            #+#    #+#             */
-/*   Updated: 2023/07/09 20:53:31 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/12 21:44:31 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,10 @@ static void	connect_right(t_node *node, t_pipe_info *info)
 
 void	connect_pipe(t_node *node, t_pipe_info *info)
 {
-	if (!node->pipe_open)
-		return ;
 	connect_left(node, info);
 	connect_right(node, info);
+	if (!node->pipe_open)
+		return ;
 	close(info->prev_pipe_fd);
 	close(info->pipe[0]);
 	close(info->pipe[1]);
