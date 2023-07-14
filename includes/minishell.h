@@ -46,7 +46,7 @@ typedef enum	e_token_type
 	TOKEN_REDIR_IN,
 	TOKEN_REDIR_OUT,
 	TOKEN_HEREDOC,
-    TOKEN_HEREDOC_DELIM,
+	TOKEN_HEREDOC_DELIM,
 	TOKEN_APPEND,
 	TOKEN_DOLLAR_SIGN,
 	TOKEN_ENV_VAR,
@@ -98,6 +98,7 @@ typedef struct  s_node
 	struct s_node	*right;
 	int				pipe_open;
 	t_node_type		parent_type;
+	t_builtin		builtin;
 }   t_node;
 
 typedef struct s_global_info
