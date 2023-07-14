@@ -55,6 +55,10 @@ void categorize_tokens(t_token *tokens, t_size num_tokens)
 		else if (tokens[i].type == TOKEN_DQ_STR || tokens[i].type == TOKEN_SQ_STR)
 		{
 		}
+		else if (tokens[i].type == TOKEN_WHITESPACE)
+		{
+			
+		}
 		else
 		{
 			tokens[i].type = TOKEN_WORD;

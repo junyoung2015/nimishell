@@ -96,7 +96,7 @@ int	main(int ac, char **av, char **env)
 	tokens = 0;
 	ast = 0;
 	status = 0;
-	// signal(SIGINT, sig_handler);
+	signal(SIGINT, sig_handler);
 	while (TRUE)
 	{
 		line = readline("minishell> ");
@@ -105,6 +105,8 @@ int	main(int ac, char **av, char **env)
 			if (ft_strcmp(line, "exit") == 0 || ft_strcmp(line, "quit") == 0)
 				exit (0);
 			add_history(line);
+			// TODO: ft_strtrim(line, space);
+			// remove spaces at the start and end
 			// tokenize the input into an array of tokens
 			if (line && *line)
 			{
@@ -115,20 +117,21 @@ int	main(int ac, char **av, char **env)
 				categorize_tokens(tokens, num_tokens);
 				if (tokens && DEBUG)
 					print_tokens(tokens, num_tokens);
-				// ast = parse_tokens(tokens, num_tokens);
-				// if (ast && DEBUG)
-				// {
-				// 	printf("\n================== AST ==================\n");
-				// 	print_ast(ast, 0, "");
-				// 	printf("=========================================\n");
-				// }
-				// g_info.root = ast;
+				ast = parse_tokens(tokens, num_tokens);
+				if (ast && DEBUG)
+				{
+					printf("\n================== AST ==================\n");
+					print_ast(ast, 0, "");
+					printf("=========================================\n");
+				}
+				g_info.root = ast;
 				// status = executor(g_info.root);
-				// g_info.exit_code = WEXITSTATUS(status);
+				g_info.exit_code = WEXITSTATUS(status);
 			}
 			// if (status)
 			// 	update_exit_status(status);
-			free_tokens(tokens, num_tokens);
+			if (tokens)
+				free_tokens(tokens, num_tokens);
 			tokens = 0;
 			// free_ast(ast);
 			free(line);
