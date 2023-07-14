@@ -74,7 +74,8 @@ typedef enum e_node_type
     AST_REDIR_OUT,
     AST_REDIR_APPEND,
 	AST_HEREDOC,
-	AST_SUBSHELL
+	AST_SUBSHELL,
+	AST_BUILTIN
 } t_node_type;
 
 typedef struct  s_node
@@ -91,7 +92,8 @@ typedef struct  s_node
 typedef struct s_global_info
 {
 	char	**env;
-	char 	**path;
+	int		stdin_fd;
+	int		stdout_fd;
 	int		exit_code;
 	t_node	*root;
 } t_global_info;
