@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:26 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/07 22:22:02 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/07/13 20:45:56 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,13 @@ void	err(void)
 	clear_all(g_info.root);
 	perror("error");
 	exit(EXIT_FAILURE);
+}
+
+void	err2(char *str)
+{
+	if (str)
+		free(str);
+	err();
 }
 
 void	cmd_not_found(void)
