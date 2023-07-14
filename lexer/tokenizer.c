@@ -255,17 +255,19 @@ t_token*	tokenize_normal(char **input, t_token_state *state)
 {
     char	*start;
 	t_token	*new_token;
+	t_token	*tmp_token;
 
 	start = *input;
-	new_token = split_until(start, &start, is_meta_ch, TOKEN_WORD);
+	new_token = split_until(start, input, is_meta_ch, TOKEN_WORD);
 	if (!new_token)
 		return (0);
     if (*start == '\0')
         *state = END;
     else if (is_space(*start))
     {
-		tokenize_whitespace(input, state);
-		// *state = NORMAL;
+		tmp_token = tokenize_whitespace(input, state);
+		free(tmp_token);
+		*state = NORMAL;
 	}
     else
         *state = META_CH;
@@ -334,7 +336,7 @@ t_token_type	get_dmeta_type(char *str)
 	return (type);
 }
 
-t_token* tokenize_meta(char **str, t_token_state *state)
+t_token* tokenize_meta(char **input, t_token_state *state)
 {
     char	*start;
 	t_token	*new_token;
@@ -352,15 +354,21 @@ t_token* tokenize_meta(char **str, t_token_state *state)
 	return (new_token);
 }
 
-t_token* tokenize_whitespace(char **str, t_token_state *state)
+t_token* tokenize_whitespace(char **input, t_token_state *state)
 {
-    while (is_space(**str))
-        (*str)++;
-    if (**str == '\0')
-        *state = END;
-    else
-        *state = NORMAL;
-    return (0);
+	char	*start;
+	t_token	*new_token;
+
+	start = *input;
+    while (is_space(**input))
+        (*input)++;
+    // if (**input == '\0')
+    //     *state = END;
+    // else
+        // *state = NORMAL;
+		*state = NORMAL;
+	new_token = create_token(TOKEN_WHITESPACE, start, *str - start);
+    return (new_token);
 }
 
 t_token *tokenize_cmd(char *input, t_size *num_tokens)
@@ -375,6 +383,7 @@ t_token *tokenize_cmd(char *input, t_size *num_tokens)
 		tokenize_squote,
 		tokenize_dquote,
 		tokenize_meta,
+		tokenize_whitespace,
 	};
 
 	state = NORMAL;
@@ -386,11 +395,17 @@ t_token *tokenize_cmd(char *input, t_size *num_tokens)
 	while (*input)
 	{
 		new_token = tokenizers[state](&input, &state);
-		if (!new_token)
+		if (!new_token && state != WSPACE)
 		{
 			// handle syntax error
 			// free tokens here...? or main?
 			return (0);
+		}
+		else if (state == WSPACE)
+		{
+			free(new_token);
+			input++;
+			continue ;
 		}
 		tokens[token_idx++] = *new_token;
 		free(new_token);

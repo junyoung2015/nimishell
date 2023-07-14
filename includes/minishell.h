@@ -40,6 +40,7 @@ typedef enum e_token_state
 	SQUOTE,
 	DQUOTE,
 	META_CH,
+	WSPACE,
 	END,
 } t_token_state;
 
@@ -147,6 +148,8 @@ char		**ft_split(char const *str, char c);
 t_token 	*tokenize(char *input, t_size *num_tokens);
 void 		print_tokens(t_token *tokens, t_size num_tokens);
 void 		categorize_tokens(t_token *tokens, t_size num_tokens);
+// FSM //
+t_token *tokenize_cmd(char *input, t_size *num_tokens);
 
 /* ================== LEXER ================== */
 t_token		*create_token(t_token_type type, const char *buffer, int buffer_length);

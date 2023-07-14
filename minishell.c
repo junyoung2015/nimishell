@@ -48,16 +48,6 @@ void print_ast(t_node *node, int depth, const char *indent)
 		printf(">");
 	else if (node->type == AST_REDIR_APPEND)
 		printf(">>");
-	// else if (node->type == AST_REDIR_IN)
-	// 	printf("<");
-	// else if (node->type == AST_HEREDOC)
-	// 	printf("<<");
-	// else if (node->type == AST_REDIR_OUT)
-	// 	printf(">");
-	// else if (node->type == AST_REDIR_APPEND)
-	// 	printf(">>");
-	// else if (node->type == AST_SUBSHELL)
-	// 	printf("$()");
 	for (t_size i = 0; i < node->num_args; i++)
 		printf("[%d][%s] ", node->type, node->cmd_args[i]);
 	printf("\n");
@@ -82,7 +72,7 @@ void print_tokens(t_token *tokens, t_size num_tokens)
 	printf("\n================= TOKENS =================\n");
 	printf("num of tokens: %llu\n", num_tokens);
 	for (t_size i = 0; i < num_tokens; i++)
-		printf("token[%llu]: %d, %s\n", i, tokens[i].type, tokens[i].value);
+		printf("token[%llu]: [%d], [%s]\n", i, tokens[i].type, tokens[i].value);
 	printf("==========================================\n");
 }
 
@@ -118,22 +108,23 @@ int	main(int ac, char **av, char **env)
 			// tokenize the input into an array of tokens
 			if (line && *line)
 			{
-				tokens = tokenize(line, &num_tokens);
+				// tokens = tokenize(line, &num_tokens);
+				tokens = tokenize_cmd(line, &num_tokens);
 				if (!tokens)
 					return (0);
 				categorize_tokens(tokens, num_tokens);
 				if (tokens && DEBUG)
 					print_tokens(tokens, num_tokens);
-				ast = parse_tokens(tokens, num_tokens);
-				if (ast && DEBUG)
-				{
-					printf("\n================== AST ==================\n");
-					print_ast(ast, 0, "");
-					printf("=========================================\n");
-				}
-				g_info.root = ast;
-				status = executor(g_info.root);
-				g_info.exit_code = WEXITSTATUS(status);
+				// ast = parse_tokens(tokens, num_tokens);
+				// if (ast && DEBUG)
+				// {
+				// 	printf("\n================== AST ==================\n");
+				// 	print_ast(ast, 0, "");
+				// 	printf("=========================================\n");
+				// }
+				// g_info.root = ast;
+				// status = executor(g_info.root);
+				// g_info.exit_code = WEXITSTATUS(status);
 			}
 			// if (status)
 			// 	update_exit_status(status);

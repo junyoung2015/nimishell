@@ -35,7 +35,7 @@ SRCS = ./minishell.c						\
 		$(EXECUTOR_DIR)heredoc.c				\
 		$(EXECUTOR_DIR)redirection.c
 
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2  -I$(INCLUDES) -I$(INCLUDE_READLINE)
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2 -I$(INCLUDES) -I$(INCLUDE_READLINE)
 # ----------- BONUS SRCS  ----------- #
 # BO_SRCS = ./minishell_bonus.c
 HEADER = minishell.h executor.h
