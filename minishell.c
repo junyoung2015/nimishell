@@ -82,7 +82,14 @@ void print_tokens(t_token *tokens, t_size num_tokens)
 
 # endif
 
-int	main(int ac, char **av, char **env)
+void	init_g_info(char **envp)
+{
+	g_info.env = envp;
+	g_info.stdin_fd = dup(STDIN_FILENO);
+	g_info.stdout_fd = dup(STDOUT_FILENO);
+}
+
+int	main(int ac, char **av, char **envp)
 {
 	(void) ac;
 	(void) av;
@@ -90,16 +97,14 @@ int	main(int ac, char **av, char **env)
 	t_token		*tokens;
 	t_size		num_tokens;
 	t_node		*ast;
-	int			status;
 	// t_global_info	g_info;
 
 	// if (DEBUG)
 	// 	atexit(chk_leaks);
 	// TODO: display_logo();
-	g_info.env = env;
+	init_g_info(envp);
 	tokens = 0;
 	ast = 0;
-	status = 0;
 	// signal(SIGINT, sig_handler);
 	while (TRUE)
 	{
@@ -126,8 +131,7 @@ int	main(int ac, char **av, char **env)
 					printf("=========================================\n");
 				}
 				g_info.root = ast;
-				status = executor(g_info.root);
-				g_info.exit_code = WEXITSTATUS(status);
+				g_info.exit_code = executor(g_info.root);
 			}
 			// if (status)
 			// 	update_exit_status(status);

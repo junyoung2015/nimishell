@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/09 19:52:08 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/13 23:19:00 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ void	run_cmd(t_node *root, t_pipe_info *info)
 		heredoc(root, info);
 	else if (root->type == AST_COMMAND)
 		command(root, info);
+	else if (root->type == AST_BUILTIN)
+		builtin(root, info);
 }
 
 void	preorder_traversal(t_node *root, t_pipe_info *info)
@@ -44,7 +46,7 @@ void	preorder_traversal(t_node *root, t_pipe_info *info)
 	preorder_traversal(root->right, info);
 }
 
-void	execute(t_node *root)
+void	execute_in_child(t_node *root)
 {
 	t_pipe_info	info;
 	size_t		i;
@@ -52,11 +54,7 @@ void	execute(t_node *root)
 
 	info.fork_cnt = 0;
 	info.prev_pipe_fd = -1;
-	info.stdin_fd = dup(STDIN_FILENO);
-	if (info.stdin_fd < 0)
-		err();
 	preorder_traversal(root, &info);
-	close(info.stdin_fd);
 	if (!info.fork_cnt)
 		exit(EXIT_SUCCESS);
 	waitpid(info.pid, &status, 0);
@@ -69,17 +67,43 @@ void	execute(t_node *root)
 	exit(WEXITSTATUS(status));
 }
 
+int	execute(t_node *root)
+{
+	t_pipe_info	info;
+	size_t		i;
+	int			status;
+
+	info.exit_code = 0;
+	info.fork_cnt = 0;
+	info.prev_pipe_fd = -1;
+	preorder_traversal(root, &info);
+	dup2(g_info.stdin_fd, STDIN_FILENO);
+	dup2(g_info.stdout_fd, STDOUT_FILENO);
+	if (!info.fork_cnt)
+		return (info.exit_code);
+	waitpid(info.pid, &status, 0);
+	i = 0;
+	while (i + 1 < info.fork_cnt)
+	{
+		wait(NULL);
+		i++;
+	}
+	return (WEXITSTATUS(status));
+}
+
 int	executor(t_node *root)
 {
 	pid_t	pid;
 	int		status;
 
+	if (root->type == AST_BUILTIN)
+		return (execute(root));
 	pid = fork();
 	if (pid < 0)
 		err();
 	else if (!pid)
-		execute(root);
+		execute_in_child(root);
 	waitpid(pid, &status, 0);
 	clear_all(g_info.root);
-	return (status);
+	return (WEXITSTATUS(status));
 }
