@@ -153,7 +153,6 @@ t_token	*split_until(char *start, char **input, t_bool (*cmp)(char ch), t_token_
 	{
 		free(new_token->value);
 		free(new_token);
-		// *state = END;
 		if (!(**input) || (cmp != is_dquote && cmp != is_squote))
 			(*input)--;
 		return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
