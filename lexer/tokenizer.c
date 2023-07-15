@@ -82,15 +82,32 @@ t_bool	is_dmeta_str(char *input)
 {
 	if (!(is_dmeta_ch(0[input]) && is_dmeta_ch(1[input])))
 		return (FALSE);
-	if (ft_strncmp(input, "<<", 2) == 0)
+	if (!ft_strncmp(input, "<<", 2))
 		return (TRUE);
-	else if (ft_strncmp(input, ">>", 2) == 0)
+	else if (!ft_strncmp(input, ">>", 2))
 		return (TRUE);
-	else if (ft_strncmp(input, "||", 2) == 0)
+	else if (!ft_strncmp(input, "||", 2))
 		return (TRUE);
-	else if (ft_strncmp(input, "&&", 2) == 0)
+	else if (!ft_strncmp(input, "&&", 2))
 		return (TRUE);
 	return (FALSE);
+}
+
+t_token_type	get_dmeta_type(char *input)
+{
+	t_token_type	type;
+
+	if (ft_strncmp(input, "<<", 2) == 0)
+		type = TOKEN_HEREDOC;
+	else if (ft_strncmp(input, ">>", 2) == 0)
+		type = TOKEN_APPEND;
+	else if (ft_strncmp(input, "||", 2) == 0)
+		type = TOKEN_OR;
+	else if (ft_strncmp(input, "&&", 2) == 0)
+		type = TOKEN_AND;
+	else
+		type = TOKEN_WORD;
+	return (type);
 }
 
 t_bool	is_meta_ch(char ch)
@@ -274,12 +291,14 @@ t_token*	tokenize_normal(char **input, t_token_state *state)
     return (new_token);
 }
 
+// TODO: return TOKEN_ERROR when syntax error (unclosed quote) is found
 t_token *tokenize_squote(char **input, t_token_state *state)
 {
 	char	*start;
 	t_token	*new_token;
 
 	start = *input;
+/*
     // increment str to skip initial quote
     // (*str)++;
     // find end of string or next single quote
@@ -287,6 +306,8 @@ t_token *tokenize_squote(char **input, t_token_state *state)
         (*input)++;
     // new_token = create_token(TOKEN_SQ_STR, start + 1, *input - start - 1);
     new_token = create_token(TOKEN_SQ_STR, start, *input - start + 1);
+*/
+	new_token = split_until(start, input, is_squote, TOKEN_SQ_STR);
 	if (!new_token)
 		return (0);
     if (**input == '\0')
@@ -296,12 +317,14 @@ t_token *tokenize_squote(char **input, t_token_state *state)
     return (new_token);
 }
 
+// TODO: return TOKEN_ERROR when syntax error (unclosed quote) is found
 t_token *tokenize_dquote(char **input, t_token_state *state)
 {
 	char	*start;
 	t_token	*new_token;
 
 	start = *input;
+/*
     // increment str to skip initial quote
     // (*str)++;
     // find end of string or next single quote
@@ -309,6 +332,8 @@ t_token *tokenize_dquote(char **input, t_token_state *state)
         (*input)++;
     // new_token = create_token(TOKEN_DQ_STR, start + 1, *input - start - 1);
     new_token = create_token(TOKEN_DQ_STR, start, *input - start + 1);
+*/	
+	new_token = split_until(start, input, is_dquote, TOKEN_DQ_STR);
 	if (!new_token)
 		return (0);
     if (**input == '\0')
@@ -318,40 +343,55 @@ t_token *tokenize_dquote(char **input, t_token_state *state)
     return (new_token);
 }
 
-t_token_type	get_dmeta_type(char *input)
-{
-	t_token_type	type;
+// t_token_type	get_dmeta_type(char *input)
+// {
+// 	t_token_type	type;
 
-	if (ft_strncmp(input, "<<", 2) == 0)
-		type = TOKEN_HEREDOC;
-	else if (ft_strncmp(input, ">>", 2) == 0)
-		type = TOKEN_APPEND;
-	else if (ft_strncmp(input, "||", 2) == 0)
-		type = TOKEN_OR;
-	else if (ft_strncmp(input, "&&", 2) == 0)
-		type = TOKEN_AND;
+// 	if (ft_strncmp(input, "<<", 2) == 0)
+// 		type = TOKEN_HEREDOC;
+// 	else if (ft_strncmp(input, ">>", 2) == 0)
+// 		type = TOKEN_APPEND;
+// 	else if (ft_strncmp(input, "||", 2) == 0)
+// 		type = TOKEN_OR;
+// 	else if (ft_strncmp(input, "&&", 2) == 0)
+// 		type = TOKEN_AND;
+// 	else
+// 		type = TOKEN_WORD;
+// 	return (type);
+// }
+
+t_token	*tokenize_operator(char **input, t_token_state *state)
+{
+	t_token	*new_token;
+
+	if (is_dmeta_str(*input))
+		new_token = create_token(get_dmeta_type(*input), (*input)++, 2);
 	else
-		type = TOKEN_WORD;
-	return (type);
+		new_token = create_token(TOKEN_OPERATOR, *input, 1);
+	*state = update_state(*(*input + 1));
+	return (new_token);
 }
 
-t_token* tokenize_meta(char **input, t_token_state *state)
+t_token	*tokenize_meta(char **input, t_token_state *state)
 {
     char	*start;
 	t_token	*new_token;
 
 	start = *input;
-	if (is_dquote(*start))
+	if (is_squote(*start))
 		new_token = tokenize_squote(input, state);
-	else if (is_squote(*start))
+	else if (is_dquote(*start))
 		new_token = tokenize_dquote(input, state);
-	else if (is_dmeta_str(start))
-		new_token = create_token(get_dmeta_type(start), start, 2);
+	// else if (is_dmeta_str(start))
+	// 	new_token = create_token(get_dmeta_type(*input), (*input)++, 2);
 	else if (is_space(*start))
 		new_token = tokenize_whitespace(input, state);
+	// else
+	// 	new_token = create_token(TOKEN_OPERATOR, start, 1);
 	else
-		new_token = create_token(TOKEN_OPERATOR, start, 1);
-	*state = NORMAL;
+		new_token = tokenize_operator(input, state);
+	*state = update_state(*(*input + 1));
+	// *state = NORMAL;
 	return (new_token);
 }
 
@@ -373,9 +413,9 @@ t_token* tokenize_whitespace(char **input, t_token_state *state)
 	start = *input;
     while (is_space(**input))
         (*input)++;
+	new_token = create_token(TOKEN_WHITESPACE, start, *input - start);
 	*state = update_state(**input);
 	(*input)--;
-	new_token = create_token(TOKEN_WHITESPACE, start, *input - start);
     return (new_token);
 }
 
