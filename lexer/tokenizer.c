@@ -271,14 +271,14 @@ t_token*	tokenize_normal(char **input, t_token_state *state)
 {
     char	*start;
 	t_token	*new_token;
-	// t_token	*tmp_token;
 
 	start = *input;
 	new_token = split_until(start, input, is_meta_ch, TOKEN_WORD);
 	if (!new_token)
 		return (0);
-    if (*start == '\0')
-        *state = END;
+	*state = update_state(*(*input + 1));
+    // if (*start == '\0')
+    //     *state = END;
     // else if (is_space(*start))
     // {
 	// 	// tokenize_whitespace(input, state);
@@ -286,8 +286,8 @@ t_token*	tokenize_normal(char **input, t_token_state *state)
 	// 	// *state = NORMAL;
 	// 	*state = WSPACE;
 	// }
-    else
-        *state = META_CH;
+    // else
+    //     *state = META_CH;
     return (new_token);
 }
 
@@ -342,23 +342,6 @@ t_token *tokenize_dquote(char **input, t_token_state *state)
         *state = NORMAL;
     return (new_token);
 }
-
-// t_token_type	get_dmeta_type(char *input)
-// {
-// 	t_token_type	type;
-
-// 	if (ft_strncmp(input, "<<", 2) == 0)
-// 		type = TOKEN_HEREDOC;
-// 	else if (ft_strncmp(input, ">>", 2) == 0)
-// 		type = TOKEN_APPEND;
-// 	else if (ft_strncmp(input, "||", 2) == 0)
-// 		type = TOKEN_OR;
-// 	else if (ft_strncmp(input, "&&", 2) == 0)
-// 		type = TOKEN_AND;
-// 	else
-// 		type = TOKEN_WORD;
-// 	return (type);
-// }
 
 t_token	*tokenize_operator(char **input, t_token_state *state)
 {
@@ -434,7 +417,7 @@ t_token *tokenize_cmd(char *input, t_size *num_tokens)
 		tokenize_whitespace,
 	};
 
-	state = NORMAL;
+	state = update_state(*input);
 	alloced = 2;
 	token_idx = 0;
 	tokens = ft_calloc(alloced, sizeof(t_token));
