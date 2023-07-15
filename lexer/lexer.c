@@ -59,9 +59,9 @@ void categorize_tokens(t_token *tokens, t_size num_tokens)
 		{
 			
 		}
-		else
-		{
-			tokens[i].type = TOKEN_WORD;
-		}
+		// else
+		// {
+		// 	tokens[i].type = TOKEN_WORD;
+		// }
 	}
 }
