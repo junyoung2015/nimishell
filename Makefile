@@ -78,7 +78,7 @@ $(NAME): $(OBJS)
 # $(BONUS): $(BO_OBJS)
 # 	$(CC) $(CFLAGS) $(BO_OBJS) -o $@
 
-%.o: %.c $(INCLUDES)$(HEADER)
+%.o: %.c $(SRCS) $(INCLUDES)$(HEADER)
 	$(CC) $(CFLAGS) -I$(INCLUDES) -I$(INCLUDE_READLINE) -c $< -o $@
 # $(CC) $(CFLAGS) -I$(INCLUDES) -I$(INCLUDE_READLINE) -c $< -o $@
 
