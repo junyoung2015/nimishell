@@ -220,8 +220,6 @@ t_node *parse_tokens(t_token *tokens, t_size num_tokens)
 
 void free_ast(t_node *root)
 {
-	// t_size i;
-
 	if (root == 0)
 		return ;
 	if (root->left != 0)

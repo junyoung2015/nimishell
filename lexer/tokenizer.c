@@ -69,6 +69,14 @@ t_bool	is_dmeta_ch(char ch)
 	return (ch == '|' || ch == '>' || ch == '<' || ch == '&');
 }
 
+/**
+ * @brief Check whether 'input' matches double-character operators.
+ * 
+ * @param input 
+ * @return t_token_type
+ * 		enum, but also works as TRUE or FALSE, since TOKEN_WORD = 0,
+ * 		and other enums are above 0.
+ */
 t_bool	is_dmeta_str(char *input)
 {
 	if (!(is_dmeta_ch(0[input]) && is_dmeta_ch(1[input])))
@@ -82,23 +90,6 @@ t_bool	is_dmeta_str(char *input)
 	else if (!ft_strncmp(input, "&&", 2))
 		return (TOKEN_AND);
 	return (TOKEN_WORD);
-}
-
-t_token_type	get_dmeta_type(char *input)
-{
-	t_token_type	type;
-
-	if (ft_strncmp(input, "<<", 2) == 0)
-		type = TOKEN_HEREDOC;
-	else if (ft_strncmp(input, ">>", 2) == 0)
-		type = TOKEN_APPEND;
-	else if (ft_strncmp(input, "||", 2) == 0)
-		type = TOKEN_OR;
-	else if (ft_strncmp(input, "&&", 2) == 0)
-		type = TOKEN_AND;
-	else
-		type = TOKEN_WORD;
-	return (type);
 }
 
 t_bool	is_meta_ch(char ch)
@@ -158,9 +149,27 @@ t_token	*split_until(char *start, char **input, t_bool (*cmp)(char ch), t_token_
 	// TODO: free tokens, malloc err
 	if (!new_token)
 		return (0);
+	if ((cmp == is_squote || cmp == is_dquote) && !cmp(**input))
+	{
+		free(new_token->value);
+		free(new_token);
+		// *state = END;
+		if (!(**input) || (cmp != is_dquote && cmp != is_squote))
+			(*input)--;
+		return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
+	}
 	if (!(**input) || (cmp != is_dquote && cmp != is_squote))
 		(*input)--;
 	return (new_token);
+}
+
+t_token_state update_state(char ch)
+{
+	if (is_meta_ch(ch))
+		return (META_CH);
+	else if (ch == '\0')
+		return (END);
+	return (NORMAL);
 }
 
 t_token*	tokenize_normal(char **input, t_token_state *state)
@@ -176,35 +185,27 @@ t_token*	tokenize_normal(char **input, t_token_state *state)
     return (new_token);
 }
 
-// TODO: return TOKEN_ERROR when syntax error (unclosed quote) is found
 t_token *tokenize_squote(char **input, t_token_state *state)
 {
 	char	*start;
 	t_token	*new_token;
+	(void)	state;
 
 	start = *input;
 	new_token = split_until(start, input, is_squote, TOKEN_SQ_STR);
 	if (!new_token)
 		return (0);
-    if (**input == '\0')
-        *state = END;
-    else
-        *state = NORMAL;
     return (new_token);
 }
 
-// TODO: return TOKEN_ERROR when syntax error (unclosed quote) is found
 t_token *tokenize_dquote(char **input, t_token_state *state)
 {
 	t_token	*new_token;
+	(void)	state;
 
 	new_token = split_until(*input, input, is_dquote, TOKEN_DQ_STR);
 	if (!new_token)
 		return (0);
-    if (**input == '\0')
-        *state = END;
-    else
-        *state = NORMAL;
     return (new_token);
 }
 
@@ -236,15 +237,6 @@ t_token	*tokenize_meta(char **input, t_token_state *state)
 		new_token = tokenize_operator(input, state);
 	*state = update_state(*(*input + 1));
 	return (new_token);
-}
-
-t_token_state update_state(char ch)
-{
-	if (is_meta_ch(ch))
-		return (META_CH);
-	else if (ch == '\0')
-		return (END);
-	return (NORMAL);
 }
 
 t_token* tokenize_whitespace(char **input, t_token_state *state)
@@ -296,7 +288,8 @@ t_token *tokenize_cmd(char *input, t_size *num_tokens)
 		if (tokens[token_idx - 1].type == TOKEN_ERROR)
 		{
 			// handle syntax error, maybe send appropriate error message to exit_err or to main()
-			return (0);
+			break ;
+			// return (tokens);
 		}
 		else if (tokens[token_idx - 1].type == TOKEN_WHITESPACE)
 		{
