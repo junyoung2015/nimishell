@@ -213,7 +213,10 @@ t_token	*tokenize_operator(char **input, t_token_state *state)
 	t_token	*new_token;
 
 	if (is_dmeta_str(*input))
-		new_token = create_token(is_dmeta_str(*input), (*input)++, 2);
+	{
+		new_token = create_token(is_dmeta_str(*input), *input, 2);
+		(*input)++;
+	}
 	else
 		new_token = create_token(TOKEN_OPERATOR, *input, 1);
 	*state = update_state(*(*input + 1));
@@ -245,7 +248,9 @@ t_token* tokenize_whitespace(char **input, t_token_state *state)
 
 	start = *input;
     while (is_space(**input))
-        (*input)++;
+    {
+		(*input)++;
+	}
 	new_token = create_token(TOKEN_WHITESPACE, start, *input - start);
 	*state = update_state(**input);
 	(*input)--;
