@@ -37,7 +37,7 @@ void categorize_tokens(t_token *tokens, t_size num_tokens)
 				tokens[i].type = TOKEN_DOLLAR_SIGN;
 			else if (ft_strcmp(tokens[i].value, "&&") == 0)
 				tokens[i].type = TOKEN_AND;
-			else if (tokens[i].type == WSPACE || tokens[i].type == TOKEN_WHITESPACE)
+			else if (tokens[i].type == TOKEN_WHITESPACE)
 				tokens[i].type = TOKEN_WHITESPACE;
 			else
 				tokens[i].type = TOKEN_UNKNOWN;
