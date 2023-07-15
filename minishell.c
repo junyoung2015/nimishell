@@ -114,26 +114,32 @@ int	main(int ac, char **av, char **env)
 				tokens = tokenize_cmd(line, &num_tokens);
 				if (!tokens)
 					return (0);
-				categorize_tokens(tokens, num_tokens);
-				if (tokens && DEBUG)
-					print_tokens(tokens, num_tokens);
-				ast = parse_tokens(tokens, num_tokens);
-				if (ast && DEBUG)
+				else if (num_tokens >= 1 && tokens[num_tokens - 1].type == TOKEN_ERROR)
 				{
-					printf("\n================== AST ==================\n");
-					print_ast(ast, 0, "");
-					printf("=========================================\n");
+					write(STD_ERR, tokens[num_tokens - 1].value, ft_strlen(tokens[num_tokens - 1].value));
 				}
-				g_info.root = ast;
-				// status = executor(g_info.root);
-				g_info.exit_code = WEXITSTATUS(status);
+				else
+				{
+					categorize_tokens(tokens, num_tokens);
+					if (tokens && DEBUG)
+						print_tokens(tokens, num_tokens);
+					ast = parse_tokens(tokens, num_tokens);
+					if (ast && DEBUG)
+					{
+						printf("\n================== AST ==================\n");
+						print_ast(ast, 0, "");
+						printf("=========================================\n");
+					}
+					g_info.root = ast;
+					status = executor(g_info.root);
+					g_info.exit_code = WEXITSTATUS(status);
+				}
 			}
 			// if (status)
 			// 	update_exit_status(status);
 			if (tokens)
 				free_tokens(tokens, num_tokens);
 			tokens = 0;
-			// free_ast(ast);
 			free(line);
 			line = 0;
 		}

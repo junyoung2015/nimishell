@@ -19,8 +19,6 @@
 
 /* ================ INCLUDES ================= */
 # include <stdio.h>
-# include <stdbool.h>
-
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
@@ -137,6 +135,7 @@ extern t_global_info	g_info;
 # define TRUE						1
 # define FALSE						0
 
+# define QUOTE_NOT_CLOSED			"Syntax Error: quote not closed\n"
 # define MALLOC_ERR					"malloc() error."
 
 /* ================== MEMORY_UTILS ================== */
