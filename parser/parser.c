@@ -3,9 +3,9 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: jungyeok <jusohn@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/15 14:10:03 by jusohn            #+#    #+#             */
+/*   Created: 2023/06/15 14:10:03 by jungyeok          #+#    #+#             */
 /*   Updated: 2023/06/17 13:58:32 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -60,7 +60,7 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
         free(cmd_node);
         return (0);
     }
-    while (*token_idx < num_tokens && ((*tokens)[*token_idx].type == TOKEN_WORD))
+    while (*token_idx < num_tokens && ((*tokens)[*token_idx].type == TOKEN_WORD || (*tokens)[*token_idx].type == TOKEN_SQ_STR || (*tokens)[*token_idx].type == TOKEN_DQ_STR))
     {
         cmd_node->cmd_args[cmd_node->num_args] = ft_strdup((*tokens)[*token_idx].value);
         if (!cmd_node->cmd_args[cmd_node->num_args])
@@ -220,8 +220,6 @@ t_node *parse_tokens(t_token *tokens, t_size num_tokens)
 
 void free_ast(t_node *root)
 {
-	// t_size i;
-
 	if (root == 0)
 		return ;
 	if (root->left != 0)
