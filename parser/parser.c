@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jungyeok <jungyeok@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jungyeok <jusohn@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 14:10:03 by jungyeok          #+#    #+#             */
 /*   Updated: 2023/06/17 13:58:32 by jusohn           ###   ########.fr       */
