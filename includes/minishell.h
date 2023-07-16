@@ -104,6 +104,7 @@ typedef struct  s_node
 typedef struct s_global_info
 {
 	char	**env;
+	int		env_cnt;
 	int		stdin_fd;
 	int		stdout_fd;
 	int		exit_code;

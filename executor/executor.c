@@ -6,33 +6,28 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/13 23:19:00 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/16 21:47:53 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "executor.h"
 
-void	run_cmd(t_node *root, t_pipe_info *info)
+void	run_cmd(t_node *root, t_exec_info *info)
 {
 	if (root->type == AST_NULL)
 		return ;
 	else if (root->type == AST_PIPE)
 		open_pipe(info);
-	else if (root->type == AST_REDIR_IN)
-		redir_in(root);
-	else if (root->type == AST_REDIR_OUT)
-		redir_out(root);
-	else if (root->type == AST_REDIR_APPEND)
-		redir_append(root);
-	else if (root->type == AST_HEREDOC)
-		heredoc(root, info);
+	else if (root->type == AST_REDIR_IN || root->type == AST_REDIR_OUT \
+				|| root->type == AST_REDIR_APPEND || root->type == AST_HEREDOC)
+		redirection(root, info);
 	else if (root->type == AST_COMMAND)
 		command(root, info);
 	else if (root->type == AST_BUILTIN)
 		builtin(root, info);
 }
 
-void	preorder_traversal(t_node *root, t_pipe_info *info)
+void	preorder_traversal(t_node *root, t_exec_info *info)
 {
 	if (!root)
 		return ;
@@ -48,12 +43,12 @@ void	preorder_traversal(t_node *root, t_pipe_info *info)
 
 void	execute_in_child(t_node *root)
 {
-	t_pipe_info	info;
+	t_exec_info	info;
 	size_t		i;
 	int			status;
 
 	info.fork_cnt = 0;
-	info.prev_pipe_fd = -1;
+	info.prev_pipe = -1;
 	preorder_traversal(root, &info);
 	if (!info.fork_cnt)
 		exit(EXIT_SUCCESS);
@@ -69,13 +64,13 @@ void	execute_in_child(t_node *root)
 
 int	execute(t_node *root)
 {
-	t_pipe_info	info;
+	t_exec_info	info;
 	size_t		i;
 	int			status;
 
 	info.exit_code = 0;
 	info.fork_cnt = 0;
-	info.prev_pipe_fd = -1;
+	info.prev_pipe = -1;
 	preorder_traversal(root, &info);
 	dup2(g_info.stdin_fd, STDIN_FILENO);
 	dup2(g_info.stdout_fd, STDOUT_FILENO);

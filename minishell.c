@@ -84,7 +84,10 @@ void print_tokens(t_token *tokens, t_size num_tokens)
 
 void	init_g_info(char **envp)
 {
+	g_info.env_cnt = 0;
 	g_info.env = envp;
+	while (envp && envp[g_info.env_cnt])
+		g_info.env_cnt++;
 	g_info.stdin_fd = dup(STDIN_FILENO);
 	g_info.stdout_fd = dup(STDOUT_FILENO);
 }

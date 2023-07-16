@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/14 21:01:02 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/16 21:46:40 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,33 +19,33 @@
 # include <stdio.h>
 # include "minishell.h"
 
-typedef struct s_pipe_info
+typedef struct s_exec_info
 {
 	size_t	fork_cnt;
 	pid_t	pid;
 	int		exit_code;
 	int		pipe[2];
-	int		prev_pipe_fd;
-}	t_pipe_info;
+	int		prev_pipe;
+}	t_exec_info;
 
 /* pipe.c */
-void	open_pipe(t_pipe_info *info);
-void	connect_pipe(t_node *node, t_pipe_info *info);
-void	close_pipe(t_node *node, t_pipe_info *info);
+void	open_pipe(t_exec_info *info);
+int		connect_pipe(t_node *node, t_exec_info *info);
+void	close_pipe(t_node *node, t_exec_info *info);
 
 /* redirection.c */
-void	redir_in(t_node *node);
-void	redir_out(t_node *node);
-void	redir_append(t_node *node);
+int		redir_in(t_node *node);
+int		redir_out(t_node *node);
+int		redir_append(t_node *node);
+void	redirection(t_node *node, t_exec_info *info);
 
 /* error.c */
 void	free_ptr(char **ptr);
 void	clear_all(t_node *root);
 void	err(void);
-void	err2(char *str);
 void	cmd_not_found(void);
 
-void	command(t_node *node, t_pipe_info *info);
-void	heredoc(t_node *node, t_pipe_info *info);
+void	command(t_node *node, t_exec_info *info);
+int		heredoc(t_node *node, t_exec_info *info);
 
 #endif
