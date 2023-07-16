@@ -242,7 +242,7 @@ t_token	*tokenize_meta(char **input, t_token_state *state)
 }
 
 t_token* tokenize_whitespace(char **input, t_token_state *state)
-{
+{  
 	char	*start;
 	t_token	*new_token;
 
