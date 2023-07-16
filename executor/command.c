@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 21:55:34 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/09 20:52:19 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/16 20:45:12 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ char	*get_filepath(char *filename)
 	return (NULL);
 }
 
-void	command(t_node *node, t_pipe_info *info)
+void	command(t_node *node, t_exec_info *info)
 {
 	char	*filepath;
 
@@ -97,7 +97,8 @@ void	command(t_node *node, t_pipe_info *info)
 		err();
 	else if (!info->pid)
 	{
-		connect_pipe(node, info);
+		if (!connect_pipe(node, info))
+			err();
 		filepath = get_filepath(node->cmd_args[0]);
 		if (execve(filepath, node->cmd_args, g_info.env) < 0)
 			err();
