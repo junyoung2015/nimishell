@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:37:25 by jusohn            #+#    #+#             */
-/*   Updated: 2023/07/16 20:51:48 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/16 22:25:14 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static int	connect_left(t_node *node, t_exec_info *info)
 		if (!redir_in(node->left))
 			return (0);
 	else if (node->left && node->left->type == AST_HEREDOC)
-		if (!heredoc(node->left, info));
+		if (!heredoc(node->left, info))
 			return (0);
 	else if ((node->pipe_open >> 1) & 1)
 		if (dup2(info->prev_pipe, STDIN_FILENO) < 0)

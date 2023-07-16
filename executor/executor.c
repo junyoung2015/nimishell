@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/16 21:47:53 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/16 22:35:28 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,10 @@ void	preorder_traversal(t_node *root, t_exec_info *info)
 {
 	if (!root)
 		return ;
+	if (root->left)
+		root->left->parent_type = root->type;
+	if (root->right)
+		root->right->parent_type = root->type;
 	run_cmd(root, info);
 	if (root->type == AST_PIPE)
 	{
