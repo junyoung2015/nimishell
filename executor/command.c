@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 21:55:34 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/16 20:45:12 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/16 22:34:38 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,9 +104,5 @@ void	command(t_node *node, t_exec_info *info)
 			err();
 	}
 	close_pipe(node, info);
-	if (node->left)
-		node->left->parent_type = AST_COMMAND;
-	if (node->right)
-		node->right->parent_type = AST_COMMAND;
 	info->fork_cnt += 1;
 }

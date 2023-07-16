@@ -96,6 +96,7 @@ int	main(int ac, char **av, char **envp)
 {
 	(void) ac;
 	(void) av;
+	int			exit_code;
 	char		*line;
 	t_token		*tokens;
 	t_size		num_tokens;
@@ -134,7 +135,7 @@ int	main(int ac, char **av, char **envp)
 					printf("=========================================\n");
 				}
 				g_info.root = ast;
-				g_info.exit_code = executor(g_info.root);
+				exit_code = executor(g_info.root);
 			}
 			// if (status)
 			// 	update_exit_status(status);
@@ -145,6 +146,6 @@ int	main(int ac, char **av, char **envp)
 			line = 0;
 		}
 	}
-	exit(status);
+	exit(exit_code);
 	return (0);
 }
