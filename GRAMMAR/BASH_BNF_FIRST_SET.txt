@@ -1,4 +1,4 @@
-FIRST(<NONSPACE>) = {'a', 'b', 'c', ..., 'z', 'A', 'B', 'C', ..., 'Z'} (character other than a whitespace character)
+FIRST(<NONSPACE>) = any character satisfying the condition !isspace(character)
 
 FIRST(<WORD>) = FIRST(<NONSPACE>)
 FIRST(<WORD-LIST>) = FIRST(<WORD>) = FIRST(<NONSPACE>)

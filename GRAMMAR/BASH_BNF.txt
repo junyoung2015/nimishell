@@ -1,4 +1,4 @@
-<NONSPACE> ::= any character other than a whitespace character
+<NONSPACE> ::= any character satisfying the condition !isspace(character)
 
 <WORD> ::= <NONSPACE>
             | <WORD> <NONSPACE>
