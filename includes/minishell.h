@@ -107,6 +107,29 @@ typedef struct  s_node
 	t_node_type		parent_type;
 }   t_node;
 
+typedef enum e_parse_state
+{
+	NONSPACE,
+	WORD,
+	ENV_VAR,
+	WORD_LIST,
+	WORD_LIST_TAIL,
+	ASSIGN_WORD,
+	REDIR,
+	REDIR_LIST,
+	REDIR_TAIL,
+	SIMPLE_CMD_ELE,
+	SIMPLE_CMD,
+	SIMPLE_CMD_TAIL,	
+	CMD,
+	SUBSHELL,
+	LIST,
+	LIST_TAIL,
+	PIPELINE,
+	PIPELINE_TAIL,
+	PARSE_STATES_CNT,
+}	t_parse_state;
+
 typedef struct s_global_info
 {
 	char	**env;
