@@ -2,7 +2,7 @@
 // {} : 0 or more occurrences
 // [] : denotes 0 or 1 occurrence
 //  | : "OR"
-<NONSPACE> -> a | b | c | ... | z
+<NONSPACE> -> any character satisfying the condition !isspace(character)
 
 <WORD> -> <NONSPACE>
 <WORD> -> <WORD> <NONSPACE>
@@ -33,7 +33,7 @@
 
 <SIMPLE-COMMAND> -> <SIMPLE-COMMAND-ELEMENT> <SIMPLE-COMMAND-TAIL>
 
-<SIMPLE-COMMAND-TAIL> -> <SIMPLE-COMMAND-ELEMENT> <TAIL_SIMPLE_COMMAND>
+<SIMPLE-COMMAND-TAIL> -> <SIMPLE-COMMAND-ELEMENT> <SIMPLE-COMMAND-TAIL>
 
 <COMMAND> -> <SIMPLE-COMMAND>
 <COMMAND> -> <SUBSHELL>
@@ -50,3 +50,4 @@
 <PIPELINE> -> <COMMAND> <PIPELINE-TAIL>
 
 <PIPELINE-TAIL> -> | <COMMAND> <PIPELINE-TAIL>
+<PIPELINE-TAIL> -> ε
