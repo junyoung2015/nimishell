@@ -8,6 +8,7 @@ void	env(void)
 	while (g_info.env && g_info.env[i])
 	{
 		write(STDOUT_FILENO, g_info.env[i], ft_strlen(g_info.env[i]));
+		write(STDOUT_FILENO, "\n", 1);
 		i++;
 	}
 }
