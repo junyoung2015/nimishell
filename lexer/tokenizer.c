@@ -64,7 +64,7 @@ t_token* realloc_tokens(t_token *tokens, t_size cur_size, t_size new_size)
 	return (new_tokens);
 }
 
-t_token	*check_and_realloc(t_token *tokens, t_size token_idx, t_size *alloced)
+t_token	*check_size(t_token *tokens, t_size token_idx, t_size *alloced)
 {
 	t_token	*new_tokens;
 
@@ -98,7 +98,7 @@ t_bool	check_parenthesis(t_token* tokens, t_size num_tokens)
 	return (depth == 0);
 }
 
-t_token	*handle_unbalanced_parenthesis(t_token *tokens, t_size *num_tokens)
+t_token	*unmatched_parenthesis(t_token *tokens, t_size *num_tokens)
 {
 	t_token	*new_token;
 
@@ -371,7 +371,7 @@ t_token *tokenize_cmd(char *input, t_size *num_tokens)
 		}
 		else if (tokens[token_idx - 1].type == TOKEN_WHITESPACE)
 			free(tokens[token_idx-- - 1].value);
-		tokens = check_and_realloc(tokens, token_idx, &alloced);
+		tokens = check_size(tokens, token_idx, &alloced);
 		if (!tokens)
 			return (0);
 		input++;
@@ -381,6 +381,6 @@ t_token *tokenize_cmd(char *input, t_size *num_tokens)
 		return (0);
 	*num_tokens = token_idx;
 	if (!check_parenthesis(tokens, *num_tokens))
-		tokens = handle_unbalanced_parenthesis(tokens, num_tokens);
+		tokens = unmatched_parenthesis(tokens, num_tokens);
 	return (tokens);
 }
