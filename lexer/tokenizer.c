@@ -24,7 +24,7 @@ int	free_tokens(t_token *tokens, t_size size)
 	return (0);
 }
 
-t_token* realloc_tokens(t_token* tokens, t_size cur_size, t_size new_size)
+t_token* realloc_tokens(t_token *tokens, t_size cur_size, t_size new_size)
 {
 	t_size		len;
 	t_size		cp_size;
@@ -62,6 +62,57 @@ t_token* realloc_tokens(t_token* tokens, t_size cur_size, t_size new_size)
 	free(tokens);
 	tokens = 0;
 	return (new_tokens);
+}
+
+t_token	*check_and_realloc(t_token *tokens, t_size token_idx, t_size *alloced)
+{
+	t_token	*new_tokens;
+
+    if (*alloced <= token_idx + 1)
+	{
+        *alloced *= 2;
+        new_tokens = realloc_tokens(tokens, token_idx, *alloced);
+    }
+	else
+		return (tokens);
+	return (new_tokens);
+}
+
+t_bool	check_parenthesis(t_token* tokens, t_size num_tokens)
+{
+	int		depth;
+	t_size	idx;
+
+	idx = 0;
+	depth = 0;
+	while (idx < num_tokens)
+	{
+		if (tokens[idx].type == TOKEN_L_PAREN)
+			depth++;
+		else if (tokens[idx].type == TOKEN_R_PAREN)
+			depth--;
+		if (depth < 0)
+		 break ;
+		idx++;
+	}
+	return (depth == 0);
+}
+
+t_token	*handle_unbalanced_parenthesis(t_token *tokens, t_size *num_tokens)
+{
+	t_token	*new_token;
+
+	free_tokens(tokens, *num_tokens);
+	tokens = ft_calloc(1, sizeof(t_token));
+	if (!tokens)
+		return (0);
+	new_token = create_token(TOKEN_ERROR, PAREN_NOT_CLOSED, ft_strlen(PAREN_NOT_CLOSED));
+	if (!new_token)
+		return (0);
+	*num_tokens = 0;
+	tokens[(*num_tokens)++] = *new_token;
+	free(new_token);
+	return (tokens);
 }
 
 t_bool	is_dmeta_ch(char ch)
@@ -288,7 +339,6 @@ t_token *tokenize_cmd(char *input, t_size *num_tokens)
 	t_token				*tokens;
 	t_token				*new_token;
 	t_token_state		state;
-	int					depth;
 	const tokenizer_fn	tokenizers[] = {
 		tokenize_normal,
 		tokenize_squote,
@@ -318,51 +368,19 @@ t_token *tokenize_cmd(char *input, t_size *num_tokens)
 		{
 			// handle syntax error, maybe send appropriate error message to exit_err or to main()
 			break ;
-			// return (tokens);
 		}
 		else if (tokens[token_idx - 1].type == TOKEN_WHITESPACE)
-		{
-			free(tokens[token_idx - 1].value);
-			token_idx--;
-		}
-		else if (alloced <= token_idx + 1)
-		{
-			alloced *= 2;
-			tokens = realloc_tokens(tokens, token_idx, alloced);
-			// TODO: malloc err
-			if (!tokens)
-				return (0);
-		}
+			free(tokens[token_idx-- - 1].value);
+		tokens = check_and_realloc(tokens, token_idx, &alloced);
+		if (!tokens)
+			return (0);
 		input++;
 	}
-	// TODO: malloc err
+	// TODO: malloc err?
 	if (!tokens)
 		return (0);
 	*num_tokens = token_idx;
-	depth = 0;
-	token_idx = 0;
-	while (token_idx < *num_tokens)
-	{
-		if (tokens[token_idx].type == TOKEN_L_PAREN)
-			depth++;
-		else if (tokens[token_idx].type == TOKEN_R_PAREN)
-			depth--;
-		if (depth < 0)
-		 break ;
-		token_idx++;
-	}
-	if (depth != 0)
-	{
-		free_tokens(tokens, *num_tokens);
-		tokens = ft_calloc(1, sizeof(t_token));
-		if (!tokens)
-			return (0);
-		new_token = create_token(TOKEN_ERROR, PAREN_NOT_CLOSED, ft_strlen(PAREN_NOT_CLOSED));
-		if (!new_token)
-			return (0);
-		*num_tokens = 0;
-		tokens[(*num_tokens)++] = *new_token;
-		free(new_token);
-	}
+	if (!check_parenthesis(tokens, *num_tokens))
+		tokens = handle_unbalanced_parenthesis(tokens, num_tokens);
 	return (tokens);
 }
