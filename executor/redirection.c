@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 21:50:47 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/16 21:46:26 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/17 21:50:01 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,9 @@ int	redir_append(t_node *node)
 
 void	redirection(t_node *node, t_exec_info *info)
 {
-	int	success;
-	
+	t_bool	success;
+
+	success = TRUE;
 	if (node->parent_type == AST_COMMAND || node->parent_type == AST_BUILTIN)
 		return ;
 	if (node->type == AST_REDIR_IN)
