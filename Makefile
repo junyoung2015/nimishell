@@ -39,7 +39,7 @@ SRCS = ./minishell.c						\
 		$(BUILTIN_DIR)export.c				\
 		$(BUILTIN_DIR)env.c
 
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2  -I$(INCLUDES) -I$(INCLUDE_READLINE)
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2 -I$(INCLUDES) -I$(INCLUDE_READLINE)
 # ----------- BONUS SRCS  ----------- #
 # BO_SRCS = ./minishell_bonus.c
 HEADER = minishell.h executor.h builtin.h
@@ -82,7 +82,7 @@ $(NAME): $(OBJS)
 # $(BONUS): $(BO_OBJS)
 # 	$(CC) $(CFLAGS) $(BO_OBJS) -o $@
 
-%.o: %.c $(INCLUDES)$(HEADER)
+%.o: %.c $(SRCS) $(INCLUDES)$(HEADER)
 	$(CC) $(CFLAGS) -I$(INCLUDES) -I$(INCLUDE_READLINE) -c $< -o $@
 # $(CC) $(CFLAGS) -I$(INCLUDES) -I$(INCLUDE_READLINE) -c $< -o $@
 
