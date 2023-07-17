@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "executor.h"
+#include "builtin.h"
 
 void	run_cmd(t_node *root, t_exec_info *info)
 {
@@ -79,7 +80,10 @@ int	execute(t_node *root)
 	dup2(g_info.stdin_fd, STDIN_FILENO);
 	dup2(g_info.stdout_fd, STDOUT_FILENO);
 	if (!info.fork_cnt)
+	{
+		clear_all(g_info.root);
 		return (info.exit_code);
+	}
 	waitpid(info.pid, &status, 0);
 	i = 0;
 	while (i + 1 < info.fork_cnt)
@@ -87,6 +91,7 @@ int	execute(t_node *root)
 		wait(NULL);
 		i++;
 	}
+	clear_all(g_info.root);
 	return (WEXITSTATUS(status));
 }
 

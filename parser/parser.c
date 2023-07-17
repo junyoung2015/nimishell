@@ -80,6 +80,11 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 	}
 	while (*token_idx < num_tokens && ((*tokens)[*token_idx].type == TOKEN_WORD || (*tokens)[*token_idx].type == TOKEN_SQ_STR || (*tokens)[*token_idx].type == TOKEN_DQ_STR))
 	{
+		if (!ft_strcmp((*tokens)[*token_idx].value, "export"))
+		{
+			cmd_node->type = AST_BUILTIN;
+			cmd_node->builtin = EXPORT;
+		}
 		cmd_node->cmd_args[cmd_node->num_args] = ft_strdup((*tokens)[*token_idx].value);
 		if (!cmd_node->cmd_args[cmd_node->num_args])
 		{
