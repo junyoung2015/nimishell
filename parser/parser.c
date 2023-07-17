@@ -85,6 +85,11 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 			cmd_node->type = AST_BUILTIN;
 			cmd_node->builtin = EXPORT;
 		}
+		else if (!ft_strcmp((*tokens)[*token_idx].value, "env"))
+		{
+			cmd_node->type = AST_BUILTIN;
+			cmd_node->builtin = ENV;
+		}
 		cmd_node->cmd_args[cmd_node->num_args] = ft_strdup((*tokens)[*token_idx].value);
 		if (!cmd_node->cmd_args[cmd_node->num_args])
 		{
