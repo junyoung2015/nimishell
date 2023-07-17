@@ -9,6 +9,7 @@ t_bool	is_in_env(char *key, char *env)
 	{
 		if (key[i] != env[i])
 			return (FALSE);
+		i++;
 	}
 	if (env[i] == '=')
 		return (TRUE);
