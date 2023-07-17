@@ -109,10 +109,34 @@ t_bool	is_squote(char ch)
 	return (ch == '\'');
 }
 
+
 t_bool	is_space(char ch)
 {
 	return (ch == ' ' || ch == '\t' || ch == '\f' || ch == '\n' || \
 		ch == '\v' || ch == '\r');
+}
+
+t_token_type	get_operator_type(char ch)
+{
+	t_token_type	type;
+
+	if (ch == '|')
+		type = TOKEN_PIPE;
+	else if (ch == '<')
+		type = TOKEN_REDIR_IN;
+	else if (ch == '>')
+		type = TOKEN_REDIR_OUT;
+	else if (ch == '$')
+		type = TOKEN_DOLLAR_SIGN;
+	else if (ch == '(')
+		type = TOKEN_L_PAREN;
+	else if (ch == ')')
+		type = TOKEN_R_PAREN;
+	else if (ch == '*')
+		type = TOKEN_WILDCARD;
+	else
+		type = TOKEN_UNKNOWN;
+	return (type);
 }
 
 t_token	*create_token(t_token_type type, const char *buffer, int buf_len)
@@ -218,7 +242,7 @@ t_token	*tokenize_operator(char **input, t_token_state *state)
 		(*input)++;
 	}
 	else
-		new_token = create_token(TOKEN_OPERATOR, *input, 1);
+		new_token = create_token(get_operator_type(**input), *input, 1);
 	*state = update_state(*(*input + 1));
 	return (new_token);
 }
@@ -264,6 +288,7 @@ t_token *tokenize_cmd(char *input, t_size *num_tokens)
 	t_token				*tokens;
 	t_token				*new_token;
 	t_token_state		state;
+	int					depth;
 	const tokenizer_fn	tokenizers[] = {
 		tokenize_normal,
 		tokenize_squote,
@@ -297,6 +322,7 @@ t_token *tokenize_cmd(char *input, t_size *num_tokens)
 		}
 		else if (tokens[token_idx - 1].type == TOKEN_WHITESPACE)
 		{
+			free(tokens[token_idx - 1].value);
 			token_idx--;
 		}
 		else if (alloced <= token_idx + 1)
@@ -313,5 +339,30 @@ t_token *tokenize_cmd(char *input, t_size *num_tokens)
 	if (!tokens)
 		return (0);
 	*num_tokens = token_idx;
+	depth = 0;
+	token_idx = 0;
+	while (token_idx < *num_tokens)
+	{
+		if (tokens[token_idx].type == TOKEN_L_PAREN)
+			depth++;
+		else if (tokens[token_idx].type == TOKEN_R_PAREN)
+			depth--;
+		if (depth < 0)
+		 break ;
+		token_idx++;
+	}
+	if (depth != 0)
+	{
+		free_tokens(tokens, *num_tokens);
+		tokens = ft_calloc(1, sizeof(t_token));
+		if (!tokens)
+			return (0);
+		new_token = create_token(TOKEN_ERROR, PAREN_NOT_CLOSED, ft_strlen(PAREN_NOT_CLOSED));
+		if (!new_token)
+			return (0);
+		*num_tokens = 0;
+		tokens[(*num_tokens)++] = *new_token;
+		free(new_token);
+	}
 	return (tokens);
 }

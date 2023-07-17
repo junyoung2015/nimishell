@@ -12,48 +12,6 @@
 
 #include "minishell.h"
 
-
-typedef t_node* (*parser_fn)(char **, t_token_state *, t_parse_state *);
-t_node* parse_nonspace(char **input, t_token_state *state, t_parse_state *parse_state);
-t_node* parse_word(char **input, t_token_state *state, t_parse_state *parse_state);
-t_node* parse_env_var(char **input, t_token_state *state, t_parse_state *parse_state);
-t_node* parse_word_list(char **input, t_token_state *state, t_parse_state *parse_state);
-t_node* parse_word_list_tail(char **input, t_token_state *state, t_parse_state *parse_state);
-t_node* parse_assignment_word(char **input, t_token_state *state, t_parse_state *parse_state);
-t_node* parse_redir(char **input, t_token_state *state, t_parse_state *parse_state);
-t_node* parse_simple_cmd_element(char **input, t_token_state *state, t_parse_state *parse_state);
-t_node* parse_redir_list(char **input, t_token_state *state, t_parse_state *parse_state);
-t_node* parse_redir_list_tail(char **input, t_token_state *state, t_parse_state *parse_state);
-t_node* parse_simple_cmd(char **input, t_token_state *state, t_parse_state *parse_state);
-t_node* parse_simple_cmd_tail(char **input, t_token_state *state, t_parse_state *parse_state);
-t_node* parse_command(char **input, t_token_state *state, t_parse_state *parse_state);
-t_node* parse_subshell(char **input, t_token_state *state, t_parse_state *parse_state);
-t_node* parse_list(char **input, t_token_state *state, t_parse_state *parse_state);
-t_node* parse_list_tail(char **input, t_token_state *state, t_parse_state *parse_state);
-t_node* parse_pipeline(char **input, t_token_state *state, t_parse_state *parse_state);
-t_node* parse_pipeline_tail(char **input, t_token_state *state, t_parse_state *parse_state);
-
-const parser_fn parsers[PARSE_STATES_CNT] = {
-	parse_nonspace,
-	parse_word,
-	parse_env_var,
-	parse_word_list,
-	parse_word_list_tail,
-	parse_assignment_word,
-	parse_redir,
-	parse_simple_cmd_element,
-	parse_redir_list,
-	parse_redir_list_tail,
-	parse_simple_cmd,
-	parse_simple_cmd_tail,
-	parse_command,
-	parse_subshell,
-	parse_list,
-	parse_list_tail,
-	parse_pipeline,
-	parse_pipeline_tail
-};
-
 t_node *create_node(t_node_type type)
 {
 	t_node	*new_node;
@@ -78,26 +36,23 @@ void append_child_node(t_node *parent, t_node *child)
 		parent->right = child;
 }
 
-/* ===================LL (1)======================== */
-
-t_node	*parse_ll(t_token *tokens, t_size num_tokens)
+// TODO: remove this free function, since it's freed in Execution part
+void free_ast(t_node *root)
 {
-	t_size	idx;
-	t_node	*root;
-	t_parse_state state;
-
-	state = NONSPACE;
-	root = 0;
-	idx = 0;
-	while ()
-
-	return (root);
+	if (root == 0)
+		return ;
+	if (root->left != 0)
+		free_ast(root->left);
+	if (root->right != 0)
+		free_ast(root->right);
+	if (root->cmd_args)
+	{
+		for (t_size i = 0; i < root->num_args; i++)
+			free(root->cmd_args[i]);
+		free(root->cmd_args);
+	}
+	free(root);
 }
-
-/* ===================LL (1)======================== */
-
-
-
 
 t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 {
@@ -279,21 +234,4 @@ t_node *parse_tokens(t_token *tokens, t_size num_tokens)
 
 	token_idx = 0;
 	return (parse_pipe(&tokens, &token_idx, num_tokens));
-}
-
-void free_ast(t_node *root)
-{
-	if (root == 0)
-		return ;
-	if (root->left != 0)
-		free_ast(root->left);
-	if (root->right != 0)
-		free_ast(root->right);
-	if (root->cmd_args)
-	{
-		for (t_size i = 0; i < root->num_args; i++)
-			free(root->cmd_args[i]);
-		free(root->cmd_args);
-	}
-	free(root);
 }
