@@ -1,0 +1,44 @@
+<NONSPACE> ::= any character satisfying the condition !isspace(character)
+
+<WORD> ::= <NONSPACE>
+            | <WORD> <NONSPACE>
+
+<ENV-VAR> ::= '$' <WORD>
+
+<WORD-LIST> ::= <WORD> <WORD-LIST-TAIL>
+
+<WORD-LIST-TAIL> ::= <WORD> <WORD-LIST-TAIL>
+
+<ASSIGNMENT-WORD> ::= <ENV-VAR> '=' <WORD>
+
+<REDIRECTION> ::=  '>' <WORD>
+                |  '<' <WORD>
+                |  '>>' <WORD>
+                |  '<<' <WORD>
+
+<SIMPLE-COMMAND-ELEMENT> ::= <WORD>
+                          |  <ASSIGNMENT-WORD>
+                          |  <REDIRECTION>
+                          |  <ENV-VAR>
+
+<REDIRECTION-LIST> ::= <REDIRECTION> <REDIRECTION-LIST-TAIL>
+
+<REDIRECTION-LIST-TAIL> ::= <REDIRECTION> <REDIRECTION-LIST-TAIL> | ε
+
+<SIMPLE-COMMAND> ::= <SIMPLE-COMMAND-ELEMENT> <SIMPLE-COMMAND-TAIL>
+
+<SIMPLE-COMMAND-TAIL> ::= <SIMPLE-COMMAND-ELEMENT> <TAIL_SIMPLE_COMMAND>
+
+<COMMAND> ::=  <SIMPLE-COMMAND>
+            |  <SUBSHELL>
+            |  <SUBSHELL> <REDIRECTION-LIST>
+
+<SUBSHELL> ::=  '(' <LIST> ')'
+
+<LIST> ::= <PIPELINE> <LIST-TAIL>
+
+<LIST-TAIL> ::= '&&' <PIPELINE> <LIST-TAIL> | '||' <PIPELINE> <LIST-TAIL>
+
+<PIPELINE> ::= <COMMAND> <PIPELINE-TAIL>
+
+<PIPELINE-TAIL> ::= '|' <COMMAND> <PIPELINE-TAIL>

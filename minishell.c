@@ -42,16 +42,12 @@ void print_ast(t_node *node, int depth, const char *indent)
 		printf("%s", node->cmd_args[0]);
 	else if (node->type == AST_NULL)
 		printf("NULL");
-	// else if (node->type == AST_REDIR_IN)
-	// 	printf("<");
-	// else if (node->type == AST_HEREDOC)
-	// 	printf("<<");
-	// else if (node->type == AST_REDIR_OUT)
-	// 	printf(">");
-	// else if (node->type == AST_REDIR_APPEND)
-	// 	printf(">>");
-	// else if (node->type == AST_SUBSHELL)
-	// 	printf("$()");
+	else if (node->type == AST_REDIR_IN)
+		printf("<");
+	else if (node->type == AST_REDIR_OUT)
+		printf(">");
+	else if (node->type == AST_REDIR_APPEND)
+		printf(">>");
 	for (t_size i = 0; i < node->num_args; i++)
 		printf("[%d][%s] ", node->type, node->cmd_args[i]);
 	printf("\n");
@@ -76,7 +72,7 @@ void print_tokens(t_token *tokens, t_size num_tokens)
 	printf("\n================= TOKENS =================\n");
 	printf("num of tokens: %llu\n", num_tokens);
 	for (t_size i = 0; i < num_tokens; i++)
-		printf("token[%llu]: %d, %s\n", i, tokens[i].type, tokens[i].value);
+		printf("token[%llu]: [%d], [%s]\n", i, tokens[i].type, tokens[i].value);
 	printf("==========================================\n");
 }
 
@@ -109,7 +105,8 @@ int	main(int ac, char **av, char **envp)
 	init_g_info(envp);
 	tokens = 0;
 	ast = 0;
-	// signal(SIGINT, sig_handler);
+	status = 0;
+	signal(SIGINT, sig_handler);
 	while (TRUE)
 	{
 		line = readline("minishell> ");
@@ -118,10 +115,13 @@ int	main(int ac, char **av, char **envp)
 			if (ft_strcmp(line, "exit") == 0 || ft_strcmp(line, "quit") == 0)
 				exit (0);
 			add_history(line);
+			// TODO: ft_strtrim(line, space);
+			// remove spaces at the start and end
 			// tokenize the input into an array of tokens
 			if (line && *line)
 			{
-				tokens = tokenize(line, &num_tokens);
+				// tokens = tokenize(line, &num_tokens);
+				tokens = tokenize_cmd(line, &num_tokens);
 				if (!tokens)
 					return (0);
 				categorize_tokens(tokens, num_tokens);
@@ -135,13 +135,14 @@ int	main(int ac, char **av, char **envp)
 					printf("=========================================\n");
 				}
 				g_info.root = ast;
-				exit_code = executor(g_info.root);
+				status = executor(g_info.root);
+				g_info.exit_code = WEXITSTATUS(status);
 			}
 			// if (status)
 			// 	update_exit_status(status);
-			free_tokens(tokens, num_tokens);
+			if (tokens)
+				free_tokens(tokens, num_tokens);
 			tokens = 0;
-			// free_ast(ast);
 			free(line);
 			line = 0;
 		}

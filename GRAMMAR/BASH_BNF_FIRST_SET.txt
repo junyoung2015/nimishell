@@ -1,0 +1,24 @@
+FIRST(<NONSPACE>) = any character satisfying the condition !isspace(character)
+
+FIRST(<WORD>) = FIRST(<NONSPACE>)
+FIRST(<WORD-LIST>) = FIRST(<WORD>) = FIRST(<NONSPACE>)
+FIRST(<WORD-LIST-TAIL>) = FIRST(<WORD>) U {ε} = FIRST(<NONSPACE>)
+
+FIRST(<ENV-VAR>) = {'$'}
+FIRST(<ASSIGNMENT-WORD>) = FIRST(<WORD>)
+
+FIRST(<REDIRECTION>) = { '>', '<', '>>', '<<' }
+FIRST(<REDIRECTION-LIST>) = FIRST(<REDIRECTION>) = { '>', '<', '>>', '<<' }
+FIRST(<REDIRECTION-LIST-TAIL>) = FIRST(<REDIRECTION>) U {ε}
+
+FIRST(<SIMPLE-COMMAND-ELEMENT>) = FIRST(<WORD>) U FIRST(<ASSIGNMENT-WORD>) U FIRST(<REDIRECTION>) U FIRST(<ENV-VAR>)
+FIRST(<SIMPLE-COMMAND>) = FIRST(<SIMPLE-COMMAND-ELEMENT>) =  { '>', '<', '>>', '<<' }
+FIRST(<SIMPLE-COMMAND-TAIL>) = FIRST(<SIMPLE-COMMAND>)
+
+FIRST(<COMMAND>) = FIRST(<SIMPLE-COMMAND>) U FIRST(<SUBSHELL>) =  { '>', '<', '>>', '<<', '(', '$' }
+FIRST(<SUBSHELL>) = { '(' }
+FIRST(<LIST>) = FIRST(<PIPELINE>) = FIRST(<COMMAND>) =  { '>', '<', '>>', '<<', '(' }
+FIRST(<LIST-TAIL>) = { '&&', '||', ε}
+
+FIRST(<PIPELINE>) = FIRST(<COMMAND>) =  { '>', '<', '>>', '<<', '(' }
+FIRST(<PIPELINE-TAIL>) = { '|', ε}
