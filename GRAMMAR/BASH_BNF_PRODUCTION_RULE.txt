@@ -5,16 +5,15 @@
 <NONSPACE> -> any character satisfying the condition !isspace(character)
 
 <WORD> -> <NONSPACE>
-<WORD> -> <WORD> <NONSPACE>
 
 <ENV-VAR> -> $ <WORD>
 
-<WORD-LIST> ::= <WORD> <WORD-LIST-TAIL>
+<WORD-LIST> -> <WORD> <WORD-LIST-TAIL>
 
 <WORD-LIST-TAIL> -> <WORD> <WORD-LIST-TAIL>
 <WORD-LIST-TAIL> -> ε
 
-<ASSIGNMENT-WORD> -> <ENV-VAR> = <WORD>
+<ASSIGNMENT-WORD> -> <WORD> = <WORD>
 
 <REDIRECTION> -> > <WORD>
 <REDIRECTION> -> < <WORD>

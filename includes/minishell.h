@@ -49,21 +49,22 @@ typedef enum	e_token_type
 	TOKEN_WORD,
 	TOKEN_UNKNOWN,
 	TOKEN_PIPE,
-	TOKEN_AND,
 	TOKEN_OR,
-	TOKEN_WILDCARD,
-	TOKEN_L_PARENTHESIS,
-	TOKEN_R_PARNTHESIS,
+	TOKEN_AND,
 	TOKEN_REDIR_IN,
-	TOKEN_REDIR_OUT,
 	TOKEN_HEREDOC,
+	TOKEN_REDIR_OUT,
 	TOKEN_APPEND,
 	TOKEN_DOLLAR_SIGN,
+	TOKEN_L_PAREN,
+	TOKEN_R_PAREN,
+	TOKEN_SUBSHELL,
 	TOKEN_ENV_VAR,
+	TOKEN_WILDCARD,
 	TOKEN_WHITESPACE,
-	TOKEN_OPERATOR,
 	TOKEN_SQ_STR,
 	TOKEN_DQ_STR,
+	TOKEN_OPERATOR,
 	TOKEN_ERROR,
 }	t_token_type;
 
@@ -91,9 +92,14 @@ typedef enum e_node_type
     AST_ARGUMENT,
     AST_PIPE,
     AST_REDIR_IN,
+	AST_HEREDOC,
     AST_REDIR_OUT,
     AST_REDIR_APPEND,
-	AST_HEREDOC,
+	AST_SUBSHELL,
+	AST_BUILTIN,
+	AST_AND,
+	AST_OR,
+
 } t_node_type;
 
 typedef struct  s_node
@@ -158,7 +164,8 @@ extern t_global_info	g_info;
 # define TRUE						1
 # define FALSE						0
 
-# define QUOTE_NOT_CLOSED			"Syntax Error: quote not closed\n"
+# define QUOTE_NOT_CLOSED			"Syntax Error: unmatched quote\n"
+# define PAREN_NOT_CLOSED			"Syntax Error: unmatched parenthesis\n"
 # define MALLOC_ERR					"malloc() error."
 
 /* ================== MEMORY_UTILS ================== */
@@ -197,6 +204,10 @@ void			categorize_tokens(t_token *tokens, t_size num_tokens);
 
 /* ================== PARSER ================== */
 t_node			*parse_tokens(t_token *tokens, t_size num_tokens);
+t_node			*parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens);
+void			free_ast(t_node *root);
+t_node			*create_node(t_node_type type);
+void			append_child_node(t_node *parent, t_node *child);
 void			free_ast(t_node *root);
 
 /* ================== EXECUTOR ================== */
