@@ -17,9 +17,10 @@ t_bool	is_in_env(char *key, char *env)
 
 void	put_env(t_node *node, char **env, size_t i)
 {
-	env[i] = node->cmd_args[0];
-	node->cmd_args[0] = NULL;
-	free(node->cmd_args);
+	env[i] = ft_strdup(node->cmd_args[0]);
+	free_ptr(node->cmd_args);
+	// node->cmd_args[0] = NULL;
+	// free(node->cmd_args);
 	node->cmd_args = NULL;
 }
 
@@ -42,7 +43,7 @@ void	append_env(t_node *node, t_exec_info *info)
 	}
 	put_env(node, env, i++);
 	env[i] = NULL;
-	free(g_info.env);
+	// free(g_info.env);
 	g_info.env = env;
 }
 
@@ -59,6 +60,7 @@ void	export(t_node *node, t_exec_info *info)
 			put_env(node, g_info.env, i);
 			return ;
 		}
+		i++;
 	}
 	append_env(node, info);
 	if (!info->exit_code)

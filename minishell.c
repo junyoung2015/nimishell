@@ -92,7 +92,7 @@ int	main(int ac, char **av, char **envp)
 {
 	(void) ac;
 	(void) av;
-	int			exit_code;
+	int			status;
 	char		*line;
 	t_token		*tokens;
 	t_size		num_tokens;
@@ -147,6 +147,6 @@ int	main(int ac, char **av, char **envp)
 			line = 0;
 		}
 	}
-	exit(exit_code);
+	exit(status);
 	return (0);
 }
