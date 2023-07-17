@@ -17,10 +17,9 @@ t_bool	is_in_env(char *key, char *env)
 
 void	put_env(t_node *node, char **env, size_t i)
 {
-	env[i] = ft_strdup(node->cmd_args[0]);
+	env[i] = node->cmd_args[1];
+	node->cmd_args[1] = NULL;
 	free_ptr(node->cmd_args);
-	// node->cmd_args[0] = NULL;
-	// free(node->cmd_args);
 	node->cmd_args = NULL;
 }
 
@@ -54,7 +53,7 @@ void	export(t_node *node, t_exec_info *info)
 	i = 0;
 	while (g_info.env && g_info.env[i])
 	{
-		if (is_in_env(node->cmd_args[0], g_info.env[i]))
+		if (is_in_env(node->cmd_args[1], g_info.env[i]))
 		{
 			free(g_info.env[i]);	
 			put_env(node, g_info.env, i);

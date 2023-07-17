@@ -6,12 +6,11 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/16 22:35:28 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/17 22:10:10 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "executor.h"
-#include "builtin.h"
 
 void	run_cmd(t_node *root, t_exec_info *info)
 {
@@ -79,11 +78,9 @@ int	execute(t_node *root)
 	preorder_traversal(root, &info);
 	dup2(g_info.stdin_fd, STDIN_FILENO);
 	dup2(g_info.stdout_fd, STDOUT_FILENO);
+	clear_all(g_info.root);
 	if (!info.fork_cnt)
-	{
-		clear_all(g_info.root);
 		return (info.exit_code);
-	}
 	waitpid(info.pid, &status, 0);
 	i = 0;
 	while (i + 1 < info.fork_cnt)
@@ -91,7 +88,6 @@ int	execute(t_node *root)
 		wait(NULL);
 		i++;
 	}
-	clear_all(g_info.root);
 	return (WEXITSTATUS(status));
 }
 
