@@ -16,15 +16,7 @@ t_bool	is_in_env(char *key, char *env)
 	return (FALSE);
 }
 
-void	put_env(t_node *node, char **env, size_t i)
-{
-	env[i] = node->cmd_args[1];
-	node->cmd_args[1] = NULL;
-	free_ptr(node->cmd_args);
-	node->cmd_args = NULL;
-}
-
-void	append_env(t_node *node, t_exec_info *info)
+void	append_last(t_node *node, t_exec_info *info)
 {
 	char **env;
 	size_t	i;
@@ -41,13 +33,34 @@ void	append_env(t_node *node, t_exec_info *info)
 		env[i] = g_info.env[i];
 		g_info.env[i++] = NULL;
 	}
-	put_env(node, env, i++);
+	env[i++] = node->cmd_args[1];
+	node->cmd_args[1] = NULL;
 	env[i] = NULL;
 	free(g_info.env);
 	g_info.env = env;
 }
 
-void	export(t_node *node, t_exec_info *info)
+void	print_env()
+{
+	size_t	i;
+	size_t	len;
+
+	i = 0;
+	while (g_info.env && g_info.env[i])
+	{
+		write(STDOUT_FILENO, "declare -x ", 11);
+		len = 0;
+		while (g_info.env[len] != '=')
+			len++;
+		write(STDOUT_FILENO, g_info.env[i], ++len);
+		write(STDOUT_FILENO, "\"", 1);
+		write(STDOUT_FILENO, g_info.env[i] + len, ft_strlen(g_info.env[i]) - len);
+		write(STDOUT_FILENO, "\"", 1);
+		i++;
+	}
+}
+
+void	add_env(t_node *node, t_exec_info *info)
 {
 	size_t	i;
 
@@ -57,13 +70,24 @@ void	export(t_node *node, t_exec_info *info)
 		if (is_in_env(node->cmd_args[1], g_info.env[i]))
 		{
 			free(g_info.env[i]);	
-			put_env(node, g_info.env, i);
+			g_info.env[i] = node->cmd_args[1];
+			node->cmd_args[1] = NULL;
 			return ;
 		}
 		i++;
 	}
-	if (node->cmd_args[1])
-		append_env(node, info);
+	append_last(node, info);
 	if (!info->exit_code)
 		g_info.env_cnt += 1;
+}
+
+void	export(t_node *node, t_exec_info *info)
+{
+
+	if (!node->cmd_args[1])
+		print_env();
+	else if (node->cmd_args[1][0] == "=")
+		export_err(info);
+	else
+		add_env(node, info);
 }
