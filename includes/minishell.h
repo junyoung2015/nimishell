@@ -137,7 +137,7 @@ typedef enum e_parse_state
 typedef struct s_global_info
 {
 	char	**env;
-	int		env_cnt;
+	size_t	env_cnt;
 	int		stdin_fd;
 	int		stdout_fd;
 	int		exit_code;

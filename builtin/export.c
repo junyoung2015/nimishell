@@ -5,7 +5,7 @@ t_bool	is_in_env(char *key, char *env)
 	size_t	i;
 
 	i = 0;
-	while (key[i] != '=')
+	while (key && key[i] != '=')
 	{
 		if (key[i] != env[i])
 			return (FALSE);
@@ -43,7 +43,7 @@ void	append_env(t_node *node, t_exec_info *info)
 	}
 	put_env(node, env, i++);
 	env[i] = NULL;
-	// free(g_info.env);
+	free(g_info.env);
 	g_info.env = env;
 }
 
@@ -62,7 +62,8 @@ void	export(t_node *node, t_exec_info *info)
 		}
 		i++;
 	}
-	append_env(node, info);
+	if (node->cmd_args[1])
+		append_env(node, info);
 	if (!info->exit_code)
 		g_info.env_cnt += 1;
 }
