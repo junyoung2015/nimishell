@@ -12,4 +12,6 @@ void	builtin(t_node *node, t_exec_info *info)
 		export(node, info);
 	else if (node->builtin == ENV)
 		env();
+	else if (node->builtin == UNSET)
+		unset(node, info);
 }

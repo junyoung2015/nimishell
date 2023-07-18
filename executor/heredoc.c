@@ -1,23 +1,9 @@
 #include "executor.h"
 
-static void	str_copy(char *dst, char *src, size_t size)
-{
-	size_t	i;
-
-	if (!src)
-		return ;
-	i = 0;
-	while (src[i] && i + 1 < size)
-	{
-		dst[i] = src[i];
-		i++;
-	}
-	dst[i] = 0;
-}
-
-static char	*str_join(char *str, char *buf, size_t len)
+static char	*str_join(char *str, char buf, size_t len)
 {
 	char	*ret;
+	size_t	i;
 
 	ret = malloc(sizeof(char) * (len + 2));
 	if (!ret)
@@ -25,8 +11,14 @@ static char	*str_join(char *str, char *buf, size_t len)
 		free(str);
 		return (NULL);
 	}
-	str_copy(ret, str, len + 1);
-	str_copy(ret + len, buf, 2);
+	i = 0;
+	while (str && str[i])
+	{
+		ret[i] = str[i];
+		i++;
+	}
+	ret[i++] = buf;
+	ret[i] = 0;
 	if (str)
 		free(str);
 	return (ret);
@@ -42,19 +34,18 @@ static char	*_err(t_exec_info *info, char *str)
 
 char	*get_next_line(int fd, t_exec_info *info, size_t *str_len)
 {
-	char	buf[2];
+	char	buf;
 	char	*str;
 	size_t	len;
 
 	str = NULL;
 	len = 0;
-	buf[0] = 0;
-	buf[1] = 0;
-	while (*buf != '\n')
+	buf = 0;
+	while (buf != '\n')
 	{
-		if (read(fd, buf, 1) < 0)
+		if (read(fd, &buf, 1) < 0)
 			return (_err(info, str));
-		if (*buf == 0)
+		if (buf == 0)
 			return (str);
 		str = str_join(str, buf, len++);
 		if (!str)

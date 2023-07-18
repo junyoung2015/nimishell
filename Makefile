@@ -37,6 +37,7 @@ SRCS = ./minishell.c						\
 		$(EXECUTOR_DIR)redirection.c		\
 		$(EXECUTOR_DIR)builtin.c			\
 		$(BUILTIN_DIR)export.c				\
+		$(BUILTIN_DIR)unset.c				\
 		$(BUILTIN_DIR)env.c
 
 CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2 -I$(INCLUDES) -I$(INCLUDE_READLINE)
