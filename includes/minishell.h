@@ -66,6 +66,7 @@ typedef enum	e_token_type
 	TOKEN_DQ_STR,
 	TOKEN_OPERATOR,
 	TOKEN_ERROR,
+	TOKEN_TYPES_CNT,
 }	t_token_type;
 
 typedef enum	e_builtin
@@ -115,7 +116,7 @@ typedef struct  s_node
 
 typedef enum e_parse_state
 {
-	NONSPACE,
+	// NONSPACE,
 	WORD,
 	ENV_VAR,
 	WORD_LIST,
@@ -133,8 +134,19 @@ typedef enum e_parse_state
 	LIST_TAIL,
 	PIPELINE,
 	PIPELINE_TAIL,
+	ERR,
 	PARSE_STATES_CNT,
 }	t_parse_state;
+
+typedef struct s_parser
+{
+	t_token	*tokens;
+	t_size	cur;
+	t_size	num_tokens;
+	void	(*advance)(struct s_parser*);
+	t_bool	(*check)(struct s_parser*, t_token_type);
+}	t_parser;
+typedef t_node* (*parse_fn)(t_parser*, t_parse_state *);
 
 typedef struct s_global_info
 {
