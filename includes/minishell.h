@@ -41,6 +41,7 @@ typedef enum e_token_state
 	DQUOTE,
 	META_CH,
 	WSPACE,
+	ESC,
 	END,
 } t_token_state;
 
