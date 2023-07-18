@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:26 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/16 20:53:14 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/18 21:46:45 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,6 @@ void	err(void)
 void	cmd_not_found(void)
 {
 	clear_all(g_info.root);
-	write(2, "error: command not found\n", 25);
+	write(STDERR_FILENO, "error: command not found\n", 25);
 	exit(EXIT_CMD_NOT_FOUND);
 }
