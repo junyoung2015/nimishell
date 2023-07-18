@@ -316,8 +316,25 @@ t_token	*tokenize_meta(char **input, t_token_state *state)
 	return (new_token);
 }
 
-t_token* tokenize_whitespace(char **input, t_token_state *state)
+t_token *tokenize_whitespace(char **input, t_token_state *state)
 {  
+	char	*start;
+	t_token	*new_token;
+
+	start = *input;
+    while (is_space(**input))
+    {
+		(*input)++;
+	}
+	new_token = create_token(TOKEN_WHITESPACE, start, *input - start);
+	*state = update_state(**input);
+	(*input)--;
+    return (new_token);
+}
+
+// TODO: edit escape
+t_token	*tokenize_escape(char **input, t_token_state *state)
+{
 	char	*start;
 	t_token	*new_token;
 
@@ -345,6 +362,7 @@ t_token *tokenize_cmd(char *input, t_size *num_tokens)
 		tokenize_dquote,
 		tokenize_meta,
 		tokenize_whitespace,
+		tokenize_escape,
 	};
 
 	state = update_state(*input);
