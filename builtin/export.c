@@ -87,7 +87,10 @@ void	export(t_node *node, t_exec_info *info)
 	if (!node->cmd_args[1])
 		print_env();
 	else if (node->cmd_args[1][0] == "=")
-		export_err(info);
+	{
+		write(STDERR_FILENO, "error: export: not a valid identifier\n", 38);
+		info->exit_code = EXIT_FAILURE;
+	}
 	else
 		add_env(node, info);
 }
