@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/17 22:10:10 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/19 20:40:50 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,11 +99,14 @@ int	executor(t_node *root)
 	if (root->type == AST_BUILTIN)
 		return (execute(root));
 	pid = fork();
+	clear_all(g_info.root);
 	if (pid < 0)
-		err();
+	{
+		perror("error");
+		return (EXIT_FAILURE);
+	}
 	else if (!pid)
 		execute_in_child(root);
 	waitpid(pid, &status, 0);
-	clear_all(g_info.root);
 	return (WEXITSTATUS(status));
 }

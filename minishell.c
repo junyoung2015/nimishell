@@ -102,7 +102,7 @@ int	main(int ac, char **av, char **envp)
 {
 	(void) ac;
 	(void) av;
-	int			status;
+	int			exit_code;
 	char		*line;
 	t_token		*tokens;
 	t_size		num_tokens;
@@ -115,7 +115,7 @@ int	main(int ac, char **av, char **envp)
 	init_g_info(envp);
 	tokens = 0;
 	ast = 0;
-	status = 0;
+	exit_code = 0;
 	signal(SIGINT, sig_handler);
 	while (TRUE)
 	{
@@ -145,8 +145,7 @@ int	main(int ac, char **av, char **envp)
 					printf("=========================================\n");
 				}
 				g_info.root = ast;
-				status = executor(g_info.root);
-				g_info.exit_code = WEXITSTATUS(status);
+				exit_code = executor(g_info.root);
 			}
 			// if (status)
 			// 	update_exit_status(status);
@@ -157,6 +156,6 @@ int	main(int ac, char **av, char **envp)
 			line = 0;
 		}
 	}
-	exit(status);
+	exit(exit_code);
 	return (0);
 }
