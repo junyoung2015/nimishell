@@ -14,4 +14,8 @@ void	builtin(t_node *node, t_exec_info *info)
 		env();
 	else if (node->builtin == UNSET)
 		unset(node, info);
+	else if (node->builtin == PWD)
+		pwd(info);
+	else if (node->builtin == CD)
+		cd(node);
 }
