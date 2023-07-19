@@ -8,5 +8,6 @@ void	env(void);
 void	unset(t_node *node, t_exec_info *info);
 void    pwd(t_exec_info *info);
 void    cd(t_node *node, t_exec_info *info);
+void	echo(t_node *node);
 
 #endif

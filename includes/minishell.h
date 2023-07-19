@@ -140,7 +140,6 @@ typedef struct s_global_info
 	size_t	env_cnt;
 	int		stdin_fd;
 	int		stdout_fd;
-	int		exit_code;
 	t_node	*root;
 } t_global_info;
 
