@@ -25,6 +25,7 @@ SRCS = ./minishell.c						\
 		$(LEXER_DIR)tokenizer.c				\
 		$(MEMORY_DIR)mem_utils.c			\
 		$(PARSER_DIR)parser.c				\
+		$(PARSER_DIR)parser_ll.c				\
 		$(STR_DIR)str_utils.c				\
 		$(STR_DIR)str_split.c				\
 		$(STR_DIR)str_utils_create.c		\
@@ -32,7 +33,7 @@ SRCS = ./minishell.c						\
 		$(EXECUTOR_DIR)error.c				\
 		$(EXECUTOR_DIR)executor.c			\
 		$(EXECUTOR_DIR)pipe.c				\
-		$(EXECUTOR_DIR)heredoc.c				\
+		$(EXECUTOR_DIR)heredoc.c			\
 		$(EXECUTOR_DIR)redirection.c
 
 CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2 -I$(INCLUDES) -I$(INCLUDE_READLINE)

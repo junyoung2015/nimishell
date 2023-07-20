@@ -41,14 +41,36 @@ typedef enum e_token_state
 	DQUOTE,
 	META_CH,
 	WSPACE,
-	ESC,
+	ESCAPE,
 	END,
 } t_token_state;
+
+typedef enum e_parse_state
+{
+	ERR,
+	ENV_VAR,
+	CMD,
+	WORD,
+	REDIR_LIST,
+	PIPELINE,
+	LIST,
+	SIMPLE_CMD,
+	ASSIGN_WORD,
+	SUBSHELL,
+	SIMPLE_CMD_ELE,
+	REDIR,
+	REDIR_TAIL,
+	WORD_LIST,
+	WORD_LIST_TAIL,
+	SIMPLE_CMD_TAIL,	
+	PIPELINE_TAIL,
+	LIST_TAIL,
+	PARSE_STATES_CNT,
+}	t_parse_state;
 
 typedef enum	e_token_type
 {
 	TOKEN_WORD,
-	TOKEN_UNKNOWN,
 	TOKEN_PIPE,
 	TOKEN_OR,
 	TOKEN_AND,
@@ -58,15 +80,16 @@ typedef enum	e_token_type
 	TOKEN_APPEND,
 	TOKEN_DOLLAR_SIGN,
 	TOKEN_L_PAREN,
+	TOKEN_WILDCARD,
+	TOKEN_SQ_STR,
+	TOKEN_DQ_STR,
 	TOKEN_R_PAREN,
 	TOKEN_SUBSHELL,
 	TOKEN_ENV_VAR,
-	TOKEN_WILDCARD,
 	TOKEN_WHITESPACE,
-	TOKEN_SQ_STR,
-	TOKEN_DQ_STR,
 	TOKEN_OPERATOR,
 	TOKEN_ERROR,
+	TOKEN_UNKNOWN,
 	TOKEN_TYPES_CNT,
 }	t_token_type;
 
@@ -91,7 +114,6 @@ typedef enum e_node_type
 {
     AST_NULL,
     AST_COMMAND,
-    AST_ARGUMENT,
     AST_PIPE,
     AST_REDIR_IN,
 	AST_HEREDOC,
@@ -115,37 +137,37 @@ typedef struct  s_node
 	t_node_type		parent_type;
 }   t_node;
 
-typedef enum e_parse_state
-{
-	// NONSPACE,
-	WORD,
-	ENV_VAR,
-	WORD_LIST,
-	WORD_LIST_TAIL,
-	ASSIGN_WORD,
-	REDIR,
-	REDIR_LIST,
-	REDIR_TAIL,
-	SIMPLE_CMD_ELE,
-	SIMPLE_CMD,
-	SIMPLE_CMD_TAIL,	
-	CMD,
-	SUBSHELL,
-	LIST,
-	LIST_TAIL,
-	PIPELINE,
-	PIPELINE_TAIL,
-	ERR,
-	PARSE_STATES_CNT,
-}	t_parse_state;
+// typedef enum e_parse_state
+// {
+// 	WORD,
+// 	ENV_VAR,
+// 	WORD_LIST,
+// 	WORD_LIST_TAIL,
+// 	ASSIGN_WORD,
+// 	REDIR,
+// 	REDIR_LIST,
+// 	REDIR_TAIL,
+// 	SIMPLE_CMD_ELE,
+// 	SIMPLE_CMD,
+// 	SIMPLE_CMD_TAIL,	
+// 	CMD,
+// 	SUBSHELL,
+// 	LIST,
+// 	LIST_TAIL,
+// 	PIPELINE,
+// 	PIPELINE_TAIL,
+// 	ERR,
+// 	PARSE_STATES_CNT,
+// }	t_parse_state;
 
 typedef struct s_parser
 {
 	t_token	*tokens;
 	t_size	cur;
-	t_size	num_tokens;
+	t_size	size;
 	void	(*advance)(struct s_parser*);
 	t_bool	(*check)(struct s_parser*, t_token_type);
+	t_token_type (*peek)(struct s_parser*);
 }	t_parser;
 typedef t_node* (*parse_fn)(t_parser*, t_parse_state *);
 
@@ -222,6 +244,8 @@ void			free_ast(t_node *root);
 t_node			*create_node(t_node_type type);
 void			append_child_node(t_node *parent, t_node *child);
 void			free_ast(t_node *root);
+/* LL(1) */
+t_node*			parse_tokens_ll(t_token* tokens, t_size num_tokens);
 
 /* ================== EXECUTOR ================== */
 int				executor(t_node *root);

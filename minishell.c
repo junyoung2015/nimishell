@@ -123,18 +123,21 @@ int	main(int ac, char **av, char **env)
 					categorize_tokens(tokens, num_tokens);
 					if (tokens && DEBUG)
 						print_tokens(tokens, num_tokens);
-					ast = parse_tokens(tokens, num_tokens);
+					ast = parse_tokens_ll(tokens, num_tokens);
+					// ast = parse_tokens(tokens, num_tokens);
 					if (ast && DEBUG)
 					{
 						printf("\n================== AST ==================\n");
 						print_ast(ast, 0, "");
 						printf("=========================================\n");
 					}
-					g_info.root = ast;
-					status = executor(g_info.root);
-					g_info.exit_code = WEXITSTATUS(status);
+					// g_info.root = ast;
+					// status = executor(g_info.root);
+					// g_info.exit_code = WEXITSTATUS(status);
 				}
 			}
+			if (ast)
+				free_ast(ast);
 			// if (status)
 			// 	update_exit_status(status);
 			if (tokens)
