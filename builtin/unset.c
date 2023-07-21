@@ -32,7 +32,7 @@ size_t	get_idx(char *key)
 
 void	remove_env(t_exec_info *info, size_t idx)
 {
-	char	*env;
+	char	**env;
 	size_t	i;
 	size_t	j;
 

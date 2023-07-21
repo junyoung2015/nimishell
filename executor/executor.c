@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/19 20:40:50 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/21 19:54:21 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ int	executor(t_node *root)
 	if (root->type == AST_BUILTIN)
 		return (execute(root));
 	pid = fork();
-	clear_all(g_info.root);
 	if (pid < 0)
 	{
 		perror("error");
@@ -107,6 +106,7 @@ int	executor(t_node *root)
 	}
 	else if (!pid)
 		execute_in_child(root);
+	clear_all(g_info.root);
 	waitpid(pid, &status, 0);
 	return (WEXITSTATUS(status));
 }

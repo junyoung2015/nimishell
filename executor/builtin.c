@@ -18,7 +18,7 @@ static int	_atoi(char *str)
 	return (num % 256);
 }
 
-static void	_exit(t_node *node, t_exec_info *info)
+static void	__exit(t_node *node, t_exec_info *info)
 {
 	if (node->parent_type == AST_PIPE)
 		return ;
@@ -47,7 +47,7 @@ void	builtin(t_node *node, t_exec_info *info)
 	else if (node->builtin == CD)
 		cd(node, info);
 	else if (node->builtin == EXIT)
-		_exit(node, info);
+		__exit(node, info);
 	else if (node->builtin == ECHO)
 		echo(node);
 }
