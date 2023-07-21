@@ -18,7 +18,7 @@ t_bool	is_in_env(char *key, char *env)
 
 void	append_last(t_node *node, t_exec_info *info)
 {
-	char **env;
+	char	**env;
 	size_t	i;
 
 	env = malloc(sizeof(char *) * (g_info.env_cnt + 2));
@@ -55,7 +55,7 @@ void	print_env()
 		write(STDOUT_FILENO, g_info.env[i], ++len);
 		write(STDOUT_FILENO, "\"", 1);
 		write(STDOUT_FILENO, g_info.env[i] + len, ft_strlen(g_info.env[i]) - len);
-		write(STDOUT_FILENO, "\"", 1);
+		write(STDOUT_FILENO, "\"\n", 2);
 		i++;
 	}
 }

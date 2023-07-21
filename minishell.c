@@ -122,8 +122,6 @@ int	main(int ac, char **av, char **envp)
 		line = readline("minishell> ");
 		if (line)
 		{
-			if (ft_strcmp(line, "exit") == 0 || ft_strcmp(line, "quit") == 0)
-				exit (0);
 			add_history(line);
 			// TODO: ft_strtrim(line, space);
 			// remove spaces at the start and end
