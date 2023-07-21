@@ -6,35 +6,35 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/17 19:05:20 by jusohn            #+#    #+#             */
-/*   Updated: 2023/07/18 22:28:48 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/07/20 21:47:11 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 // t_node* parse_nonspace(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_word(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_env_var(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_word_list(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_word_list_tail(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_assign_word(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_redir(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_simple_cmd_element(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_redir_list(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_redir_list_tail(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_simple_cmd(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_simple_cmd_tail(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_command_ll(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_subshell(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_list(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_list_tail(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_pipeline(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_pipeline_tail(t_parser *parser, t_parse_state *parse_state);
-t_node* parse_err(t_parser *parser, t_parse_state *parse_state);
+t_node* parse_word(t_parser *parser);
+t_node* parse_env_var(t_parser *parser);
+t_node* parse_word_list(t_parser *parser);
+t_node* parse_word_list_tail(t_parser *parser);
+t_node* parse_assign_word(t_parser *parser);
+t_node* parse_redir(t_parser *parser);
+t_node* parse_simple_cmd_element(t_parser *parser);
+t_node* parse_redir_list(t_parser *parser);
+t_node* parse_redir_list_tail(t_parser *parser);
+t_node* parse_simple_cmd(t_parser *parser);
+t_node* parse_simple_cmd_tail(t_parser *parser);
+t_node* parse_command_ll(t_parser *parser);
+t_node* parse_subshell(t_parser *parser);
+t_node* parse_list(t_parser *parser);
+t_node* parse_list_tail(t_parser *parser);
+t_node* parse_pipeline(t_parser *parser);
+t_node* parse_pipeline_tail(t_parser *parser);
+t_node* parse_err(t_parser *parser);
 
 // ==================== 6th =====================
 
-typedef t_node* (*parse_fn)(t_parser *parser, t_parse_state *parse_state);
+typedef t_node* (*parse_fn)(t_parser *parser);
 
 t_bool	check(t_parser *parser, t_token_type type)
 {
@@ -45,7 +45,7 @@ t_bool	check(t_parser *parser, t_token_type type)
 
 t_token_type peek(t_parser *parser) {
 	if (parser->cur + 1< parser->size)
-	    return (parser->tokens[parser->cur].type);
+	    return (parser->tokens[parser->cur + 1].type);
 	return (TOKEN_TYPES_CNT);
 }
 
@@ -54,43 +54,6 @@ void	advance(t_parser *parser)
 	if (parser->cur < parser->size)
 		parser->cur++;
 }
-
-// t_node *create_node(t_node_type type)
-// {
-// 	t_node	*new_node;
-// 	new_node = (t_node *) ft_calloc(1, sizeof(t_node));
-// 	if (!new_node)
-// 		return (0);
-// 	new_node->type = type;
-// 	new_node->cmd_args = 0;
-// 	new_node->num_args = 0;
-// 	new_node->left = 0;
-// 	new_node->right = 0;
-// 	new_node->pipe_open = 0;
-// 	new_node->parent_type = AST_NULL;
-// 	return (new_node);
-// }
-
-// t_bool append_child_node(t_node *parent, t_node *child)
-// {
-// 	if (!parent->left)
-// 	{
-// 		parent->left = child;
-// 		return (TRUE);
-// 	}
-// 	else if (!parent->right)
-// 	{
-// 		parent->right = child;
-// 		return (TRUE);
-// 	}
-// 	// else
-// 	// {
-// 	// 	if (!append_child_node(parent->left, child));
-// 	// 		return (append_child_node(parent->right, child));
-// 	// 	return (TRUE);
-// 	// }
-// 	return (FALSE);
-// }
 
 # define ROW1	"\2\5\6\6\4\4\4\4\1\0\2\2\2"
 # define ROW2	"\2\0\0\0\0\4\0\0\1\7\0\2\2"
@@ -106,24 +69,21 @@ void	advance(t_parser *parser)
 # define ROW12	"\2\5\6\6\4\4\4\4\2\0\2\2\2"
 # define ROW13	"\2\5\6\6\4\4\4\4\2\0\2\2\2"
 
+void	free_table(char **table)
+{
+	t_size	i;
+
+	i = 0;
+	while (i < 13)
+	{
+		free(table[i]);
+		i++;
+	}
+	free(table);
+}
+
 char	**init_rule_table(void)
 {
-	// char table[13][14] = {
-	// 	ROW1,
-	// 	ROW2,
-	// 	ROW3,
-	// 	ROW4,
-	// 	ROW5,
-	// 	ROW6,
-	// 	ROW7,
-	// 	ROW8,
-	// 	ROW9,
-	// 	ROW10,
-	// 	ROW11,
-	// 	ROW12,
-	// 	ROW13,
-	// };
-
 	char	**table;
 
 	table = ft_calloc(13, sizeof(char));
@@ -146,11 +106,10 @@ char	**init_rule_table(void)
 	return (table);
 }
 
-void	update_p_state(t_parser *parser, t_parse_state *parse_state)
+void	update_p_state(char **table, t_parser *parser, t_parse_state *parse_state)
 {
     t_token			cur;
 	t_token_type	peek;
-	char	**table;
 	
 	if (parser->cur == 0)
 	{
@@ -164,14 +123,13 @@ void	update_p_state(t_parser *parser, t_parse_state *parse_state)
 		// already at the end of the tokens array
 		return ;
 	}
-	table = init_rule_table();
 	*parse_state = table[cur.type][peek];
 }
 
-t_node	*parse_command_ll(t_parser *parser, t_parse_state *parse_state)
+t_node	*parse_simple_command(t_parser *parser)
 {
 	t_node	*cmd_node;
-	(void) parse_state;
+	char	*cmd_arg;
 
 	cmd_node = create_node(AST_COMMAND);
 	if (!cmd_node)
@@ -184,16 +142,49 @@ t_node	*parse_command_ll(t_parser *parser, t_parse_state *parse_state)
 	}
 	while (parser->cur < parser->size && (parser->tokens[parser->cur].type == TOKEN_WORD || parser->tokens[parser->cur].type == TOKEN_SQ_STR || parser->tokens[parser->cur].type == TOKEN_DQ_STR))
 	{
-		cmd_node->cmd_args[cmd_node->num_args] = ft_strdup(parser->tokens[parser->cur].value);
-		if (!cmd_node->cmd_args[cmd_node->num_args])
+		cmd_arg = parse_simple_cmd_element(parser);
+		if (!cmd_arg)
 		{
 			for (t_size i = 0; i < cmd_node->num_args; i++)
 				free(cmd_node->cmd_args[i++]);
 			free(cmd_node);
 			return (0);
 		}
+		cmd_node->cmd_args[cmd_node->num_args] = cmd_arg;
 		cmd_node->num_args++;
-		(parser->cur)++;
+		parser->advance(parser);
+	}
+	return (cmd_node);
+}
+
+t_node	*parse_command_ll(t_parser *parser)
+{
+	t_node	*cmd_node;
+	t_token_state	state;
+
+	state = parser->peek(parser);
+	if (TOKEN_L_PAREN == state)
+	{
+		cmd_node = parse_subshell(parser);
+		if (!cmd_node)
+			return (0);
+	}
+	else if (TOKEN_WORD == state || TOKEN_REDIR_IN == state || TOKEN_REDIR_OUT == state || TOKEN_HEREDOC == state || TOKEN_APPEND == state)
+	{
+		cmd_node = parse_simple_cmd(parser);
+		if (!cmd_node)
+			return (0);
+	}
+	else
+	{
+		// err
+		cmd_node = create_node(AST_ERR);
+		if (!cmd_node)
+			return (0);
+		cmd_node->cmd_args = ft_calloc(1, sizeof(char *));
+		if (!cmd_node->cmd_args)
+			return (0);
+		cmd_node->cmd_args[0] = parser->tokens[parser->cur].value;
 	}
 	return (cmd_node);
 }
@@ -204,6 +195,7 @@ t_node	*parse_tokens_ll(t_token* tokens, t_size num_tokens)
     t_node			*root;
 	t_node			*new_node;
 	t_parser		parser;
+	char			**table;
 	const parse_fn parse_fn_array[8] = {
 		// 0,
 		// 0,
@@ -215,7 +207,7 @@ t_node	*parse_tokens_ll(t_token* tokens, t_size num_tokens)
 		// 0,
 		parse_err,
 		parse_env_var,
-		parse_command,
+		parse_command_ll,
 		parse_word,
 		parse_redir_list,
 		parse_pipeline,
@@ -224,7 +216,7 @@ t_node	*parse_tokens_ll(t_token* tokens, t_size num_tokens)
 
 		// parse_simple_cmd,
 		// parse_assign_word,
-		// parse_simple_cmd_element,
+		// parse_simple_cmd_argment,
 		// parse_redir,
 		// parse_redir_list_tail,
 		// parse_word_list,
@@ -242,15 +234,18 @@ t_node	*parse_tokens_ll(t_token* tokens, t_size num_tokens)
 	parser.check = &check;
 	parser.advance = &advance;
 	parser.peek = &peek;
+	table = init_rule_table();
+	if (!table)
+		return (0);
     while (parser.cur < parser.size)
 	{
-		// update_p_state(&parser, &parse_state);
+		update_p_state(table, &parser, &parse_state);
 		if (parse_state == ERR)
 		{
 			// deal with err and free?
 			return 0;
 		}
-        new_node = parse_fn_array[parse_state](&parser, &parse_state);
+        new_node = parse_fn_array[parse_state](&parser);
         if (new_node != 0)
 		{
             if (root == 0)
@@ -267,6 +262,7 @@ t_node	*parse_tokens_ll(t_token* tokens, t_size num_tokens)
 		}
 		parser.advance(&parser);
     }
+	free_table(table);
     return (root);
 }
 
@@ -618,7 +614,7 @@ t_node	*parse_tokens_ll(t_token* tokens, t_size num_tokens)
 // 			// [TOKEN_OPERATOR] = ERR,
 // 			// [TOKEN_ERROR] = ERR,
 // 		},
-// 		[SIMPLE_CMD_ELE] = {
+// 		[SIMPLE_cmd_arg] = {
 // 			[TOKEN_WORD] = ASSIGN_WORD,
 // 			// [TOKEN_UNKNOWN] = ERR,
 // 			// [TOKEN_PIPE] = ERR,
@@ -854,7 +850,7 @@ t_node	*parse_tokens_ll(t_token* tokens, t_size num_tokens)
 // 	parse_word_list_tail,
 // 	parse_assign_word,
 // 	parse_redir,
-// 	parse_simple_cmd_element,
+// 	parse_simple_cmd_argment,
 // 	parse_redir_list,
 // 	parse_redir_list_tail,
 // 	parse_simple_cmd,
@@ -875,7 +871,7 @@ t_node	*parse_tokens_ll(t_token* tokens, t_size num_tokens)
 // 	[WORD_LIST_TAIL] = {},
 // 	[ASSIGN_WORD] = {},
 // 	[REDIR] = {},
-// 	[SIMPLE_CMD_ELE] = {},
+// 	[SIMPLE_cmd_arg] = {},
 // 	[REDIR_LIST] = {},
 // 	[REDIR_TAIL] = {},
 // 	[SIMPLE_CMD] = {},
@@ -1059,12 +1055,12 @@ t_node	*parse_tokens_ll(t_token* tokens, t_size num_tokens)
 // 	parse_table[REDIR][TOKEN_REDIR_OUT] = parse_redir;
 // 	parse_table[REDIR][TOKEN_HEREDOC] = parse_redir;
 // 	parse_table[REDIR][TOKEN_APPEND] = parse_redir;
-// 	parse_table[SIMPLE_CMD_ELE][TOKEN_WORD] = parse_simple_cmd_element;
-// 	parse_table[SIMPLE_CMD_ELE][TOKEN_DOLLAR_SIGN] = parse_simple_cmd_element;
-// 	parse_table[SIMPLE_CMD_ELE][TOKEN_REDIR_IN] = parse_simple_cmd_element;
-// 	parse_table[SIMPLE_CMD_ELE][TOKEN_REDIR_OUT] = parse_simple_cmd_element;
-// 	parse_table[SIMPLE_CMD_ELE][TOKEN_HEREDOC] = parse_simple_cmd_element;
-// 	parse_table[SIMPLE_CMD_ELE][TOKEN_APPEND] = parse_simple_cmd_element;
+// 	parse_table[SIMPLE_cmd_arg][TOKEN_WORD] = parse_simple_cmd_argment;
+// 	parse_table[SIMPLE_cmd_arg][TOKEN_DOLLAR_SIGN] = parse_simple_cmd_argment;
+// 	parse_table[SIMPLE_cmd_arg][TOKEN_REDIR_IN] = parse_simple_cmd_argment;
+// 	parse_table[SIMPLE_cmd_arg][TOKEN_REDIR_OUT] = parse_simple_cmd_argment;
+// 	parse_table[SIMPLE_cmd_arg][TOKEN_HEREDOC] = parse_simple_cmd_argment;
+// 	parse_table[SIMPLE_cmd_arg][TOKEN_APPEND] = parse_simple_cmd_argment;
 // 	parse_table[SIMPLE_CMD][TOKEN_WORD] = parse_simple_cmd;
 // 	parse_table[SIMPLE_CMD][TOKEN_DOLLAR_SIGN] = parse_simple_cmd;
 // 	parse_table[SIMPLE_CMD][TOKEN_REDIR_IN] = parse_simple_cmd;

@@ -45,28 +45,6 @@ typedef enum e_token_state
 	END,
 } t_token_state;
 
-typedef enum e_parse_state
-{
-	ERR,
-	ENV_VAR,
-	CMD,
-	WORD,
-	REDIR_LIST,
-	PIPELINE,
-	LIST,
-	SIMPLE_CMD,
-	ASSIGN_WORD,
-	SUBSHELL,
-	SIMPLE_CMD_ELE,
-	REDIR,
-	REDIR_TAIL,
-	WORD_LIST,
-	WORD_LIST_TAIL,
-	SIMPLE_CMD_TAIL,	
-	PIPELINE_TAIL,
-	LIST_TAIL,
-	PARSE_STATES_CNT,
-}	t_parse_state;
 
 typedef enum	e_token_type
 {
@@ -110,6 +88,29 @@ typedef struct  s_token
   char			*value;
 }   t_token;
 
+typedef enum e_parse_state
+{
+	ERR,
+	ENV_VAR,
+	CMD,
+	WORD,
+	REDIR_LIST,
+	PIPELINE,
+	LIST,
+	SIMPLE_CMD,
+	ASSIGN_WORD,
+	SUBSHELL,
+	SIMPLE_CMD_ELE,
+	REDIR,
+	REDIR_TAIL,
+	WORD_LIST,
+	WORD_LIST_TAIL,
+	SIMPLE_CMD_TAIL,	
+	PIPELINE_TAIL,
+	LIST_TAIL,
+	PARSE_STATES_CNT,
+}	t_parse_state;
+
 typedef enum e_node_type
 {
     AST_NULL,
@@ -123,7 +124,9 @@ typedef enum e_node_type
 	AST_BUILTIN,
 	AST_AND,
 	AST_OR,
-
+	AST_ERR,
+	AST_SIMPLE_CMD,
+	AST_LIST,
 } t_node_type;
 
 typedef struct  s_node
@@ -136,29 +139,6 @@ typedef struct  s_node
 	int				pipe_open;
 	t_node_type		parent_type;
 }   t_node;
-
-// typedef enum e_parse_state
-// {
-// 	WORD,
-// 	ENV_VAR,
-// 	WORD_LIST,
-// 	WORD_LIST_TAIL,
-// 	ASSIGN_WORD,
-// 	REDIR,
-// 	REDIR_LIST,
-// 	REDIR_TAIL,
-// 	SIMPLE_CMD_ELE,
-// 	SIMPLE_CMD,
-// 	SIMPLE_CMD_TAIL,	
-// 	CMD,
-// 	SUBSHELL,
-// 	LIST,
-// 	LIST_TAIL,
-// 	PIPELINE,
-// 	PIPELINE_TAIL,
-// 	ERR,
-// 	PARSE_STATES_CNT,
-// }	t_parse_state;
 
 typedef struct s_parser
 {
