@@ -75,7 +75,7 @@ void	heredoc(t_node *node, t_pipe_info *info)
 {
 	int	fd;
 
-	if (node->parent_type == AST_COMMAND)
+	if (node->parent_type == AST_CMD)
 		return ;
 	// .tmp로 이동
 	fd = open(".heredoc", O_WRONLY | O_CREAT | O_TRUNC, 0644);

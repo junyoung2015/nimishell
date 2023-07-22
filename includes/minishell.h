@@ -114,6 +114,7 @@ typedef enum e_node_type
 {
 	AST_NULL,
 	AST_SIMPLE_CMD,
+	AST_SIMPLE_CMD_ELEMENT,
 	AST_CMD,
 	AST_LIST,
 	AST_LIST_TAIL,
@@ -126,6 +127,7 @@ typedef enum e_node_type
 	AST_BUILTIN,
 	AST_AND,
 	AST_OR,
+	AST_WORD_LIST,
 	AST_ERR,
 } t_node_type;
 
@@ -147,10 +149,11 @@ typedef struct s_parser
 	t_size size;
 	t_node *tmp;
 	void (*advance)(struct s_parser *);
+	t_token_type (*cur_type)(struct s_parser *);
 	t_bool (*check)(struct s_parser *, t_token_type);
 	t_token_type (*peek)(struct s_parser *);
+	t_token_type (*consume)(struct s_parser *);
 } t_parser;
-typedef t_node *(*parse_fn)(t_parser *, t_parse_state *);
 
 typedef struct s_global_info
 {
@@ -196,6 +199,9 @@ int ft_strncmp(const char *s1, const char *s2, t_size n);
 t_size ft_strlen(const char *str);
 t_size ft_strlcpy(char *dst, const char *src, t_size dstsize);
 int ft_isalnum(int c);
+
+/* ================== INIT ================== */
+void	print_logo(void);
 
 /* ================ STR_UTILS_CREATE ================ */
 char *ft_strtrim(char *str, char c);
