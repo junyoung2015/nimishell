@@ -481,7 +481,7 @@ t_node	*parse_word_list(t_parser *parser)
 		free(word_list_node);
 		return (0);
 	}
-	while (parser->cur < parser->size && parser->check(parser, TOKEN_WORD))
+	while (parser->cur < parser->size && (parser->check(parser, TOKEN_WORD) || parser->check(parser, TOKEN_SQ_STR) || parser->check(parser, TOKEN_DQ_STR)))
 	{
 		word_list_node->cmd_args[word_list_node->num_args] = parse_word(parser);
 		if (!word_list_node->cmd_args[word_list_node->num_args])
