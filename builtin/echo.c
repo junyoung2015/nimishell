@@ -1,14 +1,5 @@
 #include "builtin.h"
 
-/*
-
-할일
-2. env 모두 복사
-3. exit | ls 안됨
-4. echo | cat 안됨
-
-*/
-
 t_bool	is_option(char *str)
 {
 	if (!str)

@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:26 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/18 21:46:45 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/22 17:22:26 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@ void	clear_all(t_node *root)
 	free(root);
 }
 
-void	err(void)
+int	err(char *str)
 {
 	clear_all(g_info.root);
-	perror("error");
-	exit(EXIT_FAILURE);
+	perror(str);
+	return (EXIT_FAILURE);
 }
 
 void	cmd_not_found(void)

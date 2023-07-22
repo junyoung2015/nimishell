@@ -20,8 +20,6 @@ static int	_atoi(char *str)
 
 static void	__exit(t_node *node, t_exec_info *info)
 {
-	if (node->parent_type == AST_PIPE)
-		return ;
 	if (node->cmd_args[1])
 		info->exit_code = _atoi(node->cmd_args[1]);
 	clear_all(g_info.root);
@@ -30,13 +28,9 @@ static void	__exit(t_node *node, t_exec_info *info)
 
 void	builtin(t_node *node, t_exec_info *info)
 {
-	if (!connect_pipe(node, info))
-	{
-		info->exit_code = EXIT_FAILURE;
-		perror("error");
+	if (node->builtin == NOT_BUILTIN)
 		return ;
-	}
-	if (node->builtin == EXPORT)
+	else if (node->builtin == EXPORT)
 		export(node, info);
 	else if (node->builtin == ENV)
 		env();

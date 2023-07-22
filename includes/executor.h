@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/17 21:25:17 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/22 17:28:42 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,25 +28,27 @@ typedef struct s_exec_info
 	int		prev_pipe;
 }	t_exec_info;
 
-/* pipe.c */
+/* pipe */
 void	open_pipe(t_exec_info *info);
 int		connect_pipe(t_node *node, t_exec_info *info);
 void	close_pipe(t_node *node, t_exec_info *info);
 
-/* redirection.c */
+/* redirection */
 int		redir_in(t_node *node);
 int		redir_out(t_node *node);
 int		redir_append(t_node *node);
 void	redirection(t_node *node, t_exec_info *info);
+int		heredoc(t_node *node, t_exec_info *info);
 
-/* error.c */
+/* error */
 void	free_ptr(char **ptr);
 void	clear_all(t_node *root);
-void	err(void);
+int		err(char *str);
 void	cmd_not_found(void);
 
+/* command */
 void	builtin(t_node *node, t_exec_info *info);
 void	command(t_node *node, t_exec_info *info);
-int		heredoc(t_node *node, t_exec_info *info);
+char	*get_cmdpath(char *filename);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:37:25 by jusohn            #+#    #+#             */
-/*   Updated: 2023/07/16 22:25:14 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/22 17:38:06 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	open_pipe(t_exec_info *info)
 {
 	if (pipe(info->pipe))
-		err();
+		exit(err("error: pipe:"));
 }
 
 static int	connect_left(t_node *node, t_exec_info *info)
@@ -83,12 +83,12 @@ void	close_pipe(t_node *node, t_exec_info *info)
 		{
 			info->prev_pipe = dup(info->pipe[0]);
 			if (info->prev_pipe < 0)
-				err();
+				exit(err("error: dup"));
 		}
 		else
 		{
 			if (dup2(info->pipe[0], info->prev_pipe) < 0)
-				err();
+				exit(err("error: dup2"));
 		}
 	}
 	close(info->pipe[0]);

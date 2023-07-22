@@ -90,7 +90,8 @@ void	init_g_info(char **envp)
 	i = 0;
 	while (i < g_info.env_cnt)
 	{
-		g_info.env[i] = envp[i];
+		g_info.env[i] = ft_strdup(envp[i]);
+		// 널가드
 		i++;
 	}
 	g_info.env[i] = NULL;

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/21 19:54:21 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/07/22 16:39:58 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "executor.h"
 
-void	run_cmd(t_node *root, t_exec_info *info)
+void	execute_node(t_node *root, t_exec_info *info)
 {
 	if (root->type == AST_NULL)
 		return ;
@@ -23,11 +23,9 @@ void	run_cmd(t_node *root, t_exec_info *info)
 		redirection(root, info);
 	else if (root->type == AST_COMMAND)
 		command(root, info);
-	else if (root->type == AST_BUILTIN)
-		builtin(root, info);
 }
 
-void	preorder_traversal(t_node *root, t_exec_info *info)
+void	preorder_traverse(t_node *root, t_exec_info *info)
 {
 	if (!root)
 		return ;
@@ -35,14 +33,14 @@ void	preorder_traversal(t_node *root, t_exec_info *info)
 		root->left->parent_type = root->type;
 	if (root->right)
 		root->right->parent_type = root->type;
-	run_cmd(root, info);
+	execute_node(root, info);
 	if (root->type == AST_PIPE)
 	{
 		root->left->pipe_open = root->pipe_open + 1;
 		root->right->pipe_open = 2;
 	}
-	preorder_traversal(root->left, info);
-	preorder_traversal(root->right, info);
+	preorder_traverse(root->left, info);
+	preorder_traverse(root->right, info);
 }
 
 void	execute_in_child(t_node *root)
@@ -53,7 +51,8 @@ void	execute_in_child(t_node *root)
 
 	info.fork_cnt = 0;
 	info.prev_pipe = -1;
-	preorder_traversal(root, &info);
+	preorder_traverse(root, &info);
+	clear_all(root);
 	if (!info.fork_cnt)
 		exit(EXIT_SUCCESS);
 	waitpid(info.pid, &status, 0);
@@ -66,7 +65,7 @@ void	execute_in_child(t_node *root)
 	exit(WEXITSTATUS(status));
 }
 
-int	execute(t_node *root)
+int	execute_in_parent(t_node *root)
 {
 	t_exec_info	info;
 	size_t		i;
@@ -75,7 +74,7 @@ int	execute(t_node *root)
 	info.exit_code = 0;
 	info.fork_cnt = 0;
 	info.prev_pipe = -1;
-	preorder_traversal(root, &info);
+	preorder_traverse(root, &info);
 	dup2(g_info.stdin_fd, STDIN_FILENO);
 	dup2(g_info.stdout_fd, STDOUT_FILENO);
 	clear_all(g_info.root);
@@ -97,13 +96,10 @@ int	executor(t_node *root)
 	int		status;
 
 	if (root->type == AST_BUILTIN)
-		return (execute(root));
+		return (execute_in_parent(root));
 	pid = fork();
 	if (pid < 0)
-	{
-		perror("error");
-		return (EXIT_FAILURE);
-	}
+		return (err("error: fork"));
 	else if (!pid)
 		execute_in_child(root);
 	clear_all(g_info.root);
