@@ -78,26 +78,47 @@ void print_tokens(t_token *tokens, t_size num_tokens)
 	printf("==========================================\n");
 }
 
-#endif
+# endif
 
-int main(int ac, char **av, char **env)
+void	init_g_info(char **envp)
 {
-	(void)ac;
-	(void)av;
-	char *line;
-	t_token *tokens;
-	t_size num_tokens;
-	t_node *ast;
-	int status;
+	size_t	i;
+	
+	g_info.env_cnt = 0;
+	while (envp && envp[g_info.env_cnt])
+		g_info.env_cnt++;
+	g_info.env = malloc(sizeof(char *) * (g_info.env_cnt + 1));
+	// 널가드 추가
+	i = 0;
+	while (i < g_info.env_cnt)
+	{
+		g_info.env[i] = ft_strdup(envp[i]);
+		// 널가드
+		i++;
+	}
+	g_info.env[i] = NULL;
+	g_info.stdin_fd = dup(STDIN_FILENO);
+	g_info.stdout_fd = dup(STDOUT_FILENO);
+}
+
+int	main(int ac, char **av, char **envp)
+{
+	(void) ac;
+	(void) av;
+	int			exit_code;
+	char		*line;
+	t_token		*tokens;
+	t_size		num_tokens;
+	t_node		*ast;
 	// t_global_info	g_info;
 
 	// if (DEBUG)
 	// 	atexit(chk_leaks);
 	// TODO: display_logo();
-	g_info.env = env;
+	init_g_info(envp);
 	tokens = 0;
 	ast = 0;
-	status = 0;
+	exit_code = 0;
 	signal(SIGINT, sig_handler);
 	print_logo();
 	while (TRUE)
@@ -105,8 +126,6 @@ int main(int ac, char **av, char **env)
 		line = readline("minishell> ");
 		if (line)
 		{
-			if (ft_strcmp(line, "exit") == 0 || ft_strcmp(line, "quit") == 0)
-				exit(0);
 			add_history(line);
 			// TODO: ft_strtrim(line, space);
 			// remove spaces at the start and end
@@ -119,7 +138,9 @@ int main(int ac, char **av, char **env)
 					return (0);
 				else if (num_tokens >= 1 && tokens[num_tokens - 1].type == TOKEN_ERROR)
 				{
+					write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
 					write(STD_ERR, tokens[num_tokens - 1].value, ft_strlen(tokens[num_tokens - 1].value));
+					write(STD_ERR, "`\n", 2);
 				}
 				else
 				{
@@ -135,8 +156,7 @@ int main(int ac, char **av, char **env)
 						printf("=========================================\n");
 					}
 					g_info.root = ast;
-					status = executor(g_info.root);
-					g_info.exit_code = WEXITSTATUS(status);
+					exit_code = executor(g_info.root);
 				}
 			}
 			// if (ast)
@@ -150,6 +170,6 @@ int main(int ac, char **av, char **env)
 			line = 0;
 		}
 	}
-	exit(status);
+	exit(exit_code);
 	return (0);
 }
