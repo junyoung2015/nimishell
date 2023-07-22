@@ -70,6 +70,7 @@ typedef enum	e_token_type
 
 typedef enum	e_builtin
 {
+	NOT_BUILTIN,
 	ECHO,
 	CD,
 	PWD,

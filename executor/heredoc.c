@@ -79,19 +79,18 @@ int	heredoc(t_node *node, t_exec_info *info)
 {
 	int	fd;
 
-	// 임시폴더에 만드는 거 추가해야함
-	fd = open(".heredoc", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	fd = open("/tmp/.heredoc", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd < 0)
 		return (0);
 	write_heredoc(node->cmd_args[0], info, fd);
 	if (info->exit_code > 0)
 		return (0);
 	close(fd);
-	fd = open(".heredoc", O_RDONLY);
+	fd = open("/tmp/.heredoc", O_RDONLY);
 	if (fd < 0)
 		return (0);
 	if (dup2(fd, STDIN_FILENO) < 0)
 		return (0);
-	unlink(".heredoc");
+	unlink("/tmp/.heredoc");
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 21:50:47 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/17 21:50:01 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/22 17:18:00 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,5 +64,5 @@ void	redirection(t_node *node, t_exec_info *info)
 	else if (node->type == AST_HEREDOC)
 		success = heredoc(node, info);
 	if (!success)
-		err();
+		exit(err("error"));
 }
