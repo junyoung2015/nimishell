@@ -69,7 +69,7 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 		return (0);
 	// if (*token_idx >= num_tokens || (*tokens)[*token_idx].type != TOKEN_WORD)
 	//     return (0);
-	cmd_node = create_node(AST_COMMAND);
+	cmd_node = create_node(AST_CMD);
 	if (!cmd_node)
 		return (0);
 	cmd_node->cmd_args = ft_calloc(num_tokens - *token_idx + 1, sizeof(char *));

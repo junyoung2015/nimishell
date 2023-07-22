@@ -89,7 +89,7 @@ typedef struct  s_token
 typedef enum e_node_type
 {
     AST_NULL,
-    AST_COMMAND,
+    AST_CMD,
     AST_ARGUMENT,
     AST_PIPE,
     AST_REDIR_IN,
