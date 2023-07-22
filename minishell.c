@@ -138,17 +138,17 @@ int	main(int ac, char **av, char **envp)
 					return (0);
 				else if (num_tokens >= 1 && tokens[num_tokens - 1].type == TOKEN_ERROR)
 				{
-					write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
+					// write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
 					write(STD_ERR, tokens[num_tokens - 1].value, ft_strlen(tokens[num_tokens - 1].value));
-					write(STD_ERR, "`\n", 2);
+					// write(STD_ERR, "`\n", 2);
 				}
 				else
 				{
 					categorize_tokens(tokens, num_tokens);
 					if (tokens && DEBUG)
 						print_tokens(tokens, num_tokens);
-					ast = parse_tokens_ll(tokens, num_tokens);
-					// ast = parse_tokens(tokens, num_tokens);
+					// ast = parse_tokens_ll(tokens, num_tokens);
+					ast = parse_tokens(tokens, num_tokens);
 					if (ast && DEBUG)
 					{
 						printf("\n================== AST ==================\n");
