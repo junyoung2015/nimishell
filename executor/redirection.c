@@ -53,7 +53,7 @@ void	redirection(t_node *node, t_exec_info *info)
 	t_bool	success;
 
 	success = TRUE;
-	if (node->parent_type == AST_CMD || node->parent_type == AST_BUILTIN)
+	if (node->parent_type == AST_CMD)
 		return ;
 	if (node->type == AST_REDIR_IN)
 		success = redir_in(node);

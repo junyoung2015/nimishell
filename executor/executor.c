@@ -21,7 +21,7 @@ void	execute_node(t_node *root, t_exec_info *info)
 	else if (root->type == AST_REDIR_IN || root->type == AST_REDIR_OUT \
 				|| root->type == AST_REDIR_APPEND || root->type == AST_HEREDOC)
 		redirection(root, info);
-	else if (root->type == AST_CMD || root->type == AST_BUILTIN)
+	else if (root->type == AST_CMD)
 		command(root, info);
 }
 
@@ -95,7 +95,7 @@ int	executor(t_node *root)
 	pid_t	pid;
 	int		status;
 
-	if (root->type == AST_BUILTIN)
+	if (root->builtin != NOT_BUILTIN)
 		return (execute_in_parent(root));
 	pid = fork();
 	if (pid < 0)
