@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/22 16:39:58 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/22 19:48:06 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	execute_node(t_node *root, t_exec_info *info)
 	else if (root->type == AST_REDIR_IN || root->type == AST_REDIR_OUT \
 				|| root->type == AST_REDIR_APPEND || root->type == AST_HEREDOC)
 		redirection(root, info);
-	else if (root->type == AST_CMD)
+	else if (root->type == AST_CMD || root->type == AST_BUILTIN)
 		command(root, info);
 }
 

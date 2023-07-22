@@ -3,12 +3,14 @@
 char	**get_path(char **env)
 {
 	char	**path;
-
-	while (*env && ft_strncmp(*env, "PATH=", 5))
-		(*env)++;
-	if (!*env)
+	size_t	i;
+	
+	i = 0;
+	while (env[i] && ft_strncmp(env[i], "PATH=", 5))
+		i++;
+	if (!env[i])
 		return (NULL);
-	path = ft_split(*env + 5, ':');
+	path = ft_split(env[i] + 5, ':');
 	if (!path)
 		exit(err("error: malloc"));
 	return (path);
