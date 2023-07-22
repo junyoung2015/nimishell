@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 21:55:34 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/22 17:46:32 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/22 20:05:30 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	command_after_fork(t_node *node, t_exec_info *info)
 		}
 		builtin(node, info);
 		clear_all(g_info.root);
-		return ;
+		exit(EXIT_SUCCESS);
 	}
 	close_pipe(node, info);
 	info->fork_cnt += 1;
