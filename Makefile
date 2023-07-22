@@ -13,6 +13,7 @@ NAME = minishell
 # -------------- DIRS  -------------- #
 INCLUDES = ./includes/
 INCLUDE_READLINE = ./include/
+INIT_DIR = ./init/
 EXECUTOR_DIR	= ./executor/
 LEXER_DIR = ./lexer/
 MEMORY_DIR = ./memory/
@@ -21,11 +22,12 @@ STR_DIR = ./str/
 
 # -------------- SRCS  -------------- #
 SRCS = ./minishell.c						\
+		$(INIT_DIR)logo.c					\
 		$(LEXER_DIR)lexer.c					\
 		$(LEXER_DIR)tokenizer.c				\
 		$(MEMORY_DIR)mem_utils.c			\
 		$(PARSER_DIR)parser.c				\
-		$(PARSER_DIR)parser_ll.c				\
+		$(PARSER_DIR)parser_ll.c			\
 		$(STR_DIR)str_utils.c				\
 		$(STR_DIR)str_split.c				\
 		$(STR_DIR)str_utils_create.c		\
@@ -79,7 +81,7 @@ $(NAME): $(OBJS)
 # $(BONUS): $(BO_OBJS)
 # 	$(CC) $(CFLAGS) $(BO_OBJS) -o $@
 
-%.o: %.c $(SRCS) $(INCLUDES)$(HEADER)
+%.o: %.c $(SRCS) $(INCLUDES)minishell.h
 	$(CC) $(CFLAGS) -I$(INCLUDES) -I$(INCLUDE_READLINE) -c $< -o $@
 # $(CC) $(CFLAGS) -I$(INCLUDES) -I$(INCLUDE_READLINE) -c $< -o $@
 

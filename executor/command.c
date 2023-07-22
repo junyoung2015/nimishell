@@ -104,8 +104,8 @@ void	command(t_node *node, t_pipe_info *info)
 	}
 	close_pipe(node, info);
 	if (node->left)
-		node->left->parent_type = AST_COMMAND;
+		node->left->parent_type = AST_CMD;
 	if (node->right)
-		node->right->parent_type = AST_COMMAND;
+		node->right->parent_type = AST_CMD;
 	info->fork_cnt += 1;
 }

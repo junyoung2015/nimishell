@@ -26,7 +26,7 @@ void	run_cmd(t_node *root, t_pipe_info *info)
 		redir_append(root);
 	else if (root->type == AST_HEREDOC)
 		heredoc(root, info);
-	else if (root->type == AST_COMMAND)
+	else if (root->type == AST_CMD)
 		command(root, info);
 }
 

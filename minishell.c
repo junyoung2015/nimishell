@@ -14,17 +14,19 @@
 
 t_global_info g_info;
 
-void	sig_handler(int signal)
+#include <signal.h>
+
+void sig_handler(int signal)
 {
 	if (signal != SIGINT)
-		return ;
+		return;
 	printf("Ctrl + C\n");
 	rl_on_new_line();
 	rl_replace_line("", 1);
 	rl_redisplay();
 }
 
-# ifdef DEBUG
+#ifdef DEBUG
 
 // TODO: remove for
 void print_ast(t_node *node, int depth, const char *indent)
@@ -32,7 +34,7 @@ void print_ast(t_node *node, int depth, const char *indent)
 	if (node == NULL)
 	{
 		printf("%*s[%s]\n", depth * 6, "", indent);
-		return ;
+		return;
 	}
 	print_ast(node->right, depth + 1, "/");
 	printf("%*c", depth * 4, 1);
@@ -54,18 +56,18 @@ void print_ast(t_node *node, int depth, const char *indent)
 	print_ast(node->left, depth + 1, "\\");
 }
 
-# endif
+#endif
 
-# ifdef DEBUG
+#ifdef DEBUG
 
-void	chk_leaks(void)
+void chk_leaks(void)
 {
 	system("leaks minishell");
 }
 
-# endif
+#endif
 
-# ifdef DEBUG
+#ifdef DEBUG
 
 void print_tokens(t_token *tokens, t_size num_tokens)
 {
@@ -76,17 +78,17 @@ void print_tokens(t_token *tokens, t_size num_tokens)
 	printf("==========================================\n");
 }
 
-# endif
+#endif
 
-int	main(int ac, char **av, char **env)
+int main(int ac, char **av, char **env)
 {
-	(void) ac;
-	(void) av;
-	char		*line;
-	t_token		*tokens;
-	t_size		num_tokens;
-	t_node		*ast;
-	int			status;
+	(void)ac;
+	(void)av;
+	char *line;
+	t_token *tokens;
+	t_size num_tokens;
+	t_node *ast;
+	int status;
 	// t_global_info	g_info;
 
 	// if (DEBUG)
@@ -97,13 +99,14 @@ int	main(int ac, char **av, char **env)
 	ast = 0;
 	status = 0;
 	signal(SIGINT, sig_handler);
+	print_logo();
 	while (TRUE)
 	{
 		line = readline("minishell> ");
 		if (line)
 		{
 			if (ft_strcmp(line, "exit") == 0 || ft_strcmp(line, "quit") == 0)
-				exit (0);
+				exit(0);
 			add_history(line);
 			// TODO: ft_strtrim(line, space);
 			// remove spaces at the start and end
@@ -131,13 +134,13 @@ int	main(int ac, char **av, char **env)
 						print_ast(ast, 0, "");
 						printf("=========================================\n");
 					}
-					// g_info.root = ast;
-					// status = executor(g_info.root);
-					// g_info.exit_code = WEXITSTATUS(status);
+					g_info.root = ast;
+					status = executor(g_info.root);
+					g_info.exit_code = WEXITSTATUS(status);
 				}
 			}
-			if (ast)
-				free_ast(ast);
+			// if (ast)
+			// 	free_ast(ast);
 			// if (status)
 			// 	update_exit_status(status);
 			if (tokens)

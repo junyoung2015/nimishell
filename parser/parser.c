@@ -14,8 +14,8 @@
 
 t_node *create_node(t_node_type type)
 {
-	t_node	*new_node;
-	new_node = (t_node *) ft_calloc(1, sizeof(t_node));
+	t_node *new_node;
+	new_node = (t_node *)ft_calloc(1, sizeof(t_node));
 	if (!new_node)
 		return (0);
 	new_node->type = type;
@@ -40,7 +40,7 @@ void append_child_node(t_node *parent, t_node *child)
 void free_ast(t_node *root)
 {
 	if (root == 0)
-		return ;
+		return;
 	if (root->left != 0)
 		free_ast(root->left);
 	if (root->right != 0)
@@ -56,12 +56,12 @@ void free_ast(t_node *root)
 
 t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 {
-	t_node          *cmd_node;
-	t_node          *redir_in_node;
-	t_node          *redir_out_node;
-	t_token_type    type;
-	t_node          *heredoc_node;
-	t_node          *append_node;
+	t_node *cmd_node;
+	t_node *redir_in_node;
+	t_node *redir_out_node;
+	t_token_type type;
+	t_node *heredoc_node;
+	t_node *append_node;
 
 	redir_in_node = 0;
 	redir_out_node = 0;
@@ -69,7 +69,7 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 		return (0);
 	// if (*token_idx >= num_tokens || (*tokens)[*token_idx].type != TOKEN_WORD)
 	//     return (0);
-	cmd_node = create_node(AST_COMMAND);
+	cmd_node = create_node(AST_CMD);
 	if (!cmd_node)
 		return (0);
 	cmd_node->cmd_args = ft_calloc(num_tokens - *token_idx + 1, sizeof(char *));
@@ -190,7 +190,7 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 			}
 		}
 		else
-			break ;
+			break;
 		(*token_idx)++;
 	}
 	// set cmd node to AST_NULL if no cmd is given (e.g. raw HEREDOC '<< EOF')
@@ -201,9 +201,9 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 
 t_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)
 {
-	t_node	*left_node;
-	t_node	*right_node;
-	t_node	*pipe_node;
+	t_node *left_node;
+	t_node *right_node;
+	t_node *pipe_node;
 	left_node = parse_cmd(tokens, token_idx, num_tokens);
 	if (*token_idx < num_tokens && (*tokens)[*token_idx].type == TOKEN_PIPE)
 	{
@@ -223,14 +223,14 @@ t_node *parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens)
 
 /**
  * @brief build AST based on the grammar, using array of tokens received
- * 
- * @param tokens 
- * @param num_tokens 
- * @return t_node* 
+ *
+ * @param tokens
+ * @param num_tokens
+ * @return t_node*
  */
 t_node *parse_tokens(t_token *tokens, t_size num_tokens)
 {
-	t_size	token_idx;
+	t_size token_idx;
 
 	token_idx = 0;
 	return (parse_pipe(&tokens, &token_idx, num_tokens));
