@@ -31,7 +31,7 @@ void	command_after_fork(t_node *node, t_exec_info *info)
 				exit(err("error: execve"));
 		}
 		builtin(node, info);
-		clear_all(g_info.env);
+		clear_all(g_info.root);
 		return ;
 	}
 	close_pipe(node, info);
