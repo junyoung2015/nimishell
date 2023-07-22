@@ -168,6 +168,7 @@ typedef struct s_global_info
 
 typedef t_token *(*tokenizer_fn)(char **, t_token_state *);
 
+// TODO: re-write the global variable 'extern' declaration
 extern t_global_info g_info;
 
 /* ================== MACRO ================== */

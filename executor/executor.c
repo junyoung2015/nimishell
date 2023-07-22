@@ -21,7 +21,7 @@ void	execute_node(t_node *root, t_exec_info *info)
 	else if (root->type == AST_REDIR_IN || root->type == AST_REDIR_OUT \
 				|| root->type == AST_REDIR_APPEND || root->type == AST_HEREDOC)
 		redirection(root, info);
-	else if (root->type == AST_COMMAND)
+	else if (root->type == AST_CMD)
 		command(root, info);
 }
 
