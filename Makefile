@@ -15,6 +15,7 @@ INCLUDES = ./includes/
 INCLUDE_READLINE = ./include/
 INIT_DIR = ./init/
 EXECUTOR_DIR	= ./executor/
+BUILTIN_DIR	= ./builtin/
 LEXER_DIR = ./lexer/
 MEMORY_DIR = ./memory/
 PARSER_DIR = ./parser/
@@ -31,17 +32,25 @@ SRCS = ./minishell.c						\
 		$(STR_DIR)str_utils.c				\
 		$(STR_DIR)str_split.c				\
 		$(STR_DIR)str_utils_create.c		\
+		$(EXECUTOR_DIR)path.c				\
 		$(EXECUTOR_DIR)command.c			\
 		$(EXECUTOR_DIR)error.c				\
 		$(EXECUTOR_DIR)executor.c			\
 		$(EXECUTOR_DIR)pipe.c				\
 		$(EXECUTOR_DIR)heredoc.c			\
-		$(EXECUTOR_DIR)redirection.c
+		$(EXECUTOR_DIR)redirection.c		\
+		$(EXECUTOR_DIR)builtin.c			\
+		$(BUILTIN_DIR)export.c				\
+		$(BUILTIN_DIR)unset.c				\
+		$(BUILTIN_DIR)env.c					\
+		$(BUILTIN_DIR)pwd.c					\
+		$(BUILTIN_DIR)echo.c				\
+		$(BUILTIN_DIR)cd.c
 
 CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2 -I$(INCLUDES) -I$(INCLUDE_READLINE)
 # ----------- BONUS SRCS  ----------- #
 # BO_SRCS = ./minishell_bonus.c
-HEADER = minishell.h executor.h
+HEADER = minishell.h executor.h builtin.h
 # BO_HEADER = minishell_bonus.h
 
 # -------------- OBJS  -------------- #

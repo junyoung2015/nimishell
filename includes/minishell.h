@@ -72,6 +72,7 @@ typedef enum e_token_type
 
 typedef enum e_builtin
 {
+	NOT_BUILTIN,
 	ECHO,
 	CD,
 	PWD,
@@ -133,14 +134,15 @@ typedef enum e_node_type
 
 typedef struct s_node
 {
-	t_node_type type;
-	char **cmd_args;
-	t_size num_args;
-	struct s_node *left;
-	struct s_node *right;
-	int pipe_open;
-	t_node_type parent_type;
-} t_node;
+	t_node_type		type;
+	char			**cmd_args;
+	t_size			num_args;
+	struct s_node	*left;
+	struct s_node	*right;
+	int				pipe_open;
+	t_node_type		parent_type;
+	t_builtin		builtin;
+}   t_node;
 
 typedef struct s_parser
 {
@@ -157,10 +159,11 @@ typedef struct s_parser
 
 typedef struct s_global_info
 {
-	char **env;
-	char **path;
-	int exit_code;
-	t_node *root;
+	char	**env;
+	size_t	env_cnt;
+	int		stdin_fd;
+	int		stdout_fd;
+	t_node	*root;
 } t_global_info;
 
 typedef t_token *(*tokenizer_fn)(char **, t_token_state *);
