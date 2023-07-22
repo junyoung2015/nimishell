@@ -25,6 +25,7 @@ t_node *create_node(t_node_type type)
 	new_node->right = 0;
 	new_node->pipe_open = 0;
 	new_node->parent_type = AST_NULL;
+	new_node->builtin = NOT_BUILTIN;
 	return (new_node);
 }
 
@@ -82,37 +83,37 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 	{
 		if (!ft_strcmp((*tokens)[*token_idx].value, "echo"))
 		{
-			cmd_node->type = AST_BUILTIN;
+			cmd_node->type = AST_CMD;
 			cmd_node->builtin = ECHO;
 		}
         if (!ft_strcmp((*tokens)[*token_idx].value, "cd"))
 		{
-			cmd_node->type = AST_BUILTIN;
+			cmd_node->type = AST_CMD;
 			cmd_node->builtin = CD;
 		}
         if (!ft_strcmp((*tokens)[*token_idx].value, "pwd"))
 		{
-			cmd_node->type = AST_BUILTIN;
+			cmd_node->type = AST_CMD;
 			cmd_node->builtin = PWD;
 		}
         if (!ft_strcmp((*tokens)[*token_idx].value, "export"))
 		{
-			cmd_node->type = AST_BUILTIN;
+			cmd_node->type = AST_CMD;
 			cmd_node->builtin = EXPORT;
 		}
         else if (!ft_strcmp((*tokens)[*token_idx].value, "unset"))
 		{
-			cmd_node->type = AST_BUILTIN;
+			cmd_node->type = AST_CMD;
 			cmd_node->builtin = UNSET;
 		}
 		else if (!ft_strcmp((*tokens)[*token_idx].value, "env"))
 		{
-			cmd_node->type = AST_BUILTIN;
+			cmd_node->type = AST_CMD;
 			cmd_node->builtin = ENV;
 		}
 		else if (!ft_strcmp((*tokens)[*token_idx].value, "exit"))
 		{
-			cmd_node->type = AST_BUILTIN;
+			cmd_node->type = AST_CMD;
 			cmd_node->builtin = EXIT;
 		}
 		cmd_node->cmd_args[cmd_node->num_args] = ft_strdup((*tokens)[*token_idx].value);
