@@ -39,7 +39,7 @@
 
 	<SIMPLE-COMMAND-ELEMENT> -> <WORD-LIST>
 	<SIMPLE-COMMAND-ELEMENT> -> <ASSIGNMENT-WORD>
-	<SIMPLE-COMMAND-ELEMENT> -> <REDIRECTION>
+	<SIMPLE-COMMAND-ELEMENT> -> <REDIRECTION-LIST>
 	<SIMPLE-COMMAND-ELEMENT> -> <ENV-VAR>
 
 	<REDIRECTION-LIST> -> <REDIRECTION> <REDIRECTION-LIST-TAIL>
@@ -578,25 +578,61 @@ t_node *parse_redir(t_parser *parser)
 	return (redir_node);
 }
 
+/**
+ * @brief Parse function for <REDIRECTION-LIST-TAIL>, calling <REDIRECTION> or
+ *		indicate the end of the <REDIRECTION-LIST-TAIL>.
+ * 
+ * @param parser	parser struct
+ * @return t_node*	root node of <REDIRECTION-LIST-TAIL>
+ */
+t_node	*parse_redir_list_tail(t_parser *parser)
+{
+	t_node	*redir_node;
+	t_node	*redir_list_tail_node;
+
+	redir_list_tail_node = 0;
+	if (parser->is_redir(parser))
+	{
+		redir_list_tail_node = parse_redir(parser);
+		if (!redir_list_tail_node)
+			return (0);
+		append_child_node(parser->tmp, redir_list_tail_node);
+		if (parser->is_redir(parser))
+		{
+			redir_node = parse_redir_list_tail(parser);
+			if (!redir_node)
+				return (0);
+			append_child_node(redir_list_tail_node, redir_node);
+		}
+	}
+	return (redir_list_tail_node);
+}
+
+/**
+ * @brief Parse function for <REDIRECTION-LIST>, calling <REDIRECTION> and
+ * 		<REDIRECTION-LIST-TAIL>.
+ * 
+ * @param parser	parser struct
+ * @return t_node*	root node of <REDIRECTION-LIST>
+ */
 t_node	*parse_redir_list(t_parser *parser)
 {
 	t_node	*redir_list_node;
+	t_node	*redir_element;
 
+	redir_list_node = parse_redir(parser);
+	if (!redir_list_node)
+		return (0);
+	parser->tmp = redir_list_node;
+	if (parser->is_redir(parser))
+	{
+		redir_element = parse_redir_list_tail(parser);
+		if (!redir_element)
+			return (0);
+		append_child_node(redir_list_node, redir_element);
+	}
 	return (redir_list_node);
 }
-
-// /**
-//  * @brief Parse function for <REDIRECTION-LIST>
-//  *
-//  * @param parser	parser struct
-//  * @return t_node*	root node from parse_redirection
-//  */
-// t_node *parse_redir_list(t_parser *parser)
-// {
-// 	t_node *redir_node;
-
-// 	retunr(redir_node);
-// }
 
 // /**
 //  * @brief Parse function for <PARSE-PIPELINE-TAIL>, calling <COMMAND> and
@@ -710,7 +746,6 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 	parser.tokens = tokens;
 	parser.size = num_tokens;
 	parser.cur = 0;
-	parser.tmp = root;
 	parser.check = &check;
 	parser.cur_type = &cur_type;
 	parser.advance = &advance;
