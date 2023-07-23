@@ -47,7 +47,7 @@ SRCS = ./minishell.c						\
 		$(BUILTIN_DIR)echo.c				\
 		$(BUILTIN_DIR)cd.c
 
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2 -I$(INCLUDES) -I$(INCLUDE_READLINE)
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2
 # ----------- BONUS SRCS  ----------- #
 # BO_SRCS = ./minishell_bonus.c
 HEADER = minishell.h executor.h builtin.h
