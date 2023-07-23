@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/17 19:05:20 by jusohn            #+#    #+#             */
-/*   Updated: 2023/07/20 21:47:11 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/07/23 15:45:45 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,12 @@
 
 	<ASSIGNMENT-WORD> -> <WORD> = <WORD>
 
-	<REDIRECTION> -> > <WORD>
-	<REDIRECTION> -> < <WORD>
-	<REDIRECTION> -> >> <WORD>
-	<REDIRECTION> -> << <WORD>
+	<REDIRECTION> -> > <WORD-LIST>
+	<REDIRECTION> -> < <WORD-LIST>
+	<REDIRECTION> -> >> <WORD-LIST>
+	<REDIRECTION> -> << <WORD-LIST>
 
-	<SIMPLE-COMMAND-ELEMENT> -> <WORD>
+	<SIMPLE-COMMAND-ELEMENT> -> <WORD-LIST>
 	<SIMPLE-COMMAND-ELEMENT> -> <ASSIGNMENT-WORD>
 	<SIMPLE-COMMAND-ELEMENT> -> <REDIRECTION>
 	<SIMPLE-COMMAND-ELEMENT> -> <ENV-VAR>
@@ -120,8 +120,8 @@ char *parse_word(t_parser *parser);
 // t_node *parse_assign_word(t_parser *parser);
 t_node *parse_redir(t_parser *parser);
 t_node *parse_simple_cmd_element(t_parser *parser);
-// t_node *parse_redir_list(t_parser *parser);
-// t_node *parse_redir_list_tail(t_parser *parser);
+t_node *parse_redir_list(t_parser *parser);
+t_node *parse_redir_list_tail(t_parser *parser);
 t_node *parse_simple_cmd(t_parser *parser);
 // t_node *parse_simple_cmd_tail(t_parser *parser);
 t_node *parse_command(t_parser *parser);
@@ -171,7 +171,7 @@ t_bool check(t_parser *parser, t_token_type type)
  */
 t_token_type peek(t_parser *parser)
 {
-	if (parser->cur + 1 < parser->size)
+	if (parser->cur + 1 < parser->size || parser->cur < parser->size)
 		return (parser->tokens[parser->cur + 1].type);
 	return (TOKEN_TYPES_CNT);
 }
@@ -293,11 +293,12 @@ void update_p_state(char **table, t_parser *parser, t_parse_state *parse_state)
 	cur = parser->tokens[parser->cur];
 	peek = parser->peek(parser);
 	// TODO: check the condition again, since we might not use word_list_tail
-	if (peek == TOKEN_TYPES_CNT && (*parse_state == WORD_LIST_TAIL || *parse_state == REDIR_TAIL || *parse_state == LIST_TAIL || *parse_state == PIPELINE_TAIL))
-	{
-		// already at the end of the tokens array
-		return ;
-	}
+	// if (peek == TOKEN_TYPES_CNT || (*parse_state == WORD_LIST_TAIL || *parse_state == REDIR_TAIL || *parse_state == LIST_TAIL || *parse_state == PIPELINE_TAIL))
+	// {
+	// 	*parse_state = PARSE_STATES_CNT;
+	// 	// already at the end of the tokens array
+	// 	return ;
+	// }
 	*parse_state = table[cur.type][peek];
 }
 
@@ -538,64 +539,50 @@ t_node	*parse_word_list(t_parser *parser)
 t_node *parse_redir(t_parser *parser)
 {
 	t_node			*redir_node;
-	t_node			*redir_in;
-	t_node			*redir_out;
-	t_node			*redir_append;
-	t_token_type	type;
-	t_node_type		node_type;
 
-	type = parser->cur_type(parser);
-	if (type == TOKEN_REDIR_IN)
-		node_type = AST_REDIR_IN;
-	else if (type == TOKEN_REDIR_OUT)
-		node_type = AST_REDIR_OUT;
-	else if (type == TOKEN_APPEND)
-		node_type = AST_REDIR_APPEND;
-	else if (type == TOKEN_HEREDOC)
-		node_type = AST_HEREDOC;
-	else // err handling? or before calling this function?
-		return (0);
-	redir_in = 0;
-	redir_out = 0;
-	redir_append = 0;
-	redir_node = create_node(node_type);
-	if (!redir_node)
-		return (0);
-	while (parser->cur < parser->size && parser->is_redir(parser))
+	redir_node = 0;
+	if (parser->check(parser, TOKEN_REDIR_IN))
 	{
-		// if (parser->cur_type(parser) == TOKEN_REDIR_IN && !redir_in)
-		// {
-		// 	redir_in = redir_node;
-		// 	while (parser->cur < parser->size && parser->is_word(parser))
-		// 	{
-		// 		if (redir_node->cmd_args != 0)
-		// 			free(redir_node->cmd_args[0]);
-		// 		else
-		// 			redir_node->cmd_args = ft_calloc(1, sizeof(char *));
-		// 		if (!redir_node->cmd_args)
-		// 		{
-		// 			free(redir_node);
-		// 			return (0);
-		// 		}
-		// 		redir_node->cmd_args[0] = parse_word(parser);
-		// 		if (!redir_node->cmd_args[redir_node->num_args])
-		// 		{
-		// 			for (t_size i = 0; i < redir_node->num_args; i++)
-		// 				free(redir_node->cmd_args[i++]);
-		// 			free(redir_node);
-		// 			return (0);
-		// 		}
-		// 		redir_node->num_args = 1;
-		// 		parser->advance(parser);
-		// 	}
-		// }
-		// else if (parser->cur_type(parser) == TOKEN_REDIR_OUT)
-		// {
-
-		// }
 		parser->advance(parser);
+		redir_node = parse_word_list(parser);
+		if (!redir_node)
+			return (0);
+		redir_node->type = AST_REDIR_IN;
+	}
+	else if (parser->check(parser, TOKEN_HEREDOC))
+	{
+		parser->advance(parser);
+		redir_node = create_node(AST_HEREDOC);
+		if (!redir_node)
+			return (0);
+		redir_node->cmd_args = ft_calloc(2, sizeof(char *));
+		redir_node->cmd_args[redir_node->num_args] = parse_word(parser);
+		redir_node->num_args = 1;
+	}
+	else if (parser->check(parser, TOKEN_REDIR_OUT))
+	{
+		parser->advance(parser);
+		redir_node = parse_word_list(parser);
+		if (!redir_node)
+			return (0);
+		redir_node->type = AST_REDIR_OUT;
+	}
+	else if (parser->check(parser, TOKEN_APPEND))
+	{
+		parser->advance(parser);
+		redir_node = parse_word_list(parser);
+		if (!redir_node)
+			return (0);
+		redir_node->type = AST_REDIR_APPEND;
 	}
 	return (redir_node);
+}
+
+t_node	*parse_redir_list(t_parser *parser)
+{
+	t_node	*redir_list_node;
+
+	return (redir_list_node);
 }
 
 // /**
@@ -704,7 +691,7 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 		0,
 		parse_command,
 		0,
-		0,
+		parse_redir_list,
 		0,
 		0,
 		0,
@@ -741,6 +728,10 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 		{
 			// deal with err and free?
 			return (0);
+		}
+		else if (parse_state == PARSE_STATES_CNT)
+		{
+			break ;
 		}
 		new_node = parse_fn_array[parse_state](&parser);
 		if (new_node != 0)
