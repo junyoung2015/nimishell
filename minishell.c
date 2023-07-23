@@ -114,7 +114,6 @@ int	main(int ac, char **av, char **envp)
 
 	// if (DEBUG)
 	// 	atexit(chk_leaks);
-	// TODO: display_logo();
 	init_g_info(envp);
 	tokens = 0;
 	ast = 0;
@@ -147,20 +146,18 @@ int	main(int ac, char **av, char **envp)
 					categorize_tokens(tokens, num_tokens);
 					if (tokens && DEBUG)
 						print_tokens(tokens, num_tokens);
-					// ast = parse_tokens_ll(tokens, num_tokens);
-					ast = parse_tokens(tokens, num_tokens);
+					ast = parse_tokens_ll(tokens, num_tokens);
+					// ast = parse_tokens(tokens, num_tokens);
 					if (ast && DEBUG)
 					{
 						printf("\n================== AST ==================\n");
 						print_ast(ast, 0, "");
 						printf("=========================================\n");
 					}
-					g_info.root = ast;
-					exit_code = executor(g_info.root);
+					// g_info.root = ast;
+					// exit_code = executor(g_info.root);
 				}
 			}
-			// if (ast)
-			// 	free_ast(ast);
 			// if (status)
 			// 	update_exit_status(status);
 			if (tokens)

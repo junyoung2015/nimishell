@@ -154,6 +154,8 @@ typedef struct s_parser
 	t_bool (*check)(struct s_parser *, t_token_type);
 	t_token_type (*peek)(struct s_parser *);
 	t_token_type (*consume)(struct s_parser *);
+	t_bool	(*is_word)(struct s_parser *);
+	t_bool	(*is_redir)(struct s_parser *);
 } t_parser;
 
 typedef struct s_global_info
