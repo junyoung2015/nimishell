@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/17 19:05:20 by jusohn            #+#    #+#             */
-/*   Updated: 2023/07/23 15:45:45 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/07/23 17:15:43 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,10 +102,10 @@
 #define ROW2	"\2\0\0\0\0\4\0\0\1\7\0\2\2"
 #define ROW3	"\5\0\0\0\0\0\0\0\0\7\0\0\0"
 #define ROW4	"\5\0\0\0\0\0\0\0\0\7\0\0\0"
-#define ROW5	"\3\0\0\0\0\0\0\0\0\0\0\0\0"
-#define ROW6	"\3\0\0\0\0\0\0\0\0\0\0\0\0"
-#define ROW7	"\3\0\0\0\0\0\0\0\0\0\0\0\0"
-#define ROW8	"\3\0\0\0\0\0\0\0\0\0\0\0\0"
+#define ROW5	"\4\0\0\0\0\0\0\0\0\0\0\0\0"
+#define ROW6	"\4\0\0\0\0\0\0\0\0\0\0\0\0"
+#define ROW7	"\4\0\0\0\0\0\0\0\0\0\0\0\0"
+#define ROW8	"\4\0\0\0\0\0\0\0\0\0\0\0\0"
 #define ROW9	"\1\0\0\0\0\0\0\0\3\0\0\0\0"
 #define ROW10	"\2\0\0\0\0\4\0\0\1\7\0\2\2"
 #define ROW11	"\2\5\6\6\4\4\4\4\2\0\0\2\2"
@@ -413,6 +413,7 @@ t_node *parse_simple_cmd(t_parser *parser)
 		// 	return (0);
 		// cmd_node->cmd_args[0] = parser->tokens[parser->cur].value;
 	}
+	// parser->advance(parser);
 	return (cmd_node);
 }
 
@@ -793,7 +794,7 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 			return (0);
 			// syntax err or malloc err?
 		}
-		parser.advance(&parser);
+		// parser.advance(&parser);
 	}
 	free_table(table);
 	return (root);
