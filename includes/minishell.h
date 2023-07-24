@@ -150,7 +150,7 @@ typedef struct s_parser
 	t_token *tokens;
 	t_size cur;
 	t_size size;
-	t_node *tmp;
+	t_node *tmp_root;
 	void (*advance)(struct s_parser *);
 	t_token_type (*cur_type)(struct s_parser *);
 	t_bool (*check)(struct s_parser *, t_token_type);
