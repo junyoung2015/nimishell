@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/13 20:46:33 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/22 17:28:42 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,33 +19,36 @@
 # include <stdio.h>
 # include "minishell.h"
 
-typedef struct s_pipe_info
+typedef struct s_exec_info
 {
 	size_t	fork_cnt;
 	pid_t	pid;
+	int		exit_code;
 	int		pipe[2];
-	int		prev_pipe_fd;
-	int		stdin_fd;
-}	t_pipe_info;
+	int		prev_pipe;
+}	t_exec_info;
 
-/* pipe.c */
-void	open_pipe(t_pipe_info *info);
-void	connect_pipe(t_node *node, t_pipe_info *info);
-void	close_pipe(t_node *node, t_pipe_info *info);
+/* pipe */
+void	open_pipe(t_exec_info *info);
+int		connect_pipe(t_node *node, t_exec_info *info);
+void	close_pipe(t_node *node, t_exec_info *info);
 
-/* redirection.c */
-void	redir_in(t_node *node);
-void	redir_out(t_node *node);
-void	redir_append(t_node *node);
+/* redirection */
+int		redir_in(t_node *node);
+int		redir_out(t_node *node);
+int		redir_append(t_node *node);
+void	redirection(t_node *node, t_exec_info *info);
+int		heredoc(t_node *node, t_exec_info *info);
 
-/* error.c */
+/* error */
 void	free_ptr(char **ptr);
 void	clear_all(t_node *root);
-void	err(void);
-void	err2(char *str);
+int		err(char *str);
 void	cmd_not_found(void);
 
-void	command(t_node *node, t_pipe_info *info);
-void	heredoc(t_node *node, t_pipe_info *info);
+/* command */
+void	builtin(t_node *node, t_exec_info *info);
+void	command(t_node *node, t_exec_info *info);
+char	*get_cmdpath(char *filename);
 
 #endif

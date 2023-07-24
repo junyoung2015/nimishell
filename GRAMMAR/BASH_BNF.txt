@@ -1,21 +1,15 @@
-<ALPHA> ::= a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|
-             A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z
+<NONSPACE> ::= any character satisfying the condition !isspace(character)
 
-<DIGIT> ::= 0|1|2|3|4|5|6|7|8|9
-
-<NUMBER> ::= <DIGIT>
-           | <NUMBER> <DIGIT>
-
-<WORD> ::= <ALPHA>
-         | <WORD> <ALPHA>
-         | <WORD> '_'
+<WORD> ::= <NONSPACE>
+            | <WORD> <NONSPACE>
 
 <ENV-VAR> ::= '$' <WORD>
 
-<WORD-LIST> ::= <WORD>
-             |  <WORD-LIST> <WORD>
+<WORD-LIST> ::= <WORD> <WORD-LIST-TAIL>
 
-<ASSIGNMENT-WORD> ::= <WORD> '=' <WORD>
+<WORD-LIST-TAIL> ::= <WORD> <WORD-LIST-TAIL>
+
+<ASSIGNMENT-WORD> ::= <ENV-VAR> '=' <WORD>
 
 <REDIRECTION> ::=  '>' <WORD>
                 |  '<' <WORD>
@@ -27,11 +21,13 @@
                           |  <REDIRECTION>
                           |  <ENV-VAR>
 
-<REDIRECTION-LIST> ::= <REDIRECTION>
-                    |  <REDIRECTION-LIST> <REDIRECTION>
+<REDIRECTION-LIST> ::= <REDIRECTION> <REDIRECTION-LIST-TAIL>
 
-<SIMPLE-COMMAND> ::=  <SIMPLE-COMMAND-ELEMENT>
-                   |  <SIMPLE-COMMAND> <SIMPLE-COMMAND-ELEMENT>
+<REDIRECTION-LIST-TAIL> ::= <REDIRECTION> <REDIRECTION-LIST-TAIL> | ε
+
+<SIMPLE-COMMAND> ::= <SIMPLE-COMMAND-ELEMENT> <SIMPLE-COMMAND-TAIL>
+
+<SIMPLE-COMMAND-TAIL> ::= <SIMPLE-COMMAND-ELEMENT> <TAIL_SIMPLE_COMMAND>
 
 <COMMAND> ::=  <SIMPLE-COMMAND>
             |  <SUBSHELL>
@@ -39,16 +35,10 @@
 
 <SUBSHELL> ::=  '(' <LIST> ')'
 
-<PATTERN> ::=  <WORD>
-            |  <PATTERN> '|' <WORD>
+<LIST> ::= <PIPELINE> <LIST-TAIL>
 
-<LIST> ::=   <LIST> '&&' <LIST>
-           |  <LIST> '||' <LIST>
-           |  <PIPELINE>
+<LIST-TAIL> ::= '&&' <PIPELINE> <LIST-TAIL> | '||' <PIPELINE> <LIST-TAIL>
 
-<SIMPLE-LIST> ::=  <SIMPLE-LIST> '&&' <SIMPLE-LIST>
-                 |  <SIMPLE-LIST> '||' <SIMPLE-LIST>
-                 |  <PIPELINE>
+<PIPELINE> ::= <COMMAND> <PIPELINE-TAIL>
 
-<PIPELINE> ::=  <PIPELINE> '|' <PIPELINE>
-             |  <COMMAND>
+<PIPELINE-TAIL> ::= '|' <COMMAND> <PIPELINE-TAIL>

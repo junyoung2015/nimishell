@@ -3,70 +3,92 @@
 /*                                                        :::      ::::::::   */
 /*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:37:25 by jusohn            #+#    #+#             */
-/*   Updated: 2023/07/12 21:44:31 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/07/22 17:38:06 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "executor.h"
 
-void	open_pipe(t_pipe_info *info)
+void	open_pipe(t_exec_info *info)
 {
 	if (pipe(info->pipe))
-		err();
+		exit(err("error: pipe:"));
 }
 
-static void	connect_left(t_node *node, t_pipe_info *info)
+static int	connect_left(t_node *node, t_exec_info *info)
 {
 	if (node->left && node->left->type == AST_REDIR_IN)
-		redir_in(node->left);
+	{
+		if (!redir_in(node->left))
+			return (0);
+	}
 	else if (node->left && node->left->type == AST_HEREDOC)
-		heredoc(node->left, info);
+	{
+		if (!heredoc(node->left, info))
+			return (0);
+	}
 	else if ((node->pipe_open >> 1) & 1)
-		if (dup2(info->prev_pipe_fd, STDIN_FILENO) < 0)
-			err();
+	{
+		if (dup2(info->prev_pipe, STDIN_FILENO) < 0)
+			return (0);
+	}
+	return (1);
 }
 
-static void	connect_right(t_node *node, t_pipe_info *info)
+static int	connect_right(t_node *node, t_exec_info *info)
 {
 	if (node->right && node->right->type == AST_REDIR_OUT)
-		redir_out(node->right);
+	{
+		if (!redir_out(node->right))
+			return (0);
+	}
 	else if (node->right && node->right->type == AST_REDIR_APPEND)
-		redir_append(node->right);
+	{
+		if (!redir_append(node->right))
+			return (0);
+	}
 	else if ((node->pipe_open >> 0) & 1)
+	{
 		if (dup2(info->pipe[1], STDOUT_FILENO) < 0)
-			err();
+			return (0);
+	}
+	return (1);
 }
 
-void	connect_pipe(t_node *node, t_pipe_info *info)
+int	connect_pipe(t_node *node, t_exec_info *info)
 {
-	connect_left(node, info);
-	connect_right(node, info);
-	if (!node->pipe_open)
-		return ;
-	close(info->prev_pipe_fd);
-	close(info->pipe[0]);
-	close(info->pipe[1]);
+	if (!connect_left(node, info))
+		return (0);
+	if (!connect_right(node, info))
+		return (0);
+	if (node->pipe_open)
+	{
+		close(info->prev_pipe);
+		close(info->pipe[0]);
+		close(info->pipe[1]);
+	}
+	return (1);
 }
 
-void	close_pipe(t_node *node, t_pipe_info *info)
+void	close_pipe(t_node *node, t_exec_info *info)
 {
 	if (!node->pipe_open)
 		return ;
 	if ((node->pipe_open >> 0) & 1)
 	{
-		if (info->prev_pipe_fd < 0)
+		if (info->prev_pipe < 0)
 		{
-			info->prev_pipe_fd = dup(info->pipe[0]);
-			if (info->prev_pipe_fd < 0)
-				err();
+			info->prev_pipe = dup(info->pipe[0]);
+			if (info->prev_pipe < 0)
+				exit(err("error: dup"));
 		}
 		else
 		{
-			if (dup2(info->pipe[0], info->prev_pipe_fd) < 0)
-				err();
+			if (dup2(info->pipe[0], info->prev_pipe) < 0)
+				exit(err("error: dup2"));
 		}
 	}
 	close(info->pipe[0]);
