@@ -429,15 +429,48 @@ t_node *parse_simple_cmd_element(t_parser *parser)
 }
 
 /**
- * @brief Parse function for <SIMPLE-COMMAND>, calling parse function
+ * @brief Parse function for <SIMPLE-COMMAND-TAIL>, calling
+ * 		<SIMPLE-COMMAND-ELEMENT> and <SIMPLE-COMMAND-TAIL>.
+ * 
+ * @param parser 
+ * @return t_node* 
+ */
+t_node	*parse_simple_cmd_tail(t_parser *parser)
+{
+	t_node	*cmd_node;
+	t_node	*simple_cmd_tail_node;
+
+	simple_cmd_tail_node = 0;
+	// Do I have to check the token type here again, when its already checked before?
+	if (parser->is_word(parser) || parser->is_redir(parser))
+	{
+		simple_cmd_tail_node = parse_simple_cmd_element(parser);
+		if (!simple_cmd_tail_node)
+			return (0);
+		append_child_node(parser->tmp_root, simple_cmd_tail_node);
+		parser->tmp_root = simple_cmd_tail_node;
+		if (parser->is_word(parser) || parser->is_redir(parser))
+		{
+			cmd_node = parse_simple_cmd_tail(parser);
+			if (!cmd_node)
+				return (0);
+			// append_child_node(simple_cmd_tail_node, cmd_node);
+		}
+	}
+	return (simple_cmd_tail_node);
+}
+
+/**
+ * @brief Parse function for <SIMPLE-COMMAND>, calling parse function for
  *		<SIMPLE-COMMAND-ELEMENT>
  *
  * @param parser 	parser struct
  * @return t_node*	root node of the <SIMPLE-COMMAND>
  */
-t_node *parse_simple_cmd(t_parser *parser)
+t_node	*parse_simple_cmd(t_parser *parser)
 {
-	t_node *cmd_node;
+	t_node	*cmd_tail;
+	t_node	*cmd_node;
 
 	if (parser->is_word(parser) || parser->is_redir(parser))
 	{
@@ -456,6 +489,14 @@ t_node *parse_simple_cmd(t_parser *parser)
 		// if (!cmd_node->cmd_args)
 		// 	return (0);
 		// cmd_node->cmd_args[0] = parser->tokens[parser->cur].value;
+	}
+	parser->tmp_root = cmd_node;
+	if (parser->is_word(parser) || parser->is_redir(parser))
+	{
+		cmd_tail = parse_simple_cmd_tail(parser);
+		if (!cmd_tail)
+			return (0);
+		append_child_node(cmd_node, cmd_tail);
 	}
 	// parser->advance(parser);
 	return (cmd_node);
@@ -504,8 +545,8 @@ t_node *parse_command(t_parser *parser)
 /**
  * @brief Parse function for <WORD>. For <REDIRECTION>, <WORD> should be
  * 		attached to left (<, <<) node or right (>, >>) of the parent node.
- * 		For	it is an argument, so should be directly attached to
- *		parent->cmd_args[0 < i].
+ * 		For	<WORD> as an argument of a command, so should be directly attached
+ * 		to parent->cmd_args[0 < i].
  *		If previous token is <WORD>, it should be considered as arguments,
  *		attaching arugments to (parser->tmp_root->cmd_args[0 < i]) and return
  *		(parser->tmp_root).
@@ -673,7 +714,7 @@ t_node	*parse_redir_list_tail(t_parser *parser)
 t_node	*parse_redir_list(t_parser *parser)
 {
 	t_node	*redir_list_node;
-	t_node	*redir_element;
+	t_node	*redir_list_tail_node;
 
 	redir_list_node = parse_redir(parser);
 	if (!redir_list_node) // err?
@@ -681,10 +722,10 @@ t_node	*parse_redir_list(t_parser *parser)
 	parser->tmp_root = redir_list_node;
 	if (parser->is_redir(parser))
 	{
-		redir_element = parse_redir_list_tail(parser);
-		if (!redir_element) // err?
+		redir_list_tail_node = parse_redir_list_tail(parser);
+		if (!redir_list_tail_node) // err?
 			return (0);
-		append_redir_node(redir_list_node, redir_element);
+		append_redir_node(redir_list_node, redir_list_tail_node);
 	}
 	return (redir_list_node);
 }
@@ -713,47 +754,11 @@ t_node *parse_pipeline_tail(t_parser *parser)
 		if (!pipe_node)	// malloc err
 			return (0);
 		pipe_node->right = right_node;
-		// append_child_node(pipe_node, right_node);
 		return (pipe_node);
 	}
 	else	// synatx error
 		return (0);
 	return (pipe_node);
-
-	// t_node	*cmd_node;
-	// t_node	*pipe_node;
-	// t_node	*pipeline_tail_node;
-
-	// // do I need to check whether token == TOKEN_PIPE again?
-	// if (parser->check(parser, TOKEN_PIPE))
-	// {
-	// 	pipe_node = create_node(AST_PIPE);
-	// 	if (!pipe_node)
-	// 		return (0);
-	// 	append_child_node(parser->tmp_root, pipe_node);
-	// 	parser->tmp_root = pipe_node;
-	// 	parser->advance(parser);
-	// 	cmd_node = 0;
-	// 	if (parser->is_word(parser))
-	// 	{
-	// 		cmd_node = parse_command(parser);
-	// 		if (!cmd_node) // err?
-	// 			return (0);
-	// 		append_child_node(parser->tmp_root, cmd_node);
-	// 		parse->tmp_root = cmd_node;
-	// 		if (parser->check(parser, TOKEN_PIPE))
-	// 		{
-	// 			pipeline_tail_node = parse_pipeline_tail(parser);
-	// 			if (!pipeline_tail_node) // err?
-	// 				return (0);
-	// 			// append_child_node(cmd_node, pipeline_tail_node);
-	// 		}
-	// 	}
-	// 	else
-	// 		cmd_node = parse_err(parser);
-	// }
-
-	// return (pipe_node);
 }
 
 /**
@@ -778,7 +783,6 @@ t_node *parse_pipeline(t_parser *parser)
 		if (!pipe_node) // err?
 			return (0);
 		pipe_node->left = cmd_node;
-		// append_child_node(pipe_node, cmd_node);
 		return (pipe_node);
 	}
 	return (cmd_node);
