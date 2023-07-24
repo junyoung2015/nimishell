@@ -691,9 +691,9 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 			{
 				// handle err, print err msg and error happend around which token
 				// For now, print error here and return 0;
-				write(STD_ERR, "minishell: syntax error near unexpected token `", 52);
+				write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
 				write(STD_ERR, new_node->cmd_args[0], ft_strlen(new_node->cmd_args[0]));
-				write(STD_ERR, "\n", 1);
+				write(STD_ERR, "`\n", 2);
 				free(new_node);
 				return (0);
 			}
