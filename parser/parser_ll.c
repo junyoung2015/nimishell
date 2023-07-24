@@ -27,15 +27,15 @@
 
 	<WORD-LIST> -> <WORD> <WORD-LIST-TAIL>
 
-	<WORD-LIST-TAIL> -> <WORD> <WORD-LIST-TAIL>
+	<WORD-LIST-TAIL> -> <WORD> <WORD-LIST-TAIL>  // advance() in this case
 	<WORD-LIST-TAIL> -> ε
 
 	<ASSIGNMENT-WORD> -> <WORD> = <WORD>
 
-	<REDIRECTION> -> > <WORD-LIST>
-	<REDIRECTION> -> < <WORD-LIST>
-	<REDIRECTION> -> >> <WORD-LIST>
-	<REDIRECTION> -> << <WORD-LIST>
+	<REDIRECTION> -> > <WORD-LIST>	 // advance() in this case
+	<REDIRECTION> -> < <WORD-LIST>	 // advance() in this case
+	<REDIRECTION> -> >> <WORD-LIST>	 // advance() in this case
+	<REDIRECTION> -> << <WORD-LIST>	 // advance() in this case
 
 	<SIMPLE-COMMAND-ELEMENT> -> <WORD-LIST>
 	<SIMPLE-COMMAND-ELEMENT> -> <ASSIGNMENT-WORD>
@@ -69,7 +69,8 @@
 	<PIPELINE> -> <COMMAND> <PIPELINE-TAIL>
 	?<PIPELINE> -> <PIPELINE-TAIL>?
 
-	<PIPELINE-TAIL> -> | <COMMAND> <PIPELINE-TAIL>
+	?<PIPELINE-TAIL> -> | <PIPELINE>?				// advance() in this case
+	 <PIPELINE-TAIL> -> | <COMMAND> <PIPELINE-TAIL>	// advance() in this case
 	<PIPELINE-TAIL> -> ε
  */
 
@@ -128,8 +129,8 @@ t_node *parse_command(t_parser *parser);
 t_node *parse_subshell(t_parser *parser);
 // t_node *parse_list(t_parser *parser);
 // t_node *parse_list_tail(t_parser *parser);
-// t_node *parse_pipeline(t_parser *parser);
-// t_node *parse_pipeline_tail(t_parser *parser);
+t_node *parse_pipeline(t_parser *parser);
+t_node *parse_pipeline_tail(t_parser *parser);
 t_node *parse_err(t_parser *parser);
 
 // type for function pointer array
@@ -235,12 +236,25 @@ t_bool	is_redir_token(t_parser *parser)
 	return (FALSE);
 }
 
+/**
+ * @brief Append the child (redirection node) to the parent node. If the
+ *		parent node is NULL, return.
+ * 
+ * @param parent	parent node
+ * @param child		child node to attach
+ */
 void	append_redir_node(t_node *parent, t_node *child)
 {
 	t_node	*tmp;
 
 	if (!parent || !child)
 		return ;
+	else if (parent == child)
+	{
+		// err handling
+		fprintf(stderr, "parent == child\n");
+		return ;
+	}
 	if (child->type == AST_REDIR_IN || child->type == AST_HEREDOC)
 	{
 		if (!parent->left)
@@ -251,7 +265,7 @@ void	append_redir_node(t_node *parent, t_node *child)
 			while (tmp->sibling)
 				tmp = tmp->sibling;
 			tmp->sibling = child;
-		}	
+		}
 	}
 	else if (child->type == AST_REDIR_OUT || child->type == AST_REDIR_APPEND)
 	{
@@ -493,8 +507,8 @@ t_node *parse_command(t_parser *parser)
  * 		For	it is an argument, so should be directly attached to
  *		parent->cmd_args[0 < i].
  *		If previous token is <WORD>, it should be considered as arguments,
- *		attaching arugments to (parser->tmp->cmd_args[0 < i]) and return
- *		(parser->tmp).
+ *		attaching arugments to (parser->tmp_root->cmd_args[0 < i]) and return
+ *		(parser->tmp_root).
  *
  * @param parser	paresr struct
  * @return t_node*	root node of the <REDIRECTION>, or <WORD>
@@ -628,15 +642,16 @@ t_node	*parse_redir_list_tail(t_parser *parser)
 		redir_list_tail_node = parse_redir(parser);
 		if (!redir_list_tail_node)
 			return (0);
-		append_redir_node(parser->tmp, redir_list_tail_node);
+		append_redir_node(parser->tmp_root, redir_list_tail_node);
+		parser->tmp_root = redir_list_tail_node;
 		if (parser->is_redir(parser))
 		{
 			redir_node = parse_redir_list_tail(parser);
 			if (!redir_node)
 				return (0);
-			append_redir_node(redir_list_tail_node, redir_node);
+			// append_redir_node(redir_list_tail_node, redir_node);
 		}
-		// append_child_node(parser->tmp, redir_list_tail_node);
+		// append_child_node(parser->tmp_root, redir_list_tail_node);
 		// if (parser->is_redir(parser))
 		// {
 		// 	redir_node = parse_redir_list_tail(parser);
@@ -661,46 +676,140 @@ t_node	*parse_redir_list(t_parser *parser)
 	t_node	*redir_element;
 
 	redir_list_node = parse_redir(parser);
-	if (!redir_list_node)
+	if (!redir_list_node) // err?
 		return (0);
-	parser->tmp = redir_list_node;
+	parser->tmp_root = redir_list_node;
 	if (parser->is_redir(parser))
 	{
 		redir_element = parse_redir_list_tail(parser);
-		if (!redir_element)
+		if (!redir_element) // err?
 			return (0);
 		append_redir_node(redir_list_node, redir_element);
-		// append_child_node(redir_list_node, redir_element);
 	}
 	return (redir_list_node);
 }
 
-// /**
-//  * @brief Parse function for <PARSE-PIPELINE-TAIL>, calling <COMMAND> and
-//  * 		<PIPELINE-TAIL>.
-//  *
-//  * @param parser	parser struct
-//  * @return t_node*	root node of <PIPELINE-TAIL>, '|'.
-//  */
-// t_node *parse_pipeline_tail(t_parser *parser)
-// {
-// 	t_node *pipeline_tail_node;
+/**
+ * @brief Parse function for <PARSE-PIPELINE-TAIL>, calling <COMMAND> and
+ * 		<PIPELINE-TAIL>.
+ *
+ * @param parser	parser struct
+ * @return t_node*	root node of <PIPELINE-TAIL>, '|'.
+ */
+t_node *parse_pipeline_tail(t_parser *parser)
+{
+	t_node	*left_node;
+	t_node	*right_node;
+	t_node	*pipe_node;
 
-// 	return (pipeline_tail_node);
-// }
+	left_node = parse_command(parser);
+	if (!left_node) // err? no command before '|'
+		return (0);
+	if (parser->check(parser, TOKEN_PIPE))
+	{
+		parser->advance(parser);
+		right_node = parse_pipeline_tail(parser);
+		if (!right_node) // err?
+			return (0);
+		pipe_node = create_node(AST_PIPE);
+		if (!pipe_node)
+			return (0);
+		append_child_node(pipe_node, left_node);
+		append_child_node(pipe_node, right_node);
+		return (pipe_node);
+	}
+	return (left_node);
 
-// /**
-//  * @brief Parse function for <PIPELINE>, calling <COMMAND> or <PIPELINE-TAIL>.
-//  *
-//  * @param parser	parser struct
-//  * @return t_node*	root node of <PIPELINE>
-//  */
-// t_node *parse_pipeline(t_parser *parser)
-// {
-// 	t_node *pipe_node;
+	// t_node	*cmd_node;
+	// t_node	*pipe_node;
+	// t_node	*pipeline_tail_node;
 
-// 	return (pipe_node);
-// }
+	// // do I need to check whether token == TOKEN_PIPE again?
+	// if (parser->check(parser, TOKEN_PIPE))
+	// {
+	// 	pipe_node = create_node(AST_PIPE);
+	// 	if (!pipe_node)
+	// 		return (0);
+	// 	append_child_node(parser->tmp_root, pipe_node);
+	// 	parser->tmp_root = pipe_node;
+	// 	parser->advance(parser);
+	// 	cmd_node = 0;
+	// 	if (parser->is_word(parser))
+	// 	{
+	// 		cmd_node = parse_command(parser);
+	// 		if (!cmd_node) // err?
+	// 			return (0);
+	// 		append_child_node(parser->tmp_root, cmd_node);
+	// 		parse->tmp_root = cmd_node;
+	// 		if (parser->check(parser, TOKEN_PIPE))
+	// 		{
+	// 			pipeline_tail_node = parse_pipeline_tail(parser);
+	// 			if (!pipeline_tail_node) // err?
+	// 				return (0);
+	// 			// append_child_node(cmd_node, pipeline_tail_node);
+	// 		}
+	// 	}
+	// 	else
+	// 		cmd_node = parse_err(parser);
+	// }
+
+	// return (pipe_node);
+}
+
+/**
+ * @brief Parse function for <PIPELINE>, calling <COMMAND> or <PIPELINE-TAIL>.
+ *
+ * @param parser	parser struct
+ * @return t_node*	root node of <PIPELINE>
+ */
+t_node *parse_pipeline(t_parser *parser)
+{
+	t_node	*left_node;
+	t_node	*right_node;
+	t_node	*pipe_node;
+
+	left_node = parse_command(parser);
+	if (!left_node) // err? no command before '|'
+		return (0);
+	if (parser->check(parser, TOKEN_PIPE))
+	{
+		pipe_node = parse_pipeline_tail(parser);
+		if (!pipe_node) // err?
+			return (0);
+		append_child_node(pipe_node, left_node);
+		return (pipe_node);
+	}
+	// if (parser->check(parser, TOKEN_PIPE))
+	// {
+	// 	parser->advance(parser);
+	// 	right_node = parse_pipeline_tail(parser);
+	// 	if (!right_node) // err?
+	// 		return (0);
+	// 	pipe_node = create_node(AST_PIPE);
+	// 	if (!pipe_node)
+	// 		return (0);
+	// 	append_child_node(pipe_node, left_node);
+	// 	append_child_node(pipe_node, right_node);
+	// 	return (pipe_node);
+	// }
+	return (left_node);
+
+	// t_node	*pipe_node;
+	// t_node	*pipe_tail_node;
+
+	// pipe_node = parse_command(parser);
+	// if (!pipe_node)	// err?
+	// 	return (0);
+	// parser->tmp_root = pipe_node;
+	// if (parser->check(parser, TOKEN_PIPE))
+	// {
+	// 	pipeline_tail_node = parse_pipeline_tail(parser);
+	// 	if (!pipeline_tail_node) // err?
+	// 		return (0);
+	// 	append_child_node(pipe_node, pipeline_tail_node);
+	// }
+	// return (pipe_node);
+}
 
 // /**
 //  * @brief Parse function for <LIST-TAIL>, calling <PIPELINE> and <LIST-TAIL>
@@ -769,7 +878,7 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 		parse_command,
 		0,
 		parse_redir_list,
-		0,
+		parse_pipeline,
 		0,
 		0,
 		// parse_err,
@@ -787,7 +896,7 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 	parser.tokens = tokens;
 	parser.size = num_tokens;
 	parser.cur = 0;
-	parser.tmp = 0;
+	parser.tmp_root = 0;
 	parser.check = &check;
 	parser.cur_type = &cur_type;
 	parser.advance = &advance;
@@ -829,23 +938,32 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 			}
 			else if (new_node->type == AST_REDIR_IN || new_node->type == AST_REDIR_OUT || new_node->type == AST_REDIR_APPEND || new_node->type == AST_HEREDOC)
 			{
-				if (parser.tmp == 0)
-					parser.tmp = new_node;
-				else
-				{
-					append_redir_node(parser.tmp, new_node);
-					parser.tmp = new_node;
-				}
+				append_redir_node(root, new_node);
+				// if (parser.tmp_root == 0)
+				// {
+				// 	// parser.tmp_root = new_node;
+				// 	append_redir_node(root, new_node);
+				// }
+				// else
+				// {
+				// 	if (parser.tmp_root == new_node)
+				// 		append_redir_node(root, new_node);
+				// 	else
+				// 		append_redir_node(parser.tmp_root, new_node);
+				// 	// parser.tmp_root = new_node;
+				// }
 			}
 			else
 			{
-				if (parser.tmp == 0)
-					parser.tmp = new_node;
-				else
+				if (parser.tmp_root == 0)
 				{
-					append_child_node(parser.tmp, new_node);
-					parser.tmp = new_node;
+					parser.tmp_root = new_node;
 				}
+				// else
+				// {
+					append_child_node(parser.tmp_root, new_node);
+				// 	parser.tmp_root = new_node;
+				// }
 			}
 		}
 		else
