@@ -99,10 +99,11 @@
 	ROW12	TOKEN_SQ_STR
 	ROW13	TOKEN_DQ_STR
  */
+
 #define ROW1	"\2\5\6\6\4\4\4\4\1\0\2\2\2"
 #define ROW2	"\2\0\0\0\0\4\0\0\1\7\0\2\2"
-#define ROW3	"\5\0\0\0\0\0\0\0\0\7\0\0\0"
-#define ROW4	"\5\0\0\0\0\0\0\0\0\7\0\0\0"
+#define ROW3	"\6\0\0\0\0\0\0\0\0\7\0\0\0"
+#define ROW4	"\6\0\0\0\0\0\0\0\0\7\0\0\0"
 #define ROW5	"\4\0\0\0\0\0\0\0\0\0\0\0\0"
 #define ROW6	"\4\0\0\0\0\0\0\0\0\0\0\0\0"
 #define ROW7	"\4\0\0\0\0\0\0\0\0\0\0\0\0"
@@ -113,28 +114,25 @@
 #define ROW12	"\2\5\6\6\4\4\4\4\2\0\2\2\2"
 #define ROW13	"\2\5\6\6\4\4\4\4\2\0\2\2\2"
 
-t_node *parse_word_list(t_parser *parser);
-// t_node *parse_word_list_tail(t_parser *parser);
+t_node *parse_word_list(t_parser *parser, t_node *parent);
 
-// t_node *parse_env_var(t_parser *parser);
-char *parse_word(t_parser *parser);
-// t_node *parse_assign_word(t_parser *parser);
-t_node *parse_redir(t_parser *parser);
-t_node *parse_simple_cmd_element(t_parser *parser);
-t_node *parse_redir_list(t_parser *parser);
-t_node *parse_redir_list_tail(t_parser *parser);
-t_node *parse_simple_cmd(t_parser *parser);
-// t_node *parse_simple_cmd_tail(t_parser *parser);
-t_node *parse_command(t_parser *parser);
-t_node *parse_subshell(t_parser *parser);
-// t_node *parse_list(t_parser *parser);
-// t_node *parse_list_tail(t_parser *parser);
-t_node *parse_pipeline(t_parser *parser);
-t_node *parse_pipeline_tail(t_parser *parser);
-t_node *parse_err(t_parser *parser);
+char *parse_word(t_parser *parser, t_node *parent);
+t_node *parse_redir(t_parser *parser, t_node *parent);
+t_node *parse_simple_cmd_element(t_parser *parser, t_node *parent);
+t_node *parse_redir_list(t_parser *parser, t_node *parent);
+t_node *parse_redir_list_tail(t_parser *parser, t_node *parent);
+t_node *parse_simple_cmd(t_parser *parser, t_node *parent);
+t_node *parse_simple_cmd_tail(t_parser *parser, t_node *parent);
+t_node *parse_command(t_parser *parser, t_node *parent);
+t_node *parse_subshell(t_parser *parser, t_node *parent);
+t_node *parse_list(t_parser *parser, t_node *parent);
+t_node *parse_list_tail(t_parser *parser, t_node *parent);
+t_node *parse_pipeline(t_parser *parser, t_node *parent);
+t_node *parse_pipeline_tail(t_parser *parser, t_node *parent);
+t_node *parse_err(t_parser *parser, t_node *parent);
 
 // type for function pointer array
-typedef t_node *(*parse_fn)(t_parser *parser);
+typedef t_node *(*parse_fn)(t_parser *parser, t_node *parent);
 
 /**
  * @brief Check the type of the current token.
@@ -333,7 +331,7 @@ void update_p_state(char **table, t_parser *parser, t_parse_state *parse_state)
 
 	if (parser->cur == 0)
 	{
-		*parse_state = PIPELINE;
+		*parse_state = LIST;
 		return ;
 	}
 	cur = parser->tokens[parser->cur];
@@ -349,15 +347,61 @@ void update_p_state(char **table, t_parser *parser, t_parse_state *parse_state)
 }
 
 /**
+ * @brief Traverse the AST tree in postorder, return the error node if it
+ * 		exists.
+ * 
+ * @param node	node of the AST tree.
+ * @param err_node	pointer to the first AST_ERR node found during traversal
+ */
+void	postorder_traversal(t_node *node, t_node **err_node)
+{
+    if (!node || (*err_node))
+    {
+		return ;
+	}
+	if (node->left)
+		postorder_traversal(node->left, err_node);
+	if (node->right)
+	    postorder_traversal(node->right, err_node);
+    if (node->type == AST_ERR)
+        *err_node = node;
+}
+
+/**
+ * @brief Check whether there is an AST_ERR node in the subtree rooted at
+ * 		new_node. If so, print error message and return TRUE. Otherwise,
+ * 		return FALSE.
+ * 
+ * @param new_node	root node of the subtree to check for errors
+ * @return t_bool	TRUE if there is an error node, FALSE otherwise
+ */
+t_bool	check_err_node(t_node *new_node)
+{
+    t_node *err_node = NULL;
+    if (!new_node)
+        return (FALSE);
+    postorder_traversal(new_node, &err_node);
+    if (err_node)
+    {
+        write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
+        write(STD_ERR, err_node->cmd_args[0], ft_strlen(err_node->cmd_args[0]));
+        write(STD_ERR, "`\n", 2);
+        return (TRUE);
+    }
+    return (FALSE);
+}
+
+/**
  * @brief Parse function that generates an Error node. This indicates the
  * 		the location of syntax error.
  *
  * @param parser 	parser struct
  * @return t_node*	error node, indicating an error in syntax
  */
-t_node *parse_err(t_parser *parser)
+t_node *parse_err(t_parser *parser, t_node *parent)
 {
-	t_node *err_node;
+	t_node	*err_node;
+	(void)	parent;
 
 	err_node = create_node(AST_ERR);
 	if (!err_node)
@@ -365,23 +409,9 @@ t_node *parse_err(t_parser *parser)
 	err_node->cmd_args = ft_calloc(1, sizeof(char *));
 	if (!err_node->cmd_args)
 		return (0);
-	err_node->cmd_args[err_node->num_args++] = parser->tokens[parser->cur].value;
+	err_node->cmd_args[err_node->num_args++] = ft_strdup(parser->tokens[parser->cur].value);
 	return (err_node);
 }
-
-// /**
-//  * @brief Parse function for <SIMPLE-COMMAND-TAIL>, calling <SIMPLE-COMMAND-ELEMENT>
-//  * 		and <SIMPLE-COMMAND-TAIL>
-//  * 
-//  * @param parser 	parser struct
-//  * @return t_node*	root node of the <SIMPLE-COMMAND-TAIL>
-//  */
-// t_node	*parse_simple_cmd_tail(t_parser *parser)
-// {
-// 	t_node	*cmd_tail_node;
-
-// 	return (cmd_tail_node);
-// }
 
 /**
  * @brief Parse function for <SIMPLE-COMMAND-ELEMENT>, calling either <WORD>
@@ -390,9 +420,9 @@ t_node *parse_err(t_parser *parser)
  * @param parser	parser struct
  * @return t_node*	root node of the <SIMPLE-COMMAND-ELEMENT>
  */
-t_node *parse_simple_cmd_element(t_parser *parser)
+t_node *parse_simple_cmd_element(t_parser *parser, t_node *parent)
 {
-	t_node *cmd_element;
+	t_node	*cmd_element;
 
 	// cmd_element = create_node(AST_SIMPLE_CMD_ELEMENT);
 	// if (!cmd_element)
@@ -402,21 +432,21 @@ t_node *parse_simple_cmd_element(t_parser *parser)
 	// 	return (0);
 	if (parser->is_word(parser))
 	{
-		cmd_element = parse_word_list(parser);
+		cmd_element = parse_word_list(parser, parent);
 		if (!cmd_element)
 			return (0);
 		cmd_element->type = AST_CMD;
 	}
 	else if (parser->is_redir(parser))
 	{
-		cmd_element = parse_redir(parser);
+		cmd_element = parse_redir_list(parser, parent);
 		if (!cmd_element)
 			return (0);
 	}
 	else
 	{
 		// err handling
-		cmd_element = parse_err(parser);
+		cmd_element = parse_err(parser, parent);
 		// cmd_element = create_node(AST_ERR);
 		// if (!cmd_element)
 		// 	return (0);
@@ -435,7 +465,7 @@ t_node *parse_simple_cmd_element(t_parser *parser)
  * @param parser 
  * @return t_node* 
  */
-t_node	*parse_simple_cmd_tail(t_parser *parser)
+t_node	*parse_simple_cmd_tail(t_parser *parser, t_node *parent)
 {
 	t_node	*cmd_node;
 	t_node	*simple_cmd_tail_node;
@@ -444,14 +474,16 @@ t_node	*parse_simple_cmd_tail(t_parser *parser)
 	// Do I have to check the token type here again, when its already checked before?
 	if (parser->is_word(parser) || parser->is_redir(parser))
 	{
-		simple_cmd_tail_node = parse_simple_cmd_element(parser);
+		simple_cmd_tail_node = parse_simple_cmd_element(parser, parent);
 		if (!simple_cmd_tail_node)
 			return (0);
-		append_child_node(parser->tmp_root, simple_cmd_tail_node);
-		parser->tmp_root = simple_cmd_tail_node;
+		if (AST_REDIR_IN <= simple_cmd_tail_node->type && simple_cmd_tail_node->type <= AST_REDIR_APPEND)
+			append_redir_node(parent, simple_cmd_tail_node);
+		else
+			append_child_node(parent, simple_cmd_tail_node);
 		if (parser->is_word(parser) || parser->is_redir(parser))
 		{
-			cmd_node = parse_simple_cmd_tail(parser);
+			cmd_node = parse_simple_cmd_tail(parser, parent);
 			if (!cmd_node)
 				return (0);
 			// append_child_node(simple_cmd_tail_node, cmd_node);
@@ -467,20 +499,20 @@ t_node	*parse_simple_cmd_tail(t_parser *parser)
  * @param parser 	parser struct
  * @return t_node*	root node of the <SIMPLE-COMMAND>
  */
-t_node	*parse_simple_cmd(t_parser *parser)
+t_node	*parse_simple_cmd(t_parser *parser, t_node *parent)
 {
 	t_node	*cmd_tail;
 	t_node	*cmd_node;
 
 	if (parser->is_word(parser) || parser->is_redir(parser))
 	{
-		cmd_node = parse_simple_cmd_element(parser);
+		cmd_node = parse_simple_cmd_element(parser, parent);
 		if (!cmd_node)
 			return (0);
 	}
 	else
 	{
-		cmd_node = parse_err(parser);
+		cmd_node = parse_err(parser, parent);
 		// err handling
 		// cmd_node = create_node(AST_ERR);
 		// if (!cmd_node)
@@ -490,13 +522,15 @@ t_node	*parse_simple_cmd(t_parser *parser)
 		// 	return (0);
 		// cmd_node->cmd_args[0] = parser->tokens[parser->cur].value;
 	}
-	parser->tmp_root = cmd_node;
 	if (parser->is_word(parser) || parser->is_redir(parser))
 	{
-		cmd_tail = parse_simple_cmd_tail(parser);
+		cmd_tail = parse_simple_cmd_tail(parser, parent);
 		if (!cmd_tail)
 			return (0);
-		append_child_node(cmd_node, cmd_tail);
+		if (AST_REDIR_IN <= cmd_tail->type && cmd_tail->type <= AST_REDIR_APPEND)
+			append_redir_node(cmd_node, cmd_tail);
+		else
+			append_child_node(cmd_node, cmd_tail);
 	}
 	// parser->advance(parser);
 	return (cmd_node);
@@ -509,28 +543,41 @@ t_node	*parse_simple_cmd(t_parser *parser)
  * @param parser	parser struct
  * @return t_node*	root node from parse_simple_cmd or parse_subshell
  */
-t_node *parse_command(t_parser *parser)
+t_node *parse_command(t_parser *parser, t_node *parent)
 {
-	t_node *cmd_node;
-	t_token_type state;
+	t_node			*cmd_node;
+	t_node			*redir_list_node;
+	t_token_type	state;
 
 	state = parser->cur_type(parser);
 	if (TOKEN_L_PAREN == state)
 	{
-		cmd_node = parse_subshell(parser);
+		cmd_node = parse_subshell(parser, parent);
 		if (!cmd_node)
 			return (0);
+		if (parser->is_redir(parser))
+		{
+			redir_list_node = parse_redir_list(parser, parent);
+			if (!redir_list_node)
+				return (0);
+			append_child_node(cmd_node, redir_list_node);
+		}
 	}
 	else if (parser->is_word(parser) || parser->is_redir(parser))
 	{
-		cmd_node = parse_simple_cmd(parser);
+		cmd_node = parse_simple_cmd(parser, parent);
 		if (!cmd_node)
 			return (0);
+	}
+	else if (state == TOKEN_TYPES_CNT)
+	{
+		parser->cur--;
+		cmd_node = parse_err(parser, parent);
 	}
 	else
 	{
 		// err handling
-		cmd_node = parse_err(parser);
+		cmd_node = parse_err(parser, parent);
 		// cmd_node = create_node(AST_ERR);
 		// if (!cmd_node)
 		// 	return (0);
@@ -548,15 +595,16 @@ t_node *parse_command(t_parser *parser)
  * 		For	<WORD> as an argument of a command, so should be directly attached
  * 		to parent->cmd_args[0 < i].
  *		If previous token is <WORD>, it should be considered as arguments,
- *		attaching arugments to (parser->tmp_root->cmd_args[0 < i]) and return
- *		(parser->tmp_root).
+ *		attaching arugments to (parent->cmd_args[0 < i]) and return
+ *		(parent).
  *
  * @param parser	paresr struct
  * @return t_node*	root node of the <REDIRECTION>, or <WORD>
  */
-char *parse_word(t_parser *parser)
+char *parse_word(t_parser *parser, t_node *parent)
 {
-	char *word;
+	char	*word;
+	(void)	parent;
 
 	word = 0;
 	if (parser->is_word(parser))
@@ -571,7 +619,7 @@ char *parse_word(t_parser *parser)
  * @param parser 	parser struct
  * @return t_node*	root node of the <WORD-LIST-TAIL>
  */
-t_node	*parse_word_list(t_parser *parser)
+t_node	*parse_word_list(t_parser *parser, t_node *parent)
 {
 	t_node	*word_list_node;
 
@@ -586,7 +634,7 @@ t_node	*parse_word_list(t_parser *parser)
 	}
 	while (parser->cur < parser->size && parser->is_word(parser))
 	{
-		word_list_node->cmd_args[word_list_node->num_args] = parse_word(parser);
+		word_list_node->cmd_args[word_list_node->num_args] = parse_word(parser, parent);
 		if (!word_list_node->cmd_args[word_list_node->num_args])
 		{
 			for (t_size i = 0; i < word_list_node->num_args; i++)
@@ -600,19 +648,6 @@ t_node	*parse_word_list(t_parser *parser)
 	return (word_list_node);
 }
 
-// /**
-//  * @brief Parse function for <REDIRECTION-LIST-TAIL>.
-//  *
-//  * @param parser	parser struct
-//  * @return t_node*	root node of <REDIRECTION-LIST-TAIL>
-//  */
-// t_node *parse_redir_tail(t_parser *parser)
-// {
-// 	t_node *redir_tail_node;
-
-// 	return (redir_tail_node);
-// }
-
 /**
  * @brief Parse function for <REDIRECTION>. '<, >, >>, <<' should be the root
  *		node, and filename should be at the left node (<, <<) or right (>, >>).
@@ -622,7 +657,7 @@ t_node	*parse_word_list(t_parser *parser)
  * @param parser 	paresr struct
  * @return t_node*	root node of the <REDIRECTION>
  */
-t_node *parse_redir(t_parser *parser)
+t_node *parse_redir(t_parser *parser, t_node *parent)
 {
 	t_node			*redir_node;
 
@@ -630,7 +665,7 @@ t_node *parse_redir(t_parser *parser)
 	if (parser->check(parser, TOKEN_REDIR_IN))
 	{
 		parser->advance(parser);
-		redir_node = parse_word_list(parser);
+		redir_node = parse_word_list(parser, parent);
 		if (!redir_node)
 			return (0);
 		redir_node->type = AST_REDIR_IN;
@@ -642,13 +677,13 @@ t_node *parse_redir(t_parser *parser)
 		if (!redir_node)
 			return (0);
 		redir_node->cmd_args = ft_calloc(2, sizeof(char *));
-		redir_node->cmd_args[redir_node->num_args] = parse_word(parser);
+		redir_node->cmd_args[redir_node->num_args] = parse_word(parser, parent);
 		redir_node->num_args = 1;
 	}
 	else if (parser->check(parser, TOKEN_REDIR_OUT))
 	{
 		parser->advance(parser);
-		redir_node = parse_word_list(parser);
+		redir_node = parse_word_list(parser, parent);
 		if (!redir_node)
 			return (0);
 		redir_node->type = AST_REDIR_OUT;
@@ -656,7 +691,7 @@ t_node *parse_redir(t_parser *parser)
 	else if (parser->check(parser, TOKEN_APPEND))
 	{
 		parser->advance(parser);
-		redir_node = parse_word_list(parser);
+		redir_node = parse_word_list(parser, parent);
 		if (!redir_node)
 			return (0);
 		redir_node->type = AST_REDIR_APPEND;
@@ -671,7 +706,7 @@ t_node *parse_redir(t_parser *parser)
  * @param parser	parser struct
  * @return t_node*	root node of <REDIRECTION-LIST-TAIL>
  */
-t_node	*parse_redir_list_tail(t_parser *parser)
+t_node	*parse_redir_list_tail(t_parser *parser, t_node *parent)
 {
 	// t_node	*tmp;
 	t_node	*redir_node;
@@ -680,19 +715,18 @@ t_node	*parse_redir_list_tail(t_parser *parser)
 	redir_list_tail_node = 0;
 	if (parser->is_redir(parser))
 	{
-		redir_list_tail_node = parse_redir(parser);
+		redir_list_tail_node = parse_redir(parser, parent);
 		if (!redir_list_tail_node)
 			return (0);
-		append_redir_node(parser->tmp_root, redir_list_tail_node);
-		parser->tmp_root = redir_list_tail_node;
+		append_redir_node(parent, redir_list_tail_node);
 		if (parser->is_redir(parser))
 		{
-			redir_node = parse_redir_list_tail(parser);
+			redir_node = parse_redir_list_tail(parser, redir_list_tail_node);
 			if (!redir_node)
 				return (0);
 			// append_redir_node(redir_list_tail_node, redir_node);
 		}
-		// append_child_node(parser->tmp_root, redir_list_tail_node);
+		// append_child_node(parent, redir_list_tail_node);
 		// if (parser->is_redir(parser))
 		// {
 		// 	redir_node = parse_redir_list_tail(parser);
@@ -711,21 +745,20 @@ t_node	*parse_redir_list_tail(t_parser *parser)
  * @param parser	parser struct
  * @return t_node*	root node of <REDIRECTION-LIST>
  */
-t_node	*parse_redir_list(t_parser *parser)
+t_node	*parse_redir_list(t_parser *parser, t_node *parent)
 {
 	t_node	*redir_list_node;
 	t_node	*redir_list_tail_node;
 
-	redir_list_node = parse_redir(parser);
+	redir_list_node = parse_redir(parser, parent);
 	if (!redir_list_node) // err?
 		return (0);
-	parser->tmp_root = redir_list_node;
 	if (parser->is_redir(parser))
 	{
-		redir_list_tail_node = parse_redir_list_tail(parser);
+		redir_list_tail_node = parse_redir_list_tail(parser, redir_list_node);
 		if (!redir_list_tail_node) // err?
 			return (0);
-		append_redir_node(redir_list_node, redir_list_tail_node);
+		// append_redir_node(redir_list_node, redir_list_tail_node);
 	}
 	return (redir_list_node);
 }
@@ -737,7 +770,7 @@ t_node	*parse_redir_list(t_parser *parser)
  * @param parser	parser struct
  * @return t_node*	root node of <PIPELINE-TAIL>, '|'.
  */
-t_node *parse_pipeline_tail(t_parser *parser)
+t_node *parse_pipeline_tail(t_parser *parser, t_node *parent)
 {
 	t_node	*right_node;
 	t_node	*pipe_node;
@@ -747,9 +780,11 @@ t_node *parse_pipeline_tail(t_parser *parser)
 	if (parser->check(parser, TOKEN_PIPE))
 	{
 		parser->advance(parser);
-		right_node = parse_pipeline(parser);
+		right_node = parse_pipeline(parser, parent);
 		if (!right_node) // err?
 			return (0);
+		if (right_node->type == AST_ERR)
+			return (right_node);
 		pipe_node = create_node(AST_PIPE);
 		if (!pipe_node)	// malloc err
 			return (0);
@@ -767,55 +802,108 @@ t_node *parse_pipeline_tail(t_parser *parser)
  * @param parser	parser struct
  * @return t_node*	root node of <PIPELINE>
  */
-t_node *parse_pipeline(t_parser *parser)
+t_node *parse_pipeline(t_parser *parser, t_node *parent)
 {
 	t_node	*cmd_node;
 	// t_node	*right_node;
 	t_node	*pipe_node;
 
-	cmd_node = parse_command(parser);
+	cmd_node = parse_command(parser, parent);
 	if (!cmd_node) // err? no command before '|'
 		return (0);
-	parser->tmp_root = cmd_node;
-	if (parser->check(parser, TOKEN_PIPE))	
+	if (cmd_node->type == AST_ERR)
+		return (cmd_node);
+	if (parser->check(parser, TOKEN_PIPE))
 	{
-		pipe_node = parse_pipeline_tail(parser);
+		pipe_node = parse_pipeline_tail(parser, cmd_node);
 		if (!pipe_node) // err?
 			return (0);
+		if (pipe_node->type == AST_ERR)
+		{
+			free_ast(cmd_node);
+			return (pipe_node);
+		}
 		pipe_node->left = cmd_node;
 		return (pipe_node);
 	}
 	return (cmd_node);
 }
 
-// /**
-//  * @brief Parse function for <LIST-TAIL>, calling <PIPELINE> and <LIST-TAIL>
-//  * 		'&&' or '||' becomes a root node, <PIPELINE> before '&&' and '||'
-//  *		operator becomes a left child, and <PIPELINE> after the '&&' and '||'
-//  *		becomes a right child.
-//  *
-//  * @param parser	parser struct
-//  * @return t_node*	root node with '&&' or '||'
-//  */
-// t_node *parse_list_tail(t_parser *parser)
-// {
-// 	t_node *list_tail_node;
+/**
+ * @brief Parse function for <LIST-TAIL>, calling <PIPELINE> and <LIST-TAIL>
+ * 		'&&' or '||' becomes a root node, <PIPELINE> before '&&' and '||'
+ *		operator becomes a left child, and <PIPELINE> after the '&&' and '||'
+ *		becomes a right child.
+ *
+	<LIST-TAIL> -> && <PIPELINE> <LIST-TAIL>
+	<LIST-TAIL> -> || <PIPELINE> <LIST-TAIL>
+	<LIST-TAIL> -> ε
+ * @param parser	parser struct
+ * @return t_node*	root node with '&&' or '||'
+ */
+t_node *parse_list_tail(t_parser *parser, t_node *parent)
+{
+	t_node			*logic_node;
+	t_node			*pipeline_node;
+	t_node			*list_tail_node;
+	t_node_type		state;
 
-// 	retunr(list_tail_node);
-// }
+	logic_node = 0;
+	if (parser->check(parser, TOKEN_AND) || parser->check(parser, TOKEN_OR))
+	{
+		state = AST_AND;
+		if (parser->check(parser, TOKEN_OR))
+			state = AST_OR;
+		parser->advance(parser);
+		pipeline_node = parse_pipeline(parser, parent);
+		if (!pipeline_node) // err?
+			return (0);
+		if (pipeline_node->type == AST_ERR)
+			return (pipeline_node);
+		logic_node = create_node(state);
+		if (!logic_node)	// malloc err
+			return (0);
+		logic_node->right = pipeline_node;
+		// append_child_node(logic_node, pipeline_node);
+		if (parser->check(parser, TOKEN_AND) || parser->check(parser, TOKEN_OR))
+		{
+			list_tail_node = parse_list_tail(parser, pipeline_node);
+			if (!list_tail_node) // err?
+				return (0);
+			append_child_node(pipeline_node, list_tail_node);
+		}
+		return (logic_node);
+	}
+	else	// syntax error
+		return (0);
+	return (logic_node);
+}
 
-// /**
-//  * @brief Parse function for <LIST>, calling <PIPELINE> and <LIST-TAIL>
-//  *
-//  * @param parser	parser struct
-//  * @return t_node*	root node of <LIST>
-//  */
-// t_node *parse_list(t_parser *parser)
-// {
-// 	t_node *list_node;
+/**
+ * @brief Parse function for <LIST>, calling <PIPELINE> and <LIST-TAIL>
+ *
+ * @param parser	parser struct
+ * @return t_node*	root node of <LIST>
+ */
+t_node *parse_list(t_parser *parser, t_node *parent)
+{
+	t_node	*pipeline_node;
+	t_node	*list_tail_node;
 
-// 	return (list_node);
-// }
+	pipeline_node = parse_pipeline(parser, parent);
+	if (!pipeline_node) // err?
+		return (0);
+	if (parser->check(parser, TOKEN_AND) || parser->check(parser, TOKEN_OR))
+	{
+		list_tail_node = parse_list_tail(parser, pipeline_node);
+		if (!list_tail_node) // err?
+			return (0);
+		append_child_node(list_tail_node, pipeline_node);
+		// list_tail_node->left = pipeline_node;
+		return (list_tail_node);
+	}
+	return (pipeline_node);
+}
 
 /**
  * @brief Parse function for <SUBSHELL>, calling <LIST>
@@ -823,10 +911,11 @@ t_node *parse_pipeline(t_parser *parser)
  * @param parser	parser struct
  * @return t_node*	root node of <SUBSHELL>
  */
-t_node *parse_subshell(t_parser *parser)
+t_node *parse_subshell(t_parser *parser, t_node *parent)
 {
-	t_node *subshell_node;
-	(void) parser;
+	t_node	*subshell_node;
+	(void)	parser;
+	(void)	parent;
 
 	subshell_node = create_node(AST_SUBSHELL);
 	if (!subshell_node)
@@ -856,8 +945,8 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 		0,
 		parse_redir_list,
 		parse_pipeline,
-		0,
-		0,
+		parse_list,
+		0,					
 		// parse_err,
 		// parse_env_var,
 		// parse_command,
@@ -896,9 +985,17 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 		{
 			break ;
 		}
-		new_node = parse_fn_array[parse_state](&parser);
+		new_node = parse_fn_array[parse_state](&parser, root);
 		if (new_node != 0)
 		{
+			if (check_err_node(new_node))
+			{
+				if (root && root != new_node)
+					free_ast(new_node);
+				free_table(table);
+				// free ast here?
+				return (0);
+			}
 			if (root == 0)
 			{
 				root = new_node;
@@ -910,7 +1007,7 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 				write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
 				write(STD_ERR, new_node->cmd_args[0], ft_strlen(new_node->cmd_args[0]));
 				write(STD_ERR, "`\n", 2);
-				free(new_node);
+				free_ast(new_node);
 				return (0);
 			}
 			else if (new_node->type == AST_REDIR_IN || new_node->type == AST_REDIR_OUT || new_node->type == AST_REDIR_APPEND || new_node->type == AST_HEREDOC)

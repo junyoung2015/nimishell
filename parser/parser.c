@@ -32,7 +32,7 @@ t_node *create_node(t_node_type type)
 
 void append_child_node(t_node *parent, t_node *child)
 {
-	// t_node	*last_child;
+	t_node	*last_child;
 
 	if (!parent || !child)
 		return ;
@@ -40,13 +40,13 @@ void append_child_node(t_node *parent, t_node *child)
 		parent->left = child;
 	else if (!parent->right)
 		parent->right = child;
-	// else
-	// {
-	// 	last_child = parent->left;
-	// 	while (last_child->sibling)
-	// 		last_child = last_child->sibling;
-	// 	last_child->sibling = child;
-	// }
+	else
+	{
+		last_child = parent->left;
+		while (last_child->sibling)
+			last_child = last_child->sibling;
+		last_child->sibling = child;
+	}
 }
 
 // TODO: remove this free function, since it's freed in Execution part
