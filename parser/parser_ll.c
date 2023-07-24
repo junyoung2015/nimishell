@@ -333,7 +333,7 @@ void update_p_state(char **table, t_parser *parser, t_parse_state *parse_state)
 
 	if (parser->cur == 0)
 	{
-		*parse_state = CMD;
+		*parse_state = PIPELINE;
 		return ;
 	}
 	cur = parser->tokens[parser->cur];
@@ -698,27 +698,27 @@ t_node	*parse_redir_list(t_parser *parser)
  */
 t_node *parse_pipeline_tail(t_parser *parser)
 {
-	t_node	*left_node;
 	t_node	*right_node;
 	t_node	*pipe_node;
 
-	left_node = parse_command(parser);
-	if (!left_node) // err? no command before '|'
-		return (0);
+	// do I need to check whether token == TOKEN_PIPE again?
+	pipe_node = 0;
 	if (parser->check(parser, TOKEN_PIPE))
 	{
 		parser->advance(parser);
-		right_node = parse_pipeline_tail(parser);
+		right_node = parse_pipeline(parser);
 		if (!right_node) // err?
 			return (0);
 		pipe_node = create_node(AST_PIPE);
-		if (!pipe_node)
+		if (!pipe_node)	// malloc err
 			return (0);
-		append_child_node(pipe_node, left_node);
-		append_child_node(pipe_node, right_node);
+		pipe_node->right = right_node;
+		// append_child_node(pipe_node, right_node);
 		return (pipe_node);
 	}
-	return (left_node);
+	else	// synatx error
+		return (0);
+	return (pipe_node);
 
 	// t_node	*cmd_node;
 	// t_node	*pipe_node;
@@ -764,51 +764,24 @@ t_node *parse_pipeline_tail(t_parser *parser)
  */
 t_node *parse_pipeline(t_parser *parser)
 {
-	t_node	*left_node;
-	t_node	*right_node;
+	t_node	*cmd_node;
+	// t_node	*right_node;
 	t_node	*pipe_node;
 
-	left_node = parse_command(parser);
-	if (!left_node) // err? no command before '|'
+	cmd_node = parse_command(parser);
+	if (!cmd_node) // err? no command before '|'
 		return (0);
-	if (parser->check(parser, TOKEN_PIPE))
+	parser->tmp_root = cmd_node;
+	if (parser->check(parser, TOKEN_PIPE))	
 	{
 		pipe_node = parse_pipeline_tail(parser);
 		if (!pipe_node) // err?
 			return (0);
-		append_child_node(pipe_node, left_node);
+		pipe_node->left = cmd_node;
+		// append_child_node(pipe_node, cmd_node);
 		return (pipe_node);
 	}
-	// if (parser->check(parser, TOKEN_PIPE))
-	// {
-	// 	parser->advance(parser);
-	// 	right_node = parse_pipeline_tail(parser);
-	// 	if (!right_node) // err?
-	// 		return (0);
-	// 	pipe_node = create_node(AST_PIPE);
-	// 	if (!pipe_node)
-	// 		return (0);
-	// 	append_child_node(pipe_node, left_node);
-	// 	append_child_node(pipe_node, right_node);
-	// 	return (pipe_node);
-	// }
-	return (left_node);
-
-	// t_node	*pipe_node;
-	// t_node	*pipe_tail_node;
-
-	// pipe_node = parse_command(parser);
-	// if (!pipe_node)	// err?
-	// 	return (0);
-	// parser->tmp_root = pipe_node;
-	// if (parser->check(parser, TOKEN_PIPE))
-	// {
-	// 	pipeline_tail_node = parse_pipeline_tail(parser);
-	// 	if (!pipeline_tail_node) // err?
-	// 		return (0);
-	// 	append_child_node(pipe_node, pipeline_tail_node);
-	// }
-	// return (pipe_node);
+	return (cmd_node);
 }
 
 // /**
@@ -892,7 +865,7 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 	};
 
 	root = 0;
-	parse_state = CMD;
+	parse_state = PIPELINE;
 	parser.tokens = tokens;
 	parser.size = num_tokens;
 	parser.cur = 0;
@@ -930,9 +903,9 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 			{
 				// handle err, print err msg and error happend around which token
 				// For now, print error here and return 0;
-				write(STD_ERR, "minishell: syntax error near unexpected token `", 52);
+				write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
 				write(STD_ERR, new_node->cmd_args[0], ft_strlen(new_node->cmd_args[0]));
-				write(STD_ERR, "\n", 1);
+				write(STD_ERR, "`\n", 2);
 				free(new_node);
 				return (0);
 			}
