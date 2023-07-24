@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:26 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/13 20:45:56 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/22 17:22:26 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,23 +37,16 @@ void	clear_all(t_node *root)
 	free(root);
 }
 
-void	err(void)
+int	err(char *str)
 {
 	clear_all(g_info.root);
-	perror("error");
-	exit(EXIT_FAILURE);
-}
-
-void	err2(char *str)
-{
-	if (str)
-		free(str);
-	err();
+	perror(str);
+	return (EXIT_FAILURE);
 }
 
 void	cmd_not_found(void)
 {
 	clear_all(g_info.root);
-	write(2, "error: command not found\n", 25);
+	write(STDERR_FILENO, "error: command not found\n", 25);
 	exit(EXIT_CMD_NOT_FOUND);
 }

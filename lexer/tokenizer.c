@@ -24,7 +24,7 @@ int	free_tokens(t_token *tokens, t_size size)
 	return (0);
 }
 
-t_token* realloc_tokens(t_token* tokens, t_size cur_size, t_size new_size)
+t_token* realloc_tokens(t_token *tokens, t_size cur_size, t_size new_size)
 {
 	t_size		len;
 	t_size		cp_size;
@@ -62,6 +62,57 @@ t_token* realloc_tokens(t_token* tokens, t_size cur_size, t_size new_size)
 	free(tokens);
 	tokens = 0;
 	return (new_tokens);
+}
+
+t_token	*check_size(t_token *tokens, t_size token_idx, t_size *alloced)
+{
+	t_token	*new_tokens;
+
+    if (*alloced <= token_idx + 1)
+	{
+        *alloced *= 2;
+        new_tokens = realloc_tokens(tokens, token_idx, *alloced);
+    }
+	else
+		return (tokens);
+	return (new_tokens);
+}
+
+t_bool	check_parenthesis(t_token* tokens, t_size num_tokens)
+{
+	int		depth;
+	t_size	idx;
+
+	idx = 0;
+	depth = 0;
+	while (idx < num_tokens)
+	{
+		if (tokens[idx].type == TOKEN_L_PAREN)
+			depth++;
+		else if (tokens[idx].type == TOKEN_R_PAREN)
+			depth--;
+		if (depth < 0)
+		 break ;
+		idx++;
+	}
+	return (depth == 0);
+}
+
+t_token	*unmatched_parenthesis(t_token *tokens, t_size *num_tokens)
+{
+	t_token	*new_token;
+
+	free_tokens(tokens, *num_tokens);
+	tokens = ft_calloc(1, sizeof(t_token));
+	if (!tokens)
+		return (0);
+	new_token = create_token(TOKEN_ERROR, PAREN_NOT_CLOSED, ft_strlen(PAREN_NOT_CLOSED));
+	if (!new_token)
+		return (0);
+	*num_tokens = 0;
+	tokens[(*num_tokens)++] = *new_token;
+	free(new_token);
+	return (tokens);
 }
 
 t_bool	is_dmeta_ch(char ch)
@@ -109,10 +160,34 @@ t_bool	is_squote(char ch)
 	return (ch == '\'');
 }
 
+
 t_bool	is_space(char ch)
 {
 	return (ch == ' ' || ch == '\t' || ch == '\f' || ch == '\n' || \
 		ch == '\v' || ch == '\r');
+}
+
+t_token_type	get_operator_type(char ch)
+{
+	t_token_type	type;
+
+	if (ch == '|')
+		type = TOKEN_PIPE;
+	else if (ch == '<')
+		type = TOKEN_REDIR_IN;
+	else if (ch == '>')
+		type = TOKEN_REDIR_OUT;
+	else if (ch == '$')
+		type = TOKEN_DOLLAR_SIGN;
+	else if (ch == '(')
+		type = TOKEN_L_PAREN;
+	else if (ch == ')')
+		type = TOKEN_R_PAREN;
+	else if (ch == '*')
+		type = TOKEN_WILDCARD;
+	else
+		type = TOKEN_UNKNOWN;
+	return (type);
 }
 
 t_token	*create_token(t_token_type type, const char *buffer, int buf_len)
@@ -218,7 +293,7 @@ t_token	*tokenize_operator(char **input, t_token_state *state)
 		(*input)++;
 	}
 	else
-		new_token = create_token(TOKEN_OPERATOR, *input, 1);
+		new_token = create_token(get_operator_type(**input), *input, 1);
 	*state = update_state(*(*input + 1));
 	return (new_token);
 }
@@ -241,7 +316,24 @@ t_token	*tokenize_meta(char **input, t_token_state *state)
 	return (new_token);
 }
 
-t_token* tokenize_whitespace(char **input, t_token_state *state)
+t_token *tokenize_whitespace(char **input, t_token_state *state)
+{  
+	char	*start;
+	t_token	*new_token;
+
+	start = *input;
+    while (is_space(**input))
+    {
+		(*input)++;
+	}
+	new_token = create_token(TOKEN_WHITESPACE, start, *input - start);
+	*state = update_state(**input);
+	(*input)--;
+    return (new_token);
+}
+
+// TODO: edit escape
+t_token	*tokenize_escape(char **input, t_token_state *state)
 {
 	char	*start;
 	t_token	*new_token;
@@ -270,6 +362,7 @@ t_token *tokenize_cmd(char *input, t_size *num_tokens)
 		tokenize_dquote,
 		tokenize_meta,
 		tokenize_whitespace,
+		tokenize_escape,
 	};
 
 	state = update_state(*input);
@@ -293,25 +386,19 @@ t_token *tokenize_cmd(char *input, t_size *num_tokens)
 		{
 			// handle syntax error, maybe send appropriate error message to exit_err or to main()
 			break ;
-			// return (tokens);
 		}
 		else if (tokens[token_idx - 1].type == TOKEN_WHITESPACE)
-		{
-			token_idx--;
-		}
-		else if (alloced <= token_idx + 1)
-		{
-			alloced *= 2;
-			tokens = realloc_tokens(tokens, token_idx, alloced);
-			// TODO: malloc err
-			if (!tokens)
-				return (0);
-		}
+			free(tokens[token_idx-- - 1].value);
+		tokens = check_size(tokens, token_idx, &alloced);
+		if (!tokens)
+			return (0);
 		input++;
 	}
-	// TODO: malloc err
+	// TODO: malloc err?
 	if (!tokens)
 		return (0);
 	*num_tokens = token_idx;
+	if (!check_parenthesis(tokens, *num_tokens))
+		tokens = unmatched_parenthesis(tokens, num_tokens);
 	return (tokens);
 }
