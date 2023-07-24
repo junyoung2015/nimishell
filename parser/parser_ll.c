@@ -247,12 +247,6 @@ void	append_redir_node(t_node *parent, t_node *child)
 
 	if (!parent || !child)
 		return ;
-	else if (parent == child)
-	{
-		// err handling
-		fprintf(stderr, "parent == child\n");
-		return ;
-	}
 	if (child->type == AST_REDIR_IN || child->type == AST_HEREDOC)
 	{
 		if (!parent->left)
@@ -962,7 +956,6 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 	parser.tokens = tokens;
 	parser.size = num_tokens;
 	parser.cur = 0;
-	parser.tmp_root = 0;
 	parser.check = &check;
 	parser.cur_type = &cur_type;
 	parser.advance = &advance;
