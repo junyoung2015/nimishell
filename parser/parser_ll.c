@@ -940,7 +940,7 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 		parse_redir_list,
 		parse_pipeline,
 		parse_list,
-		0,					
+		0,
 		// parse_err,
 		// parse_env_var,
 		// parse_command,
@@ -974,7 +974,8 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 			// deal with err and free?
 			return (0);
 		}
-		else if (parse_state == PARSE_STATES_CNT)
+		// TODO: edit parse_fn_array, so parse_state 1, 3, 7 is removed from the array, parse_state and parsing table
+		else if (parse_state == PARSE_STATES_CNT || parse_state == 1 || parse_state == 3 || parse_state == 7)
 		{
 			break ;
 		}
