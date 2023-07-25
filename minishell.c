@@ -180,8 +180,8 @@ int	main(int ac, char **av, char **envp)
 					categorize_tokens(tokens, num_tokens);
 					if (tokens && DEBUG)
 						print_tokens(tokens, num_tokens);
-					ast = parse_tokens_ll(tokens, num_tokens);
-					// ast = parse_tokens(tokens, num_tokens);
+					// ast = parse_tokens_ll(tokens, num_tokens);
+					ast = parse_tokens(tokens, num_tokens);
 					if (ast && DEBUG)
 					{
 						printf("\n================== AST ==================\n");
