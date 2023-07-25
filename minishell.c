@@ -188,8 +188,8 @@ int	main(int ac, char **av, char **envp)
 						print_ast(ast, 0, "");
 						printf("=========================================\n");
 					}
-					// g_info.root = ast;
-					// exit_code = executor(g_info.root);
+					g_info.root = ast;
+					exit_code = executor(g_info.root);
 				}
 			}
 			// if (status)
