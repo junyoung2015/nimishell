@@ -92,7 +92,7 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 	while (*token_idx < num_tokens && ((*tokens)[*token_idx].type == TOKEN_WORD || (*tokens)[*token_idx].type == TOKEN_SQ_STR || (*tokens)[*token_idx].type == TOKEN_DQ_STR))
 	{
 		if (!ft_strcmp((*tokens)[*token_idx].value, "echo"))
-			cmd_node->builtin = ECHO;
+			cmd_node->builtin = ECHO_BUILTIN;
         if (!ft_strcmp((*tokens)[*token_idx].value, "cd"))
 			cmd_node->builtin = CD;
         if (!ft_strcmp((*tokens)[*token_idx].value, "pwd"))

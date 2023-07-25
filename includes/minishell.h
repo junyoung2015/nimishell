@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <termios.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include "readline/readline.h"
@@ -73,7 +74,7 @@ typedef enum e_token_type
 typedef enum e_builtin
 {
 	NOT_BUILTIN,
-	ECHO,
+	ECHO_BUILTIN,
 	CD,
 	PWD,
 	EXPORT,
