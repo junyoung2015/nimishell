@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 21:55:34 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/22 20:05:30 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/25 21:37:12 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	command_after_fork(t_node *node, t_exec_info *info)
 	else if (!info->pid)
 	{
 		if (!connect_pipe(node, info))
-			exit(err("error"));
+			exit(err("error: dup2"));
 		if (node->builtin == NOT_BUILTIN)
 		{
 			cmdpath = get_cmdpath(node->cmd_args[0]);
@@ -44,10 +44,12 @@ void	command(t_node *node, t_exec_info *info)
 		command_after_fork(node, info);
 	else
 	{
+		if (info->exit_code > 0)
+			return ;
 		if (!connect_pipe(node, info))
 		{
 			info->exit_code = EXIT_FAILURE;
-			perror("error");
+			perror("error: dup2");
 			return ;
 		}
 		builtin(node, info);
