@@ -1004,41 +1004,15 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 				return (0);
 			}
 			else if (new_node->type == AST_REDIR_IN || new_node->type == AST_REDIR_OUT || new_node->type == AST_REDIR_APPEND || new_node->type == AST_HEREDOC)
-			{
 				append_redir_node(root, new_node);
-				// if (parser.tmp_root == 0)
-				// {
-				// 	// parser.tmp_root = new_node;
-				// 	append_redir_node(root, new_node);
-				// }
-				// else
-				// {
-				// 	if (parser.tmp_root == new_node)
-				// 		append_redir_node(root, new_node);
-				// 	else
-				// 		append_redir_node(parser.tmp_root, new_node);
-				// 	// parser.tmp_root = new_node;
-				// }
-			}
 			else
-			{
-				if (parser.tmp_root == 0)
-				{
-					parser.tmp_root = new_node;
-				}
-				// else
-				// {
-					append_child_node(parser.tmp_root, new_node);
-				// 	parser.tmp_root = new_node;
-				// }
-			}
+				append_child_node(root, new_node);
 		}
 		else
 		{
 			return (0);
 			// syntax err or malloc err?
 		}
-		// parser.advance(&parser);
 	}
 	free_table(table);
 	return (root);
