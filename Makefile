@@ -50,7 +50,10 @@ SRCS = ./minishell.c						\
 CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2
 # ----------- BONUS SRCS  ----------- #
 # BO_SRCS = ./minishell_bonus.c
-HEADER = minishell.h executor.h builtin.h
+HEADER = \
+	$(INCLUDES)minishell.h	\
+	$(INCLUDES)executor.h	\
+	$(INCLUDES)builtin.h
 # BO_HEADER = minishell_bonus.h
 
 # -------------- OBJS  -------------- #
@@ -90,7 +93,7 @@ $(NAME): $(OBJS)
 # $(BONUS): $(BO_OBJS)
 # 	$(CC) $(CFLAGS) $(BO_OBJS) -o $@
 
-%.o: %.c $(SRCS) $(INCLUDES)minishell.h
+%.o: %.c $(HEADER)
 	$(CC) $(CFLAGS) -I$(INCLUDES) -I$(INCLUDE_READLINE) -c $< -o $@
 # $(CC) $(CFLAGS) -I$(INCLUDES) -I$(INCLUDE_READLINE) -c $< -o $@
 
