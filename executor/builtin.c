@@ -42,6 +42,6 @@ void	builtin(t_node *node, t_exec_info *info)
 		cd(node, info);
 	else if (node->builtin == EXIT)
 		__exit(node, info);
-	else if (node->builtin == ECHO)
+	else if (node->builtin == ECHO_BUILTIN)
 		echo(node);
 }
