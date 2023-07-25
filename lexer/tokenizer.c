@@ -337,8 +337,10 @@ t_token	*tokenize_escape(char **input, t_token_state *state)
 {
 	char	*start;
 	t_token	*new_token;
+	(void)	state;
 
 	start = *input;
+	new_token = 0;
     return (new_token);
 }
 
