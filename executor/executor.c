@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/23 19:39:38 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/24 21:24:18 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	execute_node(t_node *root, t_exec_info *info)
 		command(root, info);
 }
 
-void	preorder_traverse(t_node *root, t_exec_info *info)
+void	tree_search(t_node *root, t_exec_info *info)
 {
 	if (!root)
 		return ;
@@ -33,14 +33,17 @@ void	preorder_traverse(t_node *root, t_exec_info *info)
 		root->left->parent_type = root->type;
 	if (root->right)
 		root->right->parent_type = root->type;
-	execute_node(root, info);
+	if (root->type != AST_CMD)
+		execute_node(root, info);
 	if (root->type == AST_PIPE)
 	{
 		root->left->pipe_open = root->pipe_open + 1;
 		root->right->pipe_open = 2;
 	}
-	preorder_traverse(root->left, info);
-	preorder_traverse(root->right, info);
+	tree_search(root->left, info);
+	tree_search(root->right, info);
+	if (root->type == AST_CMD)
+		execute_node(root, info);
 }
 
 void	execute_in_child(t_node *root)
@@ -49,10 +52,12 @@ void	execute_in_child(t_node *root)
 	size_t		i;
 	int			status;
 
+	info.fd_in = -1;
+	info.fd_out = -1;
 	info.exit_code = 0;
 	info.fork_cnt = 0;
 	info.prev_pipe = -1;
-	preorder_traverse(root, &info);
+	tree_search(root, &info);
 	clear_all(root);
 	if (!info.fork_cnt)
 		exit(EXIT_SUCCESS);
@@ -72,10 +77,12 @@ int	execute_in_parent(t_node *root)
 	size_t		i;
 	int			status;
 
+	info.fd_in = -1;
+	info.fd_out = -1;
 	info.exit_code = 0;
 	info.fork_cnt = 0;
 	info.prev_pipe = -1;
-	preorder_traverse(root, &info);
+	tree_search(root, &info);
 	dup2(g_info.stdin_fd, STDIN_FILENO);
 	dup2(g_info.stdout_fd, STDOUT_FILENO);
 	clear_all(g_info.root);
