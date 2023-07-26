@@ -90,5 +90,5 @@ int	heredoc(t_node *node, t_exec_info *info)
 	if (info->fd_in < 0)
 		return (1);
 	unlink("/tmp/.heredoc");
-	return (1);
+	return (0);
 }
