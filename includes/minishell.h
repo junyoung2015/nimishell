@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <termios.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include "readline/readline.h"
@@ -73,7 +74,7 @@ typedef enum e_token_type
 typedef enum e_builtin
 {
 	NOT_BUILTIN,
-	ECHO,
+	ECHO_BUILTIN,
 	CD,
 	PWD,
 	EXPORT,
@@ -124,6 +125,7 @@ typedef enum e_node_type
 	AST_HEREDOC,
 	AST_REDIR_OUT,
 	AST_REDIR_APPEND,
+	AST_REDIR_LIST,
 	AST_SUBSHELL,
 	AST_AND,
 	AST_OR,
@@ -138,6 +140,7 @@ typedef struct s_node
 	t_size			num_args;
 	struct s_node	*left;
 	struct s_node	*right;
+	struct s_node	*sibling; 
 	int				pipe_open;
 	t_node_type		parent_type;
 	t_builtin		builtin;
@@ -145,15 +148,16 @@ typedef struct s_node
 
 typedef struct s_parser
 {
-	t_token *tokens;
-	t_size cur;
-	t_size size;
-	t_node *tmp;
-	void (*advance)(struct s_parser *);
-	t_token_type (*cur_type)(struct s_parser *);
-	t_bool (*check)(struct s_parser *, t_token_type);
-	t_token_type (*peek)(struct s_parser *);
-	t_token_type (*consume)(struct s_parser *);
+	t_token			*tokens;
+	t_size			cur;
+	t_size			size;
+	void			(*advance)(struct s_parser *);
+	t_token_type	(*cur_type)(struct s_parser *);
+	t_bool			(*check)(struct s_parser *, t_token_type);
+	t_token_type	(*peek)(struct s_parser *);
+	t_token_type	(*consume)(struct s_parser *);
+	t_bool			(*is_word)(struct s_parser *);
+	t_bool			(*is_redir)(struct s_parser *);
 } t_parser;
 
 typedef struct s_global_info

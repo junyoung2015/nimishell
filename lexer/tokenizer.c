@@ -143,6 +143,11 @@ t_bool	is_dmeta_str(char *input)
 	return (TOKEN_WORD);
 }
 
+t_bool	is_escaped(char ch)
+{
+	return (ch == '\\');
+}
+
 t_bool	is_meta_ch(char ch)
 {
 	return (ch == '|' || ch == '>' || ch == '<' || ch == '$' || ch == '\'' || \
@@ -298,6 +303,34 @@ t_token	*tokenize_operator(char **input, t_token_state *state)
 	return (new_token);
 }
 
+/**
+ * @brief Handle '$' character. If can be treated as an environment variable,
+ *		split until the end of the variable name. If $?, just split $?.
+ *		Otherwise, treat it as a TOKEN_WORD.
+ * 
+ * @param input
+ * @param state 
+ * @return t_token* 
+ */
+t_token	*tokenize_dollar_sign(char **input, t_token_state *state)
+{
+	char	*start;
+	t_token	*new_token;
+
+	start = *input;
+	(*input)++;
+	if (is_space(**input) || **input == '\0')
+	{
+		(*input)--;
+		return (create_token(TOKEN_DOLLAR_SIGN, start, 1));
+	}
+	new_token = tokenize_normal(input, state);
+	if (!new_token)
+		return (0);
+	(*input)--;
+	return (new_token);
+}
+
 t_token	*tokenize_meta(char **input, t_token_state *state)
 {
     char	*start;
@@ -332,20 +365,25 @@ t_token *tokenize_whitespace(char **input, t_token_state *state)
     return (new_token);
 }
 
-// TODO: edit escape
+// function to handle escaped characters.
+// wihtout quotes,		(echo \!hi -> !hi).
+//						(echo $^ -> $^).
+// with single quotes,	(echo '\!hi' -> \!hi).
+//						(echo '$\$' -> $\$).
+//						(echo "\\\$hi" -> \\\$hi).
+// with double quotes,	(echo "\!hi" -> \!hi).
+//					  	(echo "\$hi" -> $hi).
+//						(echo "\\\$hi" -> \$hi).
+//						(echo "$\$" -> $$).
 t_token	*tokenize_escape(char **input, t_token_state *state)
 {
-	char	*start;
+	// char	*start;
 	t_token	*new_token;
+	(void)	state;
+	(void) input;
 
-	start = *input;
-    while (is_space(**input))
-    {
-		(*input)++;
-	}
-	new_token = create_token(TOKEN_WHITESPACE, start, *input - start);
-	*state = update_state(**input);
-	(*input)--;
+	// start = *input;
+	new_token = 0;
     return (new_token);
 }
 

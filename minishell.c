@@ -18,11 +18,21 @@ t_global_info g_info;
 
 void sig_handler(int signal)
 {
-	if (signal != SIGINT)
-		return;
-	printf("Ctrl + C\n");
-	rl_on_new_line();
-	rl_replace_line("", 1);
+	
+	if (signal == SIGINT)
+	{
+		rl_on_new_line();
+		rl_replace_line("", 1);
+	}
+	else if (signal == SIGQUIT)
+	{
+		// does nothing
+		rl_redisplay();
+	}
+	else if (signal == SIGTSTP)
+	{
+		// does nothing
+	}
 	rl_redisplay();
 }
 
@@ -50,6 +60,11 @@ void print_ast(t_node *node, int depth, const char *indent)
 		printf(">");
 	else if (node->type == AST_REDIR_APPEND)
 		printf(">>");
+	else if (node->type == AST_AND)
+		printf("&&");
+	else if (node->type == AST_OR)
+		printf("||");
+	// printf("%*c", depth * 4, 32);
 	for (t_size i = 0; i < node->num_args; i++)
 		printf("[%d][%s] ", node->type, node->cmd_args[i]);
 	printf("\n");
@@ -110,15 +125,33 @@ int	main(int ac, char **av, char **envp)
 	t_token		*tokens;
 	t_size		num_tokens;
 	t_node		*ast;
+	struct termios	term;
+	int	status;
 	// t_global_info	g_info;
 
 	// if (DEBUG)
 	// 	atexit(chk_leaks);
-	// TODO: display_logo();
 	init_g_info(envp);
 	tokens = 0;
 	ast = 0;
 	exit_code = 0;
+	status = tcgetattr(0, &term);
+	if (status == -1)
+	{
+		write(STD_ERR, "minishell: tcgetattr: ", 22);
+		write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
+		write(STD_ERR, "\n", 1);
+		exit (1);
+	}
+	term.c_lflag &= ~ECHOCTL;
+	status = tcsetattr(0, 0, &term);
+	if (status == -1)
+	{
+		write(STD_ERR, "minishell: tcgetattr: ", 22);
+		write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
+		write(STD_ERR, "\n", 1);
+		exit (1);
+	}
 	signal(SIGINT, sig_handler);
 	print_logo();
 	while (TRUE)
@@ -159,8 +192,6 @@ int	main(int ac, char **av, char **envp)
 					exit_code = executor(g_info.root);
 				}
 			}
-			// if (ast)
-			// 	free_ast(ast);
 			// if (status)
 			// 	update_exit_status(status);
 			if (tokens)
