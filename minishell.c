@@ -16,6 +16,36 @@ t_global_info g_info;
 
 #include <signal.h>
 
+/**
+ * @brief
+ * 
+ * @param code	exit code to exit
+ * @param file	file name to display in front of err msg
+ * @param msg	err msg to display
+ * @param root	root of the ast node to free
+ */
+void	exit_err_with_msg(int code, char *file, char *msg, t_node *root)
+{
+	if (msg)
+	{
+		write(STD_ERR, MINISHELL, ft_strlen(MINISHELL));
+		if (file)
+		{
+			write(STD_ERR, file, ft_strlen(file));
+			write(STD_ERR, ": ", 2);
+		}
+		write(STD_ERR, msg, ft_strlen(msg));
+	}
+	else
+	{
+		write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
+	}
+	write(STD_ERR, "\n", 1);
+	if (root)
+		free_ast(root);
+	exit(code);
+}
+
 void sig_handler(int signal)
 {
 	
@@ -138,19 +168,21 @@ int	main(int ac, char **av, char **envp)
 	status = tcgetattr(0, &term);
 	if (status == -1)
 	{
-		write(STD_ERR, "minishell: tcgetattr: ", 22);
-		write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
-		write(STD_ERR, "\n", 1);
-		exit (1);
+		exit_err_with_msg(EXIT_ERR, TCGETATTR, strerror(errno), 0);
+		// write(STD_ERR, "minishell: tcgetattr: ", 22);
+		// write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
+		// write(STD_ERR, "\n", 1);
+		// exit (1);
 	}
 	term.c_lflag &= ~ECHOCTL;
 	status = tcsetattr(0, 0, &term);
 	if (status == -1)
 	{
-		write(STD_ERR, "minishell: tcgetattr: ", 22);
-		write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
-		write(STD_ERR, "\n", 1);
-		exit (1);
+		exit_err_with_msg(EXIT_ERR, TCGETATTR, strerror(errno), 0);
+		// write(STD_ERR, "minishell: tcgetattr: ", 22);
+		// write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
+		// write(STD_ERR, "\n", 1);
+		// exit (1);
 	}
 	signal(SIGINT, sig_handler);
 	print_logo();
