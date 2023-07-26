@@ -11,24 +11,24 @@
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
-#define MINISHELL_H
+# define MINISHELL_H
 
-#ifndef DEBUG
-#define DEBUG 1
-#endif
+# ifndef DEBUG
+#  define DEBUG 1
+# endif
 
 /* ================ INCLUDES ================= */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <termios.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include "readline/readline.h"
-#include "readline/history.h"
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include <unistd.h>
+# include <fcntl.h>
+# include <errno.h>
+# include <termios.h>
+# include <sys/stat.h>
+# include <sys/wait.h>
+# include "readline/readline.h"
+# include "readline/history.h"
 
 /* ================== TYPES ================== */
 typedef int t_bool;
@@ -169,24 +169,26 @@ typedef struct s_global_info
 extern t_global_info g_info;
 
 /* ================== MACRO ================== */
-#define STD_IN					0
-#define STD_OUT					1
-#define STD_ERR					2
+# define STD_IN					0
+# define STD_OUT				1
+# define STD_ERR				2
 
-#define READ					0
-#define WRITE					1
+# define READ					0
+# define WRITE					1
 
-#define EXIT_NORMAL				0
-#define EXIT_ERR				1
-#define EXIT_NOT_EXECUTABLE		126
-#define EXIT_CMD_NOT_FOUND		127
+# define EXIT_NORMAL			0
+# define EXIT_ERR				1
+# define EXIT_NOT_EXECUTABLE	126
+# define EXIT_CMD_NOT_FOUND		127
 
-#define TRUE					1
-#define FALSE					0
+# define TRUE					1
+# define FALSE					0
 
-#define QUOTE_NOT_CLOSED		"Syntax Error: unmatched quote\n"
-#define PAREN_NOT_CLOSED		"Syntax Error: unmatched parenthesis\n"
-#define MALLOC_ERR				"malloc() error."
+# define MINISHELL				"minishell: "
+# define TCGETATTR				"tcgetattr"
+# define QUOTE_NOT_CLOSED		"Syntax Error: unmatched quote\n"
+# define PAREN_NOT_CLOSED		"Syntax Error: unmatched parenthesis\n"
+# define MALLOC_ERR				"malloc() error."
 
 /* ================== MEMORY_UTILS ================== */
 void ft_bzero(void *s, t_size n);
