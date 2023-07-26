@@ -715,6 +715,7 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 			return (0);
 		redir_node->type = AST_REDIR_APPEND;
 	}
+	parser->advance(parser);
 	return (redir_node);
 }
 
