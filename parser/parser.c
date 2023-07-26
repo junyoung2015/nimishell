@@ -93,11 +93,11 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 	{
 		if (!ft_strcmp((*tokens)[*token_idx].value, "echo"))
 			cmd_node->builtin = ECHO_BUILTIN;
-        if (!ft_strcmp((*tokens)[*token_idx].value, "cd"))
+        else if (!ft_strcmp((*tokens)[*token_idx].value, "cd"))
 			cmd_node->builtin = CD;
-        if (!ft_strcmp((*tokens)[*token_idx].value, "pwd"))
+        else if (!ft_strcmp((*tokens)[*token_idx].value, "pwd"))
 			cmd_node->builtin = PWD;
-        if (!ft_strcmp((*tokens)[*token_idx].value, "export"))
+        else if (!ft_strcmp((*tokens)[*token_idx].value, "export"))
 			cmd_node->builtin = EXPORT;
         else if (!ft_strcmp((*tokens)[*token_idx].value, "unset"))
 			cmd_node->builtin = UNSET;

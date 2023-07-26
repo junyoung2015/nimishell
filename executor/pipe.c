@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:37:25 by jusohn            #+#    #+#             */
-/*   Updated: 2023/07/22 17:38:06 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/25 20:59:03 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,52 +18,22 @@ void	open_pipe(t_exec_info *info)
 		exit(err("error: pipe:"));
 }
 
-static int	connect_left(t_node *node, t_exec_info *info)
-{
-	if (node->left && node->left->type == AST_REDIR_IN)
-	{
-		if (!redir_in(node->left))
-			return (0);
-	}
-	else if (node->left && node->left->type == AST_HEREDOC)
-	{
-		if (!heredoc(node->left, info))
-			return (0);
-	}
-	else if ((node->pipe_open >> 1) & 1)
-	{
-		if (dup2(info->prev_pipe, STDIN_FILENO) < 0)
-			return (0);
-	}
-	return (1);
-}
-
-static int	connect_right(t_node *node, t_exec_info *info)
-{
-	if (node->right && node->right->type == AST_REDIR_OUT)
-	{
-		if (!redir_out(node->right))
-			return (0);
-	}
-	else if (node->right && node->right->type == AST_REDIR_APPEND)
-	{
-		if (!redir_append(node->right))
-			return (0);
-	}
-	else if ((node->pipe_open >> 0) & 1)
-	{
-		if (dup2(info->pipe[1], STDOUT_FILENO) < 0)
-			return (0);
-	}
-	return (1);
-}
-
 int	connect_pipe(t_node *node, t_exec_info *info)
 {
-	if (!connect_left(node, info))
-		return (0);
-	if (!connect_right(node, info))
-		return (0);
+	if (info->fd_in < 0 && (node->pipe_open >> 1) & 1)
+		info->fd_in = info->prev_pipe;
+	if (info->fd_out < 0 && (node->pipe_open >> 0) & 1)
+		info->fd_out = info->pipe[1];
+	if (info->fd_in >= 0)
+	{
+		if (dup2(info->fd_in, STDIN_FILENO) < 0)
+			return (0);
+	}
+	if (info->fd_out >= 0)
+	{
+		if (dup2(info->fd_out, STDOUT_FILENO) < 0)
+			return (0);
+	}
 	if (node->pipe_open)
 	{
 		close(info->prev_pipe);
