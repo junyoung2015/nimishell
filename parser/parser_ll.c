@@ -93,7 +93,7 @@
 	ROW6	TOKEN_HEREDOC
 	ROW7	TOKEN_REDIR_OUT
 	ROW8	TOKEN_APPEND
-	ROW9	TOKEN_DOLLAR_SIGN
+	ROW9	TOKEN_DOLLAR_SIGN // TODO: remove this when refactoring
 	ROW10	TOKEN_L_PAREN
 	ROW11	TOKEN_WILDCARD
 	ROW12	TOKEN_SQ_STR
@@ -403,7 +403,7 @@ t_node *parse_err(t_parser *parser, t_node *parent)
 	err_node->cmd_args = ft_calloc(1, sizeof(char *));
 	if (!err_node->cmd_args)
 		return (0);
-	err_node->cmd_args[err_node->num_args++] = ft_strdup(parser->tokens[parser->cur].value);
+	err_node->cmd_args[err_node->num_args++] = ft_strdup(parser->tokens[parser->cur].val);
 	return (err_node);
 }
 
@@ -447,7 +447,7 @@ t_node *parse_simple_cmd_element(t_parser *parser, t_node *parent)
 		// cmd_element->cmd_args = ft_calloc(1, sizeof(char *));
 		// if (!cmd_element->cmd_args)
 		// 	return (0);
-		// cmd_element->cmd_args[0] = parser->tokens[parser->cur].value;
+		// cmd_element->cmd_args[0] = parser->tokens[parser->cur].val;
 	}
 	return (cmd_element);
 }
@@ -514,7 +514,7 @@ t_node	*parse_simple_cmd(t_parser *parser, t_node *parent)
 		// cmd_node->cmd_args = ft_calloc(1, sizeof(char *));
 		// if (!cmd_node->cmd_args)
 		// 	return (0);
-		// cmd_node->cmd_args[0] = parser->tokens[parser->cur].value;
+		// cmd_node->cmd_args[0] = parser->tokens[parser->cur].val;
 	}
 	if (parser->is_word(parser) || parser->is_redir(parser))
 	{
@@ -578,7 +578,7 @@ t_node *parse_command(t_parser *parser, t_node *parent)
 		// cmd_node->cmd_args = ft_calloc(1, sizeof(char *));
 		// if (!cmd_node->cmd_args)
 		// 	return (0);
-		// cmd_node->cmd_args[0] = parser->tokens[parser->cur].value;
+		// cmd_node->cmd_args[0] = parser->tokens[parser->cur].val;
 	}
 	return (cmd_node);
 }
@@ -602,7 +602,7 @@ char *parse_word(t_parser *parser, t_node *parent)
 
 	word = 0;
 	if (parser->is_word(parser))
-		word = ft_strdup(parser->tokens[parser->cur].value);
+		word = ft_strdup(parser->tokens[parser->cur].val);
 	return (word);
 }
 
