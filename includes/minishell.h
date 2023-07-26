@@ -42,7 +42,6 @@ typedef enum e_token_state
 	DQUOTE,
 	META_CH,
 	WSPACE,
-	ESCAPE,
 	END,
 } t_token_state;
 
@@ -56,14 +55,11 @@ typedef enum e_token_type
 	TOKEN_HEREDOC,
 	TOKEN_REDIR_OUT,
 	TOKEN_APPEND,
-	TOKEN_DOLLAR_SIGN,
 	TOKEN_L_PAREN,
 	TOKEN_WILDCARD,
 	TOKEN_SQ_STR,
 	TOKEN_DQ_STR,
 	TOKEN_R_PAREN,
-	TOKEN_SUBSHELL,
-	TOKEN_ENV_VAR,
 	TOKEN_WHITESPACE,
 	TOKEN_OPERATOR,
 	TOKEN_ERROR,
@@ -86,7 +82,7 @@ typedef enum e_builtin
 typedef struct s_token
 {
 	t_token_type type;
-	char *value;
+	char *val;
 } t_token;
 
 typedef enum e_parse_state
@@ -169,30 +165,28 @@ typedef struct s_global_info
 	t_node	*root;
 } t_global_info;
 
-typedef t_token *(*tokenizer_fn)(char **, t_token_state *);
-
 // TODO: re-write the global variable 'extern' declaration
 extern t_global_info g_info;
 
 /* ================== MACRO ================== */
-#define STD_IN 0
-#define STD_OUT 1
-#define STD_ERR 2
+#define STD_IN					0
+#define STD_OUT					1
+#define STD_ERR					2
 
-#define READ 0
-#define WRITE 1
+#define READ					0
+#define WRITE					1
 
-#define EXIT_NORMAL 0
-#define EXIT_ERR 1
-#define EXIT_NOT_EXECUTABLE 126
-#define EXIT_CMD_NOT_FOUND 127
+#define EXIT_NORMAL				0
+#define EXIT_ERR				1
+#define EXIT_NOT_EXECUTABLE		126
+#define EXIT_CMD_NOT_FOUND		127
 
-#define TRUE 1
-#define FALSE 0
+#define TRUE					1
+#define FALSE					0
 
-#define QUOTE_NOT_CLOSED "Syntax Error: unmatched quote\n"
-#define PAREN_NOT_CLOSED "Syntax Error: unmatched parenthesis\n"
-#define MALLOC_ERR "malloc() error."
+#define QUOTE_NOT_CLOSED		"Syntax Error: unmatched quote\n"
+#define PAREN_NOT_CLOSED		"Syntax Error: unmatched parenthesis\n"
+#define MALLOC_ERR				"malloc() error."
 
 /* ================== MEMORY_UTILS ================== */
 void ft_bzero(void *s, t_size n);
@@ -213,11 +207,13 @@ void	print_logo(void);
 /* ================ STR_UTILS_CREATE ================ */
 char *ft_strtrim(char *str, char c);
 char *ft_strdup(char *src);
+char *ft_substr(char const *s, t_size start, t_size len);
 char **ft_split(char const *str, char c);
 
 /* ================== TOKENIZER ================== */
+typedef t_token *(*tokenizer_fn)(char **, t_token_state *);
 void print_tokens(t_token *tokens, t_size num_tokens);
-int free_tokens(t_token *tokens, t_size size);
+t_token	*free_tokens(t_token *tokens, t_size size);
 t_token *create_token(t_token_type type, const char *buffer, int buffer_length);
 // FSM //
 t_token *tokenize_cmd(char *input, t_size *num_tokens);

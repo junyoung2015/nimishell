@@ -12,88 +12,84 @@
 
 #include "minishell.h"
 
-int	free_tokens(t_token *tokens, t_size size)
+t_token	*free_tokens(t_token *tokens, t_size size)
 {
 	t_size	i;
 
 	i = 0;
 	if (size != 0)
 		while (i < size)
-			free(tokens[i++].value);
+			free(tokens[i++].val);
 	free(tokens);
+	return (0);
+}
+
+// TODO: re-name this funciton
+t_token	*handle_malloc_err_in_tokenizer(t_token *tokens, t_size num_tokens)
+{
+	write(STD_ERR, MALLOC_ERR, ft_strlen(MALLOC_ERR));
+	write(STD_ERR, "\n", 1);
+	free_tokens(tokens, num_tokens);
 	return (0);
 }
 
 t_token* realloc_tokens(t_token *tokens, t_size cur_size, t_size new_size)
 {
-	t_size		len;
+	t_size		i;
 	t_size		cp_size;
-	t_token*	new_tokens;
-	
+	t_token*	new;
+
 	if (new_size == 0)
+		return (free_tokens(tokens, cur_size));
+	new = ft_calloc(new_size, sizeof(t_token));
+	if (!new) 
+		return (handle_malloc_err_in_tokenizer(tokens, cur_size));
+	cp_size = new_size;
+	if (cur_size < new_size)
+		cp_size = cur_size;
+	ft_memcpy(new, tokens, cp_size * sizeof(t_token));
+	i = -1;
+	while (++i < cp_size)
 	{
-		free_tokens(tokens, cur_size);
-		return (0);
+		new[i].val = ft_calloc(ft_strlen(tokens[i].val) + 1, 1);
+		if (!new[i].val)
+			return (handle_malloc_err_in_tokenizer(tokens, cur_size));
+		ft_memcpy(new[i].val, tokens[i].val, ft_strlen(tokens[i].val) + 1);
 	}
-	new_tokens = ft_calloc(new_size, sizeof(t_token));
-	if (!new_tokens) 
-	{
-		write(STD_ERR, MALLOC_ERR, ft_strlen(MALLOC_ERR));
-		write(STD_ERR, "\n", 1);
-		free_tokens(tokens, cur_size);
-		return (0);
-	}
-	cp_size = cur_size < new_size ? cur_size : new_size;
-	ft_memcpy(new_tokens, tokens, cp_size * sizeof(t_token));
-	for (size_t i = 0; i < cp_size; i++)
-	{
-		len = ft_strlen(tokens[i].value) + 1;
-		new_tokens[i].value = (char *) ft_calloc(len, sizeof(char));
-		if (!new_tokens[i].value)
-		{
-			write(STD_ERR, MALLOC_ERR, ft_strlen(MALLOC_ERR));
-			write(STD_ERR, "\n", 1);
-			free_tokens(tokens, i);
-			return (0);
-		}
-		ft_memcpy(new_tokens[i].value, tokens[i].value, len * sizeof(char));
-		free(tokens[i].value);
-	}
-	free(tokens);
-	tokens = 0;
-	return (new_tokens);
+	free_tokens(tokens, cur_size);
+	return (new);
 }
 
 t_token	*check_size(t_token *tokens, t_size token_idx, t_size *alloced)
 {
-	t_token	*new_tokens;
+	t_token	*new;
 
     if (*alloced <= token_idx + 1)
 	{
         *alloced *= 2;
-        new_tokens = realloc_tokens(tokens, token_idx, *alloced);
+        new = realloc_tokens(tokens, token_idx, *alloced);
     }
 	else
 		return (tokens);
-	return (new_tokens);
+	return (new);
 }
 
 t_bool	check_parenthesis(t_token* tokens, t_size num_tokens)
 {
 	int		depth;
-	t_size	idx;
+	t_size	i;
 
-	idx = 0;
+	i = 0;
 	depth = 0;
-	while (idx < num_tokens)
+	while (i < num_tokens)
 	{
-		if (tokens[idx].type == TOKEN_L_PAREN)
+		if (tokens[i].type == TOKEN_L_PAREN)
 			depth++;
-		else if (tokens[idx].type == TOKEN_R_PAREN)
+		else if (tokens[i].type == TOKEN_R_PAREN)
 			depth--;
 		if (depth < 0)
 		 break ;
-		idx++;
+		i++;
 	}
 	return (depth == 0);
 }
@@ -150,7 +146,7 @@ t_bool	is_escaped(char ch)
 
 t_bool	is_meta_ch(char ch)
 {
-	return (ch == '|' || ch == '>' || ch == '<' || ch == '$' || ch == '\'' || \
+	return (ch == '|' || ch == '>' || ch == '<' || ch == '\'' || \
 		ch == '"' || ch == '(' || ch == ')' || ch == '&' || ch == '\t' || \
 		ch == '\n' || ch == ' ');
 }
@@ -172,6 +168,18 @@ t_bool	is_space(char ch)
 		ch == '\v' || ch == '\r');
 }
 
+/**
+ * @brief Check whether 'ch' is a valid character for an environment variable.
+ * 
+ * @param ch		character to check
+ * @return t_bool	TRUE if 'ch' is a valid character for an environment variable,
+ * 					FALSE otherwise.
+ */
+t_bool	is_env_var(char ch)
+{
+	return (ft_isalnum(ch) || ch == '_');
+}
+
 t_token_type	get_operator_type(char ch)
 {
 	t_token_type	type;
@@ -182,8 +190,6 @@ t_token_type	get_operator_type(char ch)
 		type = TOKEN_REDIR_IN;
 	else if (ch == '>')
 		type = TOKEN_REDIR_OUT;
-	else if (ch == '$')
-		type = TOKEN_DOLLAR_SIGN;
 	else if (ch == '(')
 		type = TOKEN_L_PAREN;
 	else if (ch == ')')
@@ -204,13 +210,13 @@ t_token	*create_token(t_token_type type, const char *buffer, int buf_len)
 		return (0);
 	new_token->type = type;
 	// Allocate memory for the token value and copy the buffer content
-	new_token->value = (char *) ft_calloc(buf_len + 1, sizeof(char));
-	if (!new_token->value)
+	new_token->val = (char *) ft_calloc(buf_len + 1, sizeof(char));
+	if (!new_token->val)
 	{
 		free(new_token);
 		return (0);
 	}
-	ft_strlcpy(new_token->value, buffer, buf_len + 1);
+	ft_strlcpy(new_token->val, buffer, buf_len + 1);
 	return (new_token);
 }
 
@@ -226,12 +232,12 @@ t_token	*split_until(char *start, char **input, t_bool (*cmp)(char ch), t_token_
 	while (**input && !cmp(**input))
 		(*input)++;
 	new_token = create_token(type, start, *input - start + is_quote);
-	// TODO: free tokens, malloc err
+	// TODO: free tokens, malloc err?
 	if (!new_token)
 		return (0);
 	if ((cmp == is_squote || cmp == is_dquote) && !cmp(**input))
 	{
-		free(new_token->value);
+		free(new_token->val);
 		free(new_token);
 		if (!(**input) || (cmp != is_dquote && cmp != is_squote))
 			(*input)--;
@@ -303,34 +309,6 @@ t_token	*tokenize_operator(char **input, t_token_state *state)
 	return (new_token);
 }
 
-/**
- * @brief Handle '$' character. If can be treated as an environment variable,
- *		split until the end of the variable name. If $?, just split $?.
- *		Otherwise, treat it as a TOKEN_WORD.
- * 
- * @param input
- * @param state 
- * @return t_token* 
- */
-t_token	*tokenize_dollar_sign(char **input, t_token_state *state)
-{
-	char	*start;
-	t_token	*new_token;
-
-	start = *input;
-	(*input)++;
-	if (is_space(**input) || **input == '\0')
-	{
-		(*input)--;
-		return (create_token(TOKEN_DOLLAR_SIGN, start, 1));
-	}
-	new_token = tokenize_normal(input, state);
-	if (!new_token)
-		return (0);
-	(*input)--;
-	return (new_token);
-}
-
 t_token	*tokenize_meta(char **input, t_token_state *state)
 {
     char	*start;
@@ -365,28 +343,6 @@ t_token *tokenize_whitespace(char **input, t_token_state *state)
     return (new_token);
 }
 
-// function to handle escaped characters.
-// wihtout quotes,		(echo \!hi -> !hi).
-//						(echo $^ -> $^).
-// with single quotes,	(echo '\!hi' -> \!hi).
-//						(echo '$\$' -> $\$).
-//						(echo "\\\$hi" -> \\\$hi).
-// with double quotes,	(echo "\!hi" -> \!hi).
-//					  	(echo "\$hi" -> $hi).
-//						(echo "\\\$hi" -> \$hi).
-//						(echo "$\$" -> $$).
-t_token	*tokenize_escape(char **input, t_token_state *state)
-{
-	// char	*start;
-	t_token	*new_token;
-	(void)	state;
-	(void) input;
-
-	// start = *input;
-	new_token = 0;
-    return (new_token);
-}
-
 t_token *tokenize_cmd(char *input, t_size *num_tokens)
 {
 	t_size				alloced;
@@ -400,7 +356,6 @@ t_token *tokenize_cmd(char *input, t_size *num_tokens)
 		tokenize_dquote,
 		tokenize_meta,
 		tokenize_whitespace,
-		tokenize_escape,
 	};
 
 	state = update_state(*input);
@@ -426,7 +381,7 @@ t_token *tokenize_cmd(char *input, t_size *num_tokens)
 			break ;
 		}
 		else if (tokens[token_idx - 1].type == TOKEN_WHITESPACE)
-			free(tokens[token_idx-- - 1].value);
+			free(tokens[token_idx-- - 1].val);
 		tokens = check_size(tokens, token_idx, &alloced);
 		if (!tokens)
 			return (0);

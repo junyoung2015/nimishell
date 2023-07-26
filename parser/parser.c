@@ -91,21 +91,21 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 	}
 	while (*token_idx < num_tokens && ((*tokens)[*token_idx].type == TOKEN_WORD || (*tokens)[*token_idx].type == TOKEN_SQ_STR || (*tokens)[*token_idx].type == TOKEN_DQ_STR))
 	{
-		if (!ft_strcmp((*tokens)[*token_idx].value, "echo"))
+		if (!ft_strcmp((*tokens)[*token_idx].val, "echo"))
 			cmd_node->builtin = ECHO_BUILTIN;
-        if (!ft_strcmp((*tokens)[*token_idx].value, "cd"))
+        if (!ft_strcmp((*tokens)[*token_idx].val, "cd"))
 			cmd_node->builtin = CD;
-        if (!ft_strcmp((*tokens)[*token_idx].value, "pwd"))
+        if (!ft_strcmp((*tokens)[*token_idx].val, "pwd"))
 			cmd_node->builtin = PWD;
-        if (!ft_strcmp((*tokens)[*token_idx].value, "export"))
+        if (!ft_strcmp((*tokens)[*token_idx].val, "export"))
 			cmd_node->builtin = EXPORT;
-        else if (!ft_strcmp((*tokens)[*token_idx].value, "unset"))
+        else if (!ft_strcmp((*tokens)[*token_idx].val, "unset"))
 			cmd_node->builtin = UNSET;
-		else if (!ft_strcmp((*tokens)[*token_idx].value, "env"))
+		else if (!ft_strcmp((*tokens)[*token_idx].val, "env"))
 			cmd_node->builtin = ENV;
-		else if (!ft_strcmp((*tokens)[*token_idx].value, "exit"))
+		else if (!ft_strcmp((*tokens)[*token_idx].val, "exit"))
 			cmd_node->builtin = EXIT;
-		cmd_node->cmd_args[cmd_node->num_args] = ft_strdup((*tokens)[*token_idx].value);
+		cmd_node->cmd_args[cmd_node->num_args] = ft_strdup((*tokens)[*token_idx].val);
 		if (!cmd_node->cmd_args[cmd_node->num_args])
 		{
 			for (t_size i = 0; i < cmd_node->num_args; i++)
@@ -131,7 +131,7 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 					return (0);
 				}
 				heredoc_node->cmd_args = ft_calloc(2, sizeof(char *));
-				heredoc_node->cmd_args[0] = ft_strdup((*tokens)[*token_idx].value);
+				heredoc_node->cmd_args[0] = ft_strdup((*tokens)[*token_idx].val);
 				heredoc_node->num_args = 1;
 				if (cmd_node->num_args == 0)
 				{
@@ -161,7 +161,7 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 					return (0);
 				}
 				redir_in_node->cmd_args = ft_calloc(2, sizeof(char *));
-				redir_in_node->cmd_args[0] = ft_strdup((*tokens)[*token_idx].value);
+				redir_in_node->cmd_args[0] = ft_strdup((*tokens)[*token_idx].val);
 				redir_in_node->num_args = 1;
 				cmd_node->left = redir_in_node;
 			}
@@ -183,7 +183,7 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 					return (0);
 				}
 				redir_out_node->cmd_args = ft_calloc(2, sizeof(char *));
-				redir_out_node->cmd_args[0] = ft_strdup((*tokens)[*token_idx].value);
+				redir_out_node->cmd_args[0] = ft_strdup((*tokens)[*token_idx].val);
 				redir_out_node->num_args = 1;
 				cmd_node->right = redir_out_node;
 			}
@@ -205,7 +205,7 @@ t_node *parse_cmd(t_token **tokens, t_size *token_idx, t_size num_tokens)
 					return (0);
 				}
 				append_node->cmd_args = ft_calloc(2, sizeof(char *));
-				append_node->cmd_args[0] = ft_strdup((*tokens)[*token_idx].value);
+				append_node->cmd_args[0] = ft_strdup((*tokens)[*token_idx].val);
 				append_node->num_args = 1;
 				cmd_node->right = append_node;
 			}

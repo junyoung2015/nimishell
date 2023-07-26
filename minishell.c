@@ -89,7 +89,7 @@ void print_tokens(t_token *tokens, t_size num_tokens)
 	printf("\n================= TOKENS =================\n");
 	printf("num of tokens: %llu\n", num_tokens);
 	for (t_size i = 0; i < num_tokens; i++)
-		printf("token[%llu]: [%d], [%s]\n", i, tokens[i].type, tokens[i].value);
+		printf("token[%llu]: [%d], [%s]\n", i, tokens[i].type, tokens[i].val);
 	printf("==========================================\n");
 }
 
@@ -97,7 +97,7 @@ void print_tokens(t_token *tokens, t_size num_tokens)
 
 void	init_g_info(char **envp)
 {
-	size_t	i;
+	t_size	i;
 	
 	g_info.env_cnt = 0;
 	while (envp && envp[g_info.env_cnt])
@@ -172,7 +172,7 @@ int	main(int ac, char **av, char **envp)
 				else if (num_tokens >= 1 && tokens[num_tokens - 1].type == TOKEN_ERROR)
 				{
 					// write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
-					write(STD_ERR, tokens[num_tokens - 1].value, ft_strlen(tokens[num_tokens - 1].value));
+					write(STD_ERR, tokens[num_tokens - 1].val, ft_strlen(tokens[num_tokens - 1].val));
 					// write(STD_ERR, "`\n", 2);
 				}
 				else
@@ -180,16 +180,16 @@ int	main(int ac, char **av, char **envp)
 					categorize_tokens(tokens, num_tokens);
 					if (tokens && DEBUG)
 						print_tokens(tokens, num_tokens);
-					// ast = parse_tokens_ll(tokens, num_tokens);
-					ast = parse_tokens(tokens, num_tokens);
+					ast = parse_tokens_ll(tokens, num_tokens);
+					// ast = parse_tokens(tokens, num_tokens);
 					if (ast && DEBUG)
 					{
 						printf("\n================== AST ==================\n");
 						print_ast(ast, 0, "");
 						printf("=========================================\n");
 					}
-					g_info.root = ast;
-					exit_code = executor(g_info.root);
+					// g_info.root = ast;
+					// exit_code = executor(g_info.root);
 				}
 			}
 			// if (status)

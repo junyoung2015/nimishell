@@ -54,3 +54,28 @@ char	*ft_strdup(char *src)
 	}
 	return (dup);
 }
+
+char	*ft_substr(char const *s, t_size start, t_size len)
+{
+	char	*substr;
+	t_size	i;
+	t_size	len_src;
+
+	i = 0;
+	len_src = ft_strlen(s);
+	if (!s || start >= len_src)
+	{
+		substr = (char *) ft_calloc(1, sizeof(char));
+		if (!substr)
+			return (NULL);
+		return (substr);
+	}
+	else if (len_src < len + start)
+		len = len_src - start;
+	substr = (char *) ft_calloc(len + 1, sizeof(char));
+	if (!substr)
+		return (NULL);
+	while (s[start] && 0 < len--)
+		substr[i++] = s[start++];
+	return (substr);
+}
