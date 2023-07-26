@@ -180,13 +180,13 @@ int	main(int ac, char **av, char **envp)
 					categorize_tokens(tokens, num_tokens);
 					if (tokens && DEBUG)
 						print_tokens(tokens, num_tokens);
-					// ast = parse_tokens_ll(tokens, num_tokens);
-					ast = parse_tokens(tokens, num_tokens);
+					ast = parse_tokens_ll(tokens, num_tokens);
+					// ast = parse_tokens(tokens, num_tokens);
 					if (ast && DEBUG)
 					{
-						printf("\n================== AST ==================\n");
+						printf("\n=================== AST ==================\n");
 						print_ast(ast, 0, "");
-						printf("=========================================\n");
+						printf("==========================================\n");
 					}
 					g_info.root = ast;
 					exit_code = executor(g_info.root);
