@@ -418,12 +418,6 @@ t_node *parse_simple_cmd_element(t_parser *parser, t_node *parent)
 {
 	t_node	*cmd_element;
 
-	// cmd_element = create_node(AST_SIMPLE_CMD_ELEMENT);
-	// if (!cmd_element)
-	// 	return (0);
-	// cmd_element->cmd_args = ft_calloc(1, sizeof(char *));
-	// if (!cmd_element->cmd_args)
-	// 	return (0);
 	if (parser->is_word(parser))
 	{
 		cmd_element = parse_word_list(parser, parent);
@@ -441,13 +435,6 @@ t_node *parse_simple_cmd_element(t_parser *parser, t_node *parent)
 	{
 		// err handling
 		cmd_element = parse_err(parser, parent);
-		// cmd_element = create_node(AST_ERR);
-		// if (!cmd_element)
-		// 	return (0);
-		// cmd_element->cmd_args = ft_calloc(1, sizeof(char *));
-		// if (!cmd_element->cmd_args)
-		// 	return (0);
-		// cmd_element->cmd_args[0] = parser->tokens[parser->cur].val;
 	}
 	return (cmd_element);
 }
@@ -507,14 +494,6 @@ t_node	*parse_simple_cmd(t_parser *parser, t_node *parent)
 	else
 	{
 		cmd_node = parse_err(parser, parent);
-		// err handling
-		// cmd_node = create_node(AST_ERR);
-		// if (!cmd_node)
-		// 	return (0);
-		// cmd_node->cmd_args = ft_calloc(1, sizeof(char *));
-		// if (!cmd_node->cmd_args)
-		// 	return (0);
-		// cmd_node->cmd_args[0] = parser->tokens[parser->cur].val;
 	}
 	if (parser->is_word(parser) || parser->is_redir(parser))
 	{
@@ -572,13 +551,6 @@ t_node *parse_command(t_parser *parser, t_node *parent)
 	{
 		// err handling
 		cmd_node = parse_err(parser, parent);
-		// cmd_node = create_node(AST_ERR);
-		// if (!cmd_node)
-		// 	return (0);
-		// cmd_node->cmd_args = ft_calloc(1, sizeof(char *));
-		// if (!cmd_node->cmd_args)
-		// 	return (0);
-		// cmd_node->cmd_args[0] = parser->tokens[parser->cur].val;
 	}
 	return (cmd_node);
 }
@@ -718,16 +690,7 @@ t_node	*parse_redir_list_tail(t_parser *parser, t_node *parent)
 			redir_node = parse_redir_list_tail(parser, redir_list_tail_node);
 			if (!redir_node)
 				return (0);
-			// append_redir_node(redir_list_tail_node, redir_node);
 		}
-		// append_child_node(parent, redir_list_tail_node);
-		// if (parser->is_redir(parser))
-		// {
-		// 	redir_node = parse_redir_list_tail(parser);
-		// 	if (!redir_node)
-		// 		return (0);
-		// 	append_child_node(redir_list_tail_node, redir_node);
-		// }
 	}
 	return (redir_list_tail_node);
 }
@@ -752,7 +715,6 @@ t_node	*parse_redir_list(t_parser *parser, t_node *parent)
 		redir_list_tail_node = parse_redir_list_tail(parser, redir_list_node);
 		if (!redir_list_tail_node) // err?
 			return (0);
-		// append_redir_node(redir_list_node, redir_list_tail_node);
 	}
 	return (redir_list_node);
 }
