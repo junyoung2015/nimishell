@@ -501,7 +501,7 @@ t_node	*parse_simple_cmd_tail(t_parser *parser, t_node *parent)
 			append_child_node(parent, simple_cmd_tail_node);
 		if (parser->is_word(parser) || parser->is_redir(parser))
 		{
-			cmd_node = parse_simple_cmd_tail(parser, parent);
+			cmd_node = parse_simple_cmd_tail(parser, simple_cmd_tail_node);
 			if (!cmd_node)
 				return (0);
 			// append_child_node(simple_cmd_tail_node, cmd_node);
@@ -715,7 +715,7 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 			return (0);
 		redir_node->type = AST_REDIR_APPEND;
 	}
-	parser->advance(parser);
+	// parser->advance(parser);
 	return (redir_node);
 }
 
