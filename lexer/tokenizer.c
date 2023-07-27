@@ -223,13 +223,15 @@ t_token	*create_token(t_token_type type, const char *buffer, int buf_len)
 	return (new_token);
 }
 
-//1001
-//0101
 
-// 1001 ^ 0101 = 1100;
 
-// 1100 ^ 1001 = 0101
-// 1100 ^ 0101 = 1001
+//A 1001
+//B 0101
+
+//(A ^ B)		1001 ^ 0101 = 1100;
+
+//(A ^ B ^ A)	1100 ^ 1001 = 0101
+//(A ^ B ^ B)	1100 ^ 0101 = 1001
 
 char	*return_end_of_word(char **input, t_bool (*cmp)(char ch))
 {
@@ -239,36 +241,61 @@ char	*return_end_of_word(char **input, t_bool (*cmp)(char ch))
 
 	// squote = is_squote;
 	// dquote = is_dquote;
-	tmp = (t_bool (*)(char))((t_size)is_squote ^ (t_size)is_dquote ^ (t_size)cmp);
-
-	(*input)++;
+	tmp = (t_bool (*)(char))((t_size)is_squote ^ (t_size)is_dquote);
 	while (**input && !is_meta_ch(**input))
 	{
-		while (**input && !is_meta_ch(**input) && !is_quote(**input))
-			(*input)++;
-		if (is_meta_ch(**input))
-			return (--(*input));
-		else if (cmp(**input))
-			return (return_end_of_word(input, cmp));
-		else if (tmp(**input))
-			return (return_end_of_word(input, tmp));
-		else// if (!(**input))
-			return (*input);
-		while (**input && !is_meta_ch(**input) && !is_quote(**input))
-			(*input)++;
-		if (is_meta_ch(**input))
-			return (--*(input));
-		else if (cmp(**input))
-			return (return_end_of_word(input, cmp));
-		else if(tmp(**input))
-			return (return_end_of_word(input, tmp));
-		else
-			return (*input);
-		if (!**input)
-			break ;
 		(*input)++;
+		if (**input)
+		{
+			while (**input && !cmp(**input))
+				(*input)++;
+			if (!(**input))
+				return (0); // ERR
+			else if (cmp(**input))
+				(*input)++;
+			else
+				return (0);
+		}
+		else if (cmp(*(*input - 1)))
+		{
+			return (0);
+		}
+		else
+			return (--(*input));
+		while (**input && !is_meta_ch(**input) && !is_quote(**input))
+			(*input)++;
+		if (!(**input) || is_meta_ch(**input))
+			return (--(*input));
+		else if (!cmp(**input))
+			cmp =  (t_bool (*)(char))((t_size)tmp ^ (t_size)cmp);
 	}
-	return (*input);
+	// while (**input && !is_meta_ch(**input))
+	// {
+	// 	while (**input && !is_meta_ch(**input) && !is_quote(**input))
+	// 		(*input)++;
+	// 	if (is_meta_ch(**input))
+	// 		return (--(*input));
+	// 	else if (cmp(**input))
+	// 		return (return_end_of_word(input, cmp));
+	// 	else if (tmp(**input))
+	// 		return (return_end_of_word(input, tmp));
+	// 	else// if (!(**input))
+	// 		return (--(*input));
+	// 	while (**input && !is_meta_ch(**input) && !is_quote(**input))
+	// 		(*input)++;
+	// 	if (is_meta_ch(**input))
+	// 		return (--(*input));
+	// 	else if (cmp(**input))
+	// 		return (return_end_of_word(input, cmp));
+	// 	else if(tmp(**input))
+	// 		return (return_end_of_word(input, tmp));
+	// 	else
+	// 		return (--(*input));
+	// 	if (!**input)
+	// 		break ;
+	// 	(*input)++;
+	// }
+	return (--(*input));
 }
 
 // t_token	*split_word(char *start, char **input, t_bool (*cmp)(char ch), t_token_type type)
@@ -336,13 +363,13 @@ t_token	*split_until(char *start, char **input, t_bool (*cmp)(char ch), t_token_
 	t_bool	is_quote;
 	t_token	*new_token;
 
-	printf("start: %p\n", start);
-	if (cmp == is_squote)
-	{
-		printf("end: %p\n", return_end_of_word(input, cmp));
-		return (0);
-	}
-		// return (split_word(start, input, cmp, type));
+	// printf("start: %p\n", start);
+	// if (cmp == is_squote)
+	// {
+	// 	printf("end: %p\n", return_end_of_word(input, cmp));
+	// 	return (0);
+	// }
+	// return (split_word(start, input, cmp, type));
 	is_quote = FALSE;
 	if (cmp == is_dquote || cmp == is_squote)
 		is_quote = TRUE;
