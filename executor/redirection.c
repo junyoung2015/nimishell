@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 21:50:47 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/25 21:46:49 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/27 21:32:10 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	redir_append(t_node *node, t_exec_info *info)
 
 static void	redir_err(char *str, t_exec_info *info)
 {
-	if (g_info.root->builtin == NOT_BUILTIN || g_info.root->parent_type == AST_PIPE)
+	if (info->is_fork)
 		exit(err(str));
 	info->exit_code = EXIT_FAILURE;
 	perror(str);	
@@ -48,6 +48,8 @@ void	redirection(t_node *node, t_exec_info *info)
 {
 	int	is_err;
 
+	if (info->exit_code != EXIT_SUCCESS)
+		return ;
 	is_err = 0;
 	if (node->type == AST_REDIR_IN)
 		is_err = redir_in(node, info);
@@ -57,6 +59,8 @@ void	redirection(t_node *node, t_exec_info *info)
 		is_err = redir_append(node, info);
 	else if (node->type == AST_HEREDOC)
 		is_err = heredoc(node, info);
+	else
+		return ;
 	if (is_err == 1)
 		redir_err("error: open", info);
 	else if (is_err == 2)

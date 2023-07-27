@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/25 21:20:21 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/27 18:54:43 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 
 typedef struct s_exec_info
 {
+	t_bool	is_fork;
 	int		fd_in;
 	int		fd_out;
 	size_t	fork_cnt;
@@ -31,7 +32,7 @@ typedef struct s_exec_info
 }	t_exec_info;
 
 /* pipe */
-void	open_pipe(t_exec_info *info);
+void	open_pipe(t_node *node, t_exec_info *info);
 int		connect_pipe(t_node *node, t_exec_info *info);
 void	close_pipe(t_node *node, t_exec_info *info);
 
