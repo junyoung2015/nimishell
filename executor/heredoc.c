@@ -83,7 +83,7 @@ int	heredoc(t_node *node, t_exec_info *info)
 	if (fd < 0)
 		return (1);
 	write_heredoc(node->cmd_args[0], info, fd);
-	if (info->exit_code > 0)
+	if (info->exit_code != EXIT_SUCCESS)
 		return (2);
 	close(fd);
 	info->fd_in = open("/tmp/.heredoc", O_RDONLY);
