@@ -216,7 +216,7 @@ char			**ft_split(char const *str, char c);
 typedef t_token *(*tokenizer_fn)(char **, t_token_state *);
 void			print_tokens(t_token *tokens, t_size num_tokens);
 t_token			*free_tokens(t_token *tokens, t_size size);
-t_token			*create_token(t_token_type type, const char *buffer, int buffer_length);
+t_token			*create_token(t_token_type type, const char *buffer, t_size buf_len);
 // FSM //
 t_token			*tokenize_cmd(char *input, t_size *num_tokens);
 t_token_state	update_state(char ch);

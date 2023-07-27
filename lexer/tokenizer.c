@@ -204,7 +204,7 @@ t_token_type	get_operator_type(char ch)
 	return (type);
 }
 
-t_token	*create_token(t_token_type type, const char *buffer, int buf_len)
+t_token	*create_token(t_token_type type, const char *buffer, t_size buf_len)
 {
 	t_token	*new_token;
 	
@@ -223,24 +223,15 @@ t_token	*create_token(t_token_type type, const char *buffer, int buf_len)
 	return (new_token);
 }
 
-
-
 //A 1001
 //B 0101
-
 //(A ^ B)		1001 ^ 0101 = 1100;
-
 //(A ^ B ^ A)	1100 ^ 1001 = 0101
 //(A ^ B ^ B)	1100 ^ 0101 = 1001
-
 char	*return_end_of_word(char **input, t_bool (*cmp)(char ch))
 {
-	// void	*squote;
-	// void	*dquote;
 	t_bool	(*tmp)(char);
 
-	// squote = is_squote;
-	// dquote = is_dquote;
 	tmp = (t_bool (*)(char))((t_size)is_squote ^ (t_size)is_dquote);
 	while (**input && !is_meta_ch(**input))
 	{
@@ -249,17 +240,13 @@ char	*return_end_of_word(char **input, t_bool (*cmp)(char ch))
 		{
 			while (**input && !cmp(**input))
 				(*input)++;
-			if (!(**input))
-				return (0); // ERR
-			else if (cmp(**input))
+			if (cmp(**input))
 				(*input)++;
 			else
 				return (0);
 		}
 		else if (cmp(*(*input - 1)))
-		{
 			return (0);
-		}
 		else
 			return (--(*input));
 		while (**input && !is_meta_ch(**input) && !is_quote(**input))
@@ -269,107 +256,14 @@ char	*return_end_of_word(char **input, t_bool (*cmp)(char ch))
 		else if (!cmp(**input))
 			cmp =  (t_bool (*)(char))((t_size)tmp ^ (t_size)cmp);
 	}
-	// while (**input && !is_meta_ch(**input))
-	// {
-	// 	while (**input && !is_meta_ch(**input) && !is_quote(**input))
-	// 		(*input)++;
-	// 	if (is_meta_ch(**input))
-	// 		return (--(*input));
-	// 	else if (cmp(**input))
-	// 		return (return_end_of_word(input, cmp));
-	// 	else if (tmp(**input))
-	// 		return (return_end_of_word(input, tmp));
-	// 	else// if (!(**input))
-	// 		return (--(*input));
-	// 	while (**input && !is_meta_ch(**input) && !is_quote(**input))
-	// 		(*input)++;
-	// 	if (is_meta_ch(**input))
-	// 		return (--(*input));
-	// 	else if (cmp(**input))
-	// 		return (return_end_of_word(input, cmp));
-	// 	else if(tmp(**input))
-	// 		return (return_end_of_word(input, tmp));
-	// 	else
-	// 		return (--(*input));
-	// 	if (!**input)
-	// 		break ;
-	// 	(*input)++;
-	// }
 	return (--(*input));
 }
-
-// t_token	*split_word(char *start, char **input, t_bool (*cmp)(char ch), t_token_type type)
-// {
-// 	t_token	*word_token;
-// 	char	*end;
-
-// 	end = return_end_of_word(input, cmp);
-// 	if (!end)
-// 		return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
-// 	(*input)++;			// skip quote
-// 	while (**input && is_meta_ch(**input))
-// 	{
-// 		while (**input && is_meta_ch(**input) && !cmp(**input))
-// 			*(*input)++;
-// 		if (!cmp(**input))
-// 		{
-// 			if (!(**input))
-// 				(*input)--;
-// 			return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
-// 		}
-// 		else if (is_squote(**input))
-// 		{
-// 			(*input)++;
-// 			if (!(**input))
-// 			{
-// 				break ;
-// 			}
-// 			else if (is_squote(**input))
-// 			{
-// 				// while (**input && is_meta_ch(**input)) // continued... maybe call recursively?
-// 			}
-// 			else
-// 			{
-// 				while (**input && !is_meta_ch(**input) && !cmp(**input))
-// 				{
-// 					(*input)++;
-// 				}
-// 				if (is_meta_ch(**input))
-// 				{
-// 					break ;
-// 				}
-// 				else if (is_squote(**input))
-// 				{
-// 					// while (**input && is_meta_ch(**input)) // continued... maybe call recursively?
-// 				}
-// 				else if (!(**input))
-// 					break ;
-// 			}
-// 		}
-// 		else if (!(**input))
-// 			break ;
-
-// 		(*input)++;
-// 	}
-// 	word_token = create_token(type, start, *input - start + 1);
-// 	if (!word_token)
-// 		return (0);
-// 	(*input)--;
-// 	return (word_token);
-// }
 
 t_token	*split_until(char *start, char **input, t_bool (*cmp)(char ch), t_token_type type)
 {
 	t_bool	is_quote;
 	t_token	*new_token;
 
-	// printf("start: %p\n", start);
-	// if (cmp == is_squote)
-	// {
-	// 	printf("end: %p\n", return_end_of_word(input, cmp));
-	// 	return (0);
-	// }
-	// return (split_word(start, input, cmp, type));
 	is_quote = FALSE;
 	if (cmp == is_dquote || cmp == is_squote)
 		is_quote = TRUE;
@@ -378,8 +272,6 @@ t_token	*split_until(char *start, char **input, t_bool (*cmp)(char ch), t_token_
 		(*input)++;
 	if ((cmp == is_squote || cmp == is_dquote) && !cmp(**input))
 	{
-		// free(new_token->val);
-		// free(new_token);
 		if (!(**input) || (cmp != is_dquote && cmp != is_squote))
 			(*input)--;
 		return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
@@ -430,10 +322,12 @@ t_token *tokenize_squote(char **input, t_token_state *state)
 {
 	char	*start;
 	t_token	*new_token;
-	(void)	state;
 
 	start = *input;
-	new_token = split_until(start, input, is_squote, TOKEN_SQ_STR);
+	if (!return_end_of_word(input, is_squote))
+		return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
+	new_token = create_token(TOKEN_SQ_STR, start, *input - start + 1);
+	// new_token = split_until(start, input, is_squote, TOKEN_SQ_STR);
 	if (!new_token)
 		return (0);
 	*state = update_state(*(*input + 1));
@@ -442,10 +336,14 @@ t_token *tokenize_squote(char **input, t_token_state *state)
 
 t_token *tokenize_dquote(char **input, t_token_state *state)
 {
+	char	*start;
 	t_token	*new_token;
-	(void)	state;
 
-	new_token = split_until(*input, input, is_dquote, TOKEN_DQ_STR);
+	start = *input;
+	if (!return_end_of_word(input, is_squote))
+		return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
+	new_token = create_token(TOKEN_SQ_STR, start, *input - start + 1);
+	// new_token = split_until(*input, input, is_dquote, TOKEN_DQ_STR);
 	if (!new_token)
 		return (0);
 	*state = update_state(*(*input + 1));
