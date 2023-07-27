@@ -266,25 +266,18 @@ t_token	*split_until(char *start, char **input, t_bool (*cmp)(char ch), t_token_
 
 	is_quote = FALSE;
 	if (cmp == is_dquote || cmp == is_squote)
+	{
 		is_quote = TRUE;
-	(*input)++;
-	while (**input && !cmp(**input))
-		(*input)++;
-	if ((cmp == is_squote || cmp == is_dquote) && !cmp(**input))
-	{
-		if (!(**input) || (cmp != is_dquote && cmp != is_squote))
-			(*input)--;
-		return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
+		if (!return_end_of_word(input, is_squote))
+			return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
 	}
-	if ((cmp == is_squote || cmp == is_dquote) && **input && cmp(**input) && !is_meta_ch(**input))
+	else
 	{
- 		(*input)++;
-		while (**input && !cmp(**input) && !is_meta_ch(**input))
+		(*input)++;
+		while (**input && !cmp(**input))
 			(*input)++;
-		(*input)--;
 	}
 	new_token = create_token(type, start, *input - start + is_quote);
-	// TODO: free tokens, malloc err?
 	if (!new_token)
 		return (0);
 	if (!(**input) || (cmp != is_dquote && cmp != is_squote))
@@ -326,8 +319,8 @@ t_token *tokenize_squote(char **input, t_token_state *state)
 	start = *input;
 	if (!return_end_of_word(input, is_squote))
 		return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
-	new_token = create_token(TOKEN_SQ_STR, start, *input - start + 1);
-	// new_token = split_until(start, input, is_squote, TOKEN_SQ_STR);
+	// new_token = create_token(TOKEN_SQ_STR, start, *input - start + 1);
+	new_token = split_until(start, input, is_squote, TOKEN_SQ_STR);
 	if (!new_token)
 		return (0);
 	*state = update_state(*(*input + 1));
@@ -342,8 +335,8 @@ t_token *tokenize_dquote(char **input, t_token_state *state)
 	start = *input;
 	if (!return_end_of_word(input, is_squote))
 		return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
-	new_token = create_token(TOKEN_SQ_STR, start, *input - start + 1);
-	// new_token = split_until(*input, input, is_dquote, TOKEN_DQ_STR);
+	// new_token = create_token(TOKEN_SQ_STR, start, *input - start + 1);
+	new_token = split_until(*input, input, is_dquote, TOKEN_DQ_STR);
 	if (!new_token)
 		return (0);
 	*state = update_state(*(*input + 1));
