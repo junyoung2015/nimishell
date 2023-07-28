@@ -171,6 +171,11 @@ t_bool	is_space(char ch)
 		ch == '\v' || ch == '\r');
 }
 
+t_bool	is_not_space(char ch)
+{
+	return (!is_space(ch));
+}
+
 /**
  * @brief Check whether 'ch' is a valid character for an environment variable.
  * 
@@ -228,7 +233,7 @@ t_token	*create_token(t_token_type type, const char *buffer, t_size buf_len)
 //(A ^ B)		1001 ^ 0101 = 1100;
 //(A ^ B ^ A)	1100 ^ 1001 = 0101
 //(A ^ B ^ B)	1100 ^ 0101 = 1001
-char	*return_end_of_word(char **input, t_bool (*cmp)(char ch))
+char	*advance_to_next_token(char **input, t_bool (*cmp)(char ch))
 {
 	t_bool	(*tmp)(char);
 
@@ -261,15 +266,18 @@ char	*return_end_of_word(char **input, t_bool (*cmp)(char ch))
 
 t_token	*split_until(char *start, char **input, t_bool (*cmp)(char ch), t_token_type type)
 {
-	t_bool	is_quote;
+	t_bool	quote;
 	t_token	*new_token;
 
-	is_quote = FALSE;
-	if (cmp == is_dquote || cmp == is_squote)
+	quote = FALSE;
+	if (is_quote(**input))
 	{
-		is_quote = TRUE;
-		if (!return_end_of_word(input, is_squote))
+		quote = TRUE;
+		if (!advance_to_next_token(input, cmp))
+		{
+			(*input)--;
 			return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
+		}
 	}
 	else
 	{
@@ -277,7 +285,7 @@ t_token	*split_until(char *start, char **input, t_bool (*cmp)(char ch), t_token_
 		while (**input && !cmp(**input))
 			(*input)++;
 	}
-	new_token = create_token(type, start, *input - start + is_quote);
+	new_token = create_token(type, start, *input - start + quote);
 	if (!new_token)
 		return (0);
 	if (!(**input) || (cmp != is_dquote && cmp != is_squote))
@@ -313,11 +321,13 @@ t_token*	tokenize_normal(char **input, t_token_state *state)
 
 t_token *tokenize_squote(char **input, t_token_state *state)
 {
+	char	*start;
 	t_token	*new_token;
 
-	if (!return_end_of_word(input, is_squote))
-		return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
-	new_token = split_until(*input, input, is_squote, TOKEN_SQ_STR);
+	start = *input;
+	// if (!advance_to_next_token(input, is_squote))
+	// 	return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
+	new_token = split_until(start, input, is_squote, TOKEN_SQ_STR);
 	if (!new_token)
 		return (0);
 	*state = update_state(*(*input + 1));
@@ -326,11 +336,13 @@ t_token *tokenize_squote(char **input, t_token_state *state)
 
 t_token *tokenize_dquote(char **input, t_token_state *state)
 {
+	char	*start;
 	t_token	*new_token;
 
-	if (!return_end_of_word(input, is_squote))
-		return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
-	new_token = split_until(*input, input, is_dquote, TOKEN_DQ_STR);
+	start = *input;
+	// if (!advance_to_next_token(input, is_dquote))
+	// 	return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
+	new_token = split_until(start, input, is_dquote, TOKEN_DQ_STR);
 	if (!new_token)
 		return (0);
 	*state = update_state(*(*input + 1));
@@ -368,17 +380,19 @@ t_token	*tokenize_meta(char **input, t_token_state *state)
 
 t_token *tokenize_whitespace(char **input, t_token_state *state)
 {  
-	char	*start;
+	// char	*start;
 	t_token	*new_token;
 
-	start = *input;
-    while (is_space(**input))
-    {
-		(*input)++;
-	}
-	new_token = create_token(TOKEN_WHITESPACE, start, *input - start);
-	*state = update_state(**input);
-	(*input)--;
+	// start = *input;
+    // while (is_space(**input))
+    // {
+	// 	(*input)++;
+	// }
+	// new_token = create_token(TOKEN_WHITESPACE, start, *input - start);
+	// *state = update_state(**input);
+	// (*input)--;
+	new_token = split_until(*input, input, is_not_space, TOKEN_WHITESPACE);
+	*state = update_state(*(*input + 1));
     return (new_token);
 }
 
