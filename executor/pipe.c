@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:37:25 by jusohn            #+#    #+#             */
-/*   Updated: 2023/07/27 18:54:15 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/28 00:45:33 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	open_pipe(t_node *node, t_exec_info *info)
 	node->left->pipe_open = node->pipe_open + 1;
 	node->right->pipe_open = 2;
 	if (pipe(info->pipe))
-		exit(err("error: pipe:"));
+		err("error: pipe:", info);
 }
 
 int	connect_pipe(t_node *node, t_exec_info *info)
@@ -57,12 +57,12 @@ void	close_pipe(t_node *node, t_exec_info *info)
 		{
 			info->prev_pipe = dup(info->pipe[0]);
 			if (info->prev_pipe < 0)
-				exit(err("error: dup"));
+				err("error: dup", info);
 		}
 		else
 		{
 			if (dup2(info->pipe[0], info->prev_pipe) < 0)
-				exit(err("error: dup2"));
+				err("error: dup2", info);
 		}
 	}
 	close(info->pipe[0]);

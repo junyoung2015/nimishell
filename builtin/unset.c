@@ -39,7 +39,7 @@ void	remove_env(t_exec_info *info, size_t idx)
 	env = malloc(sizeof(char *) * g_info.env_cnt);
 	if (!env)
 	{
-		info->exit_code = EXIT_FAILURE;
+		err("error: malloc", info);
 		return ;
 	}
 	i = 0;
@@ -54,7 +54,7 @@ void	remove_env(t_exec_info *info, size_t idx)
 	free(g_info.env[idx]);
 	free(g_info.env);
 	g_info.env = env;
-	g_info.env -= 1;
+	g_info.env_cnt -= 1;
 }
 
 void	unset(t_node *node, t_exec_info *info)

@@ -12,7 +12,7 @@ char	**get_path(char **env)
 		return (NULL);
 	path = ft_split(env[i] + 5, ':');
 	if (!path)
-		exit(err("error: malloc"));
+		err_exit("error: malloc", NULL);
 	return (path);
 }
 
@@ -44,7 +44,7 @@ t_bool	check_access(char *filepath, char **path)
 		{
 			free_ptr(path);
 			free(filepath);
-			exit(err("error: access"));
+			err_exit("error: access", NULL);
 		}
 	}
 	return (FALSE);
@@ -66,7 +66,7 @@ char	*get_cmdpath(char *filename)
 		if (!cmdpath)
 		{
 			free_ptr(path);
-			exit(err("error: malloc"));
+			err_exit("error: malloc", NULL);
 		}
 		if (check_access(cmdpath, path))
 			return (cmdpath);

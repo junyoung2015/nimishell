@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/27 21:17:40 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/28 20:57:09 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ t_bool	is_stop(t_node *node, t_exec_info *info)
 		waitpid(info->pid, &status, 0);
 		info->fork_cnt -= 1;
 		info->exit_code = WEXITSTATUS(status);
+		info->is_fork = FALSE;
 	}
-	info->is_fork = FALSE;
 	if (info->exit_code != EXIT_SUCCESS && node->type == AST_AND)
 		return (TRUE);
 	if (info->exit_code == EXIT_SUCCESS && node->type == AST_OR)
@@ -32,13 +32,16 @@ t_bool	is_stop(t_node *node, t_exec_info *info)
 	return (FALSE);
 }
 
-pid_t	_fork(t_node *node, t_exec_info *info)
+pid_t	is_fork(t_node *node, t_exec_info *info)
 {
 	pid_t	pid;
 	
+	if (node->parent_type != AST_PIPE \
+			&& (node->type != AST_CMD || node->builtin != NOT_BUILTIN))
+		return (0);
 	pid = fork();
 	if (pid < 0)
-		perror("error: fork");
+		err("error: fork", info);
 	else
 	{
 		info->fork_cnt += 1;
@@ -50,10 +53,23 @@ pid_t	_fork(t_node *node, t_exec_info *info)
 	return (pid);
 }
 
+void	init_info(t_node *node, t_exec_info *info)
+{
+	if (node->type != AST_CMD)
+		return ;
+	info->exit_code = EXIT_SUCCESS;
+	info->is_fork = FALSE;
+	info->fd_in = -1;
+	info->fd_out = -1;
+	if (node->builtin != NOT_BUILTIN)
+	{
+		dup2(g_info.stdin_fd, STDIN_FILENO);
+		dup2(g_info.stdout_fd, STDOUT_FILENO);
+	}
+}
+
 void	tree_search(t_node *root, t_exec_info *info)
 {
-	pid_t	pid;
-	
 	if (!root)
 		return ;
 	if (root->left)
@@ -61,10 +77,8 @@ void	tree_search(t_node *root, t_exec_info *info)
 	if (root->right)
 		root->right->parent_type = root->type;
 	open_pipe(root, info);
-	pid = 0;
-	if (root->parent_type == AST_PIPE || (root->type == AST_CMD && root->builtin == NOT_BUILTIN))
-		pid = _fork(root, info);
-	if (pid)
+	init_info(root, info);
+	if (is_fork(root, info))
 		return ;
 	redirection(root, info);
 	tree_search(root->left, info);
@@ -74,23 +88,14 @@ void	tree_search(t_node *root, t_exec_info *info)
 	command(root, info);
 }
 
-void	init_info(t_exec_info *info)
-{
-	info->is_fork = FALSE;
-	info->fd_in = -1;
-	info->fd_out = -1;
-	info->exit_code = EXIT_SUCCESS;
-	info->fork_cnt = 0;
-	info->prev_pipe = -1;
-}
-
 int	executor(t_node *root)
 {
 	t_exec_info	info;	
 	size_t		i;
 	int			status;
 
-	init_info(&info);
+	info.fork_cnt = 0;
+	info.prev_pipe = -1;
 	tree_search(root, &info);
 	dup2(g_info.stdin_fd, STDIN_FILENO);
 	dup2(g_info.stdout_fd, STDOUT_FILENO);
