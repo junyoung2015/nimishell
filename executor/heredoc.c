@@ -24,11 +24,19 @@ static char	*str_join(char *str, char buf, size_t len)
 	return (ret);
 }
 
-static char	*_err(t_exec_info *info, char *str)
+static char	*heredoc_err(t_exec_info *info, char *str, int code)
 {
 	if (str)
 		free(str);
-	info->exit_code = EXIT_FAILURE;
+	if (code)
+		err("error: read", info);
+	else
+		err("error: malloc", info);
+	if (info->is_fork)
+	{
+		clear_all(g_info.root);
+		exit(EXIT_FAILURE);
+	}
 	return (NULL);
 }
 
@@ -44,12 +52,12 @@ char	*get_next_line(int fd, t_exec_info *info, size_t *str_len)
 	while (buf != '\n')
 	{
 		if (read(fd, &buf, 1) < 0)
-			return (_err(info, str));
+			return (heredoc_err(info, str, 1));
 		if (buf == 0)
 			return (str);
 		str = str_join(str, buf, len++);
 		if (!str)
-			return (_err(info, NULL));
+			return (heredoc_err(info, NULL, 0));
 	}
 	*str_len = len;
 	return (str);

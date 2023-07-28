@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 21:55:34 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/27 20:44:38 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/28 00:37:47 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@ void	command_in_child(t_node *node, t_exec_info *info)
 	char	*cmdpath;
 
 	if (!connect_pipe(node, info))
-		exit(err("error: dup2"));
+		err_exit("error: dup2", info);
 	if (node->builtin == NOT_BUILTIN)
 	{
 		cmdpath = get_cmdpath(node->cmd_args[0]);
 		if (execve(cmdpath, node->cmd_args, g_info.env) < 0)
-			exit(err("error: execve"));
+			err_exit("error: execve", info);
 	}
 	builtin(node, info);
 	clear_all(g_info.root);
@@ -42,8 +42,7 @@ void	command(t_node *node, t_exec_info *info)
 			return ;
 		if (!connect_pipe(node, info))
 		{
-			info->exit_code = EXIT_FAILURE;
-			perror("error: dup2");
+			err("error: dup2", info);
 			return ;
 		}
 		builtin(node, info);

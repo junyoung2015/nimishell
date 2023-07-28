@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 21:50:47 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/27 21:32:10 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/28 21:50:06 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,9 @@ int	redir_append(t_node *node, t_exec_info *info)
 static void	redir_err(char *str, t_exec_info *info)
 {
 	if (info->is_fork)
-		exit(err(str));
-	info->exit_code = EXIT_FAILURE;
-	perror(str);	
+		err_exit(str, info);
+	else
+		err(str, info);
 }
 
 void	redirection(t_node *node, t_exec_info *info)
@@ -61,8 +61,6 @@ void	redirection(t_node *node, t_exec_info *info)
 		is_err = heredoc(node, info);
 	else
 		return ;
-	if (is_err == 1)
+	if (is_err & 1)
 		redir_err("error: open", info);
-	else if (is_err == 2)
-		redir_err("error", info);
 }
