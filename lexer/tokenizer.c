@@ -25,7 +25,8 @@ t_token	*free_tokens(t_token *tokens, t_size size)
 }
 
 // TODO: re-name this funciton
-t_token	*handle_malloc_err_in_tokenizer(t_token *tokens, t_size num_tokens)
+// TODO: make this into general function for creating error token
+t_token	*create_malloc_err_token(t_token *tokens, t_size num_tokens)
 {
 	write(STD_ERR, MALLOC_ERR, ft_strlen(MALLOC_ERR));
 	write(STD_ERR, "\n", 1);
@@ -43,7 +44,7 @@ t_token* realloc_tokens(t_token *tokens, t_size cur_size, t_size new_size)
 		return (free_tokens(tokens, cur_size));
 	new = ft_calloc(new_size, sizeof(t_token));
 	if (!new) 
-		return (handle_malloc_err_in_tokenizer(tokens, cur_size));
+		return (create_malloc_err_token(tokens, cur_size));
 	cp_size = new_size;
 	if (cur_size < new_size)
 		cp_size = cur_size;
@@ -53,7 +54,7 @@ t_token* realloc_tokens(t_token *tokens, t_size cur_size, t_size new_size)
 	{
 		new[i].val = ft_calloc(ft_strlen(tokens[i].val) + 1, 1);
 		if (!new[i].val)
-			return (handle_malloc_err_in_tokenizer(tokens, cur_size));
+			return (create_malloc_err_token(tokens, cur_size));
 		ft_memcpy(new[i].val, tokens[i].val, ft_strlen(tokens[i].val) + 1);
 	}
 	free_tokens(tokens, cur_size);
