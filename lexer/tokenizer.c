@@ -88,7 +88,7 @@ t_bool	check_parenthesis(t_token* tokens, t_size num_tokens)
 		else if (tokens[i].type == TOKEN_R_PAREN)
 			depth--;
 		if (depth < 0)
-		 break ;
+			break ;
 		i++;
 	}
 	return (depth == 0);
@@ -233,7 +233,7 @@ t_token	*create_token(t_token_type type, const char *buffer, t_size buf_len)
 //(A ^ B)		1001 ^ 0101 = 1100;
 //(A ^ B ^ A)	1100 ^ 1001 = 0101
 //(A ^ B ^ B)	1100 ^ 0101 = 1001
-char	*advance_to_next_token(char **input, t_bool (*cmp)(char ch))
+t_bool	advance_to_next_token(char **input, t_bool (*cmp)(char ch))
 {
 	t_bool	(*tmp)(char);
 
@@ -248,48 +248,54 @@ char	*advance_to_next_token(char **input, t_bool (*cmp)(char ch))
 			if (cmp(**input))
 				(*input)++;
 			else
-				return (0);
+				return (FALSE);
 		}
 		else if (cmp(*(*input - 1)))
-			return (0);
+			return (FALSE);
 		else
-			return (--(*input));
+			return (TRUE);
 		while (**input && !is_meta_ch(**input) && !is_quote(**input))
 			(*input)++;
 		if (!(**input) || is_meta_ch(**input))
-			return (--(*input));
+			return (TRUE);
 		else if (!cmp(**input))
 			cmp =  (t_bool (*)(char))((t_size)tmp ^ (t_size)cmp);
 	}
-	return (--(*input));
+	return (TRUE);
 }
 
 t_token	*split_until(char *start, char **input, t_bool (*cmp)(char ch), t_token_type type)
 {
 	t_bool	quote;
 	t_token	*new_token;
+	t_bool	(*tmp)(char);
 
 	quote = FALSE;
-	if (is_quote(**input))
+	tmp = (t_bool (*)(char))((t_size)is_squote ^ (t_size)is_dquote);
+	if (is_quote((*input)[0]))
 	{
 		quote = TRUE;
 		if (!advance_to_next_token(input, cmp))
-		{
-			(*input)--;
 			return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
-		}
 	}
 	else
 	{
 		(*input)++;
-		while (**input && !cmp(**input))
+		while (**input && !cmp((*input)[0]) && !is_quote((*input)[0]))
 			(*input)++;
+		if (is_quote((*input)[0]))
+		{
+			cmp = (t_bool (*)(char))((t_size)tmp ^ (t_size)is_squote);
+			if (is_squote((*input)[0]))
+				cmp = (t_bool (*)(char))((t_size)tmp ^ (t_size)is_dquote);
+			quote = TRUE;
+			if (!advance_to_next_token(input, cmp))
+				return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
+		}
 	}
 	new_token = create_token(type, start, *input - start + quote);
 	if (!new_token)
 		return (0);
-	if (!(**input) || (cmp != is_dquote && cmp != is_squote))
-		(*input)--;
 	return (new_token);
 }
 
@@ -308,44 +314,34 @@ t_token_state update_state(char ch)
 
 t_token*	tokenize_normal(char **input, t_token_state *state)
 {
-    char	*start;
 	t_token	*new_token;
 
-	start = *input;
-	new_token = split_until(start, input, is_meta_ch, TOKEN_WORD);
+	new_token = split_until(*input, input, is_meta_ch, TOKEN_WORD);
 	if (!new_token)
 		return (0);
-	*state = update_state(*(*input + 1));
+	*state = update_state(**input);
     return (new_token);
 }
 
 t_token *tokenize_squote(char **input, t_token_state *state)
 {
-	char	*start;
 	t_token	*new_token;
 
-	start = *input;
-	// if (!advance_to_next_token(input, is_squote))
-	// 	return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
-	new_token = split_until(start, input, is_squote, TOKEN_SQ_STR);
+	new_token = split_until(*input, input, is_squote, TOKEN_SQ_STR);
 	if (!new_token)
 		return (0);
-	*state = update_state(*(*input + 1));
+	*state = update_state(**input);
     return (new_token);
 }
 
 t_token *tokenize_dquote(char **input, t_token_state *state)
 {
-	char	*start;
 	t_token	*new_token;
 
-	start = *input;
-	// if (!advance_to_next_token(input, is_dquote))
-	// 	return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
-	new_token = split_until(start, input, is_dquote, TOKEN_DQ_STR);
+	new_token = split_until(*input, input, is_dquote, TOKEN_DQ_STR);
 	if (!new_token)
 		return (0);
-	*state = update_state(*(*input + 1));
+	*state = update_state(**input);
     return (new_token);
 }
 
@@ -360,39 +356,32 @@ t_token	*tokenize_operator(char **input, t_token_state *state)
 	}
 	else
 		new_token = create_token(get_operator_type(**input), *input, 1);
-	*state = update_state(*(*input + 1));
+	*state = update_state(*(++(*input)));
 	return (new_token);
 }
 
 t_token	*tokenize_meta(char **input, t_token_state *state)
 {
-    char	*start;
 	t_token	*new_token;
 
-	start = *input;
-	if (is_space(*start))
+	if (is_space(**input))
 		new_token = tokenize_whitespace(input, state);
 	else
 		new_token = tokenize_operator(input, state);
-	*state = update_state(*(*input + 1));
+	if (!new_token)
+		return (0);
+	*state = update_state(**input);
 	return (new_token);
 }
 
 t_token *tokenize_whitespace(char **input, t_token_state *state)
-{  
-	// char	*start;
+{
 	t_token	*new_token;
 
-	// start = *input;
-    // while (is_space(**input))
-    // {
-	// 	(*input)++;
-	// }
-	// new_token = create_token(TOKEN_WHITESPACE, start, *input - start);
-	// *state = update_state(**input);
-	// (*input)--;
 	new_token = split_until(*input, input, is_not_space, TOKEN_WHITESPACE);
-	*state = update_state(*(*input + 1));
+	if (!new_token)
+		return (0);
+	*state = update_state(**input);
     return (new_token);
 }
 
@@ -438,7 +427,6 @@ t_token *tokenize_cmd(char *input, t_size *num_tokens)
 		tokens = check_size(tokens, token_idx, &alloced);
 		if (!tokens)
 			return (0);
-		input++;
 	}
 	// TODO: malloc err?
 	if (!tokens)
