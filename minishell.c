@@ -103,14 +103,14 @@ void print_ast(t_node *node, int depth, const char *indent)
 
 #endif
 
-#ifdef DEBUG
-
-void chk_leaks(void)
-{
-	system("leaks minishell");
-}
-
-#endif
+//#ifdef DEBUG
+//
+//void chk_leaks(void)
+//{
+//	system("leaks minishell");
+//}
+//
+//#endif
 
 #ifdef DEBUG
 
@@ -209,7 +209,7 @@ int	main(int ac, char **av, char **envp)
 				}
 				else
 				{
-					if (tokens && DEBUG)
+					if (DEBUG)
 						print_tokens(tokens, num_tokens);
 					ast = parse_tokens_ll(tokens, num_tokens);
 					// ast = parse_tokens(tokens, num_tokens);
