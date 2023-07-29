@@ -218,7 +218,7 @@ void			print_tokens(t_token *tokens, t_size num_tokens);
 t_token			*free_tokens(t_token *tokens, t_size size);
 t_token			*create_token(t_token_type type, const char *buffer, t_size buf_len);
 // FSM //
-t_token			*tokenize_cmd(char *input, t_size *num_tokens);
+t_token			*tokenizer(char *input, t_size *num_tokens);
 t_token_state	update_state(char ch);
 t_token			*tokenize_normal(char **input, t_token_state *state);
 t_token			*tokenize_squote(char **input, t_token_state *state);

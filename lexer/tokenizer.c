@@ -386,7 +386,7 @@ t_token *tokenize_whitespace(char **input, t_token_state *state)
     return (new_token);
 }
 
-t_token *tokenize_cmd(char *input, t_size *num_tokens)
+t_token *tokenizer(char *input, t_size *num_tokens)
 {
 	t_size				alloced;
 	t_size				token_idx;

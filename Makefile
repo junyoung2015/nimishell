@@ -24,7 +24,6 @@ STR_DIR = ./str/
 # -------------- SRCS  -------------- #
 SRCS = ./minishell.c						\
 		$(INIT_DIR)logo.c					\
-		$(LEXER_DIR)lexer.c					\
 		$(LEXER_DIR)tokenizer.c				\
 		$(MEMORY_DIR)mem_utils.c			\
 		$(PARSER_DIR)parser.c				\

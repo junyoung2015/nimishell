@@ -114,22 +114,22 @@
 #define ROW12	"\2\5\6\6\4\4\4\4\2\0\2\2\2"
 #define ROW13	"\2\5\6\6\4\4\4\4\2\0\2\2\2"
 
-t_node *parse_word_list(t_parser *parser, t_node *parent);
 
-char *parse_word(t_parser *parser, t_node *parent);
-t_node *parse_redir(t_parser *parser, t_node *parent);
-t_node *parse_simple_cmd_element(t_parser *parser, t_node *parent);
-t_node *parse_redir_list(t_parser *parser, t_node *parent);
-t_node *parse_redir_list_tail(t_parser *parser, t_node *parent);
-t_node *parse_simple_cmd(t_parser *parser, t_node *parent);
-t_node *parse_simple_cmd_tail(t_parser *parser, t_node *parent);
-t_node *parse_command(t_parser *parser, t_node *parent);
-t_node *parse_subshell(t_parser *parser, t_node *parent);
-t_node *parse_list(t_parser *parser, t_node *parent);
-t_node *parse_list_tail(t_parser *parser, t_node *parent);
-t_node *parse_pipeline(t_parser *parser, t_node *parent);
-t_node *parse_pipeline_tail(t_parser *parser, t_node *parent);
-t_node *parse_err(t_parser *parser, t_node *parent);
+char	*parse_word(t_parser *parser);
+t_node	*parse_word_list(t_parser *parser, t_node *parent);
+t_node	*parse_redir(t_parser *parser, t_node *parent);
+t_node	*parse_redir_list_tail(t_parser *parser, t_node *parent);
+t_node	*parse_redir_list(t_parser *parser, t_node *parent);
+t_node	*parse_simple_cmd_element(t_parser *parser, t_node *parent);
+t_node	*parse_simple_cmd_tail(t_parser *parser, t_node *parent);
+t_node	*parse_simple_cmd(t_parser *parser, t_node *parent);
+t_node	*parse_command(t_parser *parser, t_node *parent);
+t_node	*parse_subshell(t_parser *parser, t_node *parent);
+t_node	*parse_list_tail(t_parser *parser, t_node *parent);
+t_node	*parse_list(t_parser *parser, t_node *parent);
+t_node	*parse_pipeline_tail(t_parser *parser, t_node *parent);
+t_node	*parse_pipeline(t_parser *parser, t_node *parent);
+t_node	*parse_err(t_parser *parser, t_node *parent);
 
 // type for function pointer array
 typedef t_node *(*parse_fn)(t_parser *parser, t_node *parent);
@@ -311,6 +311,8 @@ char **init_rule_table(void)
 	return (table);
 }
 
+
+
 /**
  * @brief Update the parse state, to decide which parse function to call.
  *
@@ -356,7 +358,7 @@ void	postorder_traversal(t_node *node, t_node **err_node)
 	if (node->left)
 		postorder_traversal(node->left, err_node);
 	if (node->right)
-	    postorder_traversal(node->right, err_node);
+		postorder_traversal(node->right, err_node);
     if (node->type == AST_ERR)
         *err_node = node;
 }
@@ -458,7 +460,7 @@ t_node	*parse_simple_cmd_tail(t_parser *parser, t_node *parent)
 		simple_cmd_tail_node = parse_simple_cmd_element(parser, parent);
 		if (!simple_cmd_tail_node)
 			return (0);
-		if (AST_REDIR_IN <= simple_cmd_tail_node->type && simple_cmd_tail_node->type <= AST_REDIR_APPEND)
+		if (AST_REDIR_IN <= simple_cmd_tail_node->type && simple_cmd_tail_node->type <= AST_REDIR_APPEND) // appending to the first cmd when there is a redirection - ls | wc > a.txt, appending to ls here
 			append_redir_node(parent, simple_cmd_tail_node);
 		else
 			append_child_node(parent, simple_cmd_tail_node);
@@ -490,20 +492,20 @@ t_node	*parse_simple_cmd(t_parser *parser, t_node *parent)
 		cmd_node = parse_simple_cmd_element(parser, parent);
 		if (!cmd_node)
 			return (0);
+		if (parser->is_word(parser) || parser->is_redir(parser))
+		{
+			cmd_tail = parse_simple_cmd_tail(parser, cmd_node);
+			if (!cmd_tail)
+				return (0);
+//			if (AST_REDIR_IN <= cmd_tail->type && cmd_tail->type <= AST_REDIR_APPEND)
+//				append_redir_node(cmd_node, cmd_tail);
+//			else
+//				append_child_node(cmd_node, cmd_tail);
+		}
 	}
 	else
 	{
 		cmd_node = parse_err(parser, parent);
-	}
-	if (parser->is_word(parser) || parser->is_redir(parser))
-	{
-		cmd_tail = parse_simple_cmd_tail(parser, parent);
-		if (!cmd_tail)
-			return (0);
-		if (AST_REDIR_IN <= cmd_tail->type && cmd_tail->type <= AST_REDIR_APPEND)
-			append_redir_node(cmd_node, cmd_tail);
-		else
-			append_child_node(cmd_node, cmd_tail);
 	}
 	// parser->advance(parser);
 	return (cmd_node);
@@ -567,10 +569,9 @@ t_node *parse_command(t_parser *parser, t_node *parent)
  * @param parser	paresr struct
  * @return t_node*	root node of the <REDIRECTION>, or <WORD>
  */
-char *parse_word(t_parser *parser, t_node *parent)
+char *parse_word(t_parser *parser)
 {
 	char	*word;
-	(void)	parent;
 
 	word = 0;
 	if (parser->is_word(parser))
@@ -588,6 +589,7 @@ char *parse_word(t_parser *parser, t_node *parent)
 t_node	*parse_word_list(t_parser *parser, t_node *parent)
 {
 	t_node	*word_list_node;
+	(void)	parent;
 
 	word_list_node = create_node(AST_WORD_LIST);
 	if (!word_list_node)
@@ -600,7 +602,7 @@ t_node	*parse_word_list(t_parser *parser, t_node *parent)
 	}
 	while (parser->cur < parser->size && parser->is_word(parser))
 	{
-		word_list_node->cmd_args[word_list_node->num_args] = parse_word(parser, parent);
+		word_list_node->cmd_args[word_list_node->num_args] = parse_word(parser);
 		if (!word_list_node->cmd_args[word_list_node->num_args])
 		{
 			for (t_size i = 0; i < word_list_node->num_args; i++)
@@ -643,7 +645,7 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 		if (!redir_node)
 			return (0);
 		redir_node->cmd_args = ft_calloc(2, sizeof(char *));
-		redir_node->cmd_args[redir_node->num_args] = parse_word(parser, parent);
+		redir_node->cmd_args[redir_node->num_args] = parse_word(parser);
 		redir_node->num_args = 1;
 	}
 	else if (parser->check(parser, TOKEN_REDIR_OUT))
@@ -674,7 +676,6 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
  */
 t_node	*parse_redir_list_tail(t_parser *parser, t_node *parent)
 {
-	// t_node	*tmp;
 	t_node	*redir_node;
 	t_node	*redir_list_tail_node;
 
@@ -739,7 +740,7 @@ t_node *parse_pipeline_tail(t_parser *parser, t_node *parent)
 		right_node = parse_pipeline(parser, parent);
 		if (!right_node) // err?
 			return (0);
-		if (right_node->type == AST_ERR)
+		else if (right_node->type == AST_ERR)
 			return (right_node);
 		pipe_node = create_node(AST_PIPE);
 		if (!pipe_node)	// malloc err
@@ -747,7 +748,7 @@ t_node *parse_pipeline_tail(t_parser *parser, t_node *parent)
 		pipe_node->right = right_node;
 		return (pipe_node);
 	}
-	else	// synatx error
+	else	// syntax error
 		return (0);
 	return (pipe_node);
 }
@@ -830,8 +831,6 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 		}
 		return (logic_node);
 	}
-	else	// syntax error
-		return (0);
 	return (logic_node);
 }
 
@@ -870,12 +869,18 @@ t_node *parse_list(t_parser *parser, t_node *parent)
 t_node *parse_subshell(t_parser *parser, t_node *parent)
 {
 	t_node	*subshell_node;
-	(void)	parser;
-	(void)	parent;
+	t_node	*list_node;
 
 	subshell_node = create_node(AST_SUBSHELL);
 	if (!subshell_node)
 		return (0);
+	append_child_node(parent, subshell_node);
+	parser->advance(parser);
+	list_node = parse_list(parser, subshell_node);
+	if (!list_node)
+		return (0);
+	append_child_node(subshell_node, list_node);
+	 parser->advance(parser); // For ')', need to check where R_PAREN is advanced
 	return (subshell_node);
 }
 
@@ -902,7 +907,7 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 		parse_redir_list,
 		parse_pipeline,
 		parse_list,
-		0,
+		parse_subshell,
 		// parse_err,
 		// parse_env_var,
 		// parse_command,
@@ -956,16 +961,16 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 			{
 				root = new_node;
 			}
-			else if (new_node->type == AST_ERR)
-			{
-				// handle err, print err msg and error happend around which token
-				// For now, print error here and return 0;
-				write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
-				write(STD_ERR, new_node->cmd_args[0], ft_strlen(new_node->cmd_args[0]));
-				write(STD_ERR, "`\n", 2);
-				free_ast(new_node);
-				return (0);
-			}
+			// else if (new_node->type == AST_ERR)
+			// {
+			// 	// handle err, print err msg and error happend around which token
+			// 	// For now, print error here and return 0;
+			// 	write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
+			// 	write(STD_ERR, new_node->cmd_args[0], ft_strlen(new_node->cmd_args[0]));
+			// 	write(STD_ERR, "`\n", 2);
+			// 	free_ast(new_node);
+			// 	return (0);
+			// }
 			else if (new_node->type == AST_REDIR_IN || new_node->type == AST_REDIR_OUT || new_node->type == AST_REDIR_APPEND || new_node->type == AST_HEREDOC)
 				append_redir_node(root, new_node);
 			else
