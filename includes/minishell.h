@@ -211,12 +211,22 @@ char			*ft_strtrim(char *str, char c);
 char			*ft_strdup(char *src);
 char			*ft_substr(char const *s, t_size start, t_size len);
 char			**ft_split(char const *str, char c);
+char			*ft_strjoin(char const *s1, char const *s2);
 
 /* ================== TOKENIZER ================== */
-typedef t_token *(*tokenizer_fn)(char **, t_token_state *);
+typedef t_token *(*t_tokenizer_fn)(char **, t_token_state *);
 void			print_tokens(t_token *tokens, t_size num_tokens);
 t_token			*free_tokens(t_token *tokens, t_size size);
 t_token			*create_token(t_token_type type, const char *buffer, t_size buf_len);
+
+t_bool			is_escaped(char ch);
+t_bool			is_meta_ch(char ch);
+t_bool			is_squote(char ch);
+t_bool			is_dquote(char ch);
+t_bool			is_quote(char ch);
+t_bool			is_space(char ch);
+t_bool			is_not_space(char ch);
+t_bool			is_env_var(char ch); // ?
 // FSM //
 t_token			*tokenizer(char *input, t_size *num_tokens);
 t_token_state	update_state(char ch);

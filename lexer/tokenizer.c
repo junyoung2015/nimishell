@@ -140,6 +140,7 @@ t_bool	is_dmeta_str(char *input)
 	return (TOKEN_WORD);
 }
 
+// TODO: delete or move to somewhere else
 t_bool	is_escaped(char ch)
 {
 	return (ch == '\\');
@@ -175,18 +176,6 @@ t_bool	is_space(char ch)
 t_bool	is_not_space(char ch)
 {
 	return (!is_space(ch));
-}
-
-/**
- * @brief Check whether 'ch' is a valid character for an environment variable.
- * 
- * @param ch		character to check
- * @return t_bool	TRUE if 'ch' is a valid character for an environment variable,
- * 					FALSE otherwise.
- */
-t_bool	is_env_var(char ch)
-{
-	return (ft_isalnum(ch) || ch == '_');
 }
 
 t_token_type	get_operator_type(char ch)
@@ -393,7 +382,7 @@ t_token *tokenizer(char *input, t_size *num_tokens)
 	t_token				*tokens;
 	t_token				*new_token;
 	t_token_state		state;
-	const tokenizer_fn	tokenizers[] = {
+	const t_tokenizer_fn	tokenizers[] = {
 		tokenize_normal,
 		tokenize_squote,
 		tokenize_dquote,

@@ -132,7 +132,7 @@ t_node	*parse_pipeline(t_parser *parser, t_node *parent);
 t_node	*parse_err(t_parser *parser, t_node *parent);
 
 // type for function pointer array
-typedef t_node *(*parse_fn)(t_parser *parser, t_node *parent);
+typedef t_node *(*t_parser_fn)(t_parser *parser, t_node *parent);
 
 /**
  * @brief Check the type of the current token.
@@ -310,8 +310,6 @@ char **init_rule_table(void)
 	table[12] = ROW13;
 	return (table);
 }
-
-
 
 /**
  * @brief Update the parse state, to decide which parse function to call.
@@ -899,7 +897,7 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 	t_node *new_node;
 	t_parser parser;
 	char **table;
-	const parse_fn parse_fn_array[8] = {
+	const t_parser_fn parser_fn_arr[8] = {
 		parse_err,
 		0,
 		parse_command,
@@ -941,12 +939,12 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 			// deal with err and free?
 			return (0);
 		}
-		// TODO: edit parse_fn_array, so parse_state 1, 3, 7 is removed from the array, parse_state and parsing table
+		// TODO: edit parser_fn_arr, so parse_state 1, 3, 7 is removed from the array, parse_state and parsing table
 		else if (parse_state == PARSE_STATES_CNT || parse_state == 1 || parse_state == 3 || parse_state == 7)
 		{
 			break ;
 		}
-		new_node = parse_fn_array[parse_state](&parser, root);
+		new_node = parser_fn_arr[parse_state](&parser, root);
 		if (new_node != 0)
 		{
 			if (check_err_node(new_node))
