@@ -120,31 +120,65 @@ char	*process_dquote(char **input, t_token_state *state)
 		(*input)++;
 	if (*input > start)
 	{
-		tmp = ft_substr(start, 0, *input - start);
+		tmp = ft_substr(start, 0, *input - start + is_dquote(**input));
 		if (!tmp)
 			return (0);
 		if (is_dollar(**input))
 		{
+			(*input)++;
+			if (**input == '?')
+			{
+				result = ft_strjoin(tmp, ft_itoa(g_info.exit_status));
+				(*input)++;
+				// free(tmp);
+				// return (result);
+			}
+			else if (!**input)
+			{
+				result = ft_strjoin(tmp, *input - 1);
+				// free(tmp);
+				// return (result);
+			}
+			else if (is_env_var(**input))
+			{
+				start = *input;
+				while(**input && is_env_var(**input))
+					(*input)++;
+				env_var = ft_substr(start, 0, *input - start);
+				if (!env_var)
+					return (tmp);
+				result = ft_strjoin(tmp, substitute(env_var));
+				free(env_var);
+				// free(tmp);
+				// return (result);
+			}
+			else
+			{
+				result = ft_strjoin(tmp, *input - 1);
+				// free(tmp);
+				// return (result);
+			}
+			free(tmp);
+			return (result);
 		}
 		else if (is_dquote(**input))
 		{
 			(*input)++;
 			return (tmp);
 		}
-		
 	}
 	return (result);
 }
 
-char	*process_meta(char **input, t_token_state *state)
-{
+// char	*process_meta(char **input, t_token_state *state)
+// {
 
-}
+// }
 
-char	*process_wspace(char **input, t_token_state *state)
-{
+// char	*process_wspace(char **input, t_token_state *state)
+// {
 
-}
+// }
 
 /**
  * @brief	Look for $ in the cmg_args, while checking if it's quoted or not.
@@ -164,14 +198,14 @@ char	*check_env_var(char *cmd_arg)
 		process_normal,
 		process_squote,
 		process_dquote,
-		process_meta,
-		process_wspace,
+		// process_meta,
+		// process_wspace,
 	};
 
 	result = 0;
 	is_squote = FALSE;
 	state = update_state(*cmd_arg);
-	while (*cmd_arg)
+	while (*cmd_arg && state != END)
 	{
 		tmp = result;
 		substr = env_fn[state](&cmd_arg, &state);
@@ -179,6 +213,9 @@ char	*check_env_var(char *cmd_arg)
 			return (result);
 		result = ft_strjoin(result, substr);
 		free(tmp);
+		state = update_state(*cmd_arg);
+		if (META_CH <= state && state < END)
+			break ;
 		// cmd_arg++;
 	}
 	return (result);

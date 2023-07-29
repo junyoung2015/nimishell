@@ -163,6 +163,7 @@ typedef struct s_global_info
 	int		stdin_fd;
 	int		stdout_fd;
 	t_node	*root;
+	int		exit_status;
 } t_global_info;
 
 // TODO: re-write the global variable 'extern' declaration
