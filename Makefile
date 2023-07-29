@@ -23,6 +23,7 @@ STR_DIR = ./str/
 
 # -------------- SRCS  -------------- #
 SRCS = ./minishell.c						\
+		./str/str_env_substitute.c			\
 		$(INIT_DIR)logo.c					\
 		$(LEXER_DIR)tokenizer.c				\
 		$(MEMORY_DIR)mem_utils.c			\

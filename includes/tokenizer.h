@@ -9,7 +9,7 @@ typedef struct s_token
 	char *val;
 } t_token;
 
-typedef t_token *(*tokenizer_fn)(char **, t_token_state *);
+typedef t_token *(*t_tokenizer_fn)(char **, t_token_state *);
 
 t_token	*free_tokens(t_token *tokens, t_size size);
 t_token	*handle_malloc_err_in_tokenizer(t_token *tokens, t_size num_tokens);
