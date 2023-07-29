@@ -17,7 +17,7 @@ t_global_info g_info;
 #include <signal.h>
 
 /**
- * @brief
+ * @brief	Display err msg and exit with exit code. Free AST node if exists.
  * 
  * @param code	exit code to exit
  * @param file	file name to display in front of err msg
@@ -159,8 +159,8 @@ int	main(int ac, char **av, char **envp)
 	int	status;
 	// t_global_info	g_info;
 
-	// if (DEBUG)
-	// 	atexit(chk_leaks);
+//	 if (DEBUG)
+//		atexit(chk_leaks);
 	init_g_info(envp);
 	tokens = 0;
 	ast = 0;
@@ -193,12 +193,12 @@ int	main(int ac, char **av, char **envp)
 		{
 			add_history(line);
 			// TODO: ft_strtrim(line, space);
-			// remove spaces at the start and end
+			// Maybe - remove spaces at the start and end
 			// tokenize the input into an array of tokens
-			if (line && *line)
+			if (*line)
 			{
 				// tokens = tokenize(line, &num_tokens);
-				tokens = tokenize_cmd(line, &num_tokens);
+				tokens = tokenizer(line, &num_tokens);
 				if (!tokens)
 					return (0);
 				else if (num_tokens >= 1 && tokens[num_tokens - 1].type == TOKEN_ERROR)
