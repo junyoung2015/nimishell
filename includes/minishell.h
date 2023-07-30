@@ -203,6 +203,7 @@ int				ft_strncmp(const char *s1, const char *s2, t_size n);
 t_size			ft_strlen(const char *str);
 t_size			ft_strlcpy(char *dst, const char *src, t_size dstsize);
 char			*ft_itoa(int n);
+char			*ft_strchr(const char *s, int c);
 
 char			**check_and_sub_env(t_node *node);
 
