@@ -22,15 +22,30 @@ t_bool	is_dollar(char ch)
 
 char	*ft_getenv(char *env_var)
 {
-	size_t	i;
-	size_t	len;
+	t_size	i;
+	// t_size	len;
+	char	*start;
+	char	*end;
+	char	*tmp;
 
 	i = 0;
-	len = ft_strlen(env_var);
+	// len = ft_strlen(env_var);
 	while (g_info.env && g_info.env[i])
 	{
-		if (ft_strncmp(g_info.env[i], env_var, len) == 0)
-			return (g_info.env[i] + len + 1);
+		start = g_info.env[i];
+		end = ft_strchr(start, '=');
+		if (!end)
+			return (0);
+		tmp = ft_substr(start, 0, end - start);
+		if (tmp)
+		{
+			if (ft_strcmp(tmp, env_var) == 0)
+			{
+				free(tmp);
+				return (end + 1);
+			}
+		}
+		free(tmp);
 		i++;
 	}
 	return (0);
@@ -71,7 +86,14 @@ char	*process_normal(char **input)
 	start = ++(*input);
 	while(**input && is_env_var(**input))
 		(*input)++;
-	if (*input > start)
+	if (is_dollar(*((*input) - 1)) && !**input)
+		result = ft_strjoin(tmp, *input - 1);
+	else if (**input == '?')
+	{
+		result = ft_strjoin(tmp, ft_itoa(g_info.exit_status));
+		(*input)++;
+	}
+	else if (*input > start)
 	{
 		env_var = ft_substr(start, 0, *input - start);
 		if (!env_var)

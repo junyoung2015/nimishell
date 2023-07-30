@@ -64,6 +64,24 @@ t_size	ft_strlcpy(char *dst, const char *src, t_size dstsize)
 	return (ft_strlen(src));
 }
 
+char	*ft_strchr(const char *s, int c)
+{
+	t_size	i;
+	char	*tmp;
+
+	i = 0;
+	tmp = (char *) s;
+	while (tmp[i])
+	{
+		if (tmp[i] == (char) c)
+			return (tmp + i);
+		i++;
+	}
+	if (tmp[i] == (char) c)
+		return (tmp + i);
+	return (NULL);
+}
+
 int	is_alnum(int c)
 {
 	return (('0' <= c && c <= '9') || ('A' <= c && c <= 'Z')
