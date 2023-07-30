@@ -204,6 +204,7 @@ t_size			ft_strlen(const char *str);
 t_size			ft_strlcpy(char *dst, const char *src, t_size dstsize);
 char			*ft_itoa(int n);
 
+char			**check_and_sub_env(t_node *node);
 
 /* ================== INIT ================== */
 void			print_logo(void);

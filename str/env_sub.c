@@ -231,7 +231,7 @@ char	*check_env_var(char *cmd_arg)
  * @param node		node to substitute appropriate cmd_args with env var
  * @return char**	substituted cmd_args
  */
-char	**check_and_substitute_env(t_node *node)
+char	**check_and_sub_env(t_node *node)
 {
 	char    **result;
 	t_size  idx;

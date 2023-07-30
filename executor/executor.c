@@ -14,6 +14,8 @@
 
 void	execute_node(t_node *root, t_exec_info *info)
 {
+	if (root && root->type != AST_NULL && !root->cmd_args)
+		root->cmd_args = check_and_sub_env(root);
 	if (root->type == AST_NULL)
 		return ;
 	else if (root->type == AST_PIPE)
