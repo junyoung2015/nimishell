@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/28 20:57:09 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/30 15:32:45 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ pid_t	is_fork(t_node *node, t_exec_info *info)
 {
 	pid_t	pid;
 	
-	if (node->parent_type != AST_PIPE \
-			&& (node->type != AST_CMD || node->builtin != NOT_BUILTIN))
+	if (node->type != AST_CMD
+		|| (node->builtin != NOT_BUILTIN && node->parent_type != AST_PIPE))
 		return (0);
 	pid = fork();
 	if (pid < 0)
