@@ -202,7 +202,8 @@ int				ft_strcmp(const char *s1, const char *s2);
 int				ft_strncmp(const char *s1, const char *s2, t_size n);
 t_size			ft_strlen(const char *str);
 t_size			ft_strlcpy(char *dst, const char *src, t_size dstsize);
-int				ft_isalnum(int c);
+char			*ft_itoa(int n);
+
 
 /* ================== INIT ================== */
 void			print_logo(void);
@@ -220,6 +221,7 @@ void			print_tokens(t_token *tokens, t_size num_tokens);
 t_token			*free_tokens(t_token *tokens, t_size size);
 t_token			*create_token(t_token_type type, const char *buffer, t_size buf_len);
 
+t_bool			is_alnum(int c);
 t_bool			is_escaped(char ch);
 t_bool			is_meta_ch(char ch);
 t_bool			is_squote(char ch);

@@ -64,7 +64,7 @@ t_size	ft_strlcpy(char *dst, const char *src, t_size dstsize)
 	return (ft_strlen(src));
 }
 
-int	ft_isalnum(int c)
+int	is_alnum(int c)
 {
 	return (('0' <= c && c <= '9') || ('A' <= c && c <= 'Z')
 		|| ('a' <= c && c <= 'z'));
