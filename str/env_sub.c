@@ -1,7 +1,7 @@
 
 #include "minishell.h"
 
-typedef	char	*(*t_env_fn)(char **, t_token_state *);
+typedef	char	*(*t_env_fn)(char **);
 
 /**
  * @brief Check whether 'ch' is a valid character for an environment variable.
@@ -12,7 +12,7 @@ typedef	char	*(*t_env_fn)(char **, t_token_state *);
  */
 t_bool	is_env_var(char ch)
 {
-	return (ft_isalnum(ch) || ch == '_');
+	return (is_alnum(ch) || ch == '_');
 }
 
 t_bool	is_dollar(char ch)
@@ -48,7 +48,7 @@ char	*substitute(char *env_var)
 	return (result);
 }
 
-char	*process_normal(char **input, t_token_state *state)
+char	*process_normal(char **input)
 {
 	char	*start;
 	char	*tmp;
@@ -85,7 +85,7 @@ char	*process_normal(char **input, t_token_state *state)
 	return (result);
 }
 
-char	*process_squote(char **input, t_token_state *state)
+char	*process_squote(char **input)
 {
 	char	*start;
 	char	*result;
@@ -107,7 +107,7 @@ char	*process_squote(char **input, t_token_state *state)
  * @param state 
  * @return char* 
  */
-char	*process_dquote(char **input, t_token_state *state)
+char	*process_dquote(char **input)
 {
 	char	*start;
 	char	*tmp;
@@ -116,6 +116,7 @@ char	*process_dquote(char **input, t_token_state *state)
 
 	tmp = 0;
 	start = *input;
+	result = 0;
 	while(**input && !is_dquote(**input) && !is_dollar(**input))
 		(*input)++;
 	if (*input > start)
@@ -170,12 +171,12 @@ char	*process_dquote(char **input, t_token_state *state)
 	return (result);
 }
 
-// char	*process_meta(char **input, t_token_state *state)
+// char	*process_meta(char **input)
 // {
 
 // }
 
-// char	*process_wspace(char **input, t_token_state *state)
+// char	*process_wspace(char **input)
 // {
 
 // }
@@ -189,7 +190,7 @@ char	*process_dquote(char **input, t_token_state *state)
  */
 char	*check_env_var(char *cmd_arg)
 {
-	t_bool			is_squote;
+	// t_bool			is_squote;
 	char			*result;
 	char			*substr;
 	char			*tmp;
@@ -203,12 +204,12 @@ char	*check_env_var(char *cmd_arg)
 	};
 
 	result = 0;
-	is_squote = FALSE;
+	// is_squote = FALSE;
 	state = update_state(*cmd_arg);
 	while (*cmd_arg && state != END)
 	{
 		tmp = result;
-		substr = env_fn[state](&cmd_arg, &state);
+		substr = env_fn[state](&cmd_arg	);
 		if (!substr)
 			return (result);
 		result = ft_strjoin(result, substr);
@@ -227,7 +228,7 @@ char	*check_env_var(char *cmd_arg)
  * 			substitute the environment variable ONLY.
  * 			If the string is single-quoted, do nothing.
  *
- * @param node		node to substitute env var
+ * @param node		node to substitute appropriate cmd_args with env var
  * @return char**	substituted cmd_args
  */
 char	**check_and_substitute_env(t_node *node)
@@ -246,6 +247,9 @@ char	**check_and_substitute_env(t_node *node)
 		result[idx] = check_env_var(node->cmd_args[idx]);
 		if (!result[idx])
 		{
+			for (t_size i = 0; i < idx; i++)
+				free(result[i]);
+			free(result);
 			// free result up to now
 			return (0);
 		}

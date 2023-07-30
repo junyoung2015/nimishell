@@ -47,8 +47,7 @@ void	exit_err_with_msg(int code, char *file, char *msg, t_node *root)
 }
 
 void sig_handler(int signal)
-{
-	
+{	
 	if (signal == SIGINT)
 	{
 		rl_on_new_line();
@@ -219,8 +218,9 @@ int	main(int ac, char **av, char **envp)
 						print_ast(ast, 0, "");
 						printf("=========================================\n");
 					}
-					// g_info.root = ast;
-					// exit_code = executor(g_info.root);
+					g_info.root = ast;
+					exit_code = executor(g_info.root);
+					g_info.exit_status = exit_code; // do I need this here?
 				}
 			}
 			// if (status)
