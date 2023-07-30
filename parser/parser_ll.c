@@ -235,6 +235,32 @@ t_bool	is_redir_token(t_parser *parser)
 }
 
 /**
+ * @brief Check whether the command (cmd_args[0]) is a BUILTIN or not.
+ * 
+ * @param node	node to check
+ */
+void	is_builtin_node(t_node *node)
+{
+	char	*str;
+
+	str = node->cmd_args[0];
+	if (!ft_strcmp(str, "echo"))
+		node->builtin = ECHO_BUILTIN;
+	if (!ft_strcmp(str, "cd"))
+		node->builtin = CD;
+	if (!ft_strcmp(str, "pwd"))
+		node->builtin = PWD;
+	if (!ft_strcmp(str, "export"))
+		node->builtin = EXPORT;
+	else if (!ft_strcmp(str, "unset"))
+		node->builtin = UNSET;
+	else if (!ft_strcmp(str, "env"))
+		node->builtin = ENV;
+	else if (!ft_strcmp(str, "exit"))
+		node->builtin = EXIT;
+}
+
+/**
  * @brief Append the child (redirection node) to the parent node. If the
  *		parent node is NULL, return.
  * 
@@ -350,9 +376,7 @@ void update_p_state(char **table, t_parser *parser, t_parse_state *parse_state)
 void	postorder_traversal(t_node *node, t_node **err_node)
 {
     if (!node || (*err_node))
-    {
-		return ;
-	}
+		return ;	
 	if (node->left)
 		postorder_traversal(node->left, err_node);
 	if (node->right)
@@ -464,7 +488,7 @@ t_node	*parse_simple_cmd_tail(t_parser *parser, t_node *parent)
 			append_child_node(parent, simple_cmd_tail_node);
 		if (parser->is_word(parser) || parser->is_redir(parser))
 		{
-			cmd_node = parse_simple_cmd_tail(parser, parent);
+			cmd_node = parse_simple_cmd_tail(parser, simple_cmd_tail_node);
 			if (!cmd_node)
 				return (0);
 			// append_child_node(simple_cmd_tail_node, cmd_node);
@@ -608,6 +632,7 @@ t_node	*parse_word_list(t_parser *parser, t_node *parent)
 			free(word_list_node);
 			return (0);
 		}
+		is_builtin_node(word_list_node);
 		word_list_node->num_args++;
 		parser->advance(parser);
 	}
@@ -662,6 +687,7 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 			return (0);
 		redir_node->type = AST_REDIR_APPEND;
 	}
+	// parser->advance(parser);
 	return (redir_node);
 }
 

@@ -79,8 +79,6 @@ void print_ast(t_node *node, int depth, const char *indent)
 	printf("%*c", depth * 4, 1);
 	if (node->type == AST_PIPE)
 		printf("|");
-	else if (node->type == AST_HEREDOC)
-		printf("%s", node->cmd_args[0]);
 	else if (node->type == AST_NULL)
 		printf("NULL");
 	else if (node->type == AST_REDIR_IN)
@@ -214,9 +212,9 @@ int	main(int ac, char **av, char **envp)
 					// ast = parse_tokens(tokens, num_tokens);
 					if (ast && DEBUG)
 					{
-						printf("\n================== AST ==================\n");
+						printf("\n=================== AST ==================\n");
 						print_ast(ast, 0, "");
-						printf("=========================================\n");
+						printf("==========================================\n");
 					}
 					g_info.root = ast;
 					exit_code = executor(g_info.root);
