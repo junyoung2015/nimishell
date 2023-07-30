@@ -81,16 +81,14 @@ int	heredoc(t_node *node, t_exec_info *info)
 
 	fd = open("/tmp/.heredoc", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd < 0)
-		return (0);
+		return (1);
 	write_heredoc(node->cmd_args[0], info, fd);
 	if (info->exit_code > 0)
-		return (0);
+		return (2);
 	close(fd);
-	fd = open("/tmp/.heredoc", O_RDONLY);
-	if (fd < 0)
-		return (0);
-	if (dup2(fd, STDIN_FILENO) < 0)
-		return (0);
+	info->fd_in = open("/tmp/.heredoc", O_RDONLY);
+	if (info->fd_in < 0)
+		return (1);
 	unlink("/tmp/.heredoc");
-	return (1);
+	return (0);
 }

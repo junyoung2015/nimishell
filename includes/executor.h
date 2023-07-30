@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/22 17:28:42 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/25 21:20:21 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 
 typedef struct s_exec_info
 {
+	int		fd_in;
+	int		fd_out;
 	size_t	fork_cnt;
 	pid_t	pid;
 	int		exit_code;
@@ -34,9 +36,6 @@ int		connect_pipe(t_node *node, t_exec_info *info);
 void	close_pipe(t_node *node, t_exec_info *info);
 
 /* redirection */
-int		redir_in(t_node *node);
-int		redir_out(t_node *node);
-int		redir_append(t_node *node);
 void	redirection(t_node *node, t_exec_info *info);
 int		heredoc(t_node *node, t_exec_info *info);
 
