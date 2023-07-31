@@ -273,7 +273,7 @@ t_token	*split_until(char *start, char **input, t_bool (*cmp)(char ch), t_token_
 		(*input)++;
 		while (**input && !cmp((*input)[0]) && !is_quote((*input)[0]))
 			(*input)++;
-		if (is_quote((*input)[0]))
+		if (cmp == is_squote || cmp == is_dquote)
 		{
 			cmp = (t_bool (*)(char))((t_size)tmp ^ (t_size)is_squote);
 			if (is_squote((*input)[0]))
@@ -291,11 +291,11 @@ t_token	*split_until(char *start, char **input, t_bool (*cmp)(char ch), t_token_
 
 t_token_state update_state(char ch)
 {
-	if (ch == '\'')
+	if (is_squote(ch))
 		return (SQUOTE);
-	else if (ch == '"')
+	else if (is_dquote(ch))
 		return (DQUOTE);
-	if (is_meta_ch(ch))
+	else if (is_meta_ch(ch))
 		return (META_CH);
 	else if (ch == '\0')
 		return (END);
