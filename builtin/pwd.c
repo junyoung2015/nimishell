@@ -7,8 +7,7 @@ void    pwd(t_exec_info *info)
     cwd = getcwd(NULL, 0);
     if (!cwd)
     {
-		info->exit_code = EXIT_FAILURE;
-		perror("error: pwd");
+		err("error: pwd", info);
 		return ;
 	}
     write(STDOUT_FILENO, cwd, ft_strlen(cwd));
