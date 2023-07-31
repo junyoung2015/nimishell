@@ -24,7 +24,7 @@ void	append_last(t_node *node, t_exec_info *info)
 	env = malloc(sizeof(char *) * (g_info.env_cnt + 2));
 	if (!env)
 	{
-		info->exit_code = EXIT_FAILURE;
+		err("error: malloc", info);
 		return ;
 	}
 	i = 0;
