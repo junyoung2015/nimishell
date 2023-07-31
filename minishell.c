@@ -185,6 +185,7 @@ int	main(int ac, char **av, char **envp)
 	print_logo();
 	while (TRUE)
 	{
+		num_tokens = 0;
 		line = readline("minishell> ");
 		if (line)
 		{
@@ -194,7 +195,7 @@ int	main(int ac, char **av, char **envp)
 			// tokenize the input into an array of tokens
 			if (*line)
 			{
-				tokens = tokenize_input(line, &num_tokens);
+				tokens = tokenize_input(line, 0, &num_tokens);
 				if (!tokens || num_tokens == 0)
 				{
 					free(line);

@@ -240,7 +240,7 @@ t_bool			is_space(char ch);
 t_bool			is_not_space(char ch);
 t_bool			is_env_var(char ch); // ?
 // FSM //
-t_token			*tokenize_input(char *input, t_size *num_tokens);
+t_token			*tokenize_input(char *input, t_size alloced, t_size *num_tokens);
 t_token_state	update_state(char ch);
 t_token			*tokenize_normal(char **input, t_token_state *state);
 t_token			*tokenize_squote(char **input, t_token_state *state);
