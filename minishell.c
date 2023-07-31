@@ -194,8 +194,7 @@ int	main(int ac, char **av, char **envp)
 			// tokenize the input into an array of tokens
 			if (*line)
 			{
-				// tokens = tokenize(line, &num_tokens);
-				tokens = tokenizer(line, &num_tokens);
+				tokens = tokenize_input(line, &num_tokens);
 				if (!tokens)
 					return (0);
 				else if (num_tokens >= 1 && tokens[num_tokens - 1].type == TOKEN_ERROR)

@@ -12,7 +12,7 @@ typedef struct s_token
 typedef t_token *(*t_tokenizer_fn)(char **, t_token_state *);
 
 t_token	*free_tokens(t_token *tokens, t_size size);
-t_token	*handle_malloc_err_in_tokenizer(t_token *tokens, t_size num_tokens);
+t_token	*handle_malloc_err_in_tokenize_input(t_token *tokens, t_size num_tokens);
 t_token *realloc_tokens(t_token *tokens, t_size cur_size, t_size new_size);
 t_token	*check_size(t_token *tokens, t_size token_idx, t_size *alloced);
 t_bool	check_parenthesis(t_token* tokens, t_size num_tokens);
@@ -41,6 +41,6 @@ t_token			*tokenize_dquote(char **input, t_token_state *state);
 t_token			*tokenize_operator(char **input, t_token_state *state);
 t_token			*tokenize_meta(char **input, t_token_state *state);
 t_token			*tokenize_whitespace(char **input, t_token_state *state);
-t_token			*tokenizer(char *input, t_size *num_tokens);
+t_token			*tokenize_input(char *input, t_size *num_tokens);
 
 #endif
