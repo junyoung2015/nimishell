@@ -195,8 +195,12 @@ int	main(int ac, char **av, char **envp)
 			if (*line)
 			{
 				tokens = tokenize_input(line, &num_tokens);
-				if (!tokens)
-					return (0);
+				if (!tokens || num_tokens == 0)
+				{
+					free(line);
+					continue ;
+					// return (0);
+				}
 				else if (num_tokens >= 1 && tokens[num_tokens - 1].type == TOKEN_ERROR)
 				{
 					// write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
