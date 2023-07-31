@@ -249,13 +249,10 @@ t_token	*split_input(char *start, char **input, t_cmp cmp, t_token_type type)
 {
 	t_bool	quote;
 	t_token	*new_token;
-	t_bool	(*tmp)(char);
 
-	quote = FALSE;
-	tmp = (t_bool (*)(char))((t_size)is_squote ^ (t_size)is_dquote);
-	if (is_quote((*input)[0]))
+	quote = is_quote((*input)[0]);
+	if (quote)
 	{
-		quote = TRUE;
 		if (!move_until_cmp(input, cmp))
 			return (create_err_token(QUOTE_NOT_CLOSED));
 	}
@@ -266,17 +263,13 @@ t_token	*split_input(char *start, char **input, t_cmp cmp, t_token_type type)
 			(*input)++;
 		if (cmp == is_squote || cmp == is_dquote)
 		{
-			cmp = (t_bool (*)(char))((t_size)tmp ^ (t_size)is_squote);
-			if (is_squote((*input)[0]))
-				cmp = (t_bool (*)(char))((t_size)tmp ^ (t_size)is_dquote);
+			cmp = cmp_not((*input)[0]);
 			quote = TRUE;
 			if (!move_until_cmp(input, cmp))
 				return (create_err_token(QUOTE_NOT_CLOSED));
 		}
 	}
 	new_token = create_token(type, start, *input - start + quote);
-	if (!new_token)
-		return (0);
 	return (new_token);
 }
 
