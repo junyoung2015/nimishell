@@ -98,9 +98,13 @@
 	ROW11	TOKEN_WILDCARD
 	ROW12	TOKEN_SQ_STR
 	ROW13	TOKEN_DQ_STR
+	ROW14	TOKEN_OPERATOR
  */
 
 #define ROW1	"\2\5\6\6\4\4\4\4\1\0\2\2\2"
+#define ROW12	"\2\5\6\6\4\4\4\4\2\0\2\2\2"
+#define ROW13	"\2\5\6\6\4\4\4\4\2\0\2\2\2"
+#define ROW14	"\0\0\0\0\0\0\0\0\0\0\0\0\0"
 #define ROW2	"\2\0\0\0\0\4\0\0\1\7\0\2\2"
 #define ROW3	"\6\0\0\0\0\0\0\0\0\7\0\0\0"
 #define ROW4	"\6\0\0\0\0\0\0\0\0\7\0\0\0"
@@ -111,8 +115,21 @@
 #define ROW9	"\1\0\0\0\0\0\0\0\3\0\0\0\0"
 #define ROW10	"\2\0\0\0\0\4\0\0\1\7\0\2\2"
 #define ROW11	"\2\5\6\6\4\4\4\4\2\0\0\2\2"
-#define ROW12	"\2\5\6\6\4\4\4\4\2\0\2\2\2"
-#define ROW13	"\2\5\6\6\4\4\4\4\2\0\2\2\2"
+
+// #define ROW1	"\2\5\6\6\4\4\4\4\1\0\2\2\2"
+// #define ROW2	"\2\0\0\0\0\4\0\0\1\7\0\2\2"
+// #define ROW3	"\6\0\0\0\0\0\0\0\0\7\0\0\0"
+// #define ROW4	"\6\0\0\0\0\0\0\0\0\7\0\0\0"
+// #define ROW5	"\4\0\0\0\0\0\0\0\0\0\0\0\0"
+// #define ROW6	"\4\0\0\0\0\0\0\0\0\0\0\0\0"
+// #define ROW7	"\4\0\0\0\0\0\0\0\0\0\0\0\0"
+// #define ROW8	"\4\0\0\0\0\0\0\0\0\0\0\0\0"
+// #define ROW9	"\1\0\0\0\0\0\0\0\3\0\0\0\0"
+// #define ROW10	"\2\0\0\0\0\4\0\0\1\7\0\2\2"
+// #define ROW11	"\2\5\6\6\4\4\4\4\2\0\0\2\2"
+// #define ROW12	"\2\5\6\6\4\4\4\4\2\0\2\2\2"
+// #define ROW13	"\2\5\6\6\4\4\4\4\2\0\2\2\2"
+// #define ROW14	"\0\0\0\0\0\0\0\0\0\0\0\0\0"
 
 
 char	*parse_word(t_parser *parser);
@@ -318,10 +335,13 @@ char **init_rule_table(void)
 {
 	char **table;
 
-	table = ft_calloc(14, sizeof(char *));
+	table = ft_calloc(15, sizeof(char *));
 	if (!table)
 		return (0);
 	table[0] = ROW1;
+	table[1] = ROW12;
+	table[2] = ROW13;
+	table[3] = ROW14;
 	table[1] = ROW2;
 	table[2] = ROW3;
 	table[3] = ROW4;
@@ -332,8 +352,6 @@ char **init_rule_table(void)
 	table[8] = ROW9;
 	table[9] = ROW10;
 	table[10] = ROW11;
-	table[11] = ROW12;
-	table[12] = ROW13;
 	return (table);
 }
 

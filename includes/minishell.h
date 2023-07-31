@@ -41,13 +41,15 @@ typedef enum e_token_state
 	SQUOTE,
 	DQUOTE,
 	META_CH,
-	WSPACE,
 	END,
 } t_token_state;
 
 typedef enum e_token_type
 {
 	TOKEN_WORD,
+	TOKEN_SQ_STR,
+	TOKEN_DQ_STR,
+	TOKEN_OPERATOR,
 	TOKEN_PIPE,
 	TOKEN_OR,
 	TOKEN_AND,
@@ -57,11 +59,8 @@ typedef enum e_token_type
 	TOKEN_APPEND,
 	TOKEN_L_PAREN,
 	TOKEN_WILDCARD,
-	TOKEN_SQ_STR,
-	TOKEN_DQ_STR,
 	TOKEN_R_PAREN,
 	TOKEN_WHITESPACE,
-	TOKEN_OPERATOR,
 	TOKEN_ERROR,
 	TOKEN_UNKNOWN,
 	TOKEN_TYPES_CNT,
@@ -79,11 +78,17 @@ typedef enum e_builtin
 	EXIT,
 } t_builtin;
 
-typedef struct s_token
+typedef struct	s_token
 {
 	t_token_type type;
 	char *val;
 } t_token;
+
+typedef struct	s_lexer
+{
+	t_token	*tokens;
+	t_size	num_tokens;
+} t_lexer;
 
 typedef enum e_parse_state
 {
