@@ -180,23 +180,19 @@ t_bool	is_not_space(char ch)
 
 t_token_type	get_operator_type(char ch)
 {
-	t_token_type	type;
-
 	if (ch == '|')
-		type = TOKEN_PIPE;
+		return (TOKEN_PIPE);
 	else if (ch == '<')
-		type = TOKEN_REDIR_IN;
+		return (TOKEN_REDIR_IN);
 	else if (ch == '>')
-		type = TOKEN_REDIR_OUT;
+		return (TOKEN_REDIR_OUT);
 	else if (ch == '(')
-		type = TOKEN_L_PAREN;
+		return (TOKEN_L_PAREN);
 	else if (ch == ')')
-		type = TOKEN_R_PAREN;
+		return (TOKEN_R_PAREN);
 	else if (ch == '*')
-		type = TOKEN_WILDCARD;
-	else
-		type = TOKEN_UNKNOWN;
-	return (type);
+		return (TOKEN_WILDCARD);
+	return (TOKEN_UNKNOWN);
 }
 
 t_token	*create_token(t_token_type type, const char *buffer, t_size buf_len)
