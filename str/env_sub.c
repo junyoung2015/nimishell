@@ -86,12 +86,19 @@ char	*process_normal(char **input)
 	start = ++(*input);
 	while(**input && is_env_var(**input))
 		(*input)++;
-	if (is_dollar(*((*input) - 1)) && !**input)
-		result = ft_strjoin(tmp, *input - 1);
-	else if (**input == '?')
+	if (**input == '?')
 	{
 		result = ft_strjoin(tmp, ft_itoa(g_info.exit_status));
 		(*input)++;
+	}
+	else if (is_dollar(*((*input) - 1)) && **input && !is_env_var(**input)) // do I need to hcek \0 here?
+	{
+		env_var = ft_substr(*input - 1, 0, 1);
+		if (!env_var)
+			return (result);
+		result = ft_strjoin(tmp, env_var);
+		// (*input)++;
+		free(env_var);
 	}
 	else if (*input > start)
 	{
@@ -99,6 +106,15 @@ char	*process_normal(char **input)
 		if (!env_var)
 			return (result);
 		result = ft_strjoin(tmp, substitute(env_var));
+		free(env_var);
+	}
+	else
+	{
+		env_var = ft_substr(*input - 1, 0, 1);
+		if (!env_var)
+			return (result);
+		result = ft_strjoin(tmp, env_var);
+		// (*input)++;
 		free(env_var);
 	}
 	free(tmp);
@@ -115,6 +131,8 @@ char	*process_squote(char **input)
 	start = *input;
 	(*input)++;
 	while(**input && !is_squote(**input))
+		(*input)++;
+	if (is_squote(**input))
 		(*input)++;
 	result = ft_substr(start, 0, *input - start + 1);
 	if (!result)
@@ -139,9 +157,10 @@ char	*process_dquote(char **input)
 	tmp = 0;
 	start = *input;
 	result = 0;
+	(*input)++;
 	while(**input && !is_dquote(**input) && !is_dollar(**input))
 		(*input)++;
-	if (*input > start)
+	if (*input > start || is_dquote(**input))
 	{
 		tmp = ft_substr(start, 0, *input - start + is_dquote(**input));
 		if (!tmp)
@@ -189,6 +208,12 @@ char	*process_dquote(char **input)
 			(*input)++;
 			return (tmp);
 		}
+		else if (!**input)
+		{
+			result = tmp;
+			// free(tmp);
+			// return (result);
+		}
 	}
 	return (result);
 }
@@ -231,7 +256,7 @@ char	*check_env_var(char *cmd_arg)
 	while (*cmd_arg && state != END)
 	{
 		tmp = result;
-		substr = env_fn[state](&cmd_arg	);
+		substr = env_fn[state](&cmd_arg);
 		if (!substr)
 			return (result);
 		result = ft_strjoin(result, substr);
