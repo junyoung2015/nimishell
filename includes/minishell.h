@@ -219,6 +219,8 @@ char			*ft_strjoin(char const *s1, char const *s2);
 
 /* ================== TOKENIZER ================== */
 typedef t_token *(*t_tokenizer_fn)(char **, t_token_state *);
+typedef t_bool	(*t_cmp)(char);
+
 void			print_tokens(t_token *tokens, t_size num_tokens);
 t_token			*free_tokens(t_token *tokens, t_size size);
 t_token			*create_token(t_token_type type, const char *buffer, t_size buf_len);
@@ -233,7 +235,7 @@ t_bool			is_space(char ch);
 t_bool			is_not_space(char ch);
 t_bool			is_env_var(char ch); // ?
 // FSM //
-t_token			*tokenizer(char *input, t_size *num_tokens);
+t_token			*tokenize_input(char *input, t_size *num_tokens);
 t_token_state	update_state(char ch);
 t_token			*tokenize_normal(char **input, t_token_state *state);
 t_token			*tokenize_squote(char **input, t_token_state *state);

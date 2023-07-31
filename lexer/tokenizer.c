@@ -140,12 +140,6 @@ t_bool	is_dmeta_str(char *input)
 	return (TOKEN_WORD);
 }
 
-// TODO: delete or move to somewhere else
-t_bool	is_escaped(char ch)
-{
-	return (ch == '\\');
-}
-
 t_bool	is_meta_ch(char ch)
 {
 	return (ch == '|' || ch == '>' || ch == '<' || ch == '(' \
@@ -219,11 +213,11 @@ t_token	*create_token(t_token_type type, const char *buffer, t_size buf_len)
 //(A ^ B)		1001 ^ 0101 = 1100;
 //(A ^ B ^ A)	1100 ^ 1001 = 0101
 //(A ^ B ^ B)	1100 ^ 0101 = 1001
-t_bool	advance_to_next_token(char **input, t_bool (*cmp)(char ch))
+t_bool	advance_to_next_token(char **input, t_cmp cmp)
 {
 	t_bool	(*tmp)(char);
 
-	tmp = (t_bool (*)(char))((t_size)is_squote ^ (t_size)is_dquote);
+	tmp = (t_cmp)((t_size)is_squote ^ (t_size)is_dquote);
 	while (**input && !is_meta_ch(**input))
 	{
 		(*input)++;
@@ -245,19 +239,19 @@ t_bool	advance_to_next_token(char **input, t_bool (*cmp)(char ch))
 		if (!(**input) || is_meta_ch(**input))
 			return (TRUE);
 		else if (!cmp(**input))
-			cmp =  (t_bool (*)(char))((t_size)tmp ^ (t_size)cmp);
+			cmp =  (t_cmp)((t_size)tmp ^ (t_size)cmp);
 	}
 	return (TRUE);
 }
 
-t_token	*split_until(char *start, char **input, t_bool (*cmp)(char ch), t_token_type type)
+t_token	*split_until(char *start, char **input, t_cmp cmp, t_token_type type)
 {
 	t_bool	quote;
 	t_token	*new_token;
 	t_bool	(*tmp)(char);
 
 	quote = FALSE;
-	tmp = (t_bool (*)(char))((t_size)is_squote ^ (t_size)is_dquote);
+	tmp = (t_cmp)((t_size)is_squote ^ (t_size)is_dquote);
 	if (is_quote((*input)[0]))
 	{
 		quote = TRUE;
@@ -271,9 +265,9 @@ t_token	*split_until(char *start, char **input, t_bool (*cmp)(char ch), t_token_
 			(*input)++;
 		if (cmp == is_squote || cmp == is_dquote)
 		{
-			cmp = (t_bool (*)(char))((t_size)tmp ^ (t_size)is_squote);
+			cmp = (t_cmp)((t_size)tmp ^ (t_size)is_squote);
 			if (is_squote((*input)[0]))
-				cmp = (t_bool (*)(char))((t_size)tmp ^ (t_size)is_dquote);
+				cmp = (t_cmp)((t_size)tmp ^ (t_size)is_dquote);
 			quote = TRUE;
 			if (!advance_to_next_token(input, cmp))
 				return (create_token(TOKEN_ERROR, QUOTE_NOT_CLOSED, ft_strlen(QUOTE_NOT_CLOSED)));
@@ -298,37 +292,51 @@ t_token_state update_state(char ch)
 	return (NORMAL);
 }
 
-t_token*	tokenize_normal(char **input, t_token_state *state)
+t_token	*tokenize(char **input, t_cmp cmp, t_token_type type, t_token_state *state)
 {
 	t_token	*new_token;
 
-	new_token = split_until(*input, input, is_meta_ch, TOKEN_WORD);
+	new_token = split_until(*input, input, cmp, type);
 	if (!new_token)
 		return (0);
 	*state = update_state(**input);
-    return (new_token);
+	return (new_token);
+}
+
+t_token	*tokenize_normal(char **input, t_token_state *state)
+{
+	return (tokenize(input, is_meta_ch, TOKEN_WORD, state));
+	// t_token	*new_token;
+
+	// new_token = split_until(*input, input, is_meta_ch, TOKEN_WORD);
+	// if (!new_token)
+	// 	return (0);
+	// *state = update_state(**input);
+    // return (new_token);
 }
 
 t_token *tokenize_squote(char **input, t_token_state *state)
 {
-	t_token	*new_token;
+	return (tokenize(input, is_squote, TOKEN_SQ_STR, state));
+	// t_token	*new_token;
 
-	new_token = split_until(*input, input, is_squote, TOKEN_SQ_STR);
-	if (!new_token)
-		return (0);
-	*state = update_state(**input);
-    return (new_token);
+	// new_token = split_until(*input, input, is_squote, TOKEN_SQ_STR);
+	// if (!new_token)
+	// 	return (0);
+	// *state = update_state(**input);
+    // return (new_token);
 }
 
 t_token *tokenize_dquote(char **input, t_token_state *state)
 {
-	t_token	*new_token;
+	return (tokenize(input, is_dquote, TOKEN_DQ_STR, state));
+	// t_token	*new_token;
 
-	new_token = split_until(*input, input, is_dquote, TOKEN_DQ_STR);
-	if (!new_token)
-		return (0);
-	*state = update_state(**input);
-    return (new_token);
+	// new_token = split_until(*input, input, is_dquote, TOKEN_DQ_STR);
+	// if (!new_token)
+	// 	return (0);
+	// *state = update_state(**input);
+    // return (new_token);
 }
 
 t_token	*tokenize_operator(char **input, t_token_state *state)
@@ -346,6 +354,18 @@ t_token	*tokenize_operator(char **input, t_token_state *state)
 	return (new_token);
 }
 
+t_token *tokenize_whitespace(char **input, t_token_state *state)
+{
+	return (tokenize(input, is_not_space, TOKEN_WHITESPACE, state));
+	// t_token	*new_token;
+
+	// new_token = split_until(*input, input, is_not_space, TOKEN_WHITESPACE);
+	// if (!new_token)
+	// 	return (0);
+	// *state = update_state(**input);
+    // return (new_token);
+}
+
 t_token	*tokenize_meta(char **input, t_token_state *state)
 {
 	t_token	*new_token;
@@ -360,18 +380,7 @@ t_token	*tokenize_meta(char **input, t_token_state *state)
 	return (new_token);
 }
 
-t_token *tokenize_whitespace(char **input, t_token_state *state)
-{
-	t_token	*new_token;
-
-	new_token = split_until(*input, input, is_not_space, TOKEN_WHITESPACE);
-	if (!new_token)
-		return (0);
-	*state = update_state(**input);
-    return (new_token);
-}
-
-t_token *tokenizer(char *input, t_size *num_tokens)
+t_token *tokenize_input(char *input, t_size *num_tokens)
 {
 	t_size				alloced;
 	t_size				token_idx;
