@@ -303,16 +303,6 @@ void	append_redir_node(t_node *parent, t_node *child)
 }
 
 /**
- * @brief Free the parsing table passed.
- *
- * @param table	table for parsing table
- */
-void free_table(char **table)
-{
-	free(table);
-}
-
-/**
  * @brief Initialize the parsing table
  *
  * @return char** table of parsing table
@@ -328,16 +318,16 @@ char **init_rule_table(void)
 	table[1] = ROW12;
 	table[2] = ROW13;
 	table[3] = ROW14;
-	table[1] = ROW2;
-	table[2] = ROW3;
-	table[3] = ROW4;
-	table[4] = ROW5;
-	table[5] = ROW6;
-	table[6] = ROW7;
-	table[7] = ROW8;
-	table[8] = ROW9;
-	table[9] = ROW10;
-	table[10] = ROW11;
+	table[4] = ROW2;
+	table[5] = ROW3;
+	table[6] = ROW4;
+	table[7] = ROW5;
+	table[8] = ROW6;
+	table[9] = ROW7;
+	table[10] = ROW8;
+	table[11] = ROW9;
+	table[12] = ROW10;
+	table[13] = ROW11;
 	return (table);
 }
 
@@ -367,6 +357,7 @@ void update_p_state(char **table, t_parser *parser, t_parse_state *parse_state)
 	// 	// already at the end of the tokens array
 	// 	return ;
 	// }
+	printf("\ncur.type: %d, peek: %d\n", cur.type, peek);
 	*parse_state = table[cur.type][peek];
 }
 
@@ -655,10 +646,12 @@ t_node	*parse_word_list(t_parser *parser, t_node *parent)
 t_node *parse_redir(t_parser *parser, t_node *parent)
 {
 	t_node			*redir_node;
+	t_token_type	type;
 
 	redir_node = 0;
 	if (parser->is_redir(parser))
 	{
+		type = parser->cur_type(parser);
 		parser->advance(parser);
 		if (parser->check(parser, TOKEN_HEREDOC))
 		{
@@ -675,7 +668,7 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 			redir_node = parse_word_list(parser, parent);
 		if (!redir_node)
 			return (0);
-		redir_node->type = (int) parser->cur_type;
+		redir_node->type = (t_node_type) type;
 	}
 	return (redir_node);
 }
@@ -957,31 +950,24 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 	while (parser.cur < parser.size)
 	{
 		update_p_state(table, &parser, &parse_state);
-		if (parse_state == ERR)
-		{
-			// deal with err and free?
-			return (0);
-		}
 		// TODO: edit parser_fn_arr, so parse_state 1, 3, 7 is removed from the array, parse_state and parsing table
-		else if (parse_state == PARSE_STATES_CNT || parse_state == 1 || parse_state == 3 || parse_state == 7)
-		{
+		if (parse_state == PARSE_STATES_CNT || parse_state == 1 || parse_state == 3 || parse_state == 7)
 			break ;
-		}
 		new_node = parser_fn_arr[parse_state](&parser, root);
 		if (new_node != 0)
 		{
 			if (check_err_node(new_node))
 			{
 				if (root && root != new_node)
+				{
 					free_ast(new_node);
-				free_table(table);
-				// free ast here?
+					free_ast(root);
+				}
+				free(table);
 				return (0);
 			}
 			if (root == 0)
-			{
 				root = new_node;
-			}
 			else if (new_node->type == AST_REDIR_IN || new_node->type == AST_REDIR_OUT || new_node->type == AST_REDIR_APPEND || new_node->type == AST_HEREDOC)
 				append_redir_node(root, new_node);
 			else
@@ -989,10 +975,12 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 		}
 		else
 		{
+			if (root && root != new_node)
+				free_ast(root);
 			return (0);
 			// syntax err or malloc err?
 		}
 	}
-	free_table(table);
+	free(table);
 	return (root);
 }
