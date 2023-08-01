@@ -16,9 +16,38 @@ t_global_info g_info;
 
 #include <signal.h>
 
-void sig_handler(int signal)
+/**
+ * @brief	Display err msg and exit with exit code. Free AST node if exists.
+ * 
+ * @param code	exit code to exit
+ * @param file	file name to display in front of err msg
+ * @param msg	err msg to display
+ * @param root	root of the ast node to free
+ */
+void	exit_err_with_msg(int code, char *file, char *msg, t_node *root)
 {
-	
+	if (msg)
+	{
+		write(STD_ERR, MINISHELL, ft_strlen(MINISHELL));
+		if (file)
+		{
+			write(STD_ERR, file, ft_strlen(file));
+			write(STD_ERR, ": ", 2);
+		}
+		write(STD_ERR, msg, ft_strlen(msg));
+	}
+	else
+	{
+		write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
+	}
+	write(STD_ERR, "\n", 1);
+	if (root)
+		free_ast(root);
+	exit(code);
+}
+
+void sig_handler(int signal)
+{	
 	if (signal == SIGINT)
 	{
 		rl_on_new_line();
@@ -71,14 +100,14 @@ void print_ast(t_node *node, int depth, const char *indent)
 
 #endif
 
-#ifdef DEBUG
-
-void chk_leaks(void)
-{
-	system("leaks minishell");
-}
-
-#endif
+//#ifdef DEBUG
+//
+//void chk_leaks(void)
+//{
+//	system("leaks minishell");
+//}
+//
+//#endif
 
 #ifdef DEBUG
 
@@ -87,7 +116,7 @@ void print_tokens(t_token *tokens, t_size num_tokens)
 	printf("\n================= TOKENS =================\n");
 	printf("num of tokens: %llu\n", num_tokens);
 	for (t_size i = 0; i < num_tokens; i++)
-		printf("token[%llu]: [%d], [%s]\n", i, tokens[i].type, tokens[i].value);
+		printf("token[%llu]: [%d], [%s]\n", i, tokens[i].type, tokens[i].val);
 	printf("==========================================\n");
 }
 
@@ -95,7 +124,7 @@ void print_tokens(t_token *tokens, t_size num_tokens)
 
 void	init_g_info(char **envp)
 {
-	size_t	i;
+	t_size	i;
 	
 	g_info.env_cnt = 0;
 	while (envp && envp[g_info.env_cnt])
@@ -127,8 +156,8 @@ int	main(int ac, char **av, char **envp)
 	int	status;
 	// t_global_info	g_info;
 
-	// if (DEBUG)
-	// 	atexit(chk_leaks);
+//	 if (DEBUG)
+//		atexit(chk_leaks);
 	init_g_info(envp);
 	tokens = 0;
 	ast = 0;
@@ -136,47 +165,52 @@ int	main(int ac, char **av, char **envp)
 	status = tcgetattr(0, &term);
 	if (status == -1)
 	{
-		write(STD_ERR, "minishell: tcgetattr: ", 22);
-		write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
-		write(STD_ERR, "\n", 1);
-		exit (1);
+		exit_err_with_msg(EXIT_ERR, TCGETATTR, strerror(errno), 0);
+		// write(STD_ERR, "minishell: tcgetattr: ", 22);
+		// write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
+		// write(STD_ERR, "\n", 1);
+		// exit (1);
 	}
 	term.c_lflag &= ~ECHOCTL;
 	status = tcsetattr(0, 0, &term);
 	if (status == -1)
 	{
-		write(STD_ERR, "minishell: tcgetattr: ", 22);
-		write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
-		write(STD_ERR, "\n", 1);
-		exit (1);
+		exit_err_with_msg(EXIT_ERR, TCGETATTR, strerror(errno), 0);
+		// write(STD_ERR, "minishell: tcgetattr: ", 22);
+		// write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
+		// write(STD_ERR, "\n", 1);
+		// exit (1);
 	}
 	signal(SIGINT, sig_handler);
 	print_logo();
 	while (TRUE)
 	{
+		num_tokens = 0;
 		line = readline("minishell> ");
 		if (line)
 		{
 			add_history(line);
 			// TODO: ft_strtrim(line, space);
-			// remove spaces at the start and end
+			// Maybe - remove spaces at the start and end
 			// tokenize the input into an array of tokens
-			if (line && *line)
+			if (*line)
 			{
-				// tokens = tokenize(line, &num_tokens);
-				tokens = tokenize_cmd(line, &num_tokens);
-				if (!tokens)
-					return (0);
+				tokens = tokenize_input(line, 0, &num_tokens);
+				if (!tokens || num_tokens == 0)
+				{
+					free(line);
+					continue ;
+					// return (0);
+				}
 				else if (num_tokens >= 1 && tokens[num_tokens - 1].type == TOKEN_ERROR)
 				{
 					// write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
-					write(STD_ERR, tokens[num_tokens - 1].value, ft_strlen(tokens[num_tokens - 1].value));
+					write(STD_ERR, tokens[num_tokens - 1].val, ft_strlen(tokens[num_tokens - 1].val));
 					// write(STD_ERR, "`\n", 2);
 				}
 				else
 				{
-					categorize_tokens(tokens, num_tokens);
-					if (tokens && DEBUG)
+					if (DEBUG)
 						print_tokens(tokens, num_tokens);
 					ast = parse_tokens_ll(tokens, num_tokens);
 					// ast = parse_tokens(tokens, num_tokens);
@@ -188,6 +222,7 @@ int	main(int ac, char **av, char **envp)
 					}
 					g_info.root = ast;
 					exit_code = executor(g_info.root);
+					g_info.exit_status = exit_code; // do I need this here?
 				}
 			}
 			// if (status)
