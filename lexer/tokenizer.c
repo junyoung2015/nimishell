@@ -261,7 +261,7 @@ t_token	*split_input(char *start, char **input, t_cmp cmp, t_token_type type)
 		(*input)++;
 		while (**input && !cmp((*input)[0]) && !is_quote((*input)[0]))
 			(*input)++;
-		if (cmp == is_squote || cmp == is_dquote)
+		if (**input && !cmp((*input)[0]) && is_quote((*input)[0]))
 		{
 			cmp = cmp_not((*input)[0]);
 			quote = TRUE;
@@ -290,7 +290,7 @@ t_token	*tokenize(char **input, t_cmp cmp, t_token_type type, t_token_state *sta
 {
 	t_token	*new_token;
 
-	if (cmp == is_not_space)
+	if (cmp == is_space)
 		return (tokenize_meta(input, state));
 	else
 		new_token = split_input(*input, input, cmp, type);
@@ -320,7 +320,7 @@ t_token	*tokenize_meta(char **input, t_token_state *state)
 	t_token	*new_token;
 
 	if (is_space(**input))
-		new_token = tokenize(input, is_space, TOKEN_WHITESPACE, state);
+		new_token = tokenize(input, is_not_space, TOKEN_WHITESPACE, state);
 	else
 		new_token = tokenize_operator(input, state);
 	if (!new_token)
@@ -344,7 +344,7 @@ t_token *tokenize_input(char *input, t_size alloced, t_size *num_tokens)
 	t_token				*tokens;
 	t_token				*new_token;
 	t_token_state		state;
-	const t_cmp			cmp_func[] = { is_meta, is_squote, is_dquote, is_not_space };
+	const t_cmp			cmp_func[] = { is_meta, is_squote, is_dquote, is_space };
 
 
 	if (!init_tokenizer(input, &tokens, &alloced, &state))
