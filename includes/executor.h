@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/25 21:20:21 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/07/28 22:07:57 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ typedef struct s_exec_info
 {
 	int		fd_in;
 	int		fd_out;
+	t_bool	is_fork;
 	size_t	fork_cnt;
 	pid_t	pid;
 	int		exit_code;
@@ -31,7 +32,7 @@ typedef struct s_exec_info
 }	t_exec_info;
 
 /* pipe */
-void	open_pipe(t_exec_info *info);
+void	open_pipe(t_node *node, t_exec_info *info);
 int		connect_pipe(t_node *node, t_exec_info *info);
 void	close_pipe(t_node *node, t_exec_info *info);
 
@@ -42,7 +43,8 @@ int		heredoc(t_node *node, t_exec_info *info);
 /* error */
 void	free_ptr(char **ptr);
 void	clear_all(t_node *root);
-int		err(char *str);
+int		err(char *str, t_exec_info *info);
+void	err_exit(char *str, t_exec_info *info);
 void	cmd_not_found(void);
 
 /* command */
