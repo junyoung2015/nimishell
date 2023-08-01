@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/30 15:32:45 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/01 22:04:58 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ pid_t	is_fork(t_node *node, t_exec_info *info)
 
 void	init_info(t_node *node, t_exec_info *info)
 {
-	if (node->type != AST_CMD)
+	if (node->type != AST_CMD && node->parent_type != AST_NULL)
 		return ;
 	info->exit_code = EXIT_SUCCESS;
 	info->is_fork = FALSE;
