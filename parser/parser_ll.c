@@ -846,6 +846,7 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 	t_node			*pipeline_node;
 	t_node			*list_tail_node;
 	t_node_type		state;
+	(void)			parent;
 
 	logic_node = 0;
 	if (parser->check(parser, TOKEN_AND) || parser->check(parser, TOKEN_OR))
@@ -856,7 +857,8 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 		logic_node = create_node(state);
 		if (!logic_node)	// malloc err
 			return (0);
-		logic_node->left = parent;
+		// logic_node->left = parent;
+		// append_child_node(logic_node, parent);
 		parser->advance(parser);
 		pipeline_node = parse_pipeline(parser, logic_node);
 		if (!pipeline_node)
@@ -865,9 +867,11 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 			free(logic_node);
 			return (0);
 		}
-		if (pipeline_node->type == AST_ERR)
-			return (pipeline_node);
 		logic_node->right = pipeline_node;
+		if (pipeline_node->type == AST_ERR)
+			return (logic_node);
+		// logic_node->right = pipeline_node;
+		// append_child_node(logic_node, pipeline_node);
 		// append_child_node(logic_node, pipeline_node);
 		if (parser->check(parser, TOKEN_AND) || parser->check(parser, TOKEN_OR))
 		{
@@ -996,14 +1000,14 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 		new_node = parser_fn_arr[parse_state](&parser, root);
 		if (new_node != 0)
 		{
-			if (check_err_node(new_node))
-			{
-				if (root && root != new_node)
-					free_ast(new_node);
-				free_table(table);
-				// free ast here?
-				return (0);
-			}
+			// if (check_err_node(new_node))
+			// {
+			// 	if (root && root != new_node)
+			// 		free_ast(new_node);
+			// 	free_table(table);
+			// 	// free ast here?
+			// 	return (0);
+			// }
 			if (root == 0)
 			{
 				root = new_node;
