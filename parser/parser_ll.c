@@ -821,7 +821,7 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 		logic_node = create_node(state);
 		if (!logic_node)	// malloc err
 			return (0);
-		// logic_node->left = parent;
+		logic_node->left = parent;
 		// append_child_node(logic_node, parent);
 		parser->advance(parser);
 		pipeline_node = parse_pipeline(parser, logic_node);
