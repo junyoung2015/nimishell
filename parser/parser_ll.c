@@ -193,20 +193,6 @@ t_token_type peek(t_parser *parser)
 }
 
 /**
- * @brief Return the type of the current token, and increase the current
- *		index.
- * 
- * @param parser 		parser struct
- * @return t_token_type type of the next token
- */
-t_token_type	consume(t_parser *parser)
-{
-	if (parser->cur < parser->size)
-		return (parser->tokens[parser->cur++].type);
-	return (TOKEN_TYPES_CNT);
-}
-
-/**
  * @brief Increase the current index, after checking the range.
  *
  * @param parser	parser struct
@@ -978,7 +964,6 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 	parser.cur_type = &cur_type;
 	parser.advance = &advance;
 	parser.peek = &peek;
-	parser.consume = &consume;
 	parser.is_word = &is_word_token;
 	parser.is_redir = &is_redir_token;
 	table = init_rule_table();
@@ -1000,28 +985,18 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 		new_node = parser_fn_arr[parse_state](&parser, root);
 		if (new_node != 0)
 		{
-			// if (check_err_node(new_node))
-			// {
-			// 	if (root && root != new_node)
-			// 		free_ast(new_node);
-			// 	free_table(table);
-			// 	// free ast here?
-			// 	return (0);
-			// }
+			if (check_err_node(new_node))
+			{
+				if (root && root != new_node)
+					free_ast(new_node);
+				free_table(table);
+				// free ast here?
+				return (0);
+			}
 			if (root == 0)
 			{
 				root = new_node;
 			}
-			// else if (new_node->type == AST_ERR)
-			// {
-			// 	// handle err, print err msg and error happend around which token
-			// 	// For now, print error here and return 0;
-			// 	write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
-			// 	write(STD_ERR, new_node->cmd_args[0], ft_strlen(new_node->cmd_args[0]));
-			// 	write(STD_ERR, "`\n", 2);
-			// 	free_ast(new_node);
-			// 	return (0);
-			// }
 			else if (new_node->type == AST_REDIR_IN || new_node->type == AST_REDIR_OUT || new_node->type == AST_REDIR_APPEND || new_node->type == AST_HEREDOC)
 				append_redir_node(root, new_node);
 			else

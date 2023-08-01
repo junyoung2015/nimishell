@@ -346,7 +346,6 @@ t_token *tokenize_input(char *input, t_size alloced, t_size *num_tokens)
 	t_token_state		state;
 	const t_cmp			cmp_func[] = { is_meta, is_squote, is_dquote, is_space };
 
-
 	if (!init_tokenizer(input, &tokens, &alloced, &state))
 		return (set_err_token(tokens, num_tokens, MALLOC_ERR));
 	while (*input)
