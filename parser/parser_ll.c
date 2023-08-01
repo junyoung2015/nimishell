@@ -853,15 +853,20 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 		state = AST_AND;
 		if (parser->check(parser, TOKEN_OR))
 			state = AST_OR;
-		parser->advance(parser);
-		pipeline_node = parse_pipeline(parser, parent);
-		if (!pipeline_node) // err?
-			return (0);
-		if (pipeline_node->type == AST_ERR)
-			return (pipeline_node);
 		logic_node = create_node(state);
 		if (!logic_node)	// malloc err
 			return (0);
+		logic_node->left = parent;
+		parser->advance(parser);
+		pipeline_node = parse_pipeline(parser, logic_node);
+		if (!pipeline_node)
+		{
+			// free and handle err here?
+			free(logic_node);
+			return (0);
+		}
+		if (pipeline_node->type == AST_ERR)
+			return (pipeline_node);
 		logic_node->right = pipeline_node;
 		// append_child_node(logic_node, pipeline_node);
 		if (parser->check(parser, TOKEN_AND) || parser->check(parser, TOKEN_OR))
@@ -961,7 +966,7 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 	};
 
 	root = 0;
-	parse_state = PIPELINE;
+	parse_state = LIST;
 	parser.tokens = tokens;
 	parser.size = num_tokens;
 	parser.cur = 0;

@@ -72,6 +72,8 @@ void	tree_search(t_node *root, t_exec_info *info)
 {
 	if (!root)
 		return ;
+	if (root->cmd_args)
+		root->cmd_args = check_and_sub_env(root);
 	if (root->left)
 		root->left->parent_type = root->type;
 	if (root->right)
