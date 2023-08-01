@@ -298,7 +298,9 @@ char	**check_and_sub_env(t_node *node)
 			// free result up to now
 			return (0);
 		}
+		free(node->cmd_args[idx]);
 		idx++;
 	}
+	free(node->cmd_args);
 	return (result);
 }
