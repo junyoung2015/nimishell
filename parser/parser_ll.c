@@ -187,22 +187,8 @@ t_bool check(t_parser *parser, t_token_type type)
  */
 t_token_type peek(t_parser *parser)
 {
-	if (parser->cur + 1 < parser->size || parser->cur < parser->size)
-		return (parser->tokens[parser->cur + 1].type);
-	return (TOKEN_TYPES_CNT);
-}
-
-/**
- * @brief Return the type of the current token, and increase the current
- *		index.
- * 
- * @param parser 		parser struct
- * @return t_token_type type of the next token
- */
-t_token_type	consume(t_parser *parser)
-{
 	if (parser->cur < parser->size)
-		return (parser->tokens[parser->cur++].type);
+		return (parser->tokens[parser->cur + 1].type);
 	return (TOKEN_TYPES_CNT);
 }
 
@@ -317,16 +303,6 @@ void	append_redir_node(t_node *parent, t_node *child)
 }
 
 /**
- * @brief Free the parsing table passed.
- *
- * @param table	table for parsing table
- */
-void free_table(char **table)
-{
-	free(table);
-}
-
-/**
  * @brief Initialize the parsing table
  *
  * @return char** table of parsing table
@@ -342,16 +318,16 @@ char **init_rule_table(void)
 	table[1] = ROW12;
 	table[2] = ROW13;
 	table[3] = ROW14;
-	table[1] = ROW2;
-	table[2] = ROW3;
-	table[3] = ROW4;
-	table[4] = ROW5;
-	table[5] = ROW6;
-	table[6] = ROW7;
-	table[7] = ROW8;
-	table[8] = ROW9;
-	table[9] = ROW10;
-	table[10] = ROW11;
+	table[4] = ROW2;
+	table[5] = ROW3;
+	table[6] = ROW4;
+	table[7] = ROW5;
+	table[8] = ROW6;
+	table[9] = ROW7;
+	table[10] = ROW8;
+	table[11] = ROW9;
+	table[12] = ROW10;
+	table[13] = ROW11;
 	return (table);
 }
 
@@ -381,6 +357,7 @@ void update_p_state(char **table, t_parser *parser, t_parse_state *parse_state)
 	// 	// already at the end of the tokens array
 	// 	return ;
 	// }
+	printf("\ncur.type: %d, peek: %d\n", cur.type, peek);
 	*parse_state = table[cur.type][peek];
 }
 
@@ -413,7 +390,9 @@ void	postorder_traversal(t_node *node, t_node **err_node)
  */
 t_bool	check_err_node(t_node *new_node)
 {
-    t_node *err_node = NULL;
+    t_node *err_node;
+
+	err_node = 0;
     if (!new_node)
         return (FALSE);
     postorder_traversal(new_node, &err_node);
@@ -669,43 +648,30 @@ t_node	*parse_word_list(t_parser *parser, t_node *parent)
 t_node *parse_redir(t_parser *parser, t_node *parent)
 {
 	t_node			*redir_node;
+	t_token_type	type;
 
 	redir_node = 0;
-	if (parser->check(parser, TOKEN_REDIR_IN))
+	if (parser->is_redir(parser))
 	{
+		type = parser->cur_type(parser);
 		parser->advance(parser);
-		redir_node = parse_word_list(parser, parent);
+		if (parser->check(parser, TOKEN_HEREDOC))
+		{
+			redir_node = create_node(AST_HEREDOC);
+			redir_node->cmd_args = ft_calloc(2, sizeof(char *));
+			if (!redir_node->cmd_args)
+			{
+				free(redir_node);
+				return (0);
+			}
+			redir_node->cmd_args[(redir_node->num_args)++] = parse_word(parser);
+		}
+		else
+			redir_node = parse_word_list(parser, parent);
 		if (!redir_node)
 			return (0);
-		redir_node->type = AST_REDIR_IN;
+		redir_node->type = (t_node_type) type;
 	}
-	else if (parser->check(parser, TOKEN_HEREDOC))
-	{
-		parser->advance(parser);
-		redir_node = create_node(AST_HEREDOC);
-		if (!redir_node)
-			return (0);
-		redir_node->cmd_args = ft_calloc(2, sizeof(char *));
-		redir_node->cmd_args[redir_node->num_args] = parse_word(parser);
-		redir_node->num_args = 1;
-	}
-	else if (parser->check(parser, TOKEN_REDIR_OUT))
-	{
-		parser->advance(parser);
-		redir_node = parse_word_list(parser, parent);
-		if (!redir_node)
-			return (0);
-		redir_node->type = AST_REDIR_OUT;
-	}
-	else if (parser->check(parser, TOKEN_APPEND))
-	{
-		parser->advance(parser);
-		redir_node = parse_word_list(parser, parent);
-		if (!redir_node)
-			return (0);
-		redir_node->type = AST_REDIR_APPEND;
-	}
-	// parser->advance(parser);
 	return (redir_node);
 }
 
@@ -846,6 +812,7 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 	t_node			*pipeline_node;
 	t_node			*list_tail_node;
 	t_node_type		state;
+	(void)			parent;
 
 	logic_node = 0;
 	if (parser->check(parser, TOKEN_AND) || parser->check(parser, TOKEN_OR))
@@ -853,16 +820,24 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 		state = AST_AND;
 		if (parser->check(parser, TOKEN_OR))
 			state = AST_OR;
-		parser->advance(parser);
-		pipeline_node = parse_pipeline(parser, parent);
-		if (!pipeline_node) // err?
-			return (0);
-		if (pipeline_node->type == AST_ERR)
-			return (pipeline_node);
 		logic_node = create_node(state);
 		if (!logic_node)	// malloc err
 			return (0);
+		// logic_node->left = parent;
+		// append_child_node(logic_node, parent);
+		parser->advance(parser);
+		pipeline_node = parse_pipeline(parser, logic_node);
+		if (!pipeline_node)
+		{
+			// free and handle err here?
+			free(logic_node);
+			return (0);
+		}
 		logic_node->right = pipeline_node;
+		if (pipeline_node->type == AST_ERR)
+			return (logic_node);
+		// logic_node->right = pipeline_node;
+		// append_child_node(logic_node, pipeline_node);
 		// append_child_node(logic_node, pipeline_node);
 		if (parser->check(parser, TOKEN_AND) || parser->check(parser, TOKEN_OR))
 		{
@@ -871,7 +846,6 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 				return (0);
 			append_child_node(pipeline_node, list_tail_node);
 		}
-		return (logic_node);
 	}
 	return (logic_node);
 }
@@ -961,7 +935,7 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 	};
 
 	root = 0;
-	parse_state = PIPELINE;
+	parse_state = LIST;
 	parser.tokens = tokens;
 	parser.size = num_tokens;
 	parser.cur = 0;
@@ -969,7 +943,6 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 	parser.cur_type = &cur_type;
 	parser.advance = &advance;
 	parser.peek = &peek;
-	parser.consume = &consume;
 	parser.is_word = &is_word_token;
 	parser.is_redir = &is_redir_token;
 	table = init_rule_table();
@@ -978,41 +951,24 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 	while (parser.cur < parser.size)
 	{
 		update_p_state(table, &parser, &parse_state);
-		if (parse_state == ERR)
-		{
-			// deal with err and free?
-			return (0);
-		}
 		// TODO: edit parser_fn_arr, so parse_state 1, 3, 7 is removed from the array, parse_state and parsing table
-		else if (parse_state == PARSE_STATES_CNT || parse_state == 1 || parse_state == 3 || parse_state == 7)
-		{
+		if (parse_state == PARSE_STATES_CNT || parse_state == 1 || parse_state == 3 || parse_state == 7)
 			break ;
-		}
 		new_node = parser_fn_arr[parse_state](&parser, root);
 		if (new_node != 0)
 		{
 			if (check_err_node(new_node))
 			{
 				if (root && root != new_node)
+				{
 					free_ast(new_node);
-				free_table(table);
-				// free ast here?
+					free_ast(root);
+				}
+				free(table);
 				return (0);
 			}
 			if (root == 0)
-			{
 				root = new_node;
-			}
-			// else if (new_node->type == AST_ERR)
-			// {
-			// 	// handle err, print err msg and error happend around which token
-			// 	// For now, print error here and return 0;
-			// 	write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
-			// 	write(STD_ERR, new_node->cmd_args[0], ft_strlen(new_node->cmd_args[0]));
-			// 	write(STD_ERR, "`\n", 2);
-			// 	free_ast(new_node);
-			// 	return (0);
-			// }
 			else if (new_node->type == AST_REDIR_IN || new_node->type == AST_REDIR_OUT || new_node->type == AST_REDIR_APPEND || new_node->type == AST_HEREDOC)
 				append_redir_node(root, new_node);
 			else
@@ -1020,10 +976,12 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 		}
 		else
 		{
+			if (root && root != new_node)
+				free_ast(root);
 			return (0);
 			// syntax err or malloc err?
 		}
 	}
-	free_table(table);
+	free(table);
 	return (root);
 }

@@ -51,30 +51,30 @@ t_token	*set_err_token(t_token *tokens, t_size *num_tokens, char *msg)
 	return (tokens);
 }
 
-t_token* realloc_tokens(t_token *tokens, t_size *cur_size, t_size new_size)
+t_token* realloc_tokens(t_token *tokens, t_size *num_tokens, t_size new_size)
 {
 	t_size		i;
 	t_size		cp_size;
 	t_token		*new;
 
 	if (new_size == 0)
-		return (free_tokens(tokens, *cur_size));
+		return (free_tokens(tokens, *num_tokens));
 	new = ft_calloc(new_size, sizeof(t_token));
 	if (!new) 
-		return (set_err_token(tokens, cur_size, MALLOC_ERR));
+		return (set_err_token(tokens, num_tokens, MALLOC_ERR));
 	cp_size = new_size;
-	if (*cur_size < new_size)
-		cp_size = *cur_size;
+	if (*num_tokens < new_size)
+		cp_size = *num_tokens;
 	ft_memcpy(new, tokens, cp_size * sizeof(t_token));
 	i = -1;
 	while (++i < cp_size)
 	{
 		new[i].val = ft_calloc(ft_strlen(tokens[i].val) + 1, 1);
 		if (!new[i].val)
-			return (set_err_token(tokens, cur_size, MALLOC_ERR));
+			return (set_err_token(tokens, num_tokens, MALLOC_ERR));
 		ft_memcpy(new[i].val, tokens[i].val, ft_strlen(tokens[i].val) + 1);
 	}
-	free_tokens(tokens, *cur_size);
+	free_tokens(tokens, *num_tokens);
 	return (new);
 }
 
@@ -212,7 +212,7 @@ t_token	*create_token(t_token_type type, const char *buffer, t_size buf_len)
  * @param ch		cmp function
  * @return t_cmp	opposite cmp function
  */
-t_cmp	cmp_not(char ch)
+t_cmp	get_cmp_fn(char ch)
 {
 	if (is_squote(ch))
 		return (is_squote);
@@ -240,7 +240,7 @@ t_bool	move_until_cmp(char **input, t_cmp cmp)
 			(*input)++;
 		if (!**input || is_meta(**input))
 			return (TRUE);
-		cmp = cmp_not(**input);
+		cmp = get_cmp_fn(**input);
 	}
 	return (TRUE);
 }
@@ -263,7 +263,7 @@ t_token	*split_input(char *start, char **input, t_cmp cmp, t_token_type type)
 			(*input)++;
 		if (**input && !cmp((*input)[0]) && is_quote((*input)[0]))
 		{
-			cmp = cmp_not((*input)[0]);
+			cmp = get_cmp_fn((*input)[0]);
 			quote = TRUE;
 			if (!move_until_cmp(input, cmp))
 				return (create_err_token(QUOTE_NOT_CLOSED));
@@ -345,7 +345,6 @@ t_token *tokenize_input(char *input, t_size alloced, t_size *num_tokens)
 	t_token				*new_token;
 	t_token_state		state;
 	const t_cmp			cmp_func[] = { is_meta, is_squote, is_dquote, is_space };
-
 
 	if (!init_tokenizer(input, &tokens, &alloced, &state))
 		return (set_err_token(tokens, num_tokens, MALLOC_ERR));
