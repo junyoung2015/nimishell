@@ -187,7 +187,7 @@ t_bool check(t_parser *parser, t_token_type type)
  */
 t_token_type peek(t_parser *parser)
 {
-	if (parser->cur + 1 < parser->size || parser->cur < parser->size)
+	if (parser->cur < parser->size)
 		return (parser->tokens[parser->cur + 1].type);
 	return (TOKEN_TYPES_CNT);
 }
@@ -657,41 +657,26 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 	t_node			*redir_node;
 
 	redir_node = 0;
-	if (parser->check(parser, TOKEN_REDIR_IN))
+	if (parser->is_redir(parser))
 	{
 		parser->advance(parser);
-		redir_node = parse_word_list(parser, parent);
+		if (parser->check(parser, TOKEN_HEREDOC))
+		{
+			redir_node = create_node(AST_HEREDOC);
+			redir_node->cmd_args = ft_calloc(2, sizeof(char *));
+			if (!redir_node->cmd_args)
+			{
+				free(redir_node);
+				return (0);
+			}
+			redir_node->cmd_args[(redir_node->num_args)++] = parse_word(parser);
+		}
+		else
+			redir_node = parse_word_list(parser, parent);
 		if (!redir_node)
 			return (0);
-		redir_node->type = AST_REDIR_IN;
+		redir_node->type = (int) parser->cur_type;
 	}
-	else if (parser->check(parser, TOKEN_HEREDOC))
-	{
-		parser->advance(parser);
-		redir_node = create_node(AST_HEREDOC);
-		if (!redir_node)
-			return (0);
-		redir_node->cmd_args = ft_calloc(2, sizeof(char *));
-		redir_node->cmd_args[redir_node->num_args] = parse_word(parser);
-		redir_node->num_args = 1;
-	}
-	else if (parser->check(parser, TOKEN_REDIR_OUT))
-	{
-		parser->advance(parser);
-		redir_node = parse_word_list(parser, parent);
-		if (!redir_node)
-			return (0);
-		redir_node->type = AST_REDIR_OUT;
-	}
-	else if (parser->check(parser, TOKEN_APPEND))
-	{
-		parser->advance(parser);
-		redir_node = parse_word_list(parser, parent);
-		if (!redir_node)
-			return (0);
-		redir_node->type = AST_REDIR_APPEND;
-	}
-	// parser->advance(parser);
 	return (redir_node);
 }
 
