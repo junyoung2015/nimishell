@@ -132,7 +132,7 @@ char	*process_squote(char **input)
 		(*input)++;
 	if (is_squote(**input))
 		(*input)++;
-	result = ft_substr(start, 0, *input - start + 1);
+	result = ft_substr(start, 0, *input - start + is_squote(**input));
 	if (!result)
 		return (0);
 	return (result);

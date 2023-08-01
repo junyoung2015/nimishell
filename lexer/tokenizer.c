@@ -238,7 +238,7 @@ t_bool	move_until_cmp(char **input, t_cmp cmp)
 			return (TRUE);
 		while (**input && !is_meta(**input) && !is_quote(**input))
 			(*input)++;
-		if (!(**input) || is_meta(**input))
+		if (!**input || is_meta(**input))
 			return (TRUE);
 		cmp = cmp_not(**input);
 	}
