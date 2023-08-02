@@ -23,12 +23,13 @@ STR_DIR = ./str/
 
 # -------------- SRCS  -------------- #
 SRCS = ./minishell.c						\
-		./str/env_sub.c			\
 		$(INIT_DIR)logo.c					\
 		$(LEXER_DIR)tokenizer.c				\
 		$(MEMORY_DIR)mem_utils.c			\
 		$(PARSER_DIR)parser.c				\
 		$(PARSER_DIR)parser_ll.c			\
+		$(STR_DIR)trim_quotes.c				\
+		$(STR_DIR)env_sub.c					\
 		$(STR_DIR)str_itoa.c				\
 		$(STR_DIR)str_utils.c				\
 		$(STR_DIR)str_split.c				\
