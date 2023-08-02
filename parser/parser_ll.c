@@ -861,8 +861,8 @@ t_node *parse_list(t_parser *parser, t_node *parent)
 		list_tail_node = parse_list_tail(parser, pipeline_node);
 		if (!list_tail_node) // err?
 			return (0);
-		append_child_node(list_tail_node, pipeline_node);
-		// list_tail_node->left = pipeline_node;
+		// append_child_node(list_tail_node, pipeline_node);
+		list_tail_node->left = pipeline_node;
 		return (list_tail_node);
 	}
 	return (pipeline_node);
