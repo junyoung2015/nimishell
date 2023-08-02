@@ -57,3 +57,11 @@ void	cmd_not_found(void)
 	write(STDERR_FILENO, "error: command not found\n", 25);
 	exit(EXIT_CMD_NOT_FOUND);
 }
+
+void	display_cmd(char *msg)
+{
+	write(STDERR_FILENO, "minishell: ", 11);
+	write(STDERR_FILENO, msg, ft_strlen(msg));
+	write(STDERR_FILENO, ": command not found\n", 20);
+	exit(EXIT_CMD_NOT_FOUND);
+}
