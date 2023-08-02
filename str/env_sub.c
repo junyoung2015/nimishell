@@ -144,7 +144,7 @@ char	*process_squote(char **input)
 char	*process_dquote(char **input)
 {
 	char	*start;
-	char	*tmp;   30      31     291
+	char	*tmp;
 	char	*env_var;
 	char	*result;
 
