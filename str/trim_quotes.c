@@ -88,11 +88,11 @@ char	*trim_dquote(char **cmd_arg)
 		if (!tmp)
 			return (0);
 		result = tmp;
-		if (**cmd_arg)
-			(*cmd_arg)++;
 	}
 	else
 		result = ft_strdup("");
+	if (**cmd_arg)
+		(*cmd_arg)++;
 	return (result);
 }
 
