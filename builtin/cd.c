@@ -95,13 +95,10 @@ t_bool	cd(t_node *node, t_exec_info *info)
 	char	*cwd;
 
 	home = get_env("HOME");
-	// TODO: HOME 이 unset 됐을 경우 처리 필요
+	// TODO: HOME 이 unset 됐을 경우 처리 필요?
 	if (!home)
-	err("error: malloc", info);
-	// TODO: 원본 bash 처럼 세번째 인자는 무시하고 바로 두번째 인자가 가르키는 디렉토리로 이동?
-	if (node->num_args > 2)
-		err("error: cd", info);
-	else if (node->num_args == 1)
+		err("error: malloc", info);
+	if (node->num_args == 1)
 	{
 		if (chdir(home))
 			err("error: cd", info);
@@ -109,7 +106,7 @@ t_bool	cd(t_node *node, t_exec_info *info)
 		update_pwd(cwd, info);
 		free(cwd);
 	}
-	else if (node->num_args == 2)
+	else if (node->num_args >= 2)
 	{
 		if (chdir(node->cmd_args[1]))
 			err("error: cd", info);
