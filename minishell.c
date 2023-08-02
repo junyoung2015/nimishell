@@ -151,6 +151,8 @@ int	main(int ac, char **av, char **envp)
 	(void) av;
 	int			exit_code;
 	char		*line;
+	char		*pwd;
+	char		*tmp;
 	t_token		*tokens;
 	t_size		num_tokens;
 	t_node		*ast;
@@ -188,7 +190,10 @@ int	main(int ac, char **av, char **envp)
 	while (TRUE)
 	{
 		num_tokens = 0;
-		line = readline("minishell> ");
+		tmp = getcwd(NULL, 0);
+		pwd = ft_strjoin(tmp, "> ");
+		free(tmp);
+		line = readline(pwd);
 		if (line)
 		{
 			add_history(line);
@@ -201,6 +206,7 @@ int	main(int ac, char **av, char **envp)
 				if (!tokens || num_tokens == 0)
 				{
 					free(line);
+					free(pwd);
 					continue ;
 					// return (0);
 				}
@@ -233,6 +239,7 @@ int	main(int ac, char **av, char **envp)
 				free_tokens(tokens, num_tokens);
 			tokens = 0;
 			free(line);
+			free(pwd);
 			line = 0;
 		}
 	}
