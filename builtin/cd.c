@@ -53,8 +53,6 @@ void	update_env(char *new_env)
 	{
 		start = g_info.env[i];
 		end = ft_strchr(start, '=');
-		// if (!end)
-		// 	return (FALSE);
 		if (end)
 		{
 			tmp = ft_substr(start, 0, end - start);
@@ -71,7 +69,7 @@ void	update_env(char *new_env)
 		}		
 		i++;
 	}
-	// return (FALSE);
+	
 }
 
 void	update_pwd(char *cwd, t_exec_info *info)
@@ -79,6 +77,7 @@ void	update_pwd(char *cwd, t_exec_info *info)
 	char	*pwd;
 	char	*oldpwd;
 
+	// TODO: PWD/OLDPWD 가 없을 경우 bash 처럼 처리 필요
 	pwd = ft_strjoin("PWD=", cwd);
 	oldpwd = ft_strjoin("OLDPWD=", get_env("PWD"));
 	if (!pwd || !oldpwd)
@@ -95,7 +94,7 @@ t_bool	cd(t_node *node, t_exec_info *info)
 	char	*cwd;
 
 	home = get_env("HOME");
-	// TODO: HOME 이 unset 됐을 경우 처리 필요?
+	// TODO: HOME 이 unset 됐을 경우 처리 필요
 	if (!home)
 		err("error: malloc", info);
 	if (node->num_args == 1)
@@ -116,10 +115,3 @@ t_bool	cd(t_node *node, t_exec_info *info)
 	}
 	return (TRUE);
 }
-
-
-// void		cd(t_node *node, t_exec_info *info)
-// {
-//		 if (chdir(node->cmd_args[1]) < 0)
-// 		err("error: cd", info);
-// }
