@@ -269,6 +269,7 @@ t_token	*split_input(char *start, char **input, t_cmp cmp, t_token_type type)
 				return (create_err_token(QUOTE_NOT_CLOSED));
 		}
 	}
+	quote = is_quote((*input)[0]);
 	new_token = create_token(type, start, *input - start + quote);
 	return (new_token);
 }
