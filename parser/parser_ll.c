@@ -350,14 +350,6 @@ void update_p_state(char **table, t_parser *parser, t_parse_state *parse_state)
 	}
 	cur = parser->tokens[parser->cur];
 	peek = parser->peek(parser);
-	// TODO: check the condition again, since we might not use word_list_tail
-	// if (peek == TOKEN_TYPES_CNT || (*parse_state == WORD_LIST_TAIL || *parse_state == REDIR_TAIL || *parse_state == LIST_TAIL || *parse_state == PIPELINE_TAIL))
-	// {
-	// 	*parse_state = PARSE_STATES_CNT;
-	// 	// already at the end of the tokens array
-	// 	return ;
-	// }
-	printf("\ncur.type: %d, peek: %d\n", cur.type, peek);
 	*parse_state = table[cur.type][peek];
 }
 
@@ -935,7 +927,6 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 	};
 
 	root = 0;
-	parse_state = LIST;
 	parser.tokens = tokens;
 	parser.size = num_tokens;
 	parser.cur = 0;
