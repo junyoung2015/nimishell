@@ -93,6 +93,8 @@ void print_ast(t_node *node, int depth, const char *indent)
 		printf("||");
 	else if (node->type == AST_SUBSHELL)
 		printf("(SUB)");
+	else if (node->builtin != NOT_BUILTIN)
+		printf("[%d] ", node->builtin);
 	// printf("%*c", depth * 4, 32);
 	for (t_size i = 0; i < node->num_args; i++)
 		printf("[%d][%s] ", node->type, node->cmd_args[i]);

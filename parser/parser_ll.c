@@ -67,7 +67,7 @@
 	<LIST-TAIL> -> ε
 
 	<PIPELINE> -> <COMMAND> <PIPELINE-TAIL>
-	?<PIPELINE> -> <PIPELINE-TAIL>?
+	?<PIPELINE> -> <PIPELINE-TAIL>?i
 
 	?<PIPELINE-TAIL> -> | <PIPELINE>?				// advance() in this case
 	 <PIPELINE-TAIL> -> | <COMMAND> <PIPELINE-TAIL>	// advance() in this case

@@ -91,14 +91,12 @@ char	*process_normal(char **input)
 		result = ft_strjoin(tmp, ft_itoa(g_info.exit_status));
 		(*input)++;
 	}
-	else if (is_dollar(*((*input) - 1)) && **input && !is_env_var(**input)) // do I need to hcek \0 here?
+	else if (is_dollar(*((*input) - 1)) && **input && !is_env_var(**input)) // do I need to check \0 here?
 	{
 		env_var = ft_substr(*input - 1, 0, 1);
 		if (!env_var)
 			return (result);
 		result = ft_strjoin(tmp, env_var);
-		// (*input)++;
-		// free(env_var);
 	}
 	else if (*input > start)
 	{
@@ -106,7 +104,6 @@ char	*process_normal(char **input)
 		if (!env_var)
 			return (result);
 		result = ft_strjoin(tmp, substitute(env_var));
-		// free(env_var);
 	}
 	else
 	{
@@ -114,8 +111,6 @@ char	*process_normal(char **input)
 		if (!env_var)
 			return (result);
 		result = ft_strjoin(tmp, env_var);
-		// (*input)++;
-		// free(env_var);
 	}
 	free(env_var);
 	free(tmp);
@@ -149,7 +144,7 @@ char	*process_squote(char **input)
 char	*process_dquote(char **input)
 {
 	char	*start;
-	char	*tmp;
+	char	*tmp;   30      31     291
 	char	*env_var;
 	char	*result;
 
