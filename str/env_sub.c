@@ -1,7 +1,8 @@
 
 #include "minishell.h"
 
-typedef	char	*(*t_env_fn)(char **);
+// TODO: 밑의 typedef 를 trim_quotes 에 있는 typedef 와 minishell.h에 합쳐 넣기
+typedef	char	*(*t_process_fn)(char **);
 
 /**
  * @brief Check whether 'ch' is a valid character for an environment variable.
@@ -216,16 +217,6 @@ char	*process_dquote(char **input)
 	return (result);
 }
 
-// char	*process_meta(char **input)
-// {
-
-// }
-
-// char	*process_wspace(char **input)
-// {
-
-// }
-
 /**
  * @brief	Look for $ in the cmg_args, while checking if it's quoted or not.
  * 			Keep join the string using ft_strjoin. If it is a valid env var,
@@ -235,34 +226,30 @@ char	*process_dquote(char **input)
  */
 char	*check_env_var(char *cmd_arg)
 {
-	// t_bool			is_squote;
 	char			*result;
 	char			*substr;
 	char			*tmp;
 	t_token_state	state;
-	const t_env_fn	env_fn[] = {
+	const t_process_fn	state_fn[] = { 
 		process_normal,
 		process_squote,
 		process_dquote,
-		// process_meta,
-		// process_wspace,
 	};
 
 	result = 0;
-	// is_squote = FALSE;
 	state = update_state(*cmd_arg);
 	while (*cmd_arg && state != END)
 	{
 		tmp = result;
-		substr = env_fn[state](&cmd_arg);
+		substr = state_fn[state](&cmd_arg);
 		if (!substr)
 			return (result);
 		result = ft_strjoin(result, substr);
 		free(tmp);
+		free(substr);
 		state = update_state(*cmd_arg);
 		if (META_CH <= state && state < END)
 			break ;
-		// cmd_arg++;
 	}
 	return (result);
 }
@@ -276,7 +263,7 @@ char	*check_env_var(char *cmd_arg)
  * @param node		node to substitute appropriate cmd_args with env var
  * @return char**	substituted cmd_args
  */
-char	**check_and_sub_env(t_node *node)
+char	**env_substitution(t_node *node)
 {
 	char    **result;
 	t_size  idx;
@@ -292,10 +279,9 @@ char	**check_and_sub_env(t_node *node)
 		result[idx] = check_env_var(node->cmd_args[idx]);
 		if (!result[idx])
 		{
-			for (t_size i = 0; i < idx; i++)
-				free(result[i]);
+			while(idx >= 0)
+				free(result[idx--]);
 			free(result);
-			// free result up to now
 			return (0);
 		}
 		free(node->cmd_args[idx]);

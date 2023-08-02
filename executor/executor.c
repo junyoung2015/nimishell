@@ -73,7 +73,11 @@ void	tree_search(t_node *root, t_exec_info *info)
 	if (!root)
 		return ;
 	if (root->cmd_args && root->type != AST_HEREDOC)
-		root->cmd_args = check_and_sub_env(root);
+		root->cmd_args = env_substitution(root);
+	if (root->cmd_args) // remove_quotes(env_substitution(root)) 처럼 부르면 가독성이 저하되는가?
+		root->cmd_args = remove_quotes(root);
+	if (!root->cmd_args)
+		err("error: malloc", info);
 	if (root->left)
 		root->left->parent_type = root->type;
 	if (root->right)
