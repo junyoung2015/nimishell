@@ -261,6 +261,7 @@ void			append_child_node(t_node *parent, t_node *child);
 void			free_ast(t_node *root);
 /* LL(1) */
 t_node			*parse_tokens_ll(t_token *tokens, t_size num_tokens);
+void	is_builtin_node(t_node *node);
 
 /* ================== EXECUTOR ================== */
 int				executor(t_node *root);

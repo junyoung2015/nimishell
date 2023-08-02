@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/01 22:04:58 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/02 21:25:16 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,9 @@ void	tree_search(t_node *root, t_exec_info *info)
 		root->cmd_args = env_substitution(root);
 	if (root->cmd_args) // remove_quotes(env_substitution(root)) 처럼 부르면 가독성이 저하되는가?
 		root->cmd_args = remove_quotes(root);
-	if (root->type == AST_CMD && !root->cmd_args)
+	if (root->cmd_args)
+		is_builtin_node(root);
+	if (root->type == AST_CMD && root->type == AST_CMD && !root->cmd_args)
 		err("error: malloc", info);
 	if (root->left)
 		root->left->parent_type = root->type;
