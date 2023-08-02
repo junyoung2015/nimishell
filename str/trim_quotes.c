@@ -128,6 +128,8 @@ char	*trim_outer_quotes(char *cmd_arg)
 		if (META_CH <= state && state <= END)
 			break ;
 	}
+	if (!result)
+		return (ft_strdup(""));
 	return (result);
 }
 
