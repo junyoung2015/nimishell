@@ -265,4 +265,6 @@ t_node			*parse_tokens_ll(t_token *tokens, t_size num_tokens);
 /* ================== EXECUTOR ================== */
 int				executor(t_node *root);
 
+void	display_cmd(char *msg);
+
 #endif
