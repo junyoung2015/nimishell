@@ -279,8 +279,8 @@ char	**env_substitution(t_node *node)
 		result[idx] = check_env_var(node->cmd_args[idx]);
 		if (!result[idx])
 		{
-			while(idx >= 0)
-				free(result[idx--]);
+			while(--idx != 0)
+				free(result[idx]);
 			free(result);
 			return (0);
 		}
