@@ -265,6 +265,8 @@ t_node			*parse_tokens_ll(t_token *tokens, t_size num_tokens);
 /* ================== EXECUTOR ================== */
 int				executor(t_node *root);
 
-void	display_cmd(char *msg);
+/* ================== BUILTIN ================== */
+char			*get_env(char *env_var);
+void			display_cmd(char *msg);
 
 #endif

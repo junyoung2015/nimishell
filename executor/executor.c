@@ -76,7 +76,7 @@ void	tree_search(t_node *root, t_exec_info *info)
 		root->cmd_args = env_substitution(root);
 	if (root->cmd_args) // remove_quotes(env_substitution(root)) 처럼 부르면 가독성이 저하되는가?
 		root->cmd_args = remove_quotes(root);
-	if (!root->cmd_args)
+	if (root->type == AST_CMD && !root->cmd_args)
 		err("error: malloc", info);
 	if (root->left)
 		root->left->parent_type = root->type;
