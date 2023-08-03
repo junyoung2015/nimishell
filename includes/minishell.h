@@ -214,6 +214,7 @@ char			*ft_strchr(const char *s, int c);
 char			**env_substitution(t_node *node);
 char		    **remove_quotes(t_node *node);
 char			**wildcard_substitution(t_node *node);
+char			*trim_outer_quotes(char *cmd_arg);
 
 /* ================== INIT ================== */
 void			print_logo(void);

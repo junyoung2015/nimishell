@@ -75,12 +75,18 @@ void	tree_search(t_node *root, t_exec_info *info)
 	if (root->cmd_args && root->type != AST_HEREDOC)
 	{
 		root->cmd_args = env_substitution(root);
-		root->cmd_args = remove_quotes(root);
+		for (t_size i = 0; i < root->num_args; i++)
+			printf("[ENV]cmd_args[%llu]: %s\n", root->num_args, root->cmd_args[i]);
 		root->cmd_args = wildcard_substitution(root);
+		for (t_size i = 0; i < root->num_args; i++)
+			printf("[WILD]cmd_args[%llu]: %s\n", root->num_args, root->cmd_args[i]);
+		root->cmd_args = remove_quotes(root);
+		for (t_size i = 0; i < root->num_args; i++)
+			printf("[QUOTE]cmd_args[%llu]: %s\n", root->num_args, root->cmd_args[i]);
 		if (root->cmd_args)
 			is_builtin_node(root);
 	}
-	if (root->type == AST_CMD && root->type == AST_CMD && !root->cmd_args)
+	if (root->type == AST_CMD && !root->cmd_args)
 		err("error: malloc", info);
 	if (root->left)
 		root->left->parent_type = root->type;

@@ -605,7 +605,7 @@ t_node	*parse_word_list(t_parser *parser, t_node *parent)
 	word_list_node = create_node(AST_WORD_LIST);
 	if (!word_list_node)
 		return (0);
-	word_list_node->cmd_args = ft_calloc(parser->size - parser->cur + 1, sizeof(char *));
+	word_list_node->cmd_args = ft_calloc(parser->size - parser->cur + 2, sizeof(char *));
 	if (!word_list_node->cmd_args)
 	{
 		free(word_list_node);

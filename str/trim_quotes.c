@@ -26,8 +26,6 @@ char	*trim_normal(char **cmd_arg)
 		if (!tmp)
 			return (0);
 		result = tmp;
-		// result = ft_strjoin(result, tmp);
-		// free(tmp);
 	}
 	else
 		result = ft_strdup("");
@@ -145,7 +143,7 @@ char    **remove_quotes(t_node *node)
 	t_size	idx;
 
 	idx = 0;
-	if (!node && !node->cmd_args)
+	if (!node || !node->cmd_args)
 		return (0);
 	result = (char **)ft_calloc(node->num_args + 1, sizeof(char *));
 	if (!result)
