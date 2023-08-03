@@ -28,12 +28,13 @@ SRCS = ./minishell.c						\
 		$(MEMORY_DIR)mem_utils.c			\
 		$(PARSER_DIR)parser.c				\
 		$(PARSER_DIR)parser_ll.c			\
-		$(STR_DIR)trim_quotes.c				\
 		$(STR_DIR)env_sub.c					\
 		$(STR_DIR)str_itoa.c				\
 		$(STR_DIR)str_utils.c				\
 		$(STR_DIR)str_split.c				\
 		$(STR_DIR)str_utils_create.c		\
+		$(STR_DIR)trim_quotes.c				\
+		$(STR_DIR)wildcard_sub.c			\
 		$(EXECUTOR_DIR)path.c				\
 		$(EXECUTOR_DIR)command.c			\
 		$(EXECUTOR_DIR)error.c				\

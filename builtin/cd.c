@@ -69,7 +69,6 @@ void	update_env(char *new_env)
 		}		
 		i++;
 	}
-	
 }
 
 void	update_pwd(char *cwd, t_exec_info *info)
