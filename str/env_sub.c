@@ -243,7 +243,7 @@ char	*check_env_var(char *cmd_arg)
 		free(tmp);
 		free(substr);
 		state = update_state(*cmd_arg);
-		if (META_CH <= state && state < END)
+		if (META_CH <= state && state <= END)
 			break ;
 	}
 	return (result);
@@ -264,7 +264,7 @@ char	**env_substitution(t_node *node)
 	t_size  idx;
 
 	idx = 0;
-	if (!node->cmd_args)
+	if (!node || !node->cmd_args)
 		return (0);
 	result = (char **)ft_calloc(node->num_args + 1, sizeof(char *));
 	if (!result)
@@ -274,8 +274,11 @@ char	**env_substitution(t_node *node)
 		result[idx] = check_env_var(node->cmd_args[idx]);
 		if (!result[idx])
 		{
-			while(--idx != 0)
+			while(idx > 0)
+			{
+				idx--;
 				free(result[idx]);
+			}
 			free(result);
 			return (0);
 		}
