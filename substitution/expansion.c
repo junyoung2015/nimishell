@@ -107,23 +107,41 @@ char	**wsplit(char *cmd_arg)
 	char	*start;
 	char	*end;
 	char	**result;
+	char	**splited;
+	char	*substr;
+	char	*trimmed;
+	char	*tmp;
 	t_size	size;
+	t_size	idx;
 
+	idx = 0;
 	size = 0;
 	result = 0;
 	start = cmd_arg;
+	end = start;
 	while (start && *start)
 	{
 		if (is_wsplit(*start))
 		{
 			if (is_wildcard(*start))
+			{
+				end = start;
 				size = append_str(&result, ft_strdup("*"), size);
+			}
 			else if (is_squote(*start))
 			{
 				end = start + 1;
 				while (*end && !is_squote(*end))
 					end++;
-				size = append_str(&result, ft_substr(start, 0, end - start + 1), size);
+				substr = ft_substr(start, 0, end - start + 1);
+				if (!substr)
+					return (0);
+				tmp = substr;
+				trimmed = trim(&substr, is_squote);
+				free(tmp);
+				if (!trimmed)
+					return (0);
+				size = append_str(&result, trimmed, size);
 				if (!size)
 					return (0);
 			}
@@ -132,7 +150,23 @@ char	**wsplit(char *cmd_arg)
 				end = start + 1;
 				while (*end && !is_dquote(*end))
 					end++;
-				size = append_str(&result, ft_substr(start, 0, end - start + 1), size);
+				substr = ft_substr(start, 0, end - start + 1);
+				if (!substr)
+					return (0);
+				tmp = substr;
+				trimmed = trim(&substr, is_dquote);
+				free(tmp);
+				if (!trimmed)
+					return (0);
+				splited = wsplit(trimmed);
+				free(trimmed);
+				while (splited[idx])
+				{
+					size = append_str(&result, splited[idx], size);
+					if (!size)
+						return (0);
+					idx++;
+				}
 				if (!size)
 					return (0);
 			}
@@ -152,6 +186,76 @@ char	**wsplit(char *cmd_arg)
 	return (result);
 }
 
+char	**match_pattern(char **files, char *pattern, t_size start)
+{
+	char	**result;
+	t_size	size;
+	t_size	idx;
+
+	size = 0;
+	result = 0;
+	idx = 0;
+	while (files[idx])
+	{
+		if (ft_strncmp(files[idx] + ft_strlen(files[idx]) - start, pattern, ft_strlen(pattern)) == 0)
+		{
+			size = append_str(&result, ft_strdup(files[idx]), size);
+			if (!size)
+				return (0);
+		}
+		idx++;
+	}
+	return (result);
+}
+
+/**
+ * @brief   Find all files that match the pattern
+ * 
+ * @param files		List of files in current direcotry
+ * @param pattern	Pattern of the files to search for
+ * @return char**	List of files that match the pattern
+ */
+char	**find_matching_files(char **files, char **pattern)
+{
+	t_size	idx;
+	t_size	size;
+	t_size	start;
+	char	**result;
+	char	**new;
+
+	idx = 0;
+	result = 0;
+	new = 0;
+	size = 0;
+	start = 0;
+	while (pattern[idx])
+	{
+		if (is_wildcard_expansion(pattern[idx]))
+		{
+			new = match_pattern(files, "", start);
+			size = arr_cat(&result, new, size);
+		}
+		else
+		{
+			start += ft_strlen(pattern[idx]);
+			new = match_pattern(files, pattern[idx], start);
+			size = arr_cat(&result, new, size);
+			// size = append_str(&result, ft_strdup(pattern[idx]), size);
+		}
+		// if (is_squote(*(pattern[idx])))
+		// 	trimmed = ft_substr(pattern[idx], 1, ft_strlen(pattern[idx]));
+		// free files
+		while(*files)
+			free(*files++);
+		idx++;
+	}
+	idx = 0;
+	while (pattern[idx])
+		free(pattern[idx++]);
+	free(pattern);
+	return (result);
+}
+
 /**
  * @brief   Expand the wildcard inside cmd_args. Also expand the string inside
  *        quotes if needed.
@@ -163,33 +267,38 @@ char    **str_expansion(t_node *node)
 {
 	t_size	idx;
 	t_size	size;
-	// char	*start;
+	t_size	len;
 	char	**files;
 	char	**result;
+	char	**pattern;
 	char	**new;
 
 	idx = 0;
-	result = 0;
 	size = 0;
+	len = 0;
+	pattern = 0;
 	if (!node || !node->cmd_args)
 		return (0);
-	files = get_all_files();	// TODO: free files
-	if (!files)
-		return (0);
-	result = (char **)ft_calloc(1, sizeof(char *));
-	if (!result)
+	pattern = (char **)ft_calloc(1, sizeof(char *));
+	if (!pattern)
 		return (node->cmd_args);
 	while (idx < node->num_args)
 	{
 		if (is_wildcard_expansion(node->cmd_args[idx]))
 		{
+			files = get_all_files();	// TODO: free files?
+			if (!files)
+				return (0);
 			new = wsplit(node->cmd_args[idx]);
+			if (!new)
+				return (0);
 			for (t_size i = 0; new[i]; i++)
 				printf("%s\n", new[i]);
-			// new = wildcard_expansion(files, start, idx);
-			// if (!new)
-			// 	return (0);
-			size = arr_cat(&result, new, size);
+			size = arr_cat(&pattern, new, size);
+			if (!pattern)
+				return (0);
+			files = find_matching_files(files, pattern);
+			len = arr_cat(&result, files, len);
 			if (!result)
 				return (0);
 		}
@@ -199,11 +308,13 @@ char    **str_expansion(t_node *node)
 			if (!new)
 				return (0);
 			new[0] = ft_strdup(node->cmd_args[idx]);
-			size = arr_cat(&result, new, size);
+			len = arr_cat(&result, new, len);
+			if (!pattern)
+				return (0);
 		}
-		// else
-		// 	result = arr_cat(&result, ft_split(node->cmd_args[idx], ' '), arr_len(result));
 		idx++;
 	}
+	node->num_args = len;
+	// size = arr_cat(&result, files, size);
 	return (result);
 }
