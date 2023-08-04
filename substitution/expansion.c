@@ -205,6 +205,8 @@ char	**match_pattern(char **files, char *pattern, t_size start)
 		}
 		idx++;
 	}
+	while(*files)
+		free(*files++);
 	return (result);
 }
 
@@ -222,31 +224,33 @@ char	**find_matching_files(char **files, char **pattern)
 	t_size	start;
 	char	**result;
 	char	**new;
+	// char	**tmp;
 
 	idx = 0;
 	result = 0;
-	new = 0;
+	new = files;
 	size = 0;
 	start = 0;
 	while (pattern[idx])
 	{
 		if (is_wildcard_expansion(pattern[idx]))
 		{
-			new = match_pattern(files, "", start);
-			size = arr_cat(&result, new, size);
+			// new = match_pattern(files, "", start);
+			// size = arr_cat(&result, files, size);
 		}
 		else
 		{
 			start += ft_strlen(pattern[idx]);
-			new = match_pattern(files, pattern[idx], start);
+			// tmp = new;
+			new = match_pattern(new, pattern[idx], start);
+			if (!new)
+				return (0);
 			size = arr_cat(&result, new, size);
 			// size = append_str(&result, ft_strdup(pattern[idx]), size);
 		}
 		// if (is_squote(*(pattern[idx])))
 		// 	trimmed = ft_substr(pattern[idx], 1, ft_strlen(pattern[idx]));
 		// free files
-		while(*files)
-			free(*files++);
 		idx++;
 	}
 	idx = 0;
