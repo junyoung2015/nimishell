@@ -253,6 +253,10 @@ char	**find_matching_files(char **files, char **pattern)
 		// free files
 		idx++;
 	}
+	if (!result)
+	{
+		size = arr_cat(&result, files, size);
+	}
 	idx = 0;
 	while (pattern[idx])
 		free(pattern[idx++]);
