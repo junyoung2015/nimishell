@@ -229,6 +229,7 @@ char			*ft_strdup(char *src);
 char			*ft_substr(char const *s, t_size start, t_size len);
 char			**ft_split(char const *str, char c);
 char			*ft_strjoin(char const *s1, char const *s2);
+char			*ft_strnstr(const char *haystack, const char *needle, t_size n);
 
 /* ================== TOKENIZER ================== */
 typedef t_token *(*t_tokenizer_fn)(char **, t_token_state *);

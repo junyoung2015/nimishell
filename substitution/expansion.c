@@ -198,12 +198,18 @@ char	**match_pattern(char **files, char *pattern, t_size start)
 	idx = 0;
 	while (files[idx])
 	{
-		if (ft_strncmp(files[idx] + ft_strlen(files[idx]) - start, pattern, ft_strlen(pattern)) == 0)
+		if (ft_strnstr(files[idx] + start, pattern, ft_strlen(pattern)))
 		{
 			size = append_str(&result, ft_strdup(files[idx]), size);
 			if (!size)
 				return (0);
 		}
+		// if (ft_strncmp(files[idx] + ft_strlen(files[idx]) - start, pattern, ft_strlen(pattern)) == 0)
+		// {
+		// 	size = append_str(&result, ft_strdup(files[idx]), size);
+		// 	if (!size)
+		// 		return (0);
+		// }
 		idx++;
 	}
 	while(*files)

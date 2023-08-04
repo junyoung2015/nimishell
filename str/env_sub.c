@@ -4,6 +4,12 @@
 // TODO: 밑의 typedef 를 trim_quotes 에 있는 typedef 와 minishell.h에 합쳐 넣기
 typedef	char	*(*t_process_fn)(char **);
 
+int	is_alnum(int c)
+{
+	return (('0' <= c && c <= '9') || ('A' <= c && c <= 'Z')
+		|| ('a' <= c && c <= 'z'));
+}
+
 /**
  * @brief Check whether 'ch' is a valid character for an environment variable.
  * 
