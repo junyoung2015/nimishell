@@ -215,6 +215,7 @@ char			**env_substitution(t_node *node);
 char		    **remove_quotes(t_node *node);
 char			**wildcard_substitution(t_node *node);
 char			*trim_outer_quotes(char *cmd_arg);
+char			**str_expansion(t_node *node);
 
 /* ================== INIT ================== */
 void			print_logo(void);
