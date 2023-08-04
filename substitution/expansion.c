@@ -50,7 +50,8 @@ t_size arr_cat(char ***arr, char **new_arr, t_size size)
 		tmp[size] = new_arr[size - idx];
 		size++;
 	}
-	free(*arr);
+	if (*arr)
+		free(*arr);
     free(new_arr);
     *arr = tmp;
     return (new);
@@ -253,10 +254,10 @@ char	**find_matching_files(char **files, char **pattern)
 		// free files
 		idx++;
 	}
-	if (!result)
-	{
-		size = arr_cat(&result, files, size);
-	}
+	// if (!result)
+	// {
+	// 	size = arr_cat(&result, files, size);
+	// }
 	idx = 0;
 	while (pattern[idx])
 		free(pattern[idx++]);
