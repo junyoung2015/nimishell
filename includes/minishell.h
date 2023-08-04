@@ -211,10 +211,13 @@ t_size			ft_strlcpy(char *dst, const char *src, t_size dstsize);
 char			*ft_itoa(int n);
 char			*ft_strchr(const char *s, int c);
 
+
+typedef t_bool	(*t_cmp)(char);
 char			**env_substitution(t_node *node);
 char		    **remove_quotes(t_node *node);
 char			**wildcard_substitution(t_node *node);
 char			*trim_outer_quotes(char *cmd_arg);
+char	*		trim(char	**cmd_arg, t_cmp cmp);
 char			**str_expansion(t_node *node);
 
 /* ================== INIT ================== */
@@ -229,7 +232,6 @@ char			*ft_strjoin(char const *s1, char const *s2);
 
 /* ================== TOKENIZER ================== */
 typedef t_token *(*t_tokenizer_fn)(char **, t_token_state *);
-typedef t_bool	(*t_cmp)(char);
 
 void			print_tokens(t_token *tokens, t_size num_tokens);
 t_token			*free_tokens(t_token *tokens, t_size size);
