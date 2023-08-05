@@ -47,4 +47,3 @@ void	ft_qsort(void **arr, t_ssize l, t_ssize h, int (*cmp)(void *, void *))
 		ft_qsort(arr, pivot + 1, h, cmp);
 	}
 }
-

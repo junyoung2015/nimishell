@@ -76,11 +76,7 @@ void	tree_search(t_node *root, t_exec_info *info)
 	{
 		root->cmd_args = env_substitution(root);
 		root->cmd_args = str_expansion(root);
-		for (t_size i = 0; i < root->num_args; i++)
-			printf("[STR_EXP]cmd_args[%llu]: %s\n", i, root->cmd_args[i]);
 		root->cmd_args = remove_quotes(root);
-		for (t_size i = 0; i < root->num_args; i++)
-			printf("[QUOTE]cmd_args[%llu]: %s\n", i, root->cmd_args[i]);
 		if (root->cmd_args)
 			is_builtin_node(root);
 	}

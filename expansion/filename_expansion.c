@@ -14,9 +14,9 @@ t_bool	is_wildcard_expansion(char *cmd_arg)
 {
     char            *tmp;
 	t_bool			in_quotes;
-	in_quotes = 0;
-
+	
 	tmp = cmd_arg;
+	in_quotes = FALSE;
 	while (*tmp)
 	{
 		if (is_squote(*tmp))
@@ -59,8 +59,6 @@ t_size arr_cat(char ***arr, char **new_arr, t_size size)
 		tmp[size] = new_arr[size - idx];
 		size++;
 	}
-	if (*arr && **arr)	// TODO: Do I need to free this here?
-		free(*arr);
     free(new_arr);
     *arr = tmp;
     return (new);
@@ -234,6 +232,12 @@ char	**match_pattern_from(char **files, char *pattern, t_size start)
 	idx = 0;
 	while (files[idx])
 	{
+		// if (ft_strncmp(files[idx] + start, pattern, ft_strlen(pattern)) == 0)
+		// {
+		// 	size = append_str(&result, ft_strdup(files[idx]), size);
+		// 	if (!size)
+		// 		return (0);
+		// }
 		if (ft_strlen(files[idx]) > start)
 		{
 			if (ft_strnstr(files[idx] + start, pattern, ft_strlen(files[idx]) - start))
@@ -245,8 +249,10 @@ char	**match_pattern_from(char **files, char *pattern, t_size start)
 		}
 		idx++;
 	}
-	while(*files)
-		free(*files++);
+	idx = 0;
+	while(files[idx])
+		free(files[idx++]);
+	free(files);
 	return (result);
 }
 
@@ -264,7 +270,6 @@ char	**find_matching_files(char **files, char **pattern)
 	t_size	start;
 	char	**result;
 	char	**new;
-	// char	**tmp;
 
 	idx = 0;
 	result = 0;
@@ -273,34 +278,27 @@ char	**find_matching_files(char **files, char **pattern)
 	start = 0;
 	while (pattern[idx])
 	{
-		// If current pattern is wildcard, it means none of the files are filtered
-		if (is_wildcard_expansion(pattern[idx]))
+		// If current pattern is not wildcard, filter the files
+		if (!is_wildcard_expansion(pattern[idx]))
 		{
-			// new = match_pattern_from(files, "", start);
-			// size = arr_cat(&result, files, size);
-		}
-		// If not, filter the files with pattern[idx], from position 'start'
-		else
-		{
-			// tmp = new;
 			new = match_pattern_from(new, pattern[idx], start);
 			if (!new)
 				return (0);
 			start += ft_strlen(pattern[idx]);
-			// size = append_str(&result, ft_strdup(pattern[idx]), size);
 		}
-		// if (is_squote(*(pattern[idx])))
-		// 	trimmed = ft_substr(pattern[idx], 1, ft_strlen(pattern[idx]));
-		// free files
 		idx++;
 	}
-	if (idx && !is_wildcard(*(pattern[idx - 1])))
-	{
+	if (idx && !is_wildcard(*(pattern[idx - 1])))	// If last pattern is not wildcard, filter the files with last pattern
 		new = match_pattern_last(new, pattern[idx - 1], ft_strlen(pattern[idx - 1]));
+	else if (!result && !new)
+	{
+		idx = 0;
+		while (pattern[idx])
+			free(pattern[idx++]);
+		free(pattern);
+		return (0);
 	}
 	size = arr_cat(&result, new, size);
-	// if (!result)
-	// 	size = arr_cat(&result, files, size);
 	idx = 0;
 	while (pattern[idx])
 		free(pattern[idx++]);
@@ -318,22 +316,15 @@ char	**find_matching_files(char **files, char **pattern)
 char    **str_expansion(t_node *node)
 {
 	t_size	idx;
-	// t_size	size;
 	t_size	len;
 	char	**files;
 	char	**result;
-	char	**pattern;
 	char	**new;
 
 	idx = 0;
-	// size = 0;
 	len = 0;
-	pattern = 0;
 	if (!node || !node->cmd_args)
 		return (0);
-	pattern = (char **)ft_calloc(1, sizeof(char *));
-	if (!pattern)
-		return (node->cmd_args);
 	while (idx < node->num_args)
 	{
 		if (is_wildcard_expansion(node->cmd_args[idx]))
@@ -341,17 +332,12 @@ char    **str_expansion(t_node *node)
 			files = get_all_files();	// TODO: free files?
 			if (!files)
 				return (0);
-			ft_qsort((void **)files, 0, arr_len(files) - 1, cmp_ascii);
+			ft_qsort((void **)files, 0, arr_len(files) - 1, cmp_ascii);	// sort files in ascii order
 			new = wsplit(node->cmd_args[idx]);
 			if (!new)
 				return (0);
-			for (t_size i = 0; new[i]; i++)
-				printf("%s\n", new[i]);
-			// size = arr_cat(&pattern, new, size);
-			if (!pattern)
-				return (0);
 			files = find_matching_files(files, new);
-			if (files[0] && !files[0][0])
+			if (!files || (*files && !(*files)[0]))
 			{
 				new = (char **)ft_calloc(2, sizeof(char *));
 				if (!new)
@@ -371,8 +357,6 @@ char    **str_expansion(t_node *node)
 				return (0);
 			new[0] = ft_strdup(node->cmd_args[idx]);
 			len = arr_cat(&result, new, len);
-			if (!pattern)
-				return (0);
 		}
 		idx++;
 	}
