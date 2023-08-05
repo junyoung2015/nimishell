@@ -80,7 +80,7 @@ t_size append_str(char ***arr, char *str, t_size size)
     return (size + 1);
 }
 
-char	**get_all_files(void)
+char	**get_all_files(char *first_arg)
 {
 	DIR				*dir;
 	struct dirent	*entry;
@@ -97,11 +97,20 @@ char	**get_all_files(void)
 		entry = readdir(dir);
 		if (!entry)
 			break ;
-		else if (entry->d_name[0] != '.')
+		else
 		{
-			size = append_str(&result, ft_strdup(entry->d_name), size);
-			if (!size)
-				break ;
+			if (entry->d_name[0] != '.')
+			{
+				size = append_str(&result, ft_strdup(entry->d_name), size);
+				if (!size)
+					break ;
+			}
+			else if (first_arg && *first_arg == '.')
+			{
+				size = append_str(&result, ft_strdup(entry->d_name), size);
+				if (!size)
+					break ;
+			}
 		}
 	}
 	closedir(dir);
@@ -221,7 +230,7 @@ char	**match_pattern_last(char **files, char *pattern, t_size last)
 	return (result);
 }
 
-char	**match_pattern_from(char **files, char *pattern, t_size start)
+char	**match_pattern_middle(char **files, char *pattern, t_size start)
 {
 	char	**result;
 	t_size	size;
@@ -246,6 +255,32 @@ char	**match_pattern_from(char **files, char *pattern, t_size start)
 				if (!size)
 					return (0);
 			}
+		}
+		idx++;
+	}
+	idx = 0;
+	while(files[idx])
+		free(files[idx++]);
+	free(files);
+	return (result);
+}
+
+char	**match_pattern_first(char **files, char *pattern, t_size start)
+{
+	char	**result;
+	t_size	size;
+	t_size	idx;
+
+	size = 0;
+	result = 0;
+	idx = 0;
+	while (files[idx])
+	{
+		if (ft_strncmp(files[idx] + start, pattern, ft_strlen(pattern)) == 0)
+		{
+			size = append_str(&result, ft_strdup(files[idx]), size);
+			if (!size)
+				return (0);
 		}
 		idx++;
 	}
@@ -281,7 +316,10 @@ char	**find_matching_files(char **files, char **pattern)
 		// If current pattern is not wildcard, filter the files
 		if (!is_wildcard_expansion(pattern[idx]))
 		{
-			new = match_pattern_from(new, pattern[idx], start);
+			if (idx == 0)
+				new = match_pattern_first(new, pattern[idx], start);
+			else
+				new = match_pattern_middle(new, pattern[idx], start);
 			if (!new)
 				return (0);
 			start += ft_strlen(pattern[idx]);
@@ -329,7 +367,10 @@ char    **str_expansion(t_node *node)
 	{
 		if (is_wildcard_expansion(node->cmd_args[idx]))
 		{
-			files = get_all_files();	// TODO: free files?
+			if (node->cmd_args[idx][0] == '.')
+				files = get_all_files(node->cmd_args[idx]);
+			else
+				files = get_all_files(0);	// TODO: free files?
 			if (!files)
 				return (0);
 			ft_qsort((void **)files, 0, arr_len(files) - 1, cmp_ascii);	// sort files in ascii order

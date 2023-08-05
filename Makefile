@@ -34,8 +34,8 @@ SRCS = ./minishell.c						\
 		$(STR_DIR)str_utils.c				\
 		$(STR_DIR)str_split.c				\
 		$(STR_DIR)str_utils_create.c		\
-		$(STR_DIR)trim_quotes.c				\
 		$(STR_DIR)wildcard_sub.c			\
+		$(EXPANSION)quote_removal.c			\
 		$(EXPANSION)filename_expansion.c	\
 		$(EXPANSION)ft_qsort.c				\
 		$(EXECUTOR_DIR)path.c				\
