@@ -212,6 +212,9 @@ char			*ft_itoa(int n);
 char			*ft_strchr(const char *s, int c);
 
 
+int				cmp_ascii(const void *a, const void *b);
+void			ft_qsort(void **arr, t_ssize low, t_ssize high, int (*cmp)(const void *, const void *));
+
 typedef t_bool	(*t_cmp)(char);
 char			**env_substitution(t_node *node);
 char		    **remove_quotes(t_node *node);

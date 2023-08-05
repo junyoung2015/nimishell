@@ -28,6 +28,15 @@ t_bool	is_wildcard_expansion(char *cmd_arg)
     return (FALSE);
 }
 
+t_size	arr_len(char **arr)
+{
+	t_size	len;
+
+	len = 0;
+	while (arr && arr[len])
+		len++;
+	return (len);
+}
 
 t_size arr_cat(char ***arr, char **new_arr, t_size size)
 {
@@ -50,8 +59,8 @@ t_size arr_cat(char ***arr, char **new_arr, t_size size)
 		tmp[size] = new_arr[size - idx];
 		size++;
 	}
-	// if (*arr && **arr)	// Do I need to free this here?
-	// 	free(*arr);
+	if (*arr && **arr)	// TODO: Do I need to free this here?
+		free(*arr);
     free(new_arr);
     *arr = tmp;
     return (new);
@@ -85,19 +94,17 @@ char	**get_all_files(void)
 	dir = opendir(".");
 	if (!dir)
 		return (0);
-	entry = readdir(dir);
-	while (entry)
+	while (TRUE)
 	{
-		if (entry->d_name[0] != '.')
+		entry = readdir(dir);
+		if (!entry)
+			break ;
+		else if (entry->d_name[0] != '.')
 		{
 			size = append_str(&result, ft_strdup(entry->d_name), size);
 			if (!size)
-			{
-				closedir(dir);
-				return (0);
-			}
+				break ;
 		}
-		entry = readdir(dir);
 	}
 	closedir(dir);
 	if (!result && !size)
@@ -236,12 +243,6 @@ char	**match_pattern_from(char **files, char *pattern, t_size start)
 					return (0);
 			}
 		}
-		// if (ft_strncmp(files[idx] + ft_strlen(files[idx]) - start, pattern, ft_strlen(pattern)) == 0)
-		// {
-		// 	size = append_str(&result, ft_strdup(files[idx]), size);
-		// 	if (!size)
-		// 		return (0);
-		// }
 		idx++;
 	}
 	while(*files)
@@ -340,6 +341,7 @@ char    **str_expansion(t_node *node)
 			files = get_all_files();	// TODO: free files?
 			if (!files)
 				return (0);
+			ft_qsort((void **)files, 0, arr_len(files) - 1, cmp_ascii);
 			new = wsplit(node->cmd_args[idx]);
 			if (!new)
 				return (0);
