@@ -28,7 +28,7 @@ t_bool	is_wildcard_expansion(char *cmd_arg)
     return (FALSE);
 }
 
-t_size	arr_len(char **arr)
+t_size	ft_arrlen(char **arr)
 {
 	t_size	len;
 
@@ -38,7 +38,7 @@ t_size	arr_len(char **arr)
 	return (len);
 }
 
-t_size arr_cat(char ***arr, char **new_arr, t_size size)
+t_size ft_arrcat(char ***arr, char **new_arr, t_size size)
 {
     t_size	new;
 	t_size	idx;
@@ -64,7 +64,7 @@ t_size arr_cat(char ***arr, char **new_arr, t_size size)
     return (new);
 }
 
-t_size append_str(char ***arr, char *str, t_size size)
+t_size ft_arr_append(char ***arr, char *str, t_size size)
 {
 	if (!str)
 		return (size);
@@ -97,25 +97,22 @@ char	**get_all_files(char *first_arg)
 		entry = readdir(dir);
 		if (!entry)
 			break ;
-		else
+		else if (entry->d_name[0] != '.')
 		{
-			if (entry->d_name[0] != '.')
-			{
-				size = append_str(&result, ft_strdup(entry->d_name), size);
-				if (!size)
-					break ;
-			}
-			else if (first_arg && *first_arg == '.')
-			{
-				size = append_str(&result, ft_strdup(entry->d_name), size);
-				if (!size)
-					break ;
-			}
+			size = ft_arr_append(&result, ft_strdup(entry->d_name), size);
+			if (!size)
+				break ;
+		}
+		else if (first_arg && *first_arg == '.')
+		{
+			size = ft_arr_append(&result, ft_strdup(entry->d_name), size);
+			if (!size)
+				break ;
 		}
 	}
 	closedir(dir);
 	if (!result && !size)
-		size = append_str(&result, ft_strdup(""), size);
+		size = ft_arr_append(&result, ft_strdup(""), size);
 	return (result);
 }
 
@@ -143,7 +140,7 @@ char	**wsplit(char *cmd_arg)
 			if (is_wildcard(*start))
 			{
 				end = start;
-				size = append_str(&result, ft_strdup("*"), size);
+				size = ft_arr_append(&result, ft_strdup("*"), size);
 			}
 			else if (is_squote(*start))
 			{
@@ -158,7 +155,7 @@ char	**wsplit(char *cmd_arg)
 				free(tmp);
 				if (!trimmed)
 					return (0);
-				size = append_str(&result, trimmed, size);
+				size = ft_arr_append(&result, trimmed, size);
 				if (!size)
 					return (0);
 			}
@@ -179,7 +176,7 @@ char	**wsplit(char *cmd_arg)
 				free(trimmed);
 				while (splited[idx])
 				{
-					size = append_str(&result, splited[idx], size);
+					size = ft_arr_append(&result, splited[idx], size);
 					if (!size)
 						return (0);
 					idx++;
@@ -194,7 +191,7 @@ char	**wsplit(char *cmd_arg)
 			end = start + 1;
 			while (*end && !is_wsplit(*end))
 				end++;
-			size = append_str(&result, ft_substr(start, 0, end - start), size);
+			size = ft_arr_append(&result, ft_substr(start, 0, end - start), size);
 			if (!size)
 				return (0);
 		}
@@ -218,7 +215,7 @@ char	**match_pattern_last(char **files, char *pattern, t_size last)
 		{
 			if (ft_strnstr(files[idx] + ft_strlen(files[idx]) - last, pattern, last))
 			{
-				size = append_str(&result, ft_strdup(files[idx]), size);
+				size = ft_arr_append(&result, ft_strdup(files[idx]), size);
 				if (!size)
 					return (0);
 			}
@@ -241,17 +238,11 @@ char	**match_pattern_middle(char **files, char *pattern, t_size start)
 	idx = 0;
 	while (files[idx])
 	{
-		// if (ft_strncmp(files[idx] + start, pattern, ft_strlen(pattern)) == 0)
-		// {
-		// 	size = append_str(&result, ft_strdup(files[idx]), size);
-		// 	if (!size)
-		// 		return (0);
-		// }
 		if (ft_strlen(files[idx]) > start)
 		{
 			if (ft_strnstr(files[idx] + start, pattern, ft_strlen(files[idx]) - start))
 			{
-				size = append_str(&result, ft_strdup(files[idx]), size);
+				size = ft_arr_append(&result, ft_strdup(files[idx]), size);
 				if (!size)
 					return (0);
 			}
@@ -278,7 +269,7 @@ char	**match_pattern_first(char **files, char *pattern, t_size start)
 	{
 		if (ft_strncmp(files[idx] + start, pattern, ft_strlen(pattern)) == 0)
 		{
-			size = append_str(&result, ft_strdup(files[idx]), size);
+			size = ft_arr_append(&result, ft_strdup(files[idx]), size);
 			if (!size)
 				return (0);
 		}
@@ -336,7 +327,7 @@ char	**find_matching_files(char **files, char **pattern)
 		free(pattern);
 		return (0);
 	}
-	size = arr_cat(&result, new, size);
+	size = ft_arrcat(&result, new, size);
 	idx = 0;
 	while (pattern[idx])
 		free(pattern[idx++]);
@@ -373,7 +364,7 @@ char    **str_expansion(t_node *node)
 				files = get_all_files(0);	// TODO: free files?
 			if (!files)
 				return (0);
-			ft_qsort((void **)files, 0, arr_len(files) - 1, cmp_ascii);	// sort files in ascii order
+			ft_qsort((void **)files, 0, ft_arrlen(files) - 1, cmp_ascii);	// sort files in ascii order
 			new = wsplit(node->cmd_args[idx]);
 			if (!new)
 				return (0);
@@ -384,10 +375,10 @@ char    **str_expansion(t_node *node)
 				if (!new)
 					return (0);
 				new[0] = ft_strdup(node->cmd_args[idx]);
-				len = arr_cat(&result, new, len);
+				len = ft_arrcat(&result, new, len);
 			}
 			else
-				len = arr_cat(&result, files, len);
+				len = ft_arrcat(&result, files, len);
 			if (!result)
 				return (0);
 		}
@@ -397,12 +388,12 @@ char    **str_expansion(t_node *node)
 			if (!new)
 				return (0);
 			new[0] = ft_strdup(node->cmd_args[idx]);
-			len = arr_cat(&result, new, len);
+			len = ft_arrcat(&result, new, len);
 		}
 		idx++;
 	}
 	node->num_args = len;
 	// TODO: free node->cmd_args later?
-	// size = arr_cat(&result, files, size);
+	// size = ft_arrcat(&result, files, size);
 	return (result);
 }
