@@ -209,12 +209,6 @@ char	**match_pattern_last(char **files, char *pattern, t_size last)
 					return (0);
 			}
 		}
-		// if (ft_strncmp(files[idx] + ft_strlen(files[idx]) - last, pattern, ft_strlen(pattern)) == 0)
-		// {
-		// 	size = append_str(&result, ft_strdup(files[idx]), size);
-		// 	if (!size)
-		// 		return (0);
-		// }
 		idx++;
 	}
 	while(*files)
@@ -304,8 +298,8 @@ char	**find_matching_files(char **files, char **pattern)
 		new = match_pattern_last(new, pattern[idx - 1], ft_strlen(pattern[idx - 1]));
 	}
 	size = arr_cat(&result, new, size);
-	if (!result)
-		size = arr_cat(&result, files, size);
+	// if (!result)
+	// 	size = arr_cat(&result, files, size);
 	idx = 0;
 	while (pattern[idx])
 		free(pattern[idx++]);
@@ -355,7 +349,16 @@ char    **str_expansion(t_node *node)
 			if (!pattern)
 				return (0);
 			files = find_matching_files(files, new);
-			len = arr_cat(&result, files, len);
+			if (files[0] && !files[0][0])
+			{
+				new = (char **)ft_calloc(2, sizeof(char *));
+				if (!new)
+					return (0);
+				new[0] = ft_strdup(node->cmd_args[idx]);
+				len = arr_cat(&result, new, len);
+			}
+			else
+				len = arr_cat(&result, files, len);
 			if (!result)
 				return (0);
 		}
@@ -371,7 +374,12 @@ char    **str_expansion(t_node *node)
 		}
 		idx++;
 	}
+	for (t_size i = 0; result && result[i] && i < len; i++)
+	{
+		printf("result: [%llu][%s]\n", i, result[i]);
+	}
 	node->num_args = len;
+	// TODO: free node->cmd_args later?
 	// size = arr_cat(&result, files, size);
 	return (result);
 }
