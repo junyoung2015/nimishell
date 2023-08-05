@@ -374,10 +374,6 @@ char    **str_expansion(t_node *node)
 		}
 		idx++;
 	}
-	for (t_size i = 0; result && result[i] && i < len; i++)
-	{
-		printf("result: [%llu][%s]\n", i, result[i]);
-	}
 	node->num_args = len;
 	// TODO: free node->cmd_args later?
 	// size = arr_cat(&result, files, size);
