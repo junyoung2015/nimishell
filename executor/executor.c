@@ -75,8 +75,6 @@ void	tree_search(t_node *root, t_exec_info *info)
 	if (root->cmd_args && root->type != AST_HEREDOC)
 	{
 		root->cmd_args = env_substitution(root);
-		for (t_size i = 0; i < root->num_args; i++)
-			printf("[ENV]cmd_args[%llu]: %s\n", i, root->cmd_args[i]);
 		root->cmd_args = str_expansion(root);
 		for (t_size i = 0; i < root->num_args; i++)
 			printf("[STR_EXP]cmd_args[%llu]: %s\n", i, root->cmd_args[i]);
