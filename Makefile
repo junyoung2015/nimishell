@@ -20,7 +20,7 @@ LEXER_DIR = ./lexer/
 MEMORY_DIR = ./memory/
 PARSER_DIR = ./parser/
 STR_DIR = ./str/
-SUBSTITUTION = ./substitution/
+EXPANSION = ./expansion/
 
 # -------------- SRCS  -------------- #
 SRCS = ./minishell.c						\
@@ -36,8 +36,8 @@ SRCS = ./minishell.c						\
 		$(STR_DIR)str_utils_create.c		\
 		$(STR_DIR)trim_quotes.c				\
 		$(STR_DIR)wildcard_sub.c			\
-		$(SUBSTITUTION)expansion.c			\
-		$(SUBSTITUTION)ft_qsort.c			\
+		$(EXPANSION)filename_expansion.c	\
+		$(EXPANSION)ft_qsort.c				\
 		$(EXECUTOR_DIR)path.c				\
 		$(EXECUTOR_DIR)command.c			\
 		$(EXECUTOR_DIR)error.c				\
