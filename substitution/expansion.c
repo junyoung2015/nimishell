@@ -50,8 +50,8 @@ t_size arr_cat(char ***arr, char **new_arr, t_size size)
 		tmp[size] = new_arr[size - idx];
 		size++;
 	}
-	if (*arr)
-		free(*arr);
+	// if (*arr && **arr)	// Do I need to free this here?
+	// 	free(*arr);
     free(new_arr);
     *arr = tmp;
     return (new);
@@ -100,6 +100,8 @@ char	**get_all_files(void)
 		entry = readdir(dir);
 	}
 	closedir(dir);
+	if (!result && !size)
+		size = append_str(&result, ft_strdup(""), size);
 	return (result);
 }
 
@@ -187,7 +189,7 @@ char	**wsplit(char *cmd_arg)
 	return (result);
 }
 
-char	**match_pattern(char **files, char *pattern, t_size start)
+char	**match_pattern_last(char **files, char *pattern, t_size last)
 {
 	char	**result;
 	t_size	size;
@@ -198,11 +200,47 @@ char	**match_pattern(char **files, char *pattern, t_size start)
 	idx = 0;
 	while (files[idx])
 	{
-		if (ft_strnstr(files[idx] + start, pattern, ft_strlen(pattern)))
+		if (ft_strlen(files[idx]) >= last)
 		{
-			size = append_str(&result, ft_strdup(files[idx]), size);
-			if (!size)
-				return (0);
+			if (ft_strnstr(files[idx] + ft_strlen(files[idx]) - last, pattern, last))
+			{
+				size = append_str(&result, ft_strdup(files[idx]), size);
+				if (!size)
+					return (0);
+			}
+		}
+		// if (ft_strncmp(files[idx] + ft_strlen(files[idx]) - last, pattern, ft_strlen(pattern)) == 0)
+		// {
+		// 	size = append_str(&result, ft_strdup(files[idx]), size);
+		// 	if (!size)
+		// 		return (0);
+		// }
+		idx++;
+	}
+	while(*files)
+		free(*files++);
+	return (result);
+}
+
+char	**match_pattern_from(char **files, char *pattern, t_size start)
+{
+	char	**result;
+	t_size	size;
+	t_size	idx;
+
+	size = 0;
+	result = 0;
+	idx = 0;
+	while (files[idx])
+	{
+		if (ft_strlen(files[idx]) > start)
+		{
+			if (ft_strnstr(files[idx] + start, pattern, ft_strlen(files[idx]) - start))
+			{
+				size = append_str(&result, ft_strdup(files[idx]), size);
+				if (!size)
+					return (0);
+			}
 		}
 		// if (ft_strncmp(files[idx] + ft_strlen(files[idx]) - start, pattern, ft_strlen(pattern)) == 0)
 		// {
@@ -240,19 +278,20 @@ char	**find_matching_files(char **files, char **pattern)
 	start = 0;
 	while (pattern[idx])
 	{
+		// If current pattern is wildcard, it means none of the files are filtered
 		if (is_wildcard_expansion(pattern[idx]))
 		{
-			// new = match_pattern(files, "", start);
+			// new = match_pattern_from(files, "", start);
 			// size = arr_cat(&result, files, size);
 		}
+		// If not, filter the files with pattern[idx], from position 'start'
 		else
 		{
-			start += ft_strlen(pattern[idx]);
 			// tmp = new;
-			new = match_pattern(new, pattern[idx], start);
+			new = match_pattern_from(new, pattern[idx], start);
 			if (!new)
 				return (0);
-			size = arr_cat(&result, new, size);
+			start += ft_strlen(pattern[idx]);
 			// size = append_str(&result, ft_strdup(pattern[idx]), size);
 		}
 		// if (is_squote(*(pattern[idx])))
@@ -260,10 +299,13 @@ char	**find_matching_files(char **files, char **pattern)
 		// free files
 		idx++;
 	}
-	// if (!result)
-	// {
-	// 	size = arr_cat(&result, files, size);
-	// }
+	if (idx && !is_wildcard(*(pattern[idx - 1])))
+	{
+		new = match_pattern_last(new, pattern[idx - 1], ft_strlen(pattern[idx - 1]));
+	}
+	size = arr_cat(&result, new, size);
+	if (!result)
+		size = arr_cat(&result, files, size);
 	idx = 0;
 	while (pattern[idx])
 		free(pattern[idx++]);
@@ -281,7 +323,7 @@ char	**find_matching_files(char **files, char **pattern)
 char    **str_expansion(t_node *node)
 {
 	t_size	idx;
-	t_size	size;
+	// t_size	size;
 	t_size	len;
 	char	**files;
 	char	**result;
@@ -289,7 +331,7 @@ char    **str_expansion(t_node *node)
 	char	**new;
 
 	idx = 0;
-	size = 0;
+	// size = 0;
 	len = 0;
 	pattern = 0;
 	if (!node || !node->cmd_args)
@@ -309,10 +351,10 @@ char    **str_expansion(t_node *node)
 				return (0);
 			for (t_size i = 0; new[i]; i++)
 				printf("%s\n", new[i]);
-			size = arr_cat(&pattern, new, size);
+			// size = arr_cat(&pattern, new, size);
 			if (!pattern)
 				return (0);
-			files = find_matching_files(files, pattern);
+			files = find_matching_files(files, new);
 			len = arr_cat(&result, files, len);
 			if (!result)
 				return (0);
