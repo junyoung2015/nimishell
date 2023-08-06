@@ -160,7 +160,7 @@ t_size	handle_normal(char ***result, char **start, char **end, t_size size)
 	return (size);
 }
 
-char	**wsplit(char *cmd_arg)
+char	**split_pattern(char *cmd_arg)
 {
 	char	*start;
 	char	*end;
@@ -322,7 +322,15 @@ char	**find_matching_files(t_search *info, char **pattern)
 		idx++;
 	}
 	if (idx && !(is_wildcard(*(pattern[idx - 1])) && ft_strlen(pattern[idx - 1]) == 1))	// If last pattern is not wildcard, filter the files with last pattern
-		size = match_pattern_last(info, pattern[idx - 1], ft_strlen(pattern[idx - 1]));
+	{
+		trimmed = pattern[idx - 1];
+		if (is_quote(*(pattern[idx - 1])))
+		{
+			tmp = pattern[idx - 1];
+			trimmed = trim(&tmp, cmp);
+		}
+		size = match_pattern_last(info, trimmed, ft_strlen(trimmed));
+	}
 	ft_arrfree(pattern);
 	if (!info->files)
 		return (0);
@@ -360,7 +368,7 @@ char    **str_expansion(t_node *node)
 			if (!info)
 				return (0);
 			ft_qsort((void **)info->files, 0, ft_arrlen(info->files) - 1, cmp_ascii);	// sort files in ascii order
-			new = wsplit(node->cmd_args[idx]);
+			new = split_pattern(node->cmd_args[idx]);
 			if (!new)
 				return (0);
 			info->files = find_matching_files(info, new);
