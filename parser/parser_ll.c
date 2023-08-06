@@ -349,7 +349,10 @@ void update_p_state(char **table, t_parser *parser, t_parse_state *parse_state)
 	}
 	cur = parser->tokens[parser->cur];
 	peek = parser->peek(parser);
-	*parse_state = table[cur.type][peek];
+	if (cur.type > TOKEN_R_PAREN)
+		*parse_state = ERR;
+	else
+		*parse_state = table[cur.type][peek];
 }
 
 /**
@@ -669,7 +672,6 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 	if (parser->is_redir(parser))
 	{
 		type = parser->cur_type(parser);
-		parser->advance(parser);
 		if (parser->check(parser, TOKEN_HEREDOC))
 		{
 			redir_node = create_node(AST_HEREDOC);
@@ -678,7 +680,8 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 			{
 				free(redir_node);
 				return (0);
-			}
+			}		
+			parser->advance(parser);
 			if (parser->is_word(parser))
 				redir_node->cmd_args[(redir_node->num_args)++] = parse_word(parser);
 			else
@@ -691,6 +694,7 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 		}
 		else
 		{
+			parser->advance(parser);
 			if (parser->is_word(parser))
 				redir_node = parse_word_list(parser, parent);
 			else
@@ -908,6 +912,81 @@ t_node *parse_list(t_parser *parser, t_node *parent)
 	}
 	return (pipeline_node);
 }
+// t_node *parse_list_tail(t_parser *parser, t_node *parent)
+// {
+// 	t_node			*logic_node;
+// 	t_node			*pipeline_node;
+// 	t_node			*list_tail_node;
+// 	(void)			parent;
+
+// 	logic_node = 0;
+// 	if (parser->check(parser, TOKEN_AND) || parser->check(parser, TOKEN_OR))
+// 	{
+// 		parser->advance(parser);
+// 		pipeline_node = parse_pipeline(parser, parent);
+// 		if (!pipeline_node)
+// 		{
+// 			// free and handle err here?
+// 			return (0);
+// 		}
+// 		// logic_node->right = pipeline_node;
+// 		// logic_node->left = parent;
+// 		if (pipeline_node->type == AST_ERR)
+// 			return (pipeline_node);
+// 		// logic_node->right = pipeline_node;
+// 		// append_child_node(logic_node, pipeline_node);
+// 		if (parser->check(parser, TOKEN_OR))
+// 		{
+// 			list_tail_node = parse_list_tail(parser, pipeline_node);
+// 			if (!list_tail_node) // err?
+// 				return (0);
+// 			append_child_node(pipeline_node, list_tail_node);
+// 		}
+// 		else if (parser->check(parser, TOKEN_AND))
+// 		{
+// 			list_tail_node = parse_list_tail(parser, pipeline_node);
+// 			if (!list_tail_node) // err?
+// 				return (0);
+// 			list_tail_node->left = logic_node;
+// 			// append_child_node(list_tail_node, logic_node);
+// 			return (list_tail_node);
+// 		}
+// 	}
+// 	return (logic_node);
+// }
+
+// /**
+//  * @brief Parse function for <LIST>, calling <PIPELINE> and <LIST-TAIL>
+//  *
+//  * @param parser	parser struct
+//  * @return t_node*	root node of <LIST>
+//  */
+// t_node *parse_list(t_parser *parser, t_node *parent)
+// {
+// 	t_node		*pipeline_node;
+// 	t_node		*list_tail_node;
+// 	t_node		*logic_node;
+// 	t_node_type	state;
+
+// 	pipeline_node = parse_pipeline(parser, parent);
+// 	if (!pipeline_node) // err?
+// 		return (0);
+// 	if (parser->check(parser, TOKEN_AND) || parser->check(parser, TOKEN_OR))
+// 	{
+// 		state = AST_AND;
+// 		if (parser->check(parser, TOKEN_OR))
+// 			state = AST_OR;
+// 		logic_node = create_node(state);
+// 		append_child_node(logic_node, pipeline_node);
+// 		list_tail_node = parse_list_tail(parser, logic_node);
+// 		if (!list_tail_node) // err?
+// 			return (0);
+// 		// append_child_node(list_tail_node, pipeline_node);
+// 		// list_tail_node->left = pipeline_node;
+// 		return (list_tail_node);
+// 	}
+// 	return (pipeline_node);
+// }
 
 /**
  * @brief Parse function for <SUBSHELL>, calling <LIST>
