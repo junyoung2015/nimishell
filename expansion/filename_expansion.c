@@ -28,6 +28,16 @@ t_bool	is_wildcard_expansion(char *cmd_arg)
     return (FALSE);
 }
 
+void	ft_arrfree(char **arr)
+{
+	t_size	idx;
+
+	idx = 0;
+	while (arr && arr[idx])
+		free(arr[idx++]);
+	free(arr);
+}
+
 t_size	ft_arrlen(char **arr)
 {
 	t_size	len;
@@ -80,12 +90,13 @@ t_size ft_arr_append(char ***arr, char *str, t_size size)
     return (size + 1);
 }
 
-char	**get_all_files(char *first_arg)
+t_search	*get_all_files(char *first_arg)
 {
 	DIR				*dir;
 	struct dirent	*entry;
 	char			**result;
 	t_size			size;
+	t_search		*info;
 
 	size = 0;
 	result = 0;
@@ -113,7 +124,10 @@ char	**get_all_files(char *first_arg)
 	closedir(dir);
 	if (!result && !size)
 		size = ft_arr_append(&result, ft_strdup(""), size);
-	return (result);
+	info = create_search_info(result, size);
+	if (!info)
+		ft_arrfree(result);
+	return (info);
 }
 
 char	**wsplit(char *cmd_arg)
@@ -200,7 +214,7 @@ char	**wsplit(char *cmd_arg)
 	return (result);
 }
 
-char	**match_pattern_last(char **files, char *pattern, t_size last)
+char	**match_pattern_last(t_search *info, char *pattern, t_size last)
 {
 	char	**result;
 	t_size	size;
@@ -209,40 +223,43 @@ char	**match_pattern_last(char **files, char *pattern, t_size last)
 	size = 0;
 	result = 0;
 	idx = 0;
-	while (files[idx])
+	while (info->files[idx])
 	{
-		if (ft_strlen(files[idx]) >= last)
+		if (ft_strlen(info->files[idx]) >= last)
 		{
-			if (ft_strnstr(files[idx] + ft_strlen(files[idx]) - last, pattern, last))
+			if (ft_strnstr(info->files[idx] + ft_strlen(info->files[idx]) - last, pattern, last))
 			{
-				size = ft_arr_append(&result, ft_strdup(files[idx]), size);
+				size = ft_arr_append(&result, ft_strdup(info->files[idx]), size);
 				if (!size)
 					return (0);
 			}
 		}
 		idx++;
 	}
-	while(*files)
-		free(*files++);
+	ft_arrfree(info->files);
+	info->files = result;
 	return (result);
 }
 
-char	**match_pattern_middle(char **files, char *pattern, t_size start)
+char	**match_pattern_middle(t_search *info, char *pattern)
 {
 	char	**result;
+	t_size	*prev_pos;
+	// t_size	pos_len;
 	t_size	size;
 	t_size	idx;
 
 	size = 0;
 	result = 0;
 	idx = 0;
-	while (files[idx])
+	while (info->files[idx])
 	{
-		if (ft_strlen(files[idx]) > start)
+		if (ft_strlen(info->files[idx]) > info->prev_pos[idx])
 		{
-			if (ft_strnstr(files[idx] + start, pattern, ft_strlen(files[idx]) - start))
+			if (ft_strnstr((info->files[idx] + info->prev_pos[idx]), pattern, ft_strlen(info->files[idx]) - info->prev_pos[idx]))
 			{
-				size = ft_arr_append(&result, ft_strdup(files[idx]), size);
+				info->prev_pos[idx] = ft_strnstr(info->files[idx] + info->prev_pos[idx], pattern, ft_strlen(info->files[idx]) - info->prev_pos[idx]) - info->files[idx] + 1;
+				size = ft_arr_append(&result, ft_strdup(info->files[idx]), size);
 				if (!size)
 					return (0);
 			}
@@ -250,13 +267,22 @@ char	**match_pattern_middle(char **files, char *pattern, t_size start)
 		idx++;
 	}
 	idx = 0;
-	while(files[idx])
-		free(files[idx++]);
-	free(files);
+	prev_pos = ft_calloc(sizeof(t_size), size);
+	if (!prev_pos)
+		return (0);
+	while (idx < size)
+	{
+		prev_pos[idx] = ft_strnstr(result[idx], pattern, ft_strlen(result[idx])) - result[idx] + 1;
+		idx++;
+	}
+	ft_arrfree(info->files);
+	free(info->prev_pos);
+	info->files = result;
+	info->prev_pos = prev_pos;
 	return (result);
 }
 
-char	**match_pattern_first(char **files, char *pattern, t_size start)
+char	**match_pattern_first(t_search *info, char *pattern)
 {
 	char	**result;
 	t_size	size;
@@ -265,20 +291,20 @@ char	**match_pattern_first(char **files, char *pattern, t_size start)
 	size = 0;
 	result = 0;
 	idx = 0;
-	while (files[idx])
+	while (info->files[idx])
 	{
-		if (ft_strncmp(files[idx] + start, pattern, ft_strlen(pattern)) == 0)
+		if (ft_strncmp(info->files[idx], pattern, ft_strlen(pattern)) == 0)
 		{
-			size = ft_arr_append(&result, ft_strdup(files[idx]), size);
+			info->prev_pos[idx] = ft_strnstr(info->files[idx], pattern, ft_strlen(info->files[idx])) - info->files[idx] + 1;
+			size = ft_arr_append(&result, ft_strdup(info->files[idx]), size);
 			if (!size)
 				return (0);
 		}
 		idx++;
 	}
 	idx = 0;
-	while(files[idx])
-		free(files[idx++]);
-	free(files);
+	ft_arrfree(info->files);
+	info->files = result;
 	return (result);
 }
 
@@ -289,49 +315,38 @@ char	**match_pattern_first(char **files, char *pattern, t_size start)
  * @param pattern	Pattern of the files to search for
  * @return char**	List of files that match the pattern
  */
-char	**find_matching_files(char **files, char **pattern)
+char	**find_matching_files(t_search *info, char **pattern)
 {
 	t_size	idx;
 	t_size	size;
-	t_size	start;
 	char	**result;
-	char	**new;
 
 	idx = 0;
 	result = 0;
-	new = files;
 	size = 0;
-	start = 0;
 	while (pattern[idx])
 	{
 		// If current pattern is not wildcard, filter the files
 		if (!is_wildcard_expansion(pattern[idx]))
 		{
 			if (idx == 0)
-				new = match_pattern_first(new, pattern[idx], start);
+				info->files = match_pattern_first(info, pattern[idx]);
 			else
-				new = match_pattern_middle(new, pattern[idx], start);
-			if (!new)
+				info->files = match_pattern_middle(info, pattern[idx]);
+			if (!info->files)
 				return (0);
-			start += ft_strlen(pattern[idx]);
 		}
 		idx++;
 	}
 	if (idx && !is_wildcard(*(pattern[idx - 1])))	// If last pattern is not wildcard, filter the files with last pattern
-		new = match_pattern_last(new, pattern[idx - 1], ft_strlen(pattern[idx - 1]));
-	else if (!result && !new)
+		info->files = match_pattern_last(info, pattern[idx - 1], ft_strlen(pattern[idx - 1]));
+	else if (!result && !info->files)
 	{
-		idx = 0;
-		while (pattern[idx])
-			free(pattern[idx++]);
-		free(pattern);
+		ft_arrfree(pattern);
 		return (0);
 	}
-	size = ft_arrcat(&result, new, size);
-	idx = 0;
-	while (pattern[idx])
-		free(pattern[idx++]);
-	free(pattern);
+	size = ft_arrcat(&result, info->files, size);
+	ft_arrfree(pattern);
 	return (result);
 }
 
@@ -344,11 +359,11 @@ char	**find_matching_files(char **files, char **pattern)
  */
 char    **str_expansion(t_node *node)
 {
-	t_size	idx;
-	t_size	len;
-	char	**files;
-	char	**result;
-	char	**new;
+	t_size		idx;
+	t_size		len;
+	t_search	*info;
+	char		**result;
+	char		**new;
 
 	idx = 0;
 	len = 0;
@@ -359,17 +374,17 @@ char    **str_expansion(t_node *node)
 		if (is_wildcard_expansion(node->cmd_args[idx]))
 		{
 			if (node->cmd_args[idx][0] == '.')
-				files = get_all_files(node->cmd_args[idx]);
+				info = get_all_files(node->cmd_args[idx]);
 			else
-				files = get_all_files(0);	// TODO: free files?
-			if (!files)
+				info = get_all_files(0);	// TODO: free files?
+			if (!info)
 				return (0);
-			ft_qsort((void **)files, 0, ft_arrlen(files) - 1, cmp_ascii);	// sort files in ascii order
+			ft_qsort((void **)info->files, 0, ft_arrlen(info->files) - 1, cmp_ascii);	// sort files in ascii order
 			new = wsplit(node->cmd_args[idx]);
 			if (!new)
 				return (0);
-			files = find_matching_files(files, new);
-			if (!files || (*files && !(*files)[0]))
+			info->files = find_matching_files(info, new);
+			if (!info->files || (*(info->files) && !(*(info->files))[0]))
 			{
 				new = (char **)ft_calloc(2, sizeof(char *));
 				if (!new)
@@ -378,7 +393,7 @@ char    **str_expansion(t_node *node)
 				len = ft_arrcat(&result, new, len);
 			}
 			else
-				len = ft_arrcat(&result, files, len);
+				len = ft_arrcat(&result, info->files, len);
 			if (!result)
 				return (0);
 		}

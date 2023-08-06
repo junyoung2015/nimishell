@@ -172,6 +172,13 @@ typedef struct s_global_info
 	int		exit_status;
 } t_global_info;
 
+typedef struct s_search_info
+{
+	char	**files;
+	t_size	num_files;
+	t_size	*prev_pos;
+} t_search;
+
 // TODO: re-write the global variable 'extern' declaration
 extern t_global_info g_info;
 
@@ -197,13 +204,13 @@ extern t_global_info g_info;
 # define PAREN_NOT_CLOSED		"Syntax Error: unmatched parenthesis\n"
 # define MALLOC_ERR				"malloc() error."
 
-/* ================== MEMORY_UTILS ================== */
+/* =============== MEMORY_UTILS ================ */
 void			ft_bzero(void *s, t_size n);
 void			*ft_calloc(t_size count, t_size size);
 void			*ft_memset(void *b, int c, t_size len);
 void			*ft_memcpy(void *dst, const void *src, t_size n);
 
-/* ================== STR_UTILS ================== */
+/* ================ STR_UTILS ================ */
 int				ft_strcmp(const char *s1, const char *s2);
 int				ft_strncmp(const char *s1, const char *s2, t_size n);
 t_size			ft_strlen(const char *str);
@@ -212,16 +219,21 @@ char			*ft_itoa(int n);
 char			*ft_strchr(const char *s, int c);
 
 
+/* ================== EXPANSION ================== */
+typedef t_bool	(*t_cmp)(char);
 int				cmp_ascii(void *a, void *b);
 void			ft_qsort(void **arr, t_ssize low, t_ssize high, int (*cmp)(void *, void *));
-
-typedef t_bool	(*t_cmp)(char);
 char			**env_substitution(t_node *node);
 char		    **remove_quotes(t_node *node);
 char			**wildcard_substitution(t_node *node);
 char			*trim_outer_quotes(char *cmd_arg);
 char			*trim(char	**cmd_arg, t_cmp cmp);
 char			**str_expansion(t_node *node);
+
+t_search	*create_search_info(char **files, int num_files);
+void		free_search_info(t_search *info);
+t_ssize 	match_pattern(char *str, char *pattern, int prev_pos);
+t_bool 		search_files(t_search *info, char *pattern);
 
 /* ================== INIT ================== */
 void			print_logo(void);
