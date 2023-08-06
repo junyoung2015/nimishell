@@ -61,7 +61,7 @@ t_size ft_arrcat(char ***arr, char **new_arr, t_size size)
         new++;
     char **tmp = (char **)ft_calloc((new + 1), sizeof(char *));
     if (!tmp)
-        return (0);
+		return (0);
 	while (++idx < size)
 		tmp[idx] = (*arr)[idx];
 	while (size < new)
