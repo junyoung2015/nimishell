@@ -4,6 +4,12 @@
 // TODO: 밑의 typedef 를 trim_quotes 에 있는 typedef 와 minishell.h에 합쳐 넣기
 typedef	char	*(*t_process_fn)(char **);
 
+int	is_alnum(int c)
+{
+	return (('0' <= c && c <= '9') || ('A' <= c && c <= 'Z')
+		|| ('a' <= c && c <= 'z'));
+}
+
 /**
  * @brief Check whether 'ch' is a valid character for an environment variable.
  * 
@@ -243,7 +249,7 @@ char	*check_env_var(char *cmd_arg)
 		free(tmp);
 		free(substr);
 		state = update_state(*cmd_arg);
-		if (META_CH <= state && state < END)
+		if (META_CH <= state && state <= END)
 			break ;
 	}
 	return (result);
@@ -264,7 +270,7 @@ char	**env_substitution(t_node *node)
 	t_size  idx;
 
 	idx = 0;
-	if (!node->cmd_args)
+	if (!node || !node->cmd_args)
 		return (0);
 	result = (char **)ft_calloc(node->num_args + 1, sizeof(char *));
 	if (!result)
@@ -274,8 +280,11 @@ char	**env_substitution(t_node *node)
 		result[idx] = check_env_var(node->cmd_args[idx]);
 		if (!result[idx])
 		{
-			while(--idx != 0)
+			while(idx > 0)
+			{
+				idx--;
 				free(result[idx]);
+			}
 			free(result);
 			return (0);
 		}
