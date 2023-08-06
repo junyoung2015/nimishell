@@ -6,6 +6,7 @@ char	**get_path(char **env)
 	size_t	i;
 	
 	i = 0;
+	// TODO: PATH 가 없을 경우 bash 처럼 처리 필요
 	while (env[i] && ft_strncmp(env[i], "PATH=", 5))
 		i++;
 	if (!env[i])

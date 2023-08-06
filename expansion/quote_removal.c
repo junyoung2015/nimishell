@@ -1,7 +1,34 @@
 #include "minishell.h"
 
 // TODO: 밑의 typedef 를 env_sub 에 있는 typedef 와 minishell.h에 합쳐 넣기
-typedef	char	*(*t_trim_fn)(char **);
+typedef	char	*(*t_trim_fn)(char **, t_cmp);
+
+char	*trim(char	**cmd_arg, t_cmp cmp)
+{
+	char	*tmp;
+	char	*start;
+	char	*result;
+
+	tmp = 0;
+	result = 0;
+	start = *cmd_arg;
+	if (cmp(**cmd_arg))
+		start = ++(*cmd_arg);
+	while (**cmd_arg && !cmp(**cmd_arg))
+		(*cmd_arg)++;
+	if (*cmd_arg > start)
+	{
+		tmp = ft_substr(start, 0, *cmd_arg - start);
+		if (!tmp)
+			return (0);
+		result = tmp;
+	}
+	else
+		result = ft_strdup("");
+	if (**cmd_arg && cmp(**cmd_arg))
+		(*cmd_arg)++;
+	return (result);
+}
 
 /**
  * @brief Get substring of cmd_arg until the next quote.
@@ -26,8 +53,6 @@ char	*trim_normal(char **cmd_arg)
 		if (!tmp)
 			return (0);
 		result = tmp;
-		// result = ft_strjoin(result, tmp);
-		// free(tmp);
 	}
 	else
 		result = ft_strdup("");
@@ -107,10 +132,10 @@ char	*trim_outer_quotes(char *cmd_arg)
 	char			*result;
 	char			*tmp;
 	t_token_state	state;
-	const t_trim_fn	state_fn[] = { 
-		trim_normal,
-		trim_squote,
-		trim_dquote,
+	const t_cmp		cmp[] = {
+		is_quote,
+		is_squote,
+		is_dquote,
 	};
 
 	result = 0;
@@ -118,7 +143,7 @@ char	*trim_outer_quotes(char *cmd_arg)
 	while (*cmd_arg)
 	{
 		tmp = result;
-		trimmed = state_fn[state](&cmd_arg);
+		trimmed = trim(&cmd_arg, cmp[state]);
 		if (!trimmed)
 			return (0);
 		result = ft_strjoin(result, trimmed);
@@ -145,7 +170,7 @@ char    **remove_quotes(t_node *node)
 	t_size	idx;
 
 	idx = 0;
-	if (!node->cmd_args)
+	if (!node || !node->cmd_args)
 		return (0);
 	result = (char **)ft_calloc(node->num_args + 1, sizeof(char *));
 	if (!result)
@@ -155,8 +180,11 @@ char    **remove_quotes(t_node *node)
 		result[idx] = trim_outer_quotes(node->cmd_args[idx]);
 		if (!result[idx])
 		{
-			while(idx-- > 0)
+			while(idx > 0)
+			{
+				idx--;
 				free(result[idx]);
+			}
 			free(result);
 			return (0);
 		}

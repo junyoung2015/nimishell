@@ -82,8 +82,31 @@ char	*ft_strchr(const char *s, int c)
 	return (NULL);
 }
 
-int	is_alnum(int c)
+char	*ft_strnstr(const char *haystack, const char *needle, t_size n)
 {
-	return (('0' <= c && c <= '9') || ('A' <= c && c <= 'Z')
-		|| ('a' <= c && c <= 'z'));
+	size_t	i;
+	size_t	j;
+	size_t	size;
+	char	*src;
+	char	*to_find;
+
+	i = -1;
+	size = n;
+	src = (char *) haystack;
+	to_find = (char *) needle;
+	if (!*to_find)
+		return (src);
+	while (src[++i] && 0 < n--)
+	{
+		j = 0;
+		if (src[i] == to_find[j])
+		{
+			while (0 < n && i + j < size && to_find[j] && src[i + j] \
+			== to_find[j])
+				j++;
+			if (to_find[j] == '\0')
+				return (src + i);
+		}
+	}
+	return (0);
 }

@@ -14,12 +14,13 @@ NAME = minishell
 INCLUDES = ./includes/
 INCLUDE_READLINE = ./include/
 INIT_DIR = ./init/
-EXECUTOR_DIR	= ./executor/
+EXECUTOR_DIR = ./executor/
 BUILTIN_DIR	= ./builtin/
 LEXER_DIR = ./lexer/
 MEMORY_DIR = ./memory/
 PARSER_DIR = ./parser/
 STR_DIR = ./str/
+EXPANSION = ./expansion/
 
 # -------------- SRCS  -------------- #
 SRCS = ./minishell.c						\
@@ -28,12 +29,15 @@ SRCS = ./minishell.c						\
 		$(MEMORY_DIR)mem_utils.c			\
 		$(PARSER_DIR)parser.c				\
 		$(PARSER_DIR)parser_ll.c			\
-		$(STR_DIR)trim_quotes.c				\
-		$(STR_DIR)env_sub.c					\
 		$(STR_DIR)str_itoa.c				\
 		$(STR_DIR)str_utils.c				\
 		$(STR_DIR)str_split.c				\
 		$(STR_DIR)str_utils_create.c		\
+		$(EXPANSION)quote_removal.c			\
+		$(EXPANSION)filename_expansion.c	\
+		$(EXPANSION)filename_exp_utils.c	\
+		$(EXPANSION)ft_qsort.c				\
+		$(EXPANSION)env_substitution.c		\
 		$(EXECUTOR_DIR)path.c				\
 		$(EXECUTOR_DIR)command.c			\
 		$(EXECUTOR_DIR)error.c				\

@@ -244,22 +244,21 @@ t_bool	is_redir_token(t_parser *parser)
  */
 void	is_builtin_node(t_node *node)
 {
-	char	*str;
-
-	str = node->cmd_args[0];
-	if (!ft_strcmp(str, "echo"))
+	if (!node->cmd_args[0])
+		return ;
+	else if (!ft_strcmp(node->cmd_args[0], "echo"))
 		node->builtin = ECHO_BUILTIN;
-	if (!ft_strcmp(str, "cd"))
+	else if (!ft_strcmp(node->cmd_args[0], "cd"))
 		node->builtin = CD;
-	if (!ft_strcmp(str, "pwd"))
+	else if (!ft_strcmp(node->cmd_args[0], "pwd"))
 		node->builtin = PWD;
-	if (!ft_strcmp(str, "export"))
+	else if (!ft_strcmp(node->cmd_args[0], "export"))
 		node->builtin = EXPORT;
-	else if (!ft_strcmp(str, "unset"))
+	else if (!ft_strcmp(node->cmd_args[0], "unset"))
 		node->builtin = UNSET;
-	else if (!ft_strcmp(str, "env"))
+	else if (!ft_strcmp(node->cmd_args[0], "env"))
 		node->builtin = ENV;
-	else if (!ft_strcmp(str, "exit"))
+	else if (!ft_strcmp(node->cmd_args[0], "exit"))
 		node->builtin = EXIT;
 }
 
@@ -605,7 +604,7 @@ t_node	*parse_word_list(t_parser *parser, t_node *parent)
 	word_list_node = create_node(AST_WORD_LIST);
 	if (!word_list_node)
 		return (0);
-	word_list_node->cmd_args = ft_calloc(parser->size - parser->cur + 1, sizeof(char *));
+	word_list_node->cmd_args = ft_calloc(parser->size - parser->cur + 2, sizeof(char *));
 	if (!word_list_node->cmd_args)
 	{
 		free(word_list_node);
@@ -621,7 +620,8 @@ t_node	*parse_word_list(t_parser *parser, t_node *parent)
 			free(word_list_node);
 			return (0);
 		}
-		is_builtin_node(word_list_node);
+		if (word_list_node->cmd_args[word_list_node->num_args])
+			is_builtin_node(word_list_node);
 		word_list_node->num_args++;
 		parser->advance(parser);
 	}
