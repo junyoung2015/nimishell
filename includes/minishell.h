@@ -232,7 +232,7 @@ char			**str_expansion(t_node *node);
 
 t_search	*create_search_info(char **files, int num_files);
 void		free_search_info(t_search *info);
-t_ssize 	match_pattern(char *str, char *pattern, int prev_pos);
+// t_ssize 	match_pattern(char *str, char *pattern, int prev_pos);
 t_bool 		search_files(t_search *info, char *pattern);
 
 /* ================== INIT ================== */
