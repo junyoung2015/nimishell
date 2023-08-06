@@ -108,13 +108,7 @@ t_search	*get_all_files(char *first_arg)
 		entry = readdir(dir);
 		if (!entry)
 			break ;
-		else if (entry->d_name[0] != '.')
-		{
-			size = ft_arr_append(&result, ft_strdup(entry->d_name), size);
-			if (!size)
-				break ;
-		}
-		else if (first_arg && *first_arg == '.')
+		else if (entry->d_name[0] != '.' || (first_arg && *first_arg == '.'))
 		{
 			size = ft_arr_append(&result, ft_strdup(entry->d_name), size);
 			if (!size)
@@ -134,58 +128,45 @@ t_size	handle_wildcard(char ***result, char **start, char **end, t_size size)
 {
 	*end = *start;
 	size = ft_arr_append(result, ft_strdup("*"), size);
-	if (!size)
-		return (0);
+	(*end)++;
 	return (size);
 }
 
-// t_size	handle_quotes(char ***result, char **start, char **end, t_size size)
-// {
-// 	char	*substr;
-// 	char	*trimmed;
-// 	t_cmp	cmp;
-	
-// 	cmp = is_squote;
-// 	if (**start == '"')
-// 		cmp = is_dquote;
-// 	*end = *start + 1;
-// 	while (*end && !cmp(*end))
-// 		(*end)++;
-// 	substr = ft_substr(start, 0, *end - *start + 1);
-// 	if (!substr)
-// 		return (0);
-// 	trimmed = trim(&substr, cmp);
-// 	free(substr);
-// 	if (!trimmed)
-// 		return (0);
-// 	splited = wsplit(trimmed);
-// 	free(trimmed);
-// 	while (splited && splited[idx])
-// 	{
-// 		size = ft_arr_append(&result, splited[idx], size);
-// 		if (!size)
-// 			return (0);
-// 		idx++;
-// 	}
-// 	size = ft_arr_append(result, trimmed, size);
-// 	if (!size)
-// 		return (0);
-// 	return (size);
-// }
+t_size	handle_quotes(char ***result, char **start, char **end, t_size size)
+{
+	char	*substr;
+	t_cmp	cmp;
+
+	cmp = is_squote;
+	if (is_dquote(**start))
+		cmp = is_dquote;
+	*end = *start + 1;
+	while (**end && !cmp(**end))
+		(*end)++;
+	substr = ft_substr(*start, 0, *end - *start + 1);
+	if (!substr)
+		return (0);
+	size = ft_arr_append(result, substr, size);
+	(*end)++;
+	return (size);
+}
+
+t_size	handle_normal(char ***result, char **start, char **end, t_size size)
+{
+	*end = *start + 1;
+	while (**end && !is_wsplit(**end))
+		(*end)++;
+	size = ft_arr_append(result, ft_substr(*start, 0, *end - *start), size);
+	return (size);
+}
 
 char	**wsplit(char *cmd_arg)
 {
 	char	*start;
 	char	*end;
 	char	**result;
-	// char	**splited;
-	char	*substr;
-	char	*trimmed;
-	char	*tmp;
 	t_size	size;
-	// t_size	idx;
 
-	// idx = 0;
 	size = 0;
 	result = 0;
 	start = cmd_arg;
@@ -195,64 +176,14 @@ char	**wsplit(char *cmd_arg)
 		if (is_wsplit(*start))
 		{
 			if (is_wildcard(*start))
-			{
-				end = start;
-				size = ft_arr_append(&result, ft_strdup("*"), size);
-			}
-			else if (is_squote(*start))
-			{
-				end = start + 1;
-				while (*end && !is_squote(*end))
-					end++;
-				substr = ft_substr(start, 0, end - start + 1);
-				if (!substr)
-					return (0);
-				tmp = substr;
-				trimmed = trim(&substr, is_squote);
-				free(tmp);
-				if (!trimmed)
-					return (0);
-				size = ft_arr_append(&result, trimmed, size);
-				if (!size)
-					return (0);
-			}
-			else if (is_dquote(*start))
-			{
-				end = start + 1;
-				while (*end && !is_dquote(*end))
-					end++;
-				substr = ft_substr(start, 0, end - start + 1);
-				if (!substr)
-					return (0);
-				tmp = substr;
-				trimmed = trim(&substr, is_dquote);
-				free(tmp);
-				if (!trimmed)
-					return (0);
-				// splited = wsplit(trimmed);
-				// free(trimmed);
-				// while (splited && splited[idx])
-				// {
-				// 	size = ft_arr_append(&result, splited[idx], size);
-				// 	if (!size)
-				// 		return (0);
-				// 	idx++;
-				// }
-				size = ft_arr_append(&result, trimmed, size);
-				if (!size)
-					return (0);
-			}
-			end++;
+				size = handle_wildcard(&result, &start, &end, size);
+			else
+				size = handle_quotes(&result, &start, &end, size);
 		}
 		else
-		{
-			end = start + 1;
-			while (*end && !is_wsplit(*end))
-				end++;
-			size = ft_arr_append(&result, ft_substr(start, 0, end - start), size);
-			if (!size)
-				return (0);
-		}
+			size = handle_normal(&result, &start, &end, size);
+		if (!size)
+			return (0);
 		start = end;
 	}
 	return (result);
@@ -363,18 +294,28 @@ char	**find_matching_files(t_search *info, char **pattern)
 	t_size	idx;
 	t_size	size;
 	char	**result;
+	char	*trimmed;
+	char	*tmp;
+	t_cmp	cmp;
 
 	idx = 0;
 	result = 0;
 	size = 0;
 	while (pattern[idx])
 	{
+		trimmed = pattern[idx];
 		if (!is_wildcard_expansion(pattern[idx]))
 		{
+			cmp = get_cmp_fn(*(pattern[idx]));
+			if (is_quote(*(pattern[idx])))
+			{
+				tmp = pattern[idx];
+				trimmed = trim(&tmp, cmp);
+			}
 			if (idx == 0)
-				size = match_pattern_first(info, pattern[idx]);
+				size = match_pattern_first(info, trimmed);
 			else
-				size = match_pattern_middle(info, pattern[idx]);
+				size = match_pattern_middle(info, trimmed);
 			if (!size)
 				return (0);
 		}
@@ -382,13 +323,10 @@ char	**find_matching_files(t_search *info, char **pattern)
 	}
 	if (idx && !(is_wildcard(*(pattern[idx - 1])) && ft_strlen(pattern[idx - 1]) == 1))	// If last pattern is not wildcard, filter the files with last pattern
 		size = match_pattern_last(info, pattern[idx - 1], ft_strlen(pattern[idx - 1]));
-	else if (!result && !info->files)
-	{
-		ft_arrfree(pattern);
-		return (0);
-	}
-	size = ft_arrcat(&result, info->files, 0);
 	ft_arrfree(pattern);
+	if (!info->files)
+		return (0);
+	size = ft_arrcat(&result, info->files, 0);
 	return (result);
 }
 
@@ -425,8 +363,6 @@ char    **str_expansion(t_node *node)
 			new = wsplit(node->cmd_args[idx]);
 			if (!new)
 				return (0);
-			for (t_size i = 0; new[i]; i++)
-				printf("new[%llu]: %s\n", i, new[i]);
 			info->files = find_matching_files(info, new);
 			if (!info->files || (*(info->files) && !(*(info->files))[0]))
 			{
