@@ -218,7 +218,6 @@ t_size			ft_strlcpy(char *dst, const char *src, t_size dstsize);
 char			*ft_itoa(int n);
 char			*ft_strchr(const char *s, int c);
 
-
 /* ================== EXPANSION ================== */
 typedef t_bool	(*t_cmp)(char);
 int				cmp_ascii(void *a, void *b);
@@ -270,6 +269,7 @@ t_token			*tokenize_squote(char **input, t_token_state *state);
 t_token			*tokenize_dquote(char **input, t_token_state *state);
 t_token			*tokenize_meta(char **input, t_token_state *state);
 t_token			*tokenize_whitespace(char **input, t_token_state *state);
+t_cmp			get_cmp_fn(char ch);
 
 /* ================== LEXER ================== */
 void			categorize_tokens(t_token *tokens, t_size num_tokens);
