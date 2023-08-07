@@ -51,6 +51,7 @@ void	err_exit(char *str, t_exec_info *info)
 	exit(err(str, info));
 }
 
+// TODO: display_cmd 가 cmd_not_found 를 대채할 예정
 void	cmd_not_found(void)
 {
 	clear_all(g_info.root);
@@ -63,5 +64,6 @@ void	display_cmd(char *msg)
 	write(STDERR_FILENO, "minishell: ", 11);
 	write(STDERR_FILENO, msg, ft_strlen(msg));
 	write(STDERR_FILENO, ": command not found\n", 20);
+	clear_all(g_info.root);
 	exit(EXIT_CMD_NOT_FOUND);
 }
