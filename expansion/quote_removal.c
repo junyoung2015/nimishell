@@ -188,9 +188,10 @@ char    **remove_quotes(t_node *node)
 			free(result);
 			return (0);
 		}
-		free(node->cmd_args[idx]);
+		// free(node->cmd_args[idx]);
 		idx++;
 	}
-	free(node->cmd_args);
+	ft_arrfree(node->cmd_args);
+	// free(node->cmd_args);
 	return (result);
 }

@@ -397,6 +397,8 @@ char    **str_expansion(t_node *node)
 	}
 	node->num_args = len;
 	// TODO: free node->cmd_args later?
+	// free(node->cmd_args);
+	ft_arrfree(node->cmd_args);
 	// size = ft_arrcat(&result, files, size);
 	return (result);
 }
