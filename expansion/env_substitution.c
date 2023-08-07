@@ -78,6 +78,7 @@ char	*process_normal(char **input)
 	char	*tmp;
 	char	*env_var;
 	char	*result;
+	char	*substituted;
 
 	tmp = 0;
 	env_var = 0;
@@ -113,7 +114,9 @@ char	*process_normal(char **input)
 		env_var = ft_substr(start, 0, *input - start);
 		if (!env_var)
 			return (result);
-		result = ft_strjoin(tmp, substitute(env_var));
+		substituted = substitute(env_var);
+		result = ft_strjoin(tmp, substituted);
+		free(substituted);
 	}
 	else
 	{
@@ -157,6 +160,7 @@ char	*process_dquote(char **input)
 	char	*tmp;
 	char	*env_var;
 	char	*result;
+	char	*substituted;
 
 	tmp = 0;
 	start = *input;
@@ -193,7 +197,9 @@ char	*process_dquote(char **input)
 				env_var = ft_substr(start, 0, *input - start);
 				if (!env_var)
 					return (tmp);
-				result = ft_strjoin(tmp, substitute(env_var));
+				substituted = substitute(env_var);
+				result = ft_strjoin(tmp, substituted);
+				free(substituted);
 				free(env_var);
 				// free(tmp);
 				// return (result);
@@ -250,8 +256,8 @@ char	*check_env_var(char *cmd_arg)
 		if (!substr)
 			return (result);
 		result = ft_strjoin(result, substr);
-		free(tmp);
 		free(substr);
+		free(tmp);
 		state = update_state(*cmd_arg);
 		if (META_CH <= state && state <= END)
 			break ;
