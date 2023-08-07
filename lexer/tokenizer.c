@@ -359,7 +359,10 @@ t_token *tokenize_input(char *input, t_size alloced, t_size *num_tokens)
 		if (tokens[*num_tokens - 1].type == TOKEN_ERROR)
 			break ;
 		else if (tokens[*num_tokens - 1].type == TOKEN_WHITESPACE)
-			free(tokens[(*num_tokens)-- - 1].val);
+		{
+			free(tokens[(*num_tokens) - 1].val);
+			tokens[(*num_tokens)-- - 1].val = 0;
+		}
 		tokens = should_realloc(tokens, num_tokens, &alloced);
 		if (!tokens)
 			return (set_err_token(tokens, num_tokens, MALLOC_ERR));
