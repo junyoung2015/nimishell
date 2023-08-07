@@ -16,9 +16,13 @@ expect "minishell: cmd_nonexist: command not found" ;
 #     timeout { send_user "${red}Test failed${default}" }
 # }
 
-# Test './program_nonexist'
-#send "./program_nonexist\r"
-#expect "minishell: program_nonexist: No such file or directory" ;
+# Test exit code for when coommand not found
+send "echo \$?\r"
+expect "127" ;
+
+Test './program_nonexist'
+send "./program_nonexist\r"
+expect "minishell: program_nonexist: No such file or directory" ;
 
 # Test 'ls > '
 send "ls >\r"
@@ -35,6 +39,10 @@ expect "$env(USER)" ;
 #     "$env(USER)" { send_user "${green}Test passed${default}\n" ; sleep 1 }
 #     timeout { send_user "${red}Test failed${default}" }
 # }
+
+# Test exit code for normal exit
+send "echo \$\?\r"
+expect "0" ;
 
 # Test 'echo '$USER''
 send "echo \'\$USER\'\r"
