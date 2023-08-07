@@ -23,7 +23,11 @@ jobs:
         runs-on: ubuntu-latest
         needs: Minishell-Compliation
         steps:
-          - run: echo "Starting test..."
-          - run: chmod +x test_sh_minishell.sh
-          - run: ./test_sh_minishell.sh
+          - uses: actions/checkout@v3
+          - name: Test minishell
+            run: |
+              echo "Starting test..."
+              ls
+              chmod +x ./test_sh_minishell.sh
+              ./test_sh_minishell.sh
           - run: echo "Status - ${{ job.status }}."
