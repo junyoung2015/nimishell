@@ -1076,6 +1076,7 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 					free_ast(root);
 				}
 				free(table);
+				free_ast(new_node);
 				return (0);
 			}
 			if (root == 0)
