@@ -70,6 +70,7 @@ t_size ft_arrcat(char ***arr, char **new_arr, t_size size)
 		size++;
 	}
     free(new_arr);
+	ft_arrfree(*arr);
     *arr = tmp;
     return (new);
 }

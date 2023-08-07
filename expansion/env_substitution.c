@@ -47,7 +47,7 @@ char	*ft_getenv(char *env_var)
 			if (ft_strcmp(tmp, env_var) == 0)
 			{
 				free(tmp);
-				return (end + 1);
+				return (start);
 			}
 		}
 		free(tmp);
@@ -59,12 +59,15 @@ char	*ft_getenv(char *env_var)
 char	*substitute(char *env_var)
 {
 	char	*result;
+	char	*key;
 	char	*value;
 
 	result = 0;
-	value = ft_getenv(env_var);
+	key = ft_getenv(env_var);
+	value = ft_strchr(key, '=');
 	if (value)
 		result = ft_strdup(value);
+	free(key);
 	return (result);
 }
 
@@ -288,9 +291,10 @@ char	**env_substitution(t_node *node)
 			free(result);
 			return (0);
 		}
-		free(node->cmd_args[idx]);
+		// free(node->cmd_args[idx]);
 		idx++;
 	}
-	free(node->cmd_args);
+	ft_arrfree(node->cmd_args);
+	// free(node->cmd_args);
 	return (result);
 }
