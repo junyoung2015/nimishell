@@ -36,12 +36,19 @@ int	redir_append(t_node *node, t_exec_info *info)
 	return (0);
 }
 
-static void	redir_err(char *str, t_exec_info *info)
+static void	redir_err(char *filename, t_exec_info *info)
 {
+	// TODO: display_cmd 와 redir_err 를 합치는 것에 대해 고려하기
+	write(STDERR_FILENO, "minishell: ", 11);
+	if (filename)
+	{
+		write(STDERR_FILENO, filename, ft_strlen(filename));
+		write(STDERR_FILENO, ": ", 2);
+	}
 	if (info->is_fork)
-		err_exit(str, info);
+		err_exit(0, info);
 	else
-		err(str, info);
+		err(0, info);
 }
 
 void	redirection(t_node *node, t_exec_info *info)
@@ -62,5 +69,5 @@ void	redirection(t_node *node, t_exec_info *info)
 	else
 		return ;
 	if (is_err & 1)
-		redir_err("error: open", info);
+		redir_err(node->cmd_args[0], info);
 }
