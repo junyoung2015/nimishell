@@ -7,15 +7,23 @@ on:
         branches: [main]
 jobs:
     Minishell-Compliation:
+      runs-on: ubuntu-latest
+      steps:
+        - run: echo "This job is running on ${{ runner.os }} server by Github."
+        - run: echo "Triggered by ${{ github.event_name }}."
+        - run: echo "On Branch ${{ github.ref }}."
+        - run: echo "In Repository ${{ github.repository }}"
+        - uses: actions/checkout@v3
+        - name: Extract and install GNU readline library
+          run: make -j readline
+        - name: Compile Minishell
+          run: make -j mini
+        - run: echo "Status - ${{ job.status }}."
+    Minishell-Test:
         runs-on: ubuntu-latest
+        needs: Minishell-Compliation
         steps:
-          - run: echo "This job is running on ${{ runner.os }} server by Github."
-          - run: echo "Triggered by ${{ github.event_name }}."
-          - run: echo "On Branch ${{ github.ref }}."
-          - run: echo "In Repository ${{ github.repository }}"
-          - uses: actions/checkout@v3
-          - name: Extract and install GNU readline library
-            run: make -j readline
-          - name: Compile Minishell
-            run: make mini
+          - run: echo "Starting test..."
+          - run: chmod +x test_sh_minishell.sh
+          - run: ./test_sh_minishell.sh
           - run: echo "Status - ${{ job.status }}."
