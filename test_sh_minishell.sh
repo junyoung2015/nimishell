@@ -20,7 +20,7 @@ expect "minishell: cmd_nonexist: command not found" ;
 send "echo \$?\r"
 expect "127" ;
 
-Test './program_nonexist'
+# Test './program_nonexist'
 send "./program_nonexist\r"
 expect "minishell: program_nonexist: No such file or directory" ;
 
