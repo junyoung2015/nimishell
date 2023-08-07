@@ -2,9 +2,9 @@
 
 spawn ./minishell
 
-set green "\033\[0;32;40m"
-set red "\033\[1;31m"
-set default "\033\[0m"
+# set green "\033\[0;32;40m"
+# set red "\033\[1;31m"
+# set default "\033\[0m"
 
 set timeout 5
 
@@ -67,6 +67,26 @@ expect "" ;
 # Test 'echo $USER' after unset USER
 send "echo \$USER\r"
 expect "\n" ;
+
+# Test export
+send "export test=ch\r"
+expect "" ;
+
+# Test env substitution for export
+send "e\$test'o' \$USER\r"
+expect "$env(USER)" ;
+
+# Test env substitution for export
+send "e\$test\"o\" \$USER\r"
+expect "$env(USER)" ;
+
+# Test export with whitespace
+send "export \"wspace=hi test\"\r"
+expect "" ;
+
+# Test env substitution for export with whitespace
+send "e\$test'o' \$wspace\r"
+expect "hi test" ;
 
 # Finish
 send "exit\r"
