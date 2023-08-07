@@ -70,7 +70,8 @@ t_size ft_arrcat(char ***arr, char **new_arr, t_size size)
 		size++;
 	}
     free(new_arr);
-	ft_arrfree(*arr);
+	if (*arr)
+		free(*arr);
     *arr = tmp;
     return (new);
 }
@@ -356,6 +357,7 @@ char    **str_expansion(t_node *node)
 
 	idx = 0;
 	len = 0;
+	result = 0;
 	if (!node || !node->cmd_args)
 		return (0);
 	while (idx < node->num_args)
