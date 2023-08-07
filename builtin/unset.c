@@ -36,7 +36,7 @@ void	remove_env(t_exec_info *info, size_t idx)
 	size_t	i;
 	size_t	j;
 
-	env = malloc(sizeof(char *) * g_info.env_cnt);
+	env = ft_calloc(g_info.env_cnt, sizeof(char *));
 	if (!env)
 	{
 		err("error: malloc", info);
