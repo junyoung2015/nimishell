@@ -133,7 +133,7 @@ void	init_g_info(char **envp)
 	g_info.env_cnt = 0;
 	while (envp && envp[g_info.env_cnt])
 		g_info.env_cnt++;
-	g_info.env = malloc(sizeof(char *) * (g_info.env_cnt + 1));
+	g_info.env = ft_calloc((g_info.env_cnt + 1), sizeof(char *));
 	// 널가드 추가
 	i = 0;
 	while (i < g_info.env_cnt)
@@ -158,8 +158,8 @@ int	main(int ac, char **av, char **envp)
 	t_token		*tokens;
 	t_size		num_tokens;
 	t_node		*ast;
-	struct termios	term;
-	int	status;
+	// struct termios	term;
+	// int	status;
 	// t_global_info	g_info;
 
 //	 if (DEBUG)
@@ -168,25 +168,25 @@ int	main(int ac, char **av, char **envp)
 	tokens = 0;
 	ast = 0;
 	exit_code = 0;
-	status = tcgetattr(0, &term);
-	if (status == -1)
-	{
-		exit_err_with_msg(EXIT_ERR, TCGETATTR, strerror(errno), 0);
-		// write(STD_ERR, "minishell: tcgetattr: ", 22);
-		// write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
-		// write(STD_ERR, "\n", 1);
-		// exit (1);
-	}
-	term.c_lflag &= ~ECHOCTL;
-	status = tcsetattr(0, 0, &term);
-	if (status == -1)
-	{
-		exit_err_with_msg(EXIT_ERR, TCGETATTR, strerror(errno), 0);
-		// write(STD_ERR, "minishell: tcgetattr: ", 22);
-		// write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
-		// write(STD_ERR, "\n", 1);
-		// exit (1);
-	}
+	// status = tcgetattr(0, &term);
+	// if (status == -1)
+	// {
+	// 	exit_err_with_msg(EXIT_ERR, TCGETATTR, strerror(errno), 0);
+	// 	// write(STD_ERR, "minishell: tcgetattr: ", 22);
+	// 	// write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
+	// 	// write(STD_ERR, "\n", 1);
+	// 	// exit (1);
+	// }
+	// term.c_lflag &= ~ECHOCTL;
+	// status = tcsetattr(0, 0, &term);
+	// if (status == -1)
+	// {
+	// 	exit_err_with_msg(EXIT_ERR, TCGETATTR, strerror(errno), 0);
+	// 	// write(STD_ERR, "minishell: tcgetattr: ", 22);
+	// 	// write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
+	// 	// write(STD_ERR, "\n", 1);
+	// 	// exit (1);
+	// }
 	signal(SIGINT, sig_handler);
 	print_logo();
 	while (TRUE)

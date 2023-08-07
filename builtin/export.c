@@ -21,7 +21,7 @@ void	append_last(t_node *node, t_exec_info *info)
 	char	**env;
 	size_t	i;
 
-	env = malloc(sizeof(char *) * (g_info.env_cnt + 2));
+	env = ft_calloc(g_info.env_cnt + 2, sizeof(char *));
 	if (!env)
 	{
 		err("error: malloc", info);
