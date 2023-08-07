@@ -38,17 +38,17 @@ char	*ft_getenv(char *env_var)
 	while (g_info.env && g_info.env[i])
 	{
 		start = g_info.env[i];
-		end = ft_strchr(start, '=');
+		if (start)
+			end = ft_strchr(start, '=');
+		else
+			return (0);
 		if (!end)
 			return (0);
 		tmp = ft_substr(start, 0, end - start);
-		if (tmp)
+		if (tmp && ft_strcmp(tmp, env_var) == 0)
 		{
-			if (ft_strcmp(tmp, env_var) == 0)
-			{
-				free(tmp);
-				return (start);
-			}
+			free(tmp);
+			return (start);
 		}
 		free(tmp);
 		i++;
@@ -64,10 +64,11 @@ char	*substitute(char *env_var)
 
 	result = 0;
 	key = ft_getenv(env_var);
+	if (!key)
+		return (0);
 	value = ft_strchr(key, '=');
 	if (value)
 		result = ft_strdup(value + 1);
-	free(key);
 	return (result);
 }
 
