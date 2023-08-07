@@ -24,10 +24,11 @@ jobs:
         needs: Minishell-Compliation
         steps:
           - uses: actions/checkout@v3
+          - name: Install expect
+            run: sudo apt-get install expect
           - name: Test minishell
             run: |
               echo "Starting test..."
-              ls
               chmod +x ./test_sh_minishell.sh
               ./test_sh_minishell.sh
           - run: echo "Status - ${{ job.status }}."
