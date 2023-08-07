@@ -228,6 +228,7 @@ char			**wildcard_substitution(t_node *node);
 char			*trim_outer_quotes(char *cmd_arg);
 char			*trim(char	**cmd_arg, t_cmp cmp);
 char			**str_expansion(t_node *node);
+void			ft_arrfree(char **arr);
 
 t_search	*create_search_info(char **files, int num_files);
 void		free_search_info(t_search *info);
