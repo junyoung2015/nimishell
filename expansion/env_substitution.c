@@ -99,7 +99,9 @@ char	*process_normal(char **input)
 		(*input)++;
 	if (**input == '?')
 	{
-		result = ft_strjoin(tmp, ft_itoa(g_info.exit_status));
+		substituted = ft_itoa(g_info.exit_status);
+		result = ft_strjoin(tmp, substituted);
+		free(substituted);
 		(*input)++;
 	}
 	else if (is_dollar(*((*input) - 1)) && **input && !is_env_var(**input)) // do I need to check \0 here?
