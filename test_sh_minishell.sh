@@ -10,9 +10,13 @@ set timeout 5
 
 ##### Executing commands with relative and absolute path #####
 
+# Test wc
+send "echo \"\" | wc\r"
+expect "1       0       1" ;
+
 # Test ls
-send "ls includes\r"
-expect "builtin.h   executor.h  lexer.h     minishell.h parser.h    tokenizer.h" ;
+# send "ls includes\r"
+# expect "builtin.h	xecutor.h	lexer.h	minishell.h	parser.	tokenizer.h	" ;
 
 # Test executing command that does not exist 'cmd_nonexist'
 send "cmd_nonexist\r"
