@@ -199,8 +199,9 @@ extern t_global_info g_info;
 # define FALSE					0
 
 # define MINISHELL				"minishell: "
+# define COLON					": "
 # define TCGETATTR				"tcgetattr"
-# define CMD_NOT_FOUND			": command not found\n"
+# define CMD_NOT_FOUND			"command not found\n"
 // # define NO_FILE_DIR			": No such file or directory\n"
 # define QUOTE_NOT_CLOSED		"Syntax Error: unmatched quote\n"
 # define PAREN_NOT_CLOSED		"Syntax Error: unmatched parenthesis\n"
