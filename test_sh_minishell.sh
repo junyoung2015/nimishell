@@ -109,28 +109,30 @@ send "e\$test'o' \$wspace\r"
 expect "hi test" ;
 
 # Test executing non-builtin commands after unset PATH
-# send "unset PATH\r"
-# expect "" ;
+send "unset PATH\r"
+expect "" ;
 
 # Test executing non-builtin commands after unset PATH
-# send "ls\r"
+send "ls\r"
 # exepct "minishell: ls: No such file or directory" ;
+exepct "minishell: ls: command not found" ;
 
 # Test executing non-builtin commands after export new PATH
-# send "export PATH=/bin:/usr/sbin:/usr/local/bin\r"
-# expect "" ;
+send "export PATH=/bin:/usr/sbin:/usr/local/bin\r"
+expect "" ;
 
 # Test executing non-builtin commands after setting new PATH
-# send "ls includes\r"
-# expect "builtin.h   executor.h  lexer.h     minishell.h parser.h    tokenizer.h" ;
+send "ls includes\r"
+expect "builtin.h   executor.h  lexer.h     minishell.h parser.h    tokenizer.h" ;
 
 # Test executing non-builtin commands after export wrong PATH
-# send "export PATH=/tmp\r"
-# expect "" ;
+send "export PATH=/tmp\r"
+expect "" ;
 
 # Test executing non-builtin commands after setting wrong PATH
-# send "ls includes\r"
+send "ls includes\r"
 # exepct "minishell: ls: No such file or directory" ;
+exepct "minishell: ls: command not found" ;
 
 # Finish
 send "exit\r"
