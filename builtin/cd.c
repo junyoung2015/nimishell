@@ -45,17 +45,15 @@ void	update_env(char *new_env)
 {
 	t_size	i;
 	char	*start;
-	char	*end;
 	char	*tmp;
 
 	i = 0;
 	while (g_info.env && g_info.env[i])
 	{
 		start = g_info.env[i];
-		end = ft_strchr(start, '=');
-		if (end)
+		if (ft_strchr(start, '='))
 		{
-			tmp = ft_substr(start, 0, end - start);
+			tmp = ft_substr(start, 0, ft_strchr(start, '=') - start);
 			if (tmp)
 			{
 				if (ft_strncmp(tmp, new_env, ft_strlen(tmp)) == 0)
@@ -83,8 +81,6 @@ void	update_pwd(char *cwd, t_exec_info *info)
 		err("error: malloc", info);
 	update_env(pwd);
 	update_env(oldpwd);
-	// free(pwd);
-	// free(oldpwd);
 }
 
 t_bool	cd(t_node *node, t_exec_info *info)
@@ -95,8 +91,9 @@ t_bool	cd(t_node *node, t_exec_info *info)
 	home = get_env("HOME");
 	// TODO: HOME 이 unset 됐을 경우 처리 필요
 	if (!home)
-		err("error: malloc", info);
-	if (node->num_args == 1)
+		err("minishell: cd: HOME not set", info);
+		// err_exit(EXIT_FAILURE, "cd: HOME not set", info);
+	if (home && node->num_args == 1)
 	{
 		if (chdir(home))
 			err("error: cd", info);

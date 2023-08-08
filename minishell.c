@@ -226,11 +226,11 @@ int	main(int ac, char **av, char **envp)
 		get_git_branch(branch);
 		if (*branch)
 		{
-			pwd = ft_strjoin(tmp, " [\033[1;32;40m");
+			pwd = ft_strjoin(tmp, " \033[0;35;40m[\033[0;32;40m");
 			free(tmp);
 			tmp = ft_strjoin(pwd, branch);
 			free(pwd);
-			pwd = ft_strjoin(tmp, "\033[0m] > ");
+			pwd = ft_strjoin(tmp, "\033[0;35;40m]\033[0m ");
 			free(tmp);
 		}
 		else
