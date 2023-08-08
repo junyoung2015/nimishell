@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/28 22:07:57 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/08 18:05:39 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,13 @@ int		heredoc(t_node *node, t_exec_info *info);
 void	free_ptr(char **ptr);
 void	clear_all(t_node *root);
 int		err(char *str, t_exec_info *info);
-void	err_exit(char *str, t_exec_info *info);
+void	err_exit(int code, char *file, t_exec_info *info);
+// void	err_exit(char *str, t_exec_info *info);
 void	cmd_not_found(void);
 
 /* command */
 void	builtin(t_node *node, t_exec_info *info);
 void	command(t_node *node, t_exec_info *info);
-char	*get_cmdpath(char *filename);
+char	*get_cmdpath(char *filename, t_exec_info *info);
 
 #endif

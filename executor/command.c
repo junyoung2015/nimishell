@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 21:55:34 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/07/28 00:37:47 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/08 18:05:44 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,16 @@ void	command_in_child(t_node *node, t_exec_info *info)
 	char	*cmdpath;
 
 	if (!connect_pipe(node, info))
-		err_exit("error: dup2", info);
+		err_exit(EXIT_FAILURE, 0, info);
 	if (node->builtin == NOT_BUILTIN)
 	{
-		cmdpath = get_cmdpath(node->cmd_args[0]);
+		cmdpath = get_cmdpath(node->cmd_args[0], info);
 		if (access(cmdpath, F_OK) < 0)
-			err_exit("error: command not found", info);
+			err_exit(EXIT_CMD_NOT_FOUND, cmdpath, info);
 		if (access(cmdpath, X_OK) < 0)
-			err_exit("error: permission denied", info);
+			err_exit(EXIT_NOT_EXECUTABLE, cmdpath, info);
 		if (execve(cmdpath, node->cmd_args, g_info.env) < 0)
-			err_exit("error: execve", info);
+			err_exit(EXIT_NOT_EXECUTABLE, cmdpath, info);
 	}
 	builtin(node, info);
 	clear_all(g_info.root);

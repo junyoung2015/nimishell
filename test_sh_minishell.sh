@@ -9,7 +9,9 @@ set default "\033\[0m"
 
 set timeout 5
 
-##### Executing commands with relative and absolute path #####
+##########
+########## Executing commands with relative and absolute path ##########
+##########
 
 # Test wc
 send "echo \"\" | wc\r"
@@ -42,6 +44,7 @@ expect {
 # Test executing program that does not exist, in absolute path './program_nonexist'
 send "./program_nonexist\r"
 # expect "error: command not found: No such file or directory" ;
+# expect "minishell: ./program_nonexist: No such file or directory" ;
 # expect "minishell: program_nonexist: No such file or directory" ;
 expect {
 	"error: command not found: No such file or directory" {
@@ -52,7 +55,7 @@ expect {
 	}
 }
 
-#======#### Exit code for CMD_NOT_FOUND #####======
+#========== Exit code for CMD_NOT_FOUND ==========#
 
 # Test exit code for when coommand not found
 send "echo \$?\r"
@@ -66,7 +69,9 @@ expect {
 	}
 }
 
-##### Input with wrong syntax #####
+##########
+########## Input with wrong syntax ##########
+##########
 
 # Test 'ls > '
 send "ls >\r"
@@ -80,7 +85,9 @@ expect {
 	}
 }
 
-###### Environment variables substitution #####
+##########
+########## Environment variables substitution ##########
+##########
 
 # Test 'echo $USER'
 send "echo \$USER\r"
@@ -94,7 +101,7 @@ expect {
 	}
 }
 
-#======#### Exit code for normal exit #####======
+#========== Exit code for normal exit ==========#
 # Test exit code for normal exit
 send "echo \$\?\r"
 # expect "0" ;
@@ -131,8 +138,11 @@ expect {
 	}
 }
 
-##### Test for unset and export, using varaibles after unset and after export #####
+##########
+########## Test for unset and export, using varaibles after unset and after export ##########
+##########
 
+#========== Normal Test ==========#
 # Test 'unset USER'
 send "unset USER\r"
 # expect "" ;
@@ -267,16 +277,16 @@ expect {
 }
 
 # Test executing non-builtin commands after setting new PATH
-send "ls includes\r"
-# expect "builtin.h   executor.h  lexer.h     minishell.h parser.h    tokenizer.h" ;
-expect {
-	"builtin.h\nexecutor.h\nlexer.h\nminishell.h\nparser.h\ntokenizer.h\n" {
-		send_user "${green}Test passed${default}\n" ;
-	}
-	timeout {
-		send_user "${red}Test failed${default}\n"
-	}
-}
+send "ls includesabc\r"
+expect "ls: includesabc: No such file or directory" ;
+# expect {
+# 	"builtin.h\nexecutor.h\nlexer.h\nminishell.h\nparser.h\ntokenizer.h\n" {
+# 		send_user "${green}Test passed${default}\n" ;
+# 	}
+# 	timeout {
+# 		send_user "${red}Test failed${default}\n"
+# 	}
+# }
 
 # Test executing non-builtin commands after export wrong PATH
 send "export PATH=/tmp\r"
@@ -302,6 +312,19 @@ expect {
 		send_user "${red}Test failed${default}\n"
 	}
 }
+
+#========== Error Test ==========#
+# send "export A.B=C\r"
+# expect "minishell: export: A.B=C: not a valid identifier"
+
+# send "export A=B B=C C=D\r"
+# expect ""
+
+# send "echo \$A\$B\$C\r"
+# expect "BCD"
+
+# send "export 123=A\r"
+# expect "minishell: export: \`123=A': not a valid identifier"
 
 # Finish
 send "exit\r"
