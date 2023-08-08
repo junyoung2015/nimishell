@@ -8,7 +8,9 @@ spawn ./minishell
 
 set timeout 5
 
+##########
 ########## Executing commands with relative and absolute path ##########
+##########
 
 # Test wc
 send "echo \"\" | wc\r"
@@ -31,13 +33,15 @@ send "./program_nonexist\r"
 # expect "error: command not found: No such file or directory" ;
 expect "minishell: ./program_nonexist: No such file or directory" ;
 
-#======#### Exit code for CMD_NOT_FOUND #####======#
+#========== Exit code for CMD_NOT_FOUND ==========#
 
 # Test exit code for when coommand not found
 send "echo \$?\r"
 expect "127" ;
 
-##### Input with wrong syntax #####
+##########
+########## Input with wrong syntax ##########
+##########
 
 # Test 'ls > '
 send "ls >\r"
@@ -47,7 +51,9 @@ expect "minishell: syntax error near unexpected token `>`" ;
 #     timeout { send_user "${red}Test failed${default}" }
 # }
 
+##########
 ########## Environment variables substitution ##########
+##########
 
 # Test 'echo $USER'
 send "echo \$USER\r"
@@ -57,7 +63,7 @@ expect "$env(USER)" ;
 #     timeout { send_user "${red}Test failed${default}" }
 # }
 
-#======#### Exit code for normal exit #####======#
+#========== Exit code for normal exit ==========#
 # Test exit code for normal exit
 send "echo \$\?\r"
 expect "0" ;
@@ -78,8 +84,11 @@ expect "'$env(USER)'" ;
 #     timeout { send_user "${red}Test failed${default}" }
 # }
 
+##########
 ########## Test for unset and export, using varaibles after unset and after export ##########
+##########
 
+#========== Normal Test ==========#
 # Test 'unset USER'
 send "unset USER\r"
 expect "" ;
@@ -137,6 +146,19 @@ expect "" ;
 send "ls includes\r"
 # exepct "minishell: ls: No such file or directory" ;
 expect "minishell: ls: command not found" ;
+
+#========== Error Test ==========#
+# send "export A.B=C\r"
+# expect "minishell: export: A.B=C: not a valid identifier"
+
+# send "export A=B B=C C=D\r"
+# expect ""
+
+# send "echo \$A\$B\$C\r"
+# expect "BCD"
+
+# send "export 123=A\r"
+# expect "minishell: export: \`123=A': not a valid identifier"
 
 # Finish
 send "exit\r"
