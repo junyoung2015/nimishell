@@ -2,9 +2,10 @@
 
 spawn ./minishell
 
-# set green "\033\[0;32;40m"
+set green "\033\[0;32;40m"
 # set red "\033\[1;31m"
-# set default "\033\[0m"
+# set yellow "\033\[1;33m"
+set default "\033\[0m"
 
 set timeout 5
 
@@ -12,7 +13,10 @@ set timeout 5
 
 # Test wc
 send "echo \"\" | wc\r"
-expect "1       0       1" ;
+expect {
+    "1       0       1"  { send_user "${green}Test passed${default}\n" ; }
+    timeout { send_user "${red}Test failed${default}" }
+}
 
 # Test ls
 # send "ls includes\r"
