@@ -17,7 +17,7 @@ void	free_ptr(char **ptr)
 	size_t	i;
 
 	i = 0;
-	while (ptr[i])
+	while (ptr && ptr[i])
 	{
 		free(ptr[i]);
 		ptr[i++] = NULL;
