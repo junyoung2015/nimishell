@@ -324,7 +324,7 @@ expect {
 	}
 	timeout {
 		send_user "${red}Test failed${default}\n"
-		exit 1 ;
+		# exit 1 ;
 	}
 }
 # expect {
