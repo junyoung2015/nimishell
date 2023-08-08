@@ -115,7 +115,7 @@ expect "" ;
 # Test executing non-builtin commands after unset PATH
 send "ls\r"
 # exepct "minishell: ls: No such file or directory" ;
-exepct "minishell: ls: command not found" ;
+expect "minishell: ls: command not found" ;
 
 # Test executing non-builtin commands after export new PATH
 send "export PATH=/bin:/usr/sbin:/usr/local/bin\r"
@@ -132,7 +132,7 @@ expect "" ;
 # Test executing non-builtin commands after setting wrong PATH
 send "ls includes\r"
 # exepct "minishell: ls: No such file or directory" ;
-exepct "minishell: ls: command not found" ;
+expect "minishell: ls: command not found" ;
 
 # Finish
 send "exit\r"
