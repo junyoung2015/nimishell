@@ -25,7 +25,7 @@ char	*trim(char	**cmd_arg, t_cmp cmp)
 	}
 	else
 		result = ft_strdup("");
-	if (**cmd_arg && cmp(**cmd_arg))
+	if (**cmd_arg && cmp != is_quote && cmp(**cmd_arg))
 		(*cmd_arg)++;
 	return (result);
 }
