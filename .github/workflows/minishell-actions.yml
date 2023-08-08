@@ -1,5 +1,5 @@
 name: Minishell Actions
-run-name: Building ${{ github.repository }}
+run-name: Compile and Test ${{ github.repository }}
 on:
     push:
         branches: [main]
