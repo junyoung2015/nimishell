@@ -8,7 +8,7 @@ spawn ./minishell
 
 set timeout 5
 
-##### Executing commands with relative and absolute path #####
+########## Executing commands with relative and absolute path ##########
 
 # Test wc
 send "echo \"\" | wc\r"
@@ -28,10 +28,10 @@ expect "minishell: cmd_nonexist: command not found" ;
 
 # Test executing program that does not exist, in absolute path './program_nonexist'
 send "./program_nonexist\r"
-expect "error: command not found: No such file or directory" ;
-# expect "minishell: program_nonexist: No such file or directory" ;
+# expect "error: command not found: No such file or directory" ;
+expect "minishell: ./program_nonexist: No such file or directory" ;
 
-#======#### Exit code for CMD_NOT_FOUND #####======
+#======#### Exit code for CMD_NOT_FOUND #####======#
 
 # Test exit code for when coommand not found
 send "echo \$?\r"
@@ -47,7 +47,7 @@ expect "minishell: syntax error near unexpected token `>`" ;
 #     timeout { send_user "${red}Test failed${default}" }
 # }
 
-###### Environment variables substitution #####
+########## Environment variables substitution ##########
 
 # Test 'echo $USER'
 send "echo \$USER\r"
@@ -57,7 +57,7 @@ expect "$env(USER)" ;
 #     timeout { send_user "${red}Test failed${default}" }
 # }
 
-#======#### Exit code for normal exit #####======
+#======#### Exit code for normal exit #####======#
 # Test exit code for normal exit
 send "echo \$\?\r"
 expect "0" ;
@@ -78,7 +78,7 @@ expect "'$env(USER)'" ;
 #     timeout { send_user "${red}Test failed${default}" }
 # }
 
-##### Test for unset and export, using varaibles after unset and after export #####
+########## Test for unset and export, using varaibles after unset and after export ##########
 
 # Test 'unset USER'
 send "unset USER\r"
@@ -126,8 +126,8 @@ send "export PATH=/bin:/usr/sbin:/usr/local/bin\r"
 expect "" ;
 
 # Test executing non-builtin commands after setting new PATH
-send "ls includes\r"
-expect "builtin.h   executor.h  lexer.h     minishell.h parser.h    tokenizer.h" ;
+send "ls includesabc\r"
+expect "ls: includesabc: No such file or directory" ;
 
 # Test executing non-builtin commands after export wrong PATH
 send "export PATH=/tmp\r"
