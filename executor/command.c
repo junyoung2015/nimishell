@@ -22,6 +22,10 @@ void	command_in_child(t_node *node, t_exec_info *info)
 	if (node->builtin == NOT_BUILTIN)
 	{
 		cmdpath = get_cmdpath(node->cmd_args[0]);
+		if (access(cmdpath, F_OK) < 0)
+			err_exit("error: command not found", info);
+		if (access(cmdpath, X_OK) < 0)
+			err_exit("error: permission denied", info);
 		if (execve(cmdpath, node->cmd_args, g_info.env) < 0)
 			err_exit("error: execve", info);
 	}

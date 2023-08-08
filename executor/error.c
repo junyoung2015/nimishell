@@ -59,11 +59,12 @@ void	cmd_not_found(void)
 	exit(EXIT_CMD_NOT_FOUND);
 }
 
+// TODO: display_cmd fmf err_exit 과 합치는 것에 대해 생각해보기
 void	display_cmd(char *msg)
 {
 	write(STDERR_FILENO, "minishell: ", 11);
 	write(STDERR_FILENO, msg, ft_strlen(msg));
-	write(STDERR_FILENO, ": command not found\n", 20);
+	write(STDERR_FILENO, CMD_NOT_FOUND, ft_strlen(CMD_NOT_FOUND));
 	clear_all(g_info.root);
 	exit(EXIT_CMD_NOT_FOUND);
 }
