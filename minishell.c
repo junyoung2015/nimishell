@@ -104,14 +104,14 @@ void print_ast(t_node *node, int depth, const char *indent)
 
 #endif
 
-//#ifdef DEBUG
-//
-//void chk_leaks(void)
-//{
-//	system("leaks minishell");
-//}
-//
-//#endif
+#ifdef DEBUG
+
+void chk_leaks(void)
+{
+	system("leaks minishell");
+}
+
+#endif
 
 #ifdef DEBUG
 
@@ -162,8 +162,8 @@ int	main(int ac, char **av, char **envp)
 	// int	status;
 	// t_global_info	g_info;
 
-//	 if (DEBUG)
-//		atexit(chk_leaks);
+	// if (DEBUG)
+	// 	atexit(chk_leaks);
 	init_g_info(envp);
 	tokens = 0;
 	ast = 0;

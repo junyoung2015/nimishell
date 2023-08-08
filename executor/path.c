@@ -13,7 +13,8 @@ char	**get_path(char **env)
 		return (NULL);
 	path = ft_split(env[i] + 5, ':');
 	if (!path)
-		err_exit("error: malloc", NULL);
+		err("error: malloc", NULL);
+		// err_exit("error: malloc", NULL);
 	return (path);
 }
 
@@ -35,7 +36,7 @@ char	*join_path(char *path, char *filename)
 	return (filepath - len);
 }
 
-t_bool	check_access(char *filepath, char **path)
+t_bool	check_access(char *filepath, char **path, t_exec_info *info)
 {
 	if (!access(filepath, F_OK))
 	{
@@ -44,14 +45,14 @@ t_bool	check_access(char *filepath, char **path)
 		else
 		{
 			free_ptr(path);
-			free(filepath);
-			err_exit("error: access", NULL);
+			// free(filepath);
+			err_exit(EXIT_NOT_EXECUTABLE, filepath, info);
 		}
 	}
 	return (FALSE);
 }
 
-char	*get_cmdpath(char *filename)
+char	*get_cmdpath(char *filename, t_exec_info *info)
 {
 	char	**path;
 	char	*cmdpath;
@@ -67,14 +68,16 @@ char	*get_cmdpath(char *filename)
 		if (!cmdpath)
 		{
 			free_ptr(path);
-			err_exit("error: malloc", NULL);
+			err("error: malloc", info);
+			// err_exit("error: malloc", NULL);
 		}
-		if (check_access(cmdpath, path))
+		if (check_access(cmdpath, path, info))
 			return (cmdpath);
 		free(cmdpath);
 		i++;
 	}
 	free_ptr(path);
+	// err_exit(EXIT_CMD_NOT_FOUND, filename, CMD_NOT_FOUND, info);
 	display_cmd(filename);
 	return (NULL);
 }
