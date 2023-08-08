@@ -49,6 +49,8 @@ void	err_exit(int code, char *file, t_exec_info *info)
 {
 	if (info)
 		info->exit_code = code;
+	else if (!code)
+		code = EXIT_FAILURE;
 	write(STD_ERR, MINISHELL, ft_strlen(MINISHELL));
 	if (file)
 	{
