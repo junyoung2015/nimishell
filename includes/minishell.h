@@ -200,6 +200,11 @@ extern t_global_info g_info;
 
 # define MINISHELL				"minishell: "
 # define COLON					": "
+# define GIT_BRANCH				".git/HEAD"
+# define REF_HEAD				"ref: refs/heads/"
+# define DETACHED_HEAD			"detached HEAD"
+# define MAX_BRANCH_LEN			100
+
 # define TCGETATTR				"tcgetattr"
 # define CMD_NOT_FOUND			"command not found\n"
 // # define NO_FILE_DIR			": No such file or directory\n"
