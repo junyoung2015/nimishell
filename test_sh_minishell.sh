@@ -8,7 +8,13 @@ spawn ./minishell
 
 set timeout 5
 
-# Test 'cmd_nonexist'
+##### Executing commands with relative and absolute path #####
+
+# Test ls
+send "ls includes\r"
+expect "builtin.h   executor.h  lexer.h     minishell.h parser.h    tokenizer.h" ;
+
+# Test executing command that does not exist 'cmd_nonexist'
 send "cmd_nonexist\r"
 expect "minishell: cmd_nonexist: command not found" ;
 # expect {
@@ -16,13 +22,18 @@ expect "minishell: cmd_nonexist: command not found" ;
 #     timeout { send_user "${red}Test failed${default}" }
 # }
 
+# Test executing program that does not exist, in absolute path './program_nonexist'
+send "./program_nonexist\r"
+expect "error: command not found: No such file or directory" ;
+# expect "minishell: program_nonexist: No such file or directory" ;
+
+#======#### Exit code for CMD_NOT_FOUND #####======
+
 # Test exit code for when coommand not found
 send "echo \$?\r"
 expect "127" ;
 
-# Test './program_nonexist'
-send "./program_nonexist\r"
-expect "minishell: program_nonexist: No such file or directory" ;
+##### Input with wrong syntax #####
 
 # Test 'ls > '
 send "ls >\r"
@@ -32,6 +43,8 @@ expect "minishell: syntax error near unexpected token `>`" ;
 #     timeout { send_user "${red}Test failed${default}" }
 # }
 
+###### Environment variables substitution #####
+
 # Test 'echo $USER'
 send "echo \$USER\r"
 expect "$env(USER)" ;
@@ -40,6 +53,7 @@ expect "$env(USER)" ;
 #     timeout { send_user "${red}Test failed${default}" }
 # }
 
+#======#### Exit code for normal exit #####======
 # Test exit code for normal exit
 send "echo \$\?\r"
 expect "0" ;
@@ -60,6 +74,8 @@ expect "'$env(USER)'" ;
 #     timeout { send_user "${red}Test failed${default}" }
 # }
 
+##### Test for unset and export, using varaibles after unset and after export #####
+
 # Test 'unset USER'
 send "unset USER\r"
 expect "" ;
@@ -71,6 +87,10 @@ expect "\n" ;
 # Test export
 send "export test=ch\r"
 expect "" ;
+
+# Test env substitution for export
+send "e\$test'o'\r"
+expect "\n" ;
 
 # Test env substitution for export
 send "e\$test'o' \$USER\r"
@@ -111,8 +131,6 @@ expect "hi test" ;
 # Test executing non-builtin commands after setting wrong PATH
 # send "ls includes\r"
 # exepct "minishell: ls: No such file or directory" ;
-
-
 
 # Finish
 send "exit\r"
