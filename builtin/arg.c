@@ -29,8 +29,9 @@ int arg_check(char *str, t_builtin func)
 	i = 0;
 	while (str[i] && str[i] != '=')
 	{
-		if (!ft_isalnum(str[i++]))
+		if (!ft_isalnum(str[i]) && str[i] != '_')
 			return (-1);
+		i++;
 	}
 	if (str[i] == '=')
 		return (2 - 3 * (func == UNSET));
