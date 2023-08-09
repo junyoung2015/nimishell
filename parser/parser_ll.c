@@ -175,7 +175,7 @@ t_bool check(t_parser *parser, t_token_type type)
 {
 	if (parser->cur >= parser->size)
 		return (FALSE);
-	return (parser->cur_type(parser) == type);
+	return (cur_type(parser) == type);
 }
 
 /**
@@ -214,7 +214,7 @@ t_bool	is_word_token(t_parser *parser)
 {
 	t_token_type	type;
 
-	type = parser->cur_type(parser);
+	type = cur_type(parser);
 	if (parser->cur < parser->size)
 		return (type == TOKEN_WORD || type == TOKEN_SQ_STR || type == TOKEN_DQ_STR);
 	return (FALSE);
@@ -230,7 +230,7 @@ t_bool	is_redir_token(t_parser *parser)
 {
 	t_token_type	type;
 
-	type = parser->cur_type(parser);
+	type = cur_type(parser);
 	if (parser->cur < parser->size)
 		return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT || \
 			type == TOKEN_APPEND || type == TOKEN_HEREDOC);
@@ -339,8 +339,8 @@ char **init_rule_table(void)
  */
 void update_p_state(char **table, t_parser *parser, t_parse_state *parse_state)
 {
-	t_token cur;
-	t_token_type peek;
+	t_token			cur;
+	t_token_type	next;
 
 	if (parser->cur == 0)
 	{
@@ -348,11 +348,11 @@ void update_p_state(char **table, t_parser *parser, t_parse_state *parse_state)
 		return ;
 	}
 	cur = parser->tokens[parser->cur];
-	peek = parser->peek(parser);
+	next = peek(parser);
 	if (cur.type > TOKEN_R_PAREN)
 		*parse_state = ERR;
 	else
-		*parse_state = table[cur.type][peek];
+		*parse_state = table[cur.type][next];
 }
 
 /**
@@ -451,14 +451,14 @@ t_node *parse_simple_cmd_element(t_parser *parser, t_node *parent)
 {
 	t_node	*cmd_element;
 
-	if (parser->is_word(parser))
+	if (is_word_token(parser))
 	{
 		cmd_element = parse_word_list(parser, parent);
 		if (!cmd_element)
 			return (0);
 		cmd_element->type = AST_CMD;
 	}
-	else if (parser->is_redir(parser))
+	else if (is_redir_token(parser))
 	{
 		cmd_element = parse_redir_list(parser, parent);
 		if (!cmd_element)
@@ -486,7 +486,7 @@ t_node	*parse_simple_cmd_tail(t_parser *parser, t_node *parent)
 
 	simple_cmd_tail_node = 0;
 	// Do I have to check the token type here again, when its already checked before?
-	if (parser->is_word(parser) || parser->is_redir(parser))
+	if (is_word_token(parser) || is_redir_token(parser))
 	{
 		simple_cmd_tail_node = parse_simple_cmd_element(parser, parent);
 		if (!simple_cmd_tail_node)
@@ -495,7 +495,7 @@ t_node	*parse_simple_cmd_tail(t_parser *parser, t_node *parent)
 			append_redir_node(parent, simple_cmd_tail_node);
 		else
 			append_child_node(parent, simple_cmd_tail_node);
-		if (parser->is_word(parser) || parser->is_redir(parser))
+		if (is_word_token(parser) || is_redir_token(parser))
 		{
 			cmd_node = parse_simple_cmd_tail(parser, simple_cmd_tail_node);
 			if (!cmd_node)
@@ -518,12 +518,12 @@ t_node	*parse_simple_cmd(t_parser *parser, t_node *parent)
 	t_node	*cmd_tail;
 	t_node	*cmd_node;
 
-	if (parser->is_word(parser) || parser->is_redir(parser))
+	if (is_word_token(parser) || is_redir_token(parser))
 	{
 		cmd_node = parse_simple_cmd_element(parser, parent);
 		if (!cmd_node)
 			return (0);
-		if (parser->is_word(parser) || parser->is_redir(parser))
+		if (is_word_token(parser) || is_redir_token(parser))
 		{
 			cmd_tail = parse_simple_cmd_tail(parser, cmd_node);
 			if (!cmd_tail)
@@ -538,7 +538,7 @@ t_node	*parse_simple_cmd(t_parser *parser, t_node *parent)
 	{
 		cmd_node = parse_err(parser, parent);
 	}
-	// parser->advance(parser);
+	// advance(parser);
 	return (cmd_node);
 }
 
@@ -555,13 +555,13 @@ t_node *parse_command(t_parser *parser, t_node *parent)
 	t_node			*redir_list_node;
 	t_token_type	state;
 
-	state = parser->cur_type(parser);
+	state = cur_type(parser);
 	if (TOKEN_L_PAREN == state)
 	{
 		cmd_node = parse_subshell(parser, parent);
 		if (!cmd_node)
 			return (0);
-		if (parser->is_redir(parser))
+		if (is_redir_token(parser))
 		{
 			redir_list_node = parse_redir_list(parser, parent);
 			if (!redir_list_node)
@@ -569,7 +569,7 @@ t_node *parse_command(t_parser *parser, t_node *parent)
 			append_child_node(cmd_node, redir_list_node);
 		}
 	}
-	else if (parser->is_word(parser) || parser->is_redir(parser))
+	else if (is_word_token(parser) || is_redir_token(parser))
 	{
 		cmd_node = parse_simple_cmd(parser, parent);
 		if (!cmd_node)
@@ -605,7 +605,7 @@ char *parse_word(t_parser *parser)
 	char	*word;
 
 	word = 0;
-	if (parser->is_word(parser))
+	if (is_word_token(parser))
 		word = ft_strdup(parser->tokens[parser->cur].val);
 	return (word);
 }
@@ -636,7 +636,7 @@ t_node	*parse_word_list(t_parser *parser, t_node *parent)
 		free(word_list_node);
 		return (parse_err(parser, parent));
 	}
-	while (parser->cur < parser->size && parser->is_word(parser))
+	while (parser->cur < parser->size && is_word_token(parser))
 	{
 		word_list_node->cmd_args[word_list_node->num_args] = parse_word(parser);
 		if (!word_list_node->cmd_args[word_list_node->num_args])
@@ -649,7 +649,7 @@ t_node	*parse_word_list(t_parser *parser, t_node *parent)
 		if (word_list_node->cmd_args[word_list_node->num_args])
 			is_builtin_node(word_list_node);
 		word_list_node->num_args++;
-		parser->advance(parser);
+		advance(parser);
 	}
 	return (word_list_node);
 }
@@ -669,10 +669,10 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 	t_token_type	type;
 
 	redir_node = 0;
-	if (parser->is_redir(parser))
+	if (is_redir_token(parser))
 	{
-		type = parser->cur_type(parser);
-		if (parser->check(parser, TOKEN_HEREDOC))
+		type = cur_type(parser);
+		if (check(parser, TOKEN_HEREDOC))
 		{
 			redir_node = create_node(AST_HEREDOC);
 			redir_node->cmd_args = ft_calloc(2, sizeof(char *));
@@ -681,8 +681,8 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 				free(redir_node);
 				return (0);
 			}		
-			parser->advance(parser);
-			if (parser->is_word(parser))
+			advance(parser);
+			if (is_word_token(parser))
 				redir_node->cmd_args[(redir_node->num_args)++] = parse_word(parser);
 			else
 			{
@@ -694,8 +694,8 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 		}
 		else
 		{
-			parser->advance(parser);
-			if (parser->is_word(parser))
+			advance(parser);
+			if (is_word_token(parser))
 				redir_node = parse_word_list(parser, parent);
 			else
 			{
@@ -723,13 +723,13 @@ t_node	*parse_redir_list_tail(t_parser *parser, t_node *parent)
 	t_node	*redir_list_tail_node;
 
 	redir_list_tail_node = 0;
-	if (parser->is_redir(parser))
+	if (is_redir_token(parser))
 	{
 		redir_list_tail_node = parse_redir(parser, parent);
 		if (!redir_list_tail_node)
 			return (0);
 		append_redir_node(parent, redir_list_tail_node);
-		if (parser->is_redir(parser))
+		if (is_redir_token(parser))
 		{
 			redir_node = parse_redir_list_tail(parser, redir_list_tail_node);
 			if (!redir_node)
@@ -756,7 +756,7 @@ t_node	*parse_redir_list(t_parser *parser, t_node *parent)
 		return (0);
 	else if (redir_list_node->type == AST_ERR)
 		return (redir_list_node);
-	if (parser->is_redir(parser))
+	if (is_redir_token(parser))
 	{
 		redir_list_tail_node = parse_redir_list_tail(parser, redir_list_node);
 		if (!redir_list_tail_node) // err?
@@ -779,9 +779,9 @@ t_node *parse_pipeline_tail(t_parser *parser, t_node *parent)
 
 	// do I need to check whether token == TOKEN_PIPE again?
 	pipe_node = 0;
-	if (parser->check(parser, TOKEN_PIPE))
+	if (check(parser, TOKEN_PIPE))
 	{
-		parser->advance(parser);
+		advance(parser);
 		right_node = parse_pipeline(parser, parent);
 		if (!right_node) // err?
 			return (0);
@@ -815,7 +815,7 @@ t_node *parse_pipeline(t_parser *parser, t_node *parent)
 		return (0);
 	else if (cmd_node->type == AST_ERR)
 		return (cmd_node);
-	if (parser->check(parser, TOKEN_PIPE))
+	if (check(parser, TOKEN_PIPE))
 	{
 		pipe_node = parse_pipeline_tail(parser, cmd_node);
 		if (!pipe_node) // err?
@@ -852,17 +852,17 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 	(void)			parent;
 
 	logic_node = 0;
-	if (parser->check(parser, TOKEN_AND) || parser->check(parser, TOKEN_OR))
+	if (check(parser, TOKEN_AND) || check(parser, TOKEN_OR))
 	{
 		state = AST_AND;
-		if (parser->check(parser, TOKEN_OR))
+		if (check(parser, TOKEN_OR))
 			state = AST_OR;
 		logic_node = create_node(state);
 		if (!logic_node)	// malloc err
 			return (0);
 		// logic_node->left = parent;
 		// append_child_node(logic_node, parent);
-		parser->advance(parser);
+		advance(parser);
 		pipeline_node = parse_pipeline(parser, logic_node);
 		if (!pipeline_node)
 		{
@@ -876,7 +876,7 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 		// logic_node->right = pipeline_node;
 		// append_child_node(logic_node, pipeline_node);
 		// append_child_node(logic_node, pipeline_node);
-		if (parser->check(parser, TOKEN_AND) || parser->check(parser, TOKEN_OR))
+		if (check(parser, TOKEN_AND) || check(parser, TOKEN_OR))
 		{
 			list_tail_node = parse_list_tail(parser, pipeline_node);
 			if (!list_tail_node) // err?
@@ -901,7 +901,7 @@ t_node *parse_list(t_parser *parser, t_node *parent)
 	pipeline_node = parse_pipeline(parser, parent);
 	if (!pipeline_node) // err?
 		return (0);
-	if (parser->check(parser, TOKEN_AND) || parser->check(parser, TOKEN_OR))
+	if (check(parser, TOKEN_AND) || check(parser, TOKEN_OR))
 	{
 		list_tail_node = parse_list_tail(parser, pipeline_node);
 		if (!list_tail_node) // err?
@@ -920,9 +920,9 @@ t_node *parse_list(t_parser *parser, t_node *parent)
 // 	(void)			parent;
 
 // 	logic_node = 0;
-// 	if (parser->check(parser, TOKEN_AND) || parser->check(parser, TOKEN_OR))
+// 	if (check(parser, TOKEN_AND) || check(parser, TOKEN_OR))
 // 	{
-// 		parser->advance(parser);
+// 		advance(parser);
 // 		pipeline_node = parse_pipeline(parser, parent);
 // 		if (!pipeline_node)
 // 		{
@@ -935,14 +935,14 @@ t_node *parse_list(t_parser *parser, t_node *parent)
 // 			return (pipeline_node);
 // 		// logic_node->right = pipeline_node;
 // 		// append_child_node(logic_node, pipeline_node);
-// 		if (parser->check(parser, TOKEN_OR))
+// 		if (check(parser, TOKEN_OR))
 // 		{
 // 			list_tail_node = parse_list_tail(parser, pipeline_node);
 // 			if (!list_tail_node) // err?
 // 				return (0);
 // 			append_child_node(pipeline_node, list_tail_node);
 // 		}
-// 		else if (parser->check(parser, TOKEN_AND))
+// 		else if (check(parser, TOKEN_AND))
 // 		{
 // 			list_tail_node = parse_list_tail(parser, pipeline_node);
 // 			if (!list_tail_node) // err?
@@ -971,10 +971,10 @@ t_node *parse_list(t_parser *parser, t_node *parent)
 // 	pipeline_node = parse_pipeline(parser, parent);
 // 	if (!pipeline_node) // err?
 // 		return (0);
-// 	if (parser->check(parser, TOKEN_AND) || parser->check(parser, TOKEN_OR))
+// 	if (check(parser, TOKEN_AND) || check(parser, TOKEN_OR))
 // 	{
 // 		state = AST_AND;
-// 		if (parser->check(parser, TOKEN_OR))
+// 		if (check(parser, TOKEN_OR))
 // 			state = AST_OR;
 // 		logic_node = create_node(state);
 // 		append_child_node(logic_node, pipeline_node);
@@ -1003,12 +1003,12 @@ t_node *parse_subshell(t_parser *parser, t_node *parent)
 	if (!subshell_node)
 		return (0);
 	append_child_node(parent, subshell_node);
-	parser->advance(parser);
+	advance(parser);
 	list_node = parse_list(parser, subshell_node);
 	if (!list_node)
 		return (0);
 	append_child_node(subshell_node, list_node);
-	 parser->advance(parser); // For ')', need to check where R_PAREN is advanced
+	 advance(parser); // For ')', need to check where R_PAREN is advanced
 	return (subshell_node);
 }
 
@@ -1050,12 +1050,6 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 	parser.tokens = tokens;
 	parser.size = num_tokens;
 	parser.cur = 0;
-	parser.check = &check;
-	parser.cur_type = &cur_type;
-	parser.advance = &advance;
-	parser.peek = &peek;
-	parser.is_word = &is_word_token;
-	parser.is_redir = &is_redir_token;
 	table = init_rule_table();
 	if (!table)
 		return (0);
