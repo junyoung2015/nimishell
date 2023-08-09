@@ -97,7 +97,6 @@ void	update_pwd(char *cwd, t_exec_info *info)
 	char	*pwd;
 	char	*oldpwd;
 
-	// TODO: PWD/OLDPWD 가 없을 경우 bash 처럼 처리 필요
 	pwd = ft_strjoin("PWD=", cwd);
 	oldpwd = ft_strjoin("OLDPWD=", get_env("PWD"));
 	if (!pwd || !oldpwd)
