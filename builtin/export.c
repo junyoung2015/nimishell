@@ -16,13 +16,15 @@ t_bool	is_in_env(char *key, char *env)
 	return (FALSE);
 }
 
-void	append_last(t_node *node, t_exec_info *info)
+void	append_last(char *arg, t_exec_info *info)
 {
 	char	**env;
+	char	*str;
 	size_t	i;
 
 	env = ft_calloc(g_info.env_cnt + 2, sizeof(char *));
-	if (!env)
+	str = ft_strdup(arg);
+	if (!env || !arg)
 	{
 		err("error: malloc", info);
 		return ;
@@ -33,11 +35,11 @@ void	append_last(t_node *node, t_exec_info *info)
 		env[i] = g_info.env[i];
 		g_info.env[i++] = NULL;
 	}
-	env[i++] = node->cmd_args[1];
-	node->cmd_args[1] = NULL;
+	env[i++] = str;
 	env[i] = NULL;
 	free(g_info.env);
 	g_info.env = env;
+	g_info.env_cnt += 1;
 }
 
 void	print_env()
@@ -60,37 +62,53 @@ void	print_env()
 	}
 }
 
-void	add_env(t_node *node, t_exec_info *info)
+void	add_env(char *arg, t_exec_info *info)
 {
 	size_t	i;
+	char	*str;
 
 	i = 0;
 	while (g_info.env && g_info.env[i])
 	{
-		if (is_in_env(node->cmd_args[1], g_info.env[i]))
+		if (is_in_env(arg, g_info.env[i]))
 		{
-			free(g_info.env[i]);	
-			g_info.env[i] = node->cmd_args[1];
-			node->cmd_args[1] = NULL;
+			str = ft_strdup(arg);
+			if (str)
+			{
+				free(g_info.env[i]);
+				g_info.env[i] = str;
+			}
+			else
+				err("error: malloc", info);
 			return ;
 		}
 		i++;
 	}
-	append_last(node, info);
-	if (!info->exit_code)
-		g_info.env_cnt += 1;
+	append_last(arg, info);
 }
 
 void	export(t_node *node, t_exec_info *info)
 {
 
-	if (!node->cmd_args[1])
-		print_env();
-	else if (node->cmd_args[1][0] == '=')
+	size_t	i;
+	int		result;
+
+	if (!node->cmd_args[1] || node->cmd_args[1][0] == '#')
 	{
-		write(STDERR_FILENO, "error: export: not a valid identifier\n", 38);
-		info->exit_code = EXIT_FAILURE;
+		print_env();
+		return ;
 	}
-	else
-		add_env(node, info);
+	i = 1;
+	result = 1;
+	while (result && node->cmd_args[i])
+	{
+		result = arg_check(node->cmd_args[i], EXPORT);
+		if (result < 0)
+			arg_err("export", node->cmd_args[i], info);
+		else if (result >> 1)
+			add_env(node->cmd_args[i], info);
+		i++;
+	}
 }
+
+

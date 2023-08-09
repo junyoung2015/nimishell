@@ -51,6 +51,7 @@ SRCS = ./minishell.c						\
 		$(BUILTIN_DIR)env.c					\
 		$(BUILTIN_DIR)pwd.c					\
 		$(BUILTIN_DIR)echo.c				\
+		$(BUILTIN_DIR)arg.c					\
 		$(BUILTIN_DIR)cd.c
 
 CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2
