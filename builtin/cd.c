@@ -83,42 +83,114 @@ void	update_pwd(char *cwd, t_exec_info *info)
 	update_env(oldpwd);
 }
 
-t_bool	cd(t_node *node, t_exec_info *info)
+t_bool	try_chdir(char *path, t_exec_info *info)
+{
+	if (chdir(path))
+	{
+		display_err(CD_BUILTIN, path, 0, info);
+		return (FALSE);
+	}
+	return (TRUE);
+}
+
+t_bool	cd_to_home(t_exec_info *info)
+{
+	char *home = get_env("HOME");
+	if (!home)
+	{
+		display_err(CD_BUILTIN, 0, CD_HOME_NOT_SET, info);
+		return (FALSE);
+	}
+	return (try_chdir(home, info));
+}
+
+t_bool	cd_to_oldpwd(t_exec_info *info)
+{
+	return (try_chdir(get_env("OLDPWD"), info));
+}
+
+t_bool	cd_to_path_with_home(char *path, t_exec_info *info)
 {
 	char	*home;
-	char	*cwd;
+	char	*full_path;
+	t_bool	bool;
 
 	home = get_env("HOME");
-	if (!home)
-		display_err(CD_BUILTIN, 0, CD_HOME_NOT_SET, info);
-	if (home && node->num_args == 1 && chdir(home))
-			display_err(CD_BUILTIN, home, 0, info);
+	full_path = ft_strjoin(home, path + 1);
+	if (!full_path)
+	{
+		err("error: malloc", info);
+		return (FALSE);
+	}
+	bool = try_chdir(full_path, info);
+	free(full_path);
+	return (bool);
+}
+
+
+t_bool	cd(t_node *node, t_exec_info *info)
+{
+	char	*cwd;
+	t_bool	status;
+
+	status = TRUE;
+	if (node->num_args == 1)
+		status = cd_to_home(info);
 	else if (node->num_args >= 2)
 	{
-		if (ft_strcmp(node->cmd_args[1], "-") == 0)
-		{
-			if (chdir(get_env("OLDPWD")))
-				display_err(CD_BUILTIN, get_env("OLDPWD"), 0, info);
-		}
-		else if (ft_strcmp(node->cmd_args[1], "~") == 0)
-		{
-			if (chdir(home))
-				display_err(CD_BUILTIN, home, 0, info);
-		}
+		if (ft_strcmp(node->cmd_args[1], "~") == 0)
+			status = cd_to_home(info);
+		else if (ft_strcmp(node->cmd_args[1], "-") == 0)
+			status = cd_to_oldpwd(info);
 		else if (ft_strncmp(node->cmd_args[1], "~/", 2) == 0)
-		{
-			cwd = ft_strjoin(home, node->cmd_args[1] + 1);
-			if (!cwd)
-				err("error: malloc", info);
-			if (chdir(cwd))
-				display_err(CD_BUILTIN, cwd, 0, info);
-			free(cwd);
-		}
-		else if (chdir(node->cmd_args[1]))
-			display_err(CD_BUILTIN, node->cmd_args[1], 0, info);
+			status = cd_to_path_with_home(node->cmd_args[1], info);
+		else
+		status = try_chdir(node->cmd_args[1], info);
 	}
 	cwd = getcwd(0, 0);
 	update_pwd(cwd, info);
 	free(cwd);
-	return (TRUE);
+	return (status);
 }
+
+
+// t_bool	cd(t_node *node, t_exec_info *info)
+// {
+// 	char	*home;
+// 	char	*cwd;
+
+// 	home = get_env("HOME");
+// 	if (!home)
+// 		display_err(CD_BUILTIN, 0, CD_HOME_NOT_SET, info);
+// 	if (node->num_args == 1 || (node->num_args >= 2 && ft_strcmp(node->cmd_args[1], "~") == 0))
+// 		if (!cd_to_home(info))
+// 			return FALSE;
+// 	else if (node->num_args >= 2)
+// 	{
+// 		if (ft_strcmp(node->cmd_args[1], "-") == 0)
+// 		{
+// 			if (chdir(get_env("OLDPWD")))
+// 				display_err(CD_BUILTIN, get_env("OLDPWD"), 0, info);
+// 		}
+// 		else if (ft_strcmp(node->cmd_args[1], "~") == 0)
+// 		{
+// 			if (chdir(home))
+// 				display_err(CD_BUILTIN, home, 0, info);
+// 		}
+// 		else if (ft_strncmp(node->cmd_args[1], "~/", 2) == 0)
+// 		{
+// 			cwd = ft_strjoin(home, node->cmd_args[1] + 1);
+// 			if (!cwd)
+// 				err("error: malloc", info);
+// 			if (chdir(cwd))
+// 				display_err(CD_BUILTIN, cwd, 0, info);
+// 			free(cwd);
+// 		}
+// 		else if (chdir(node->cmd_args[1]))
+// 			display_err(CD_BUILTIN, node->cmd_args[1], 0, info);
+// 	}
+// 	cwd = getcwd(0, 0);
+// 	update_pwd(cwd, info);
+// 	free(cwd);
+// 	return (TRUE);
+// }
