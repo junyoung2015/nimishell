@@ -175,7 +175,7 @@ t_bool	cd(t_node *node, t_exec_info *info)
 		status = cd_to_home(info);
 	else if (node->num_args >= 2)
 	{
-		if (ft_strcmp(node->cmd_args[1], "~") == 0)
+		if (ft_strcmp(node->cmd_args[1], "~") == 0 || !*(node->cmd_args[1]))
 			status = cd_to_home(info);
 		else if (ft_strcmp(node->cmd_args[1], "-") == 0)
 			status = cd_to_oldpwd(info);
