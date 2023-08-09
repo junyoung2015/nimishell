@@ -45,10 +45,34 @@ int	err(char *str, t_exec_info *info)
 	return (EXIT_FAILURE);
 }
 
+int	display_err(char *exec, char *file, char *msg, t_exec_info *info)
+{
+	if (info)
+		info->exit_code = EXIT_FAILURE;
+	write(STD_ERR, MINISHELL, ft_strlen(MINISHELL));
+	if (exec)
+	{
+		write(STD_ERR, exec, ft_strlen(exec));
+		write(STD_ERR, COLON, ft_strlen(COLON));		
+	}
+	if (file)
+	{
+		write(STD_ERR, file, ft_strlen(file));
+		write(STD_ERR, COLON, ft_strlen(COLON));
+	}
+	if (msg)
+		write(STD_ERR, msg, ft_strlen(msg));
+	else
+		perror(0);
+	return (EXIT_FAILURE);
+}
+
 void	err_exit(int code, char *file, t_exec_info *info)
 {
 	if (info)
 		info->exit_code = code;
+	else if (!code)
+		code = EXIT_FAILURE;
 	write(STD_ERR, MINISHELL, ft_strlen(MINISHELL));
 	if (file)
 	{
@@ -63,7 +87,7 @@ void	err_exit(int code, char *file, t_exec_info *info)
 	exit(code);
 }
 
-// TODO: display_cmd 가 cmd_not_found 를 대채할 예정
+// TODO: display_cmd_err 가 cmd_not_found 를 대채할 예정
 void	cmd_not_found(void)
 {
 	clear_all(g_info.root);
@@ -71,8 +95,8 @@ void	cmd_not_found(void)
 	exit(EXIT_CMD_NOT_FOUND);
 }
 
-// TODO: display_cmd fmf err_exit 과 합치는 것에 대해 생각해보기
-void	display_cmd(char *filename)
+// TODO: display_cmd_err fmf err_exit 과 합치는 것에 대해 생각해보기
+void	display_cmd_err(char *filename)
 {
 	write(STDERR_FILENO, "minishell: ", 11);
 	if (filename)

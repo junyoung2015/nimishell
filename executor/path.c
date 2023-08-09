@@ -78,6 +78,6 @@ char	*get_cmdpath(char *filename, t_exec_info *info)
 	}
 	free_ptr(path);
 	// err_exit(EXIT_CMD_NOT_FOUND, filename, CMD_NOT_FOUND, info);
-	display_cmd(filename);
+	display_cmd_err(filename);
 	return (NULL);
 }

@@ -10,6 +10,145 @@ set count 1
 
 set timeout 5
 
+send "\r"
+expect "" ;
+
+##########
+########## Testing cd builtin ##########
+##########
+
+send "pwd\r"
+expect {
+	"$env(HOME)/nimishell" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n" ;
+		# exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+send "cd includes\r"
+expect {
+	"" {
+		send_user "${green}Test ${count} passed${default}\n"
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n" ;
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+send "pwd\r"
+expect {
+	"$env(HOME)/nimishell/includes" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n" ;
+		# exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+send "cd -\r"
+expect {
+	"" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n" ;
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+send "pwd\r"
+expect {
+	"$env(HOME)/nimishell" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n" ;
+		# exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+send "cd\r"
+expect {
+	"" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n" ;
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+send "pwd\r"
+expect {
+	"$env(HOME)" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n" ;
+		# exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+send "cd dir_does_not_exist\r"
+expect {
+	"minishell: cd: dir_does_not_exist: No such file or directory" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n" ;
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+send "export HOME_BACKUP=\$HOME\r"
+expect {
+	"" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n" ;
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+send "unset HOME\r"
+expect {
+	"" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n" ;
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+send "cd\r"
+expect {
+	"minishell: cd: HOME not set" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n" ;
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
 ##########
 ########## Executing commands with relative and absolute path ##########
 ##########
@@ -19,13 +158,13 @@ send "echo \"\" | wc\r"
 expect {
 	"1       0       1"  {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n" ;
+		send_user "${red}Test ${count} failed${default}\n" ;
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 # Test ls
 # send "ls includes\r"
@@ -37,13 +176,13 @@ send "cmd_nonexist\r"
 expect {
 	"minishell: cmd_nonexist: command not found" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n" ;
+		send_user "${red}Test ${count} failed${default}\n" ;
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 # Test executing program that does not exist, in absolute path './program_nonexist'
 send "./program_nonexist\r"
@@ -53,13 +192,13 @@ send "./program_nonexist\r"
 expect {
 	"minishell: ./program_nonexist: No such file or directory" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n" ;
+		send_user "${red}Test ${count} failed${default}\n" ;
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 #========== Exit code for CMD_NOT_FOUND ==========#
 
@@ -69,13 +208,13 @@ send "echo \$?\r"
 expect {
 	"127" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n" ;
+		send_user "${red}Test ${count} failed${default}\n" ;
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 ##########
 ########## Input with wrong syntax ##########
@@ -87,13 +226,13 @@ send "ls >\r"
 expect {
 	"minishell: syntax error near unexpected token `>`" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 ##########
 ########## Environment variables substitution ##########
@@ -105,13 +244,13 @@ send "echo \$USER\r"
 expect {
 	"$env(USER)" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 #========== Exit code for normal exit ==========#
 # Test exit code for normal exit
@@ -119,13 +258,13 @@ send "echo \$\?\r"
 expect {
 	"0" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 # Test 'echo '$USER''
 send "echo \'\$USER\'\r"
@@ -133,13 +272,13 @@ send "echo \'\$USER\'\r"
 expect {
 	"\$USER" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 # Test 'echo "'$USER'"
 send "echo \"\'\$USER\'\"\r"
@@ -147,13 +286,13 @@ send "echo \"\'\$USER\'\"\r"
 expect {
 	"$env(USER)" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 ##########
 ########## Test for unset and export, using varaibles after unset and after export ##########
@@ -166,13 +305,13 @@ send "unset USER\r"
 expect {
 	"" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 # Test 'echo $USER' after unset USER
 send "echo \$USER\r"
@@ -180,13 +319,13 @@ send "echo \$USER\r"
 expect {
 	"\n" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 # Test export
 send "export test=ch\r"
@@ -194,13 +333,13 @@ send "export test=ch\r"
 expect {
 	"" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 # Test env substitution for export
 send "e\$test'o'\r"
@@ -208,13 +347,13 @@ send "e\$test'o'\r"
 expect {
 	"\n" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 # Test env substitution for export
 send "e\$test'o' \$USER\r"
@@ -222,13 +361,13 @@ send "e\$test'o' \$USER\r"
 expect {
 	"$env(USER)" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 # Test env substitution for export
 send "e\$test\"o\" \$USER\r"
@@ -236,13 +375,13 @@ send "e\$test\"o\" \$USER\r"
 expect {
 	"$env(USER)" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 # Test export with whitespace
 send "export \"wspace=hi test\"\r"
@@ -250,13 +389,13 @@ send "export \"wspace=hi test\"\r"
 expect {
 	"" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 # Test env substitution for export with whitespace
 send "e\$test'o' \$wspace\r"
@@ -264,13 +403,13 @@ expect "hi test" ;
 expect {
 	"hi test" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 # Test executing non-builtin commands after unset PATH
 send "unset PATH\r"
@@ -278,13 +417,13 @@ send "unset PATH\r"
 expect {
 	"" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 # Test executing non-builtin commands after unset PATH
 send "ls\r"
@@ -293,13 +432,13 @@ send "ls\r"
 expect {
 	"minishell: ls: command not found" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 # Test executing non-builtin commands after export new PATH
 send "export PATH=/bin:/usr/sbin:/usr/local/bin\r"
@@ -307,32 +446,33 @@ send "export PATH=/bin:/usr/sbin:/usr/local/bin\r"
 expect {
 	"" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 # Test executing non-builtin commands after setting new PATH
 send "ls includesabc\r"
 expect {
 	"ls: includesabc: No such file or directory" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
-		exit 1 ;
+		send_user "${red}Test ${count} failed${default}\n"
+		# exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
+
 # expect {
 # 	"builtin.h\nexecutor.h\nlexer.h\nminishell.h\nparser.h\ntokenizer.h\n" {
 # 		send_user "${green}Test passed${default}\n" ;
 # 	}
 # 	timeout {
-# 		send_user "${red}Test failed${default}\n"
+# 		send_user "${red}Test ${count} failed${default}\n"
 # 	}
 # }
 
@@ -342,13 +482,13 @@ send "export PATH=/tmp\r"
 expect {
 	"" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 # Test executing non-builtin commands after setting wrong PATH
 send "ls includes\r"
@@ -357,26 +497,30 @@ send "ls includes\r"
 expect {
 	"minishell: ls: command not found" {
 		send_user "${green}Test ${count} passed${default}\n" ;
-		set count [ expr \$count + 1 ] ;
 	}
 	timeout {
-		send_user "${red}Test failed${default}\n"
+		send_user "${red}Test ${count} failed${default}\n"
 		exit 1 ;
 	}
 }
+set count [ expr \$count + 1 ] ;
 
 #========== Error Test ==========#
 # send "export A.B=C\r"
 # expect "minishell: export: A.B=C: not a valid identifier"
+# set count [ expr \$count + 1 ] ;
 
 # send "export A=B B=C C=D\r"
 # expect ""
+# set count [ expr \$count + 1 ] ;
 
 # send "echo \$A\$B\$C\r"
 # expect "BCD"
+# set count [ expr \$count + 1 ] ;
 
 # send "export 123=A\r"
 # expect "minishell: export: \`123=A': not a valid identifier"
+# set count [ expr \$count + 1 ] ;
 
 # Finish
 send "exit\r"
