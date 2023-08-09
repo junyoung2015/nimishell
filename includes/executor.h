@@ -44,6 +44,7 @@ int		heredoc(t_node *node, t_exec_info *info);
 void	free_ptr(char **ptr);
 void	clear_all(t_node *root);
 int		err(char *str, t_exec_info *info);
+int		display_err(char *file, char *exec, char *msg, t_exec_info *info);
 void	err_exit(int code, char *file, t_exec_info *info);
 // void	err_exit(char *str, t_exec_info *info);
 void	cmd_not_found(void);
