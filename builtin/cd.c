@@ -89,25 +89,36 @@ t_bool	cd(t_node *node, t_exec_info *info)
 	char	*cwd;
 
 	home = get_env("HOME");
-	// TODO: HOME 이 unset 됐을 경우 처리 필요
 	if (!home)
-		err("minishell: cd: HOME not set", info);
-		// err_exit(EXIT_FAILURE, "cd: HOME not set", info);
-	if (home && node->num_args == 1)
-	{
-		if (chdir(home))
-			err("error: cd", info);
-		cwd = getcwd(0, 0);
-		update_pwd(cwd, info);
-		free(cwd);
-	}
+		display_err(CD_BUILTIN, 0, CD_HOME_NOT_SET, info);
+	if (home && node->num_args == 1 && chdir(home))
+			display_err(CD_BUILTIN, home, 0, info);
 	else if (node->num_args >= 2)
 	{
-		if (chdir(node->cmd_args[1]))
-			err("error: cd", info);
-		cwd = getcwd(0, 0);
-		update_pwd(cwd, info);
-		free(cwd);
+		if (ft_strcmp(node->cmd_args[1], "-") == 0)
+		{
+			if (chdir(get_env("OLDPWD")))
+				display_err(CD_BUILTIN, get_env("OLDPWD"), 0, info);
+		}
+		else if (ft_strcmp(node->cmd_args[1], "~") == 0)
+		{
+			if (chdir(home))
+				display_err(CD_BUILTIN, home, 0, info);
+		}
+		else if (ft_strncmp(node->cmd_args[1], "~/", 2) == 0)
+		{
+			cwd = ft_strjoin(home, node->cmd_args[1] + 1);
+			if (!cwd)
+				err("error: malloc", info);
+			if (chdir(cwd))
+				display_err(CD_BUILTIN, cwd, 0, info);
+			free(cwd);
+		}
+		else if (chdir(node->cmd_args[1]))
+			display_err(CD_BUILTIN, node->cmd_args[1], 0, info);
 	}
+	cwd = getcwd(0, 0);
+	update_pwd(cwd, info);
+	free(cwd);
 	return (TRUE);
 }
