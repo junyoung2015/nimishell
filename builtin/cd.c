@@ -84,6 +84,7 @@ void	update_env(char *new_env, t_exec_info *info)
 				free(tmp);
 				return ;
 			}
+			free(tmp);
 		}
 	}
 	append_new_env(new_env, info);
