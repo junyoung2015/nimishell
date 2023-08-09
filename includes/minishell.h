@@ -153,13 +153,6 @@ typedef struct s_parser
 	t_token			*tokens;
 	t_size			cur;
 	t_size			size;
-	void			(*advance)(struct s_parser *);
-	t_token_type	(*cur_type)(struct s_parser *);
-	t_bool			(*check)(struct s_parser *, t_token_type);
-	t_token_type	(*peek)(struct s_parser *);
-	t_token_type	(*consume)(struct s_parser *);
-	t_bool			(*is_word)(struct s_parser *);
-	t_bool			(*is_redir)(struct s_parser *);
 } t_parser;
 
 typedef struct s_global_info
@@ -209,7 +202,7 @@ extern t_global_info g_info;
 # define MAX_BRANCH_LEN			100
 
 /* ================= BUILTIN ================= */
-# define CD_BUILTIN						"cd"
+# define CD_BUILTIN				"cd"
 
 
 /* ================ ERR MSG ================== */

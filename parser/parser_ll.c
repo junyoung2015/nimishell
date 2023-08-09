@@ -563,7 +563,7 @@ t_node *parse_command(t_parser *parser, t_node *parent)
 			return (0);
 		if (is_redir_token(parser))
 		{
-			redir_list_node = parse_redir_list(parser, parent);
+			redir_list_node = parse_redir_list(parser, cmd_node);
 			if (!redir_list_node)
 				return (0);
 			append_child_node(cmd_node, redir_list_node);
@@ -909,6 +909,16 @@ t_node *parse_list(t_parser *parser, t_node *parent)
 		// append_child_node(list_tail_node, pipeline_node);
 		list_tail_node->left = pipeline_node;
 		return (list_tail_node);
+	}
+	else if (check(parser, TOKEN_AND))
+	{
+		// list_tail_node = parse_list_tail(parser, pipeline_node);
+		// if (!list_tail_node) // err?
+		// 	return (0);
+		// append_child_node(list_tail_node, pipeline_node);
+		// list_tail_node->left = pipeline_node;
+		// return (list_tail_node);
+		// return (pipeline_node);
 	}
 	return (pipeline_node);
 }
