@@ -198,21 +198,30 @@ extern t_global_info g_info;
 # define TRUE					1
 # define FALSE					0
 
+/* ============= GENERAL MACRO =============== */
 # define MINISHELL				"minishell: "
 # define COLON					": "
+
+/* =============== PROMPT GIT ================ */
 # define GIT_BRANCH				".git/HEAD"
 # define REF_HEAD				"ref: refs/heads/"
 # define DETACHED_HEAD			"detached HEAD"
 # define MAX_BRANCH_LEN			100
 
+/* ================= BUILTIN ================= */
+# define CD_BUILTIN						"cd"
+
+
+/* ================ ERR MSG ================== */
 # define TCGETATTR				"tcgetattr"
+# define CD_HOME_NOT_SET		"HOME not set\n"
 # define CMD_NOT_FOUND			"command not found\n"
-// # define NO_FILE_DIR			": No such file or directory\n"
+# define NO_FILE_DIR			"No such file or directory\n"
 # define QUOTE_NOT_CLOSED		"Syntax Error: unmatched quote\n"
 # define PAREN_NOT_CLOSED		"Syntax Error: unmatched parenthesis\n"
 # define MALLOC_ERR				"malloc() error."
 
-/* =============== MEMORY_UTILS ================ */
+/* ============== MEMORY_UTILS =============== */
 void			ft_bzero(void *s, t_size n);
 void			*ft_calloc(t_size count, t_size size);
 void			*ft_memset(void *b, int c, t_size len);
@@ -299,6 +308,6 @@ int				executor(t_node *root);
 
 /* ================== BUILTIN ================== */
 char			*get_env(char *env_var);
-void			display_cmd(char *msg);
+void			display_cmd_err(char *msg);
 
 #endif

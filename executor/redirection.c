@@ -38,7 +38,7 @@ int	redir_append(t_node *node, t_exec_info *info)
 
 static void	redir_err(char *filename, t_exec_info *info)
 {
-	// TODO: display_cmd 와 redir_err 를 합치는 것에 대해 고려하기
+	// TODO: display_cmd_err 와 redir_err 를 합치는 것에 대해 고려하기
 	if (info->is_fork)
 		err_exit(EXIT_FAILURE, filename, info);
 	else
