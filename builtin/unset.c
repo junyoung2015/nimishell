@@ -60,9 +60,22 @@ void	remove_env(t_exec_info *info, size_t idx)
 void	unset(t_node *node, t_exec_info *info)
 {
 	size_t	idx;
+	size_t	i;
+	int		result;
 
-	idx = get_idx(node->cmd_args[1]);
-	if (idx == g_info.env_cnt)
-		return ;
-	remove_env(info, idx);
+	i = 1;
+	result = 1;
+	while (result && node->cmd_args[i])
+	{
+		result = arg_check(node->cmd_args[i], UNSET);
+		if (result < 0)
+			arg_err("unset", node->cmd_args[i], info);
+		else if (result >> 1)
+		{
+			idx = get_idx(node->cmd_args[i]);
+			if (idx < g_info.env_cnt)
+				remove_env(info, idx);
+		}
+		i++;
+	}
 }
