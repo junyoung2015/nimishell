@@ -691,6 +691,7 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 				redir_node = parse_err(parser, parent);
 				return (redir_node);
 			}
+			advance(parser);
 		}
 		else
 		{
