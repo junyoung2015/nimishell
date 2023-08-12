@@ -204,7 +204,6 @@ extern t_global_info g_info;
 /* ================= BUILTIN ================= */
 # define CD_BUILTIN				"cd"
 
-
 /* ================ ERR MSG ================== */
 # define TCGETATTR				"tcgetattr"
 # define CD_HOME_NOT_SET		"HOME not set\n"

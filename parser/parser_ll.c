@@ -680,7 +680,7 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 			{
 				free(redir_node);
 				return (0);
-			}		
+			}
 			advance(parser);
 			if (is_word_token(parser))
 				redir_node->cmd_args[(redir_node->num_args)++] = parse_word(parser);
@@ -691,6 +691,7 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 				redir_node = parse_err(parser, parent);
 				return (redir_node);
 			}
+			advance(parser);
 		}
 		else
 		{
