@@ -491,9 +491,9 @@ t_node	*parse_simple_cmd_tail(t_parser *parser, t_node *parent)
 		simple_cmd_tail_node = parse_simple_cmd_element(parser, parent);
 		if (!simple_cmd_tail_node)
 			return (0);
-		if (AST_REDIR_IN <= simple_cmd_tail_node->type && simple_cmd_tail_node->type <= AST_REDIR_APPEND) // appending to the first cmd when there is a redirection - ls | wc > a.txt, appending to ls here
-			append_redir_node(parent, simple_cmd_tail_node);
-		else
+		// if (AST_REDIR_IN <= simple_cmd_tail_node->type && simple_cmd_tail_node->type <= AST_REDIR_APPEND) // appending to the first cmd when there is a redirection - ls | wc > a.txt, appending to ls here
+		// 	append_redir_node(parent, simple_cmd_tail_node);
+		// else
 			append_child_node(parent, simple_cmd_tail_node);
 		if (is_word_token(parser) || is_redir_token(parser))
 		{
@@ -665,6 +665,7 @@ t_node	*parse_word_list(t_parser *parser, t_node *parent)
  */
 t_node *parse_redir(t_parser *parser, t_node *parent)
 {
+	t_node			*cmd_node;
 	t_node			*redir_node;
 	t_token_type	type;
 
@@ -675,6 +676,8 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 		if (check(parser, TOKEN_HEREDOC))
 		{
 			redir_node = create_node(AST_HEREDOC);
+			if (!redir_node)
+				return (0);
 			redir_node->cmd_args = ft_calloc(2, sizeof(char *));
 			if (!redir_node->cmd_args)
 			{
@@ -692,6 +695,21 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 				return (redir_node);
 			}
 			advance(parser);
+			if (is_word_token(parser))
+			{
+				cmd_node = parse_word_list(parser, parent);
+				if (!cmd_node)
+					return (0);
+				cmd_node->type = AST_CMD;
+				// append_redir_node(cmd_node, redir_node);
+				append_child_node(cmd_node, redir_node);
+				return (cmd_node);
+				// cmd_node = parse_simple_cmd(parser, parent);
+				// if (!cmd_node)
+				// 	return (0);
+				// append_redir_node(cmd_node, redir_node);
+				// return (cmd_node);
+			}
 		}
 		else
 		{
@@ -729,7 +747,8 @@ t_node	*parse_redir_list_tail(t_parser *parser, t_node *parent)
 		redir_list_tail_node = parse_redir(parser, parent);
 		if (!redir_list_tail_node)
 			return (0);
-		append_redir_node(parent, redir_list_tail_node);
+		// append_redir_node(parent, redir_list_tail_node);
+		append_child_node(parent, redir_list_tail_node);
 		if (is_redir_token(parser))
 		{
 			redir_node = parse_redir_list_tail(parser, redir_list_tail_node);
@@ -1086,8 +1105,8 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 			}
 			if (root == 0)
 				root = new_node;
-			else if (new_node->type == AST_REDIR_IN || new_node->type == AST_REDIR_OUT || new_node->type == AST_REDIR_APPEND || new_node->type == AST_HEREDOC)
-				append_redir_node(root, new_node);
+			// else if (new_node->type == AST_REDIR_IN || new_node->type == AST_REDIR_OUT || new_node->type == AST_REDIR_APPEND || new_node->type == AST_HEREDOC)
+			// 	append_redir_node(root, new_node);
 			else
 				append_child_node(root, new_node);
 		}
