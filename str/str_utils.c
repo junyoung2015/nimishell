@@ -96,7 +96,7 @@ char	*ft_strnstr(const char *haystack, const char *needle, t_size n)
 	to_find = (char *) needle;
 	if (!*to_find)
 		return (src);
-	while (src[++i] && 0 < n--)
+	while (src[++i] && 0 < n)
 	{
 		j = 0;
 		if (src[i] == to_find[j])
@@ -107,6 +107,7 @@ char	*ft_strnstr(const char *haystack, const char *needle, t_size n)
 			if (to_find[j] == '\0')
 				return (src + i);
 		}
+		n--;
 	}
 	return (0);
 }
