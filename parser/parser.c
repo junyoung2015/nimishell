@@ -42,10 +42,11 @@ void append_child_node(t_node *parent, t_node *child)
 		parent->right = child;
 	else
 	{
-		last_child = parent->left;
+		last_child = parent->right;
 		while (last_child->sibling)
 			last_child = last_child->sibling;
 		last_child->sibling = child;
+		last_child->left = child;
 	}
 }
 

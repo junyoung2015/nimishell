@@ -100,7 +100,7 @@ void print_ast(t_node *node, int depth, const char *indent)
 {
 	if (node == NULL)
 	{
-		printf("%*s[%s]\n", depth * 6, "", indent);
+		printf("%*s[%s]\n", depth * 4, "", indent);
 		return;
 	}
 	print_ast(node->right, depth + 1, "/");
@@ -125,7 +125,7 @@ void print_ast(t_node *node, int depth, const char *indent)
 		printf("[%d] ", node->builtin);
 	// printf("%*c", depth * 4, 32);
 	for (t_size i = 0; i < node->num_args; i++)
-		printf("[%d][%s] ", node->type, node->cmd_args[i]);
+		printf("[%s] ", node->cmd_args[i]);
 	printf("\n");
 	print_ast(node->left, depth + 1, "\\");
 }
