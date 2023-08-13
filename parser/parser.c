@@ -34,7 +34,7 @@ void append_child_node(t_node *parent, t_node *child)
 {
 	t_node	*last_child;
 
-	if (!parent || !child)
+	if (!parent || !child || parent == child)
 		return ;
 	if (!parent->left)
 		parent->left = child;
@@ -46,7 +46,7 @@ void append_child_node(t_node *parent, t_node *child)
 		while (last_child->sibling)
 			last_child = last_child->sibling;
 		last_child->sibling = child;
-		last_child->left = child;
+		last_child->left  = child;
 	}
 }
 
