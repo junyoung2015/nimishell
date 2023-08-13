@@ -107,6 +107,8 @@ int	executor(t_node *root)
 	info.fork_cnt = 0;
 	info.prev_pipe = -1;
 	tree_search(root, &info);
+	if (info.prev_pipe >= 0)
+		close(info.prev_pipe);
 	dup2(g_info.stdin_fd, STDIN_FILENO);
 	dup2(g_info.stdout_fd, STDOUT_FILENO);
 	clear_all(g_info.root);
