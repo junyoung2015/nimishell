@@ -150,6 +150,8 @@ char	*trim_outer_quotes(char *cmd_arg)
 		state = update_state(*cmd_arg);
 		free(tmp);
 		free(trimmed);
+		if (!result)
+			return (0);
 		if (META_CH <= state && state <= END)
 			break ;
 	}
