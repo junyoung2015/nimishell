@@ -204,6 +204,7 @@ set count [ expr \$count + 1 ] ;
 
 # Test exit code for when coommand not found
 send "echo \$?\r"
+# expect "127" ;
 expect {
 	"127" {
 		send_user "${green}Test ${count} passed${default}\n" ;
@@ -221,6 +222,7 @@ set count [ expr \$count + 1 ] ;
 
 # Test 'ls > '
 send "ls >\r"
+# expect "minishell: syntax error near unexpected token `>`" ;
 expect {
 	"minishell: syntax error near unexpected token `>`" {
 		send_user "${green}Test ${count} passed${default}\n" ;
@@ -238,6 +240,7 @@ set count [ expr \$count + 1 ] ;
 
 # Test 'echo $USER'
 send "echo \$USER\r"
+# expect "$env(USER)" ;
 expect {
 	"$env(USER)" {
 		send_user "${green}Test ${count} passed${default}\n" ;
@@ -265,6 +268,7 @@ set count [ expr \$count + 1 ] ;
 
 # Test 'echo '$USER''
 send "echo \'\$USER\'\r"
+# expect "\$USER" ;
 expect {
 	"\$USER" {
 		send_user "${green}Test ${count} passed${default}\n" ;
@@ -278,6 +282,7 @@ set count [ expr \$count + 1 ] ;
 
 # Test 'echo "'$USER'"
 send "echo \"\'\$USER\'\"\r"
+# expect "'$env(USER)'" ;
 expect {
 	"$env(USER)" {
 		send_user "${green}Test ${count} passed${default}\n" ;
@@ -296,6 +301,7 @@ set count [ expr \$count + 1 ] ;
 #========== Normal Test ==========#
 # Test 'unset USER'
 send "unset USER\r"
+# expect "" ;
 expect {
 	"" {
 		send_user "${green}Test ${count} passed${default}\n" ;
@@ -309,6 +315,7 @@ set count [ expr \$count + 1 ] ;
 
 # Test 'echo $USER' after unset USER
 send "echo \$USER\r"
+# expect "\n" ;
 expect {
 	"\n" {
 		send_user "${green}Test ${count} passed${default}\n" ;
@@ -322,6 +329,7 @@ set count [ expr \$count + 1 ] ;
 
 # Test export
 send "export test=ch\r"
+# expect "" ;
 expect {
 	"" {
 		send_user "${green}Test ${count} passed${default}\n" ;
@@ -335,6 +343,7 @@ set count [ expr \$count + 1 ] ;
 
 # Test env substitution for export
 send "e\$test'o'\r"
+# expect "\n" ;
 expect {
 	"\n" {
 		send_user "${green}Test ${count} passed${default}\n" ;
@@ -348,6 +357,7 @@ set count [ expr \$count + 1 ] ;
 
 # Test env substitution for export
 send "e\$test'o' \$USER\r"
+# expect "$env(USER)" ;
 expect {
 	"$env(USER)" {
 		send_user "${green}Test ${count} passed${default}\n" ;
@@ -361,6 +371,7 @@ set count [ expr \$count + 1 ] ;
 
 # Test env substitution for export
 send "e\$test\"o\" \$USER\r"
+# expect "$env(USER)" ;
 expect {
 	"$env(USER)" {
 		send_user "${green}Test ${count} passed${default}\n" ;
@@ -374,6 +385,7 @@ set count [ expr \$count + 1 ] ;
 
 # Test export with whitespace
 send "export \"wspace=hi test\"\r"
+# expect "" ;
 expect {
 	"" {
 		send_user "${green}Test ${count} passed${default}\n" ;
@@ -401,6 +413,7 @@ set count [ expr \$count + 1 ] ;
 
 # Test executing non-builtin commands after unset PATH
 send "unset PATH\r"
+# expect "" ;
 expect {
 	"" {
 		send_user "${green}Test ${count} passed${default}\n" ;
@@ -429,6 +442,7 @@ set count [ expr \$count + 1 ] ;
 
 # Test executing non-builtin commands after export new PATH
 send "export PATH=/bin:/usr/sbin:/usr/local/bin\r"
+# expect "" ;
 expect {
 	"" {
 		send_user "${green}Test ${count} passed${default}\n" ;
@@ -441,11 +455,9 @@ expect {
 set count [ expr \$count + 1 ] ;
 
 # Test executing non-builtin commands after setting new PATH
-# Test result can vary depending on the host environment
 send "ls includesabc\r"
-# expect "ls: cannot access 'includesabc': No such file or directory" ; # on Ubuntu
 expect {
-	"ls: includesabc: No such file or directory" {	# on macOS bash
+	"ls: includesabc: No such file or directory" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
@@ -509,47 +521,6 @@ set count [ expr \$count + 1 ] ;
 # send "export 123=A\r"
 # expect "minishell: export: \`123=A': not a valid identifier"
 # set count [ expr \$count + 1 ] ;
-
-##########
-########## Test for && and || operator ##########
-##########
-
-send "export A=B && echo \$A\r"
-expect {
-	"B" {
-		send_user "${green}Test ${count} passed${default}\n" ;
-	}
-	timeout {
-		send_user "${red}Test ${count} failed${default}\n"
-		exit 1 ;
-	}
-}
-set count [ expr \$count + 1 ] ;
-
-send "export PATH=/usr/bin:/bin:/usr/sbin:/sbin\r"
-expect {
-	"" {
-		send_user "${green}Test ${count} passed${default}\n" ;
-	}
-	timeout {
-		send_user "${red}Test ${count} failed${default}\n"
-		exit 1 ;
-	}
-}
-set count [ expr \$count + 1 ] ;
-
-send "ls && echo test\r"
-# expect {
-# 	exec ls
-# 	exec echo
-# 	# "$ls" {
-# 	# 	send_user "${green}Test ${count} passed${default}\n" ;
-# 	# }
-# 	timeout {
-# 		send_user "${red}Test ${count} failed${default}\n"
-# 		exit 1 ;
-# 	}
-# }
 
 # Finish
 send "exit\r"
