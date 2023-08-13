@@ -886,16 +886,34 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 	}
 	if (pipeline_node->type == AST_ERR)
 		return (logic_node);
-	if (check(parser, TOKEN_AND) || check(parser, TOKEN_OR))
+	if (check(parser, TOKEN_OR))
 	{
 		list_tail_node = parse_list_tail(parser, pipeline_node);
 		if (!list_tail_node) // err?
 			return (0);
+		// append_child_node(logic_node, parent);
+		// append_child_node(logic_node, list_tail_node);
+		// append_child_node(list_tail_node, pipeline_node);
+		logic_node->left = parent;
 		logic_node->right = list_tail_node;
 		list_tail_node->left = pipeline_node;
 	}
+	else if (check(parser, TOKEN_AND))
+	{
+		list_tail_node = parse_list_tail(parser, pipeline_node);
+		if (!list_tail_node) // err?
+			return (0);
+		// append_child_node(logic_node, parent);
+		// append_child_node(logic_node, pipeline_node);
+		// append_child_node(list_tail_node, pipeline_node);
+		logic_node->left = parent;
+		logic_node->right = pipeline_node;
+		list_tail_node->left = logic_node;
+		return (list_tail_node);
+	}
 	else
 	{
+		logic_node->left = parent;
 		logic_node->right = pipeline_node;
 	}
 	return (logic_node);
@@ -920,7 +938,7 @@ t_node *parse_list(t_parser *parser, t_node *parent)
 		list_tail_node = parse_list_tail(parser, pipeline_node);
 		if (!list_tail_node) // err?
 			return (0);
-		list_tail_node->left = pipeline_node;
+		// list_tail_node->left = pipeline_node;
 		return (list_tail_node);
 	}
 	// else if (check(parser, TOKEN_AND))
