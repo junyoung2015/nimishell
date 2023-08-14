@@ -298,6 +298,43 @@ void			free_ast(t_node *root);
 t_node			*parse_tokens_ll(t_token *tokens, t_size num_tokens);
 void			is_builtin_node(t_node *node);
 
+char			*parse_word(t_parser *parser);
+t_node			*parse_word_list(t_parser *parser, t_node *parent);
+t_node			*parse_redir(t_parser *parser, t_node *parent);
+t_node			*parse_redir_list_tail(t_parser *parser, t_node *parent);
+t_node			*parse_redir_list(t_parser *parser, t_node *parent);
+t_node			*parse_simple_cmd_element(t_parser *parser, t_node *parent);
+t_node			*parse_simple_cmd_tail(t_parser *parser, t_node *parent);
+t_node			*parse_simple_cmd(t_parser *parser, t_node *parent);
+t_node			*parse_command(t_parser *parser, t_node *parent);
+t_node			*parse_subshell(t_parser *parser, t_node *parent);
+t_node			*parse_list_tail(t_parser *parser, t_node *parent);
+t_node			*parse_list(t_parser *parser, t_node *parent);
+t_node			*parse_pipeline_tail(t_parser *parser, t_node *parent);
+t_node			*parse_pipeline(t_parser *parser, t_node *parent);
+t_node			*parse_err(t_parser *parser, t_node *parent);
+
+void			postorder_traversal(t_node *node, t_node **err_node);
+t_bool			check_err_node(t_node *new_node);
+t_node			*parse_err(t_parser *parser, t_node *parent);
+char			*token_type_to_str(t_token_type type);
+
+void			append_redir_node(t_node *parent, t_node *child);
+void			append_child_node(t_node *parent, t_node *child);
+
+/* ============== PARSER_UTILS =============== */
+t_bool			is_word_token(t_parser *parser);
+t_bool			is_redir_token(t_parser *parser);
+void			is_builtin_node(t_node *node);
+void			update_p_state(char **table, t_parser *parser, t_parse_state *parse_state);
+
+
+/* =========== PARSER_STATUS_UTILS =========== */
+void			advance(t_parser *parser);
+t_bool			check(t_parser *parser, t_token_type type);
+t_token_type	cur_type(t_parser *parser);
+t_token_type	peek(t_parser *parser);
+
 /* ================== EXECUTOR ================== */
 int				executor(t_node *root);
 

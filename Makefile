@@ -29,6 +29,15 @@ SRCS = ./minishell.c						\
 		$(MEMORY_DIR)mem_utils.c			\
 		$(PARSER_DIR)ast_utils.c			\
 		$(PARSER_DIR)parser_ll.c			\
+		$(PARSER_DIR)parser_utils.c			\
+		$(PARSER_DIR)parser_status_utils.c	\
+		$(PARSER_DIR)parse_err.c			\
+		$(PARSER_DIR)parse_list.c			\
+		$(PARSER_DIR)parse_pipeline.c		\
+		$(PARSER_DIR)parse_redir_list.c		\
+		$(PARSER_DIR)parse_simple_cmd.c		\
+		$(PARSER_DIR)parse_subshell.c		\
+		$(PARSER_DIR)parse_word_list.c		\
 		$(STR_DIR)str_itoa.c				\
 		$(STR_DIR)str_utils.c				\
 		$(STR_DIR)str_split.c				\

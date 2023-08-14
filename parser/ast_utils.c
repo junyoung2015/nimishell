@@ -20,6 +20,23 @@ t_node *create_node(t_node_type type)
 	return (new_node);
 }
 
+void free_ast(t_node *root)
+{
+	if (root == 0)
+		return;
+	if (root->left != 0)
+		free_ast(root->left);
+	if (root->right != 0)
+		free_ast(root->right);
+	if (root->cmd_args)
+	{
+		for (t_size i = 0; i < root->num_args; i++)
+			free(root->cmd_args[i]);
+		free(root->cmd_args);
+	}
+	free(root);
+}
+
 void append_child_node(t_node *parent, t_node *child)
 {
 	t_node	*last_child;
@@ -40,19 +57,41 @@ void append_child_node(t_node *parent, t_node *child)
 	}
 }
 
-void free_ast(t_node *root)
+/**
+ * @brief Append the child (redirection node) to the parent node. If the
+ *		parent node is NULL, return.
+ * 
+ * @param parent	parent node
+ * @param child		child node to attach
+ */
+void	append_redir_node(t_node *parent, t_node *child)
 {
-	if (root == 0)
-		return;
-	if (root->left != 0)
-		free_ast(root->left);
-	if (root->right != 0)
-		free_ast(root->right);
-	if (root->cmd_args)
+	t_node	*tmp;
+
+	if (!parent || !child)
+		return ;
+	if (child->type == AST_REDIR_IN || child->type == AST_HEREDOC)
 	{
-		for (t_size i = 0; i < root->num_args; i++)
-			free(root->cmd_args[i]);
-		free(root->cmd_args);
+		if (!parent->left)
+			parent->left = child;
+		else
+		{
+			tmp = parent->left;
+			while (tmp->sibling)
+				tmp = tmp->sibling;
+			tmp->sibling = child;
+		}
 	}
-	free(root);
+	else if (child->type == AST_REDIR_OUT || child->type == AST_REDIR_APPEND)
+	{
+		if (!parent->right)
+			parent->right = child;
+		else
+		{
+			tmp = parent->right;
+			while (tmp->sibling)
+				tmp = tmp->sibling;
+			tmp->sibling = child;
+		}
+	}
 }
