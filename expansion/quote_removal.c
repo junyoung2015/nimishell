@@ -35,9 +35,12 @@ char	*trim(char	**cmd_arg, t_cmp cmp)
  * 
  * @param cmd_arg 
  */
-char	*trim_outer_quotes(char *cmd_arg, char *trimmed, char *tmp, t_token_state state)
+char	*trim_outer_quotes(char *cmd_arg)
 {
+	char			*trimmed;
 	char			*result;
+	char			*tmp;
+	t_token_state	state;
 	const t_cmp		cmp[] = {
 		is_quote,
 		is_squote,
@@ -46,7 +49,7 @@ char	*trim_outer_quotes(char *cmd_arg, char *trimmed, char *tmp, t_token_state s
 
 	result = 0;
 	state = update_state(*cmd_arg);
-	while (*cmd_arg && META_CH <= state && state <= END)
+	while (*cmd_arg)
 	{
 		tmp = result;
 		trimmed = trim(&cmd_arg, cmp[state]);
@@ -58,6 +61,8 @@ char	*trim_outer_quotes(char *cmd_arg, char *trimmed, char *tmp, t_token_state s
 		free(trimmed);
 		if (!result)
 			return (0);
+		if (META_CH <= state && state <= END)
+			break ;
 	}
 	if (!result)
 		return (ft_strdup(""));
@@ -83,7 +88,7 @@ char    **remove_quotes(t_node *node)
 		return (0);
 	while (idx < node->num_args)
 	{
-		result[idx] = trim_outer_quotes(node->cmd_args[idx], 0, 0, 0);
+		result[idx] = trim_outer_quotes(node->cmd_args[idx]);
 		if (!result[idx])
 		{
 			while(idx-- > 0)
