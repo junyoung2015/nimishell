@@ -213,7 +213,7 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 		new_node = parser_fn_arr[parse_state](&parser, root);
 		if (new_node != 0)
 		{
-			if (check_err_node(new_node))
+			if (check_err(new_node))
 			{
 				if (root && root != new_node)
 				{

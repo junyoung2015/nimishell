@@ -315,7 +315,7 @@ t_node			*parse_pipeline(t_parser *parser, t_node *parent);
 t_node			*parse_err(t_parser *parser, t_node *parent);
 
 void			postorder_traversal(t_node *node, t_node **err_node);
-t_bool			check_err_node(t_node *new_node);
+t_bool			check_err(t_node *new_node);
 t_node			*parse_err(t_parser *parser, t_node *parent);
 char			*tok_type(t_token_type type);
 

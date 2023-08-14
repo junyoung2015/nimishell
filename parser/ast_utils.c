@@ -39,7 +39,7 @@ void free_ast(t_node *root)
 
 void append_child_node(t_node *parent, t_node *child)
 {
-	t_node	*last_child;
+	// t_node	*last_child;
 
 	if (!parent || !child || parent == child)
 		return ;
@@ -47,14 +47,14 @@ void append_child_node(t_node *parent, t_node *child)
 		parent->left = child;
 	else if (!parent->right)
 		parent->right = child;
-	else
-	{
-		last_child = parent->right;
-		while (last_child->sibling)
-			last_child = last_child->sibling;
-		last_child->sibling = child;
-		last_child->left  = child;
-	}
+	// else
+	// {
+	// 	last_child = parent->right;
+	// 	while (last_child->sibling)
+	// 		last_child = last_child->sibling;
+	// 	last_child->sibling = child;
+	// 	last_child->left  = child;
+	// }
 }
 
 /**
@@ -66,7 +66,7 @@ void append_child_node(t_node *parent, t_node *child)
  */
 void	append_redir_node(t_node *parent, t_node *child)
 {
-	t_node	*tmp;
+	// t_node	*tmp;
 
 	if (!parent || !child)
 		return ;
@@ -74,24 +74,24 @@ void	append_redir_node(t_node *parent, t_node *child)
 	{
 		if (!parent->left)
 			parent->left = child;
-		else
-		{
-			tmp = parent->left;
-			while (tmp->sibling)
-				tmp = tmp->sibling;
-			tmp->sibling = child;
-		}
+		// else
+		// {
+		// 	tmp = parent->left;
+		// 	while (tmp->sibling)
+		// 		tmp = tmp->sibling;
+		// 	tmp->sibling = child;
+		// }
 	}
 	else if (child->type == AST_REDIR_OUT || child->type == AST_REDIR_APPEND)
 	{
 		if (!parent->right)
 			parent->right = child;
-		else
-		{
-			tmp = parent->right;
-			while (tmp->sibling)
-				tmp = tmp->sibling;
-			tmp->sibling = child;
-		}
+		// else
+		// {
+		// 	tmp = parent->right;
+		// 	while (tmp->sibling)
+		// 		tmp = tmp->sibling;
+		// 	tmp->sibling = child;
+		// }
 	}
 }
