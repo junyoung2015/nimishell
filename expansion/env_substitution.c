@@ -214,13 +214,16 @@ char	*process_dquote(char **input)
 					free(env_var);
 				}
 				else
-					result = ft_strjoin(tmp, *input - 1);
+				{
+					env_var = ft_substr(*input - 1, 0, 2);
+					if (!env_var)
+						return (0);
+					result = ft_strjoin(tmp, env_var);
+					free(env_var);
+					(*input)++;
+				}
 				free(tmp);
 			}
-			else if (is_dquote(**input))
-				(*input)++;
-			else if (!**input)
-				result = tmp;
 		}
 		start = *input;
 	}
