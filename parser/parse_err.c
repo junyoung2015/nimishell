@@ -4,18 +4,18 @@
  * 		exists.
  * 
  * @param node	node of the AST tree.
- * @param err_node	pointer to the first AST_ERR node found during traversal
+ * @param err	pointer to the first AST_ERR node found during traversal
  */
-void	postorder_traversal(t_node *node, t_node **err_node)
+void	postorder_traversal(t_node *node, t_node **err)
 {
-    if (!node || (*err_node))
+    if (!node || (*err))
 		return ;	
 	if (node->left)
-		postorder_traversal(node->left, err_node);
+		postorder_traversal(node->left, err);
 	if (node->right)
-		postorder_traversal(node->right, err_node);
+		postorder_traversal(node->right, err);
     if (node->type == AST_ERR)
-        *err_node = node;
+        *err = node;
 }
 
 /**
@@ -26,18 +26,18 @@ void	postorder_traversal(t_node *node, t_node **err_node)
  * @param new_node	root node of the subtree to check for errors
  * @return t_bool	TRUE if there is an error node, FALSE otherwise
  */
-t_bool	check_err_node(t_node *new_node)
+t_bool	check_err(t_node *new_node)
 {
-    t_node *err_node;
+    t_node *err;
 
-	err_node = 0;
+	err = 0;
     if (!new_node)
         return (FALSE);
-    postorder_traversal(new_node, &err_node);
-    if (err_node)
+    postorder_traversal(new_node, &err);
+    if (err)
     {
         write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
-        write(STD_ERR, err_node->cmd_args[0], ft_strlen(err_node->cmd_args[0]));
+        write(STD_ERR, err->cmd_args[0], ft_strlen(err->cmd_args[0]));
         write(STD_ERR, "`\n", 2);
         return (TRUE);
     }
@@ -53,23 +53,23 @@ t_bool	check_err_node(t_node *new_node)
  */
 t_node *parse_err(t_parser *parser, t_node *parent)
 {
-	t_node	*err_node;
+	t_node	*err;
 	(void)	parent;
 
-	err_node = create_node(AST_ERR);
-	if (!err_node)
+	err = create_node(AST_ERR);
+	if (!err)
 		return (0);
-	err_node->cmd_args = ft_calloc(1, sizeof(char *));
-	if (!err_node->cmd_args)
+	err->cmd_args = ft_calloc(1, sizeof(char *));
+	if (!err->cmd_args)
 		return (0);
 	if (parser->tokens[parser->cur].val)
-		err_node->cmd_args[err_node->num_args++] = ft_strdup(parser->tokens[parser->cur].val);
+		err->cmd_args[err->num_args++] = ft_strdup(parser->tokens[parser->cur].val);
 	else
-		err_node->cmd_args[err_node->num_args++] = ft_strdup(token_type_to_str(parser->tokens[parser->cur - 1].type));
-	return (err_node);
+		err->cmd_args[err->num_args++] = ft_strdup(tok_type(parser->tokens[parser->cur - 1].type));
+	return (err);
 }
 
-char	*token_type_to_str(t_token_type type)
+char	*tok_type(t_token_type type)
 {
 	if (type == TOKEN_PIPE)
 		return ("|");
@@ -83,4 +83,3 @@ char	*token_type_to_str(t_token_type type)
 		return ("<<");
 	return ("UNKNOWN");
 }
-
