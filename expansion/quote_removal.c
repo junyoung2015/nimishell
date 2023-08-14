@@ -31,107 +31,13 @@ char	*trim(char	**cmd_arg, t_cmp cmp)
 }
 
 /**
- * @brief Get substring of cmd_arg until the next quote.
- * 
- * @param cmd_arg	arg to get substring
- * @return char*	substring of cmd_arg until the next quote
- */
-char	*trim_normal(char **cmd_arg)
-{
-	char	*tmp;
-	char	*start;
-	char	*result;
-
-	tmp = 0;
-	result = 0;
-	start = *cmd_arg;
-	while (**cmd_arg && !is_quote(**cmd_arg))
-		(*cmd_arg)++;
-	if (*cmd_arg > start)
-	{
-		tmp = ft_substr(start, 0, *cmd_arg - start);
-		if (!tmp)
-			return (0);
-		result = tmp;
-	}
-	else
-		result = ft_strdup("");
-	return (result);
-}
-
-/**
- * @brief Remove outer single quotes from the cmd_arg
- * 
- * @param cmd_arg	arg to remove single quotes
- * @return char*	new string without single quotes
- */
-char	*trim_squote(char **cmd_arg)
-{
-	char	*tmp;
-	char	*start;
-	char	*result;
-
-	tmp = 0;
-	result = 0;
-	start = ++(*cmd_arg);
-	while (**cmd_arg && !is_squote(**cmd_arg))
-		(*cmd_arg)++;
-	if (*cmd_arg > start)
-	{
-		tmp = ft_substr(start, 0, *cmd_arg - start);
-		if (!tmp)
-			return (0);
-		result = tmp;
-	}
-	else
-		result = ft_strdup("");
-	if (**cmd_arg)
-		(*cmd_arg)++;
-	return (result);
-}
-
-/**
- * @brief Remove outer double quotes from the cmd_arg
- * 
- * @param cmd_arg	arg to remove double quotes
- * @return char*	new string without double quotes
- */
-char	*trim_dquote(char **cmd_arg)
-{
-	char	*tmp;
-	char	*start;
-	char	*result;
-
-	tmp = 0;
-	result = 0;
-	start = ++(*cmd_arg);
-	while (**cmd_arg && !is_dquote(**cmd_arg))
-		(*cmd_arg)++;
-	if (*cmd_arg > start)
-	{
-		tmp = ft_substr(start, 0, *cmd_arg - start);
-		if (!tmp)
-			return (0);
-		result = tmp;
-	}
-	else
-		result = ft_strdup("");
-	if (**cmd_arg)
-		(*cmd_arg)++;
-	return (result);
-}
-
-/**
  * @brief
  * 
  * @param cmd_arg 
  */
-char	*trim_outer_quotes(char *cmd_arg)
+char	*trim_outer_quotes(char *cmd_arg, char *trimmed, char *tmp, t_token_state state)
 {
-	char			*trimmed;
 	char			*result;
-	char			*tmp;
-	t_token_state	state;
 	const t_cmp		cmp[] = {
 		is_quote,
 		is_squote,
@@ -140,7 +46,7 @@ char	*trim_outer_quotes(char *cmd_arg)
 
 	result = 0;
 	state = update_state(*cmd_arg);
-	while (*cmd_arg)
+	while (*cmd_arg && META_CH <= state && state <= END)
 	{
 		tmp = result;
 		trimmed = trim(&cmd_arg, cmp[state]);
@@ -152,8 +58,6 @@ char	*trim_outer_quotes(char *cmd_arg)
 		free(trimmed);
 		if (!result)
 			return (0);
-		if (META_CH <= state && state <= END)
-			break ;
 	}
 	if (!result)
 		return (ft_strdup(""));
@@ -179,21 +83,16 @@ char    **remove_quotes(t_node *node)
 		return (0);
 	while (idx < node->num_args)
 	{
-		result[idx] = trim_outer_quotes(node->cmd_args[idx]);
+		result[idx] = trim_outer_quotes(node->cmd_args[idx], 0, 0, 0);
 		if (!result[idx])
 		{
-			while(idx > 0)
-			{
-				idx--;
+			while(idx-- > 0)
 				free(result[idx]);
-			}
 			free(result);
 			return (0);
 		}
-		// free(node->cmd_args[idx]);
 		idx++;
 	}
 	ft_arrfree(node->cmd_args);
-	// free(node->cmd_args);
 	return (result);
 }
