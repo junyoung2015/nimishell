@@ -27,7 +27,7 @@ SRCS = ./minishell.c						\
 		$(INIT_DIR)logo.c					\
 		$(LEXER_DIR)tokenizer.c				\
 		$(MEMORY_DIR)mem_utils.c			\
-		$(PARSER_DIR)parser.c				\
+		$(PARSER_DIR)ast_utils.c			\
 		$(PARSER_DIR)parser_ll.c			\
 		$(STR_DIR)str_itoa.c				\
 		$(STR_DIR)str_utils.c				\
