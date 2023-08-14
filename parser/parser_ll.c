@@ -885,7 +885,10 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 		return (0);
 	}
 	if (pipeline_node->type == AST_ERR)
-		return (logic_node);
+	{
+		free_ast(logic_node);
+		return (pipeline_node);
+	}
 	if (check(parser, TOKEN_OR))
 	{
 		list_tail_node = parse_list_tail(parser, pipeline_node);
