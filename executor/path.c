@@ -58,7 +58,7 @@ char	*get_cmdpath(char *filename, t_exec_info *info)
 	char	*cmdpath;
 	size_t	i;
 
-	if (*filename == '/' || *filename == '.')
+	if (*filename == '/' || *filename == '.' || !*filename)
 		return (filename);
 	path = get_path(g_info.env);
 	i = 0;
