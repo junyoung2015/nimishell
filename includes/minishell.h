@@ -244,7 +244,8 @@ void			ft_arrfree(char **arr);
 t_search	*create_search_info(char **files, int num_files);
 void		free_search_info(t_search *info);
 // t_ssize 	match_pattern(char *str, char *pattern, int prev_pos);
-t_bool 		search_files(t_search *info, char *pattern);
+t_bool		search_files(t_search *info, char *pattern);
+t_bool		is_wildcard(char ch);
 
 /* ================== INIT ================== */
 void			print_logo(void);

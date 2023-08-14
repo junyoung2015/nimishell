@@ -95,9 +95,18 @@ char	*process_normal(char **input)
 	if (!**input || !is_dollar(**input))
 		return (tmp);
 	start = ++(*input);
-	while(**input && is_env_var(**input))
+	while(**input && is_env_var(**input) && **input != '?')
 		(*input)++;
-	if (**input == '?')
+	if (*input > start)
+	{
+		env_var = ft_substr(start, 0, *input - start);
+		if (!env_var)
+			return (result);
+		substituted = substitute(env_var);
+		result = ft_strjoin(tmp, substituted);
+		free(substituted);
+	}
+	else if (**input == '?')
 	{
 		substituted = ft_itoa(g_info.exit_status);
 		result = ft_strjoin(tmp, substituted);
@@ -110,15 +119,6 @@ char	*process_normal(char **input)
 		if (!env_var)
 			return (result);
 		result = ft_strjoin(tmp, env_var);
-	}
-	else if (*input > start)
-	{
-		env_var = ft_substr(start, 0, *input - start);
-		if (!env_var)
-			return (result);
-		substituted = substitute(env_var);
-		result = ft_strjoin(tmp, substituted);
-		free(substituted);
 	}
 	else
 	{
@@ -180,17 +180,13 @@ char	*process_dquote(char **input)
 			(*input)++;
 			if (**input == '?')
 			{
-				result = ft_strjoin(tmp, ft_itoa(g_info.exit_status));
+				substituted = ft_itoa(g_info.exit_status);
+				result = ft_strjoin(tmp, substituted);
 				(*input)++;
-				// free(tmp);
-				// return (result);
+				free(substituted);
 			}
 			else if (!**input)
-			{
 				result = ft_strjoin(tmp, *input - 1);
-				// free(tmp);
-				// return (result);
-			}
 			else if (is_env_var(**input))
 			{
 				start = *input;
@@ -203,15 +199,9 @@ char	*process_dquote(char **input)
 				result = ft_strjoin(tmp, substituted);
 				free(substituted);
 				free(env_var);
-				// free(tmp);
-				// return (result);
 			}
 			else
-			{
 				result = ft_strjoin(tmp, *input - 1);
-				// free(tmp);
-				// return (result);
-			}
 			free(tmp);
 			return (result);
 		}
@@ -221,11 +211,7 @@ char	*process_dquote(char **input)
 			return (tmp);
 		}
 		else if (!**input)
-		{
 			result = tmp;
-			// free(tmp);
-			// return (result);
-		}
 	}
 	return (result);
 }
