@@ -159,60 +159,73 @@ char	*process_squote(char **input)
 char	*process_dquote(char **input)
 {
 	char	*start;
+	char	*end;
 	char	*tmp;
 	char	*env_var;
+	char	*prev;
 	char	*result;
 	char	*substituted;
 
 	tmp = 0;
-	start = *input;
 	result = 0;
+	start = *input;
 	(*input)++;
-	while(**input && !is_dquote(**input) && !is_dollar(**input))
-		(*input)++;
-	if (*input > start || is_dquote(**input))
+	end = *input;
+	while (*end && !is_dquote(*end))
+		end++;
+	while(**input && start < end)
 	{
-		tmp = ft_substr(start, 0, *input - start + is_dquote(**input));
-		if (!tmp)
-			return (0);
-		if (is_dollar(**input))
-		{
+		while(**input && !is_dquote(**input) && !is_dollar(**input))
 			(*input)++;
-			if (**input == '?')
-			{
-				substituted = ft_itoa(g_info.exit_status);
-				result = ft_strjoin(tmp, substituted);
-				(*input)++;
-				free(substituted);
-			}
-			else if (!**input)
-				result = ft_strjoin(tmp, *input - 1);
-			else if (is_env_var(**input))
-			{
-				start = *input;
-				while(**input && is_env_var(**input))
-					(*input)++;
-				env_var = ft_substr(start, 0, *input - start);
-				if (!env_var)
-					return (tmp);
-				substituted = substitute(env_var);
-				result = ft_strjoin(tmp, substituted);
-				free(substituted);
-				free(env_var);
-			}
-			else
-				result = ft_strjoin(tmp, *input - 1);
-			free(tmp);
-			return (result);
-		}
-		else if (is_dquote(**input))
+		if (*input > start || is_dquote(**input))
 		{
-			(*input)++;
-			return (tmp);
-		}
-		else if (!**input)
+			prev = result;
+			tmp = ft_substr(start, 0, *input - start + is_dquote(**input));
+			if (!tmp)
+				return (0);
 			result = tmp;
+			tmp = ft_strjoin(prev, tmp);
+			free(prev);
+			free(result);
+			result = tmp;
+			if (is_dollar(**input))
+			{
+				(*input)++;
+				if (**input == '?')
+				{
+					substituted = ft_itoa(g_info.exit_status);
+					result = ft_strjoin(tmp, substituted);
+					(*input)++;
+					free(substituted);
+				}
+				else if (!**input)
+					result = ft_strjoin(tmp, *input - 1);
+				else if (is_env_var(**input))
+				{
+					start = *input;
+					while(**input && is_env_var(**input))
+						(*input)++;
+					env_var = ft_substr(start, 0, *input - start);
+					if (!env_var)
+						return (0);
+					substituted = substitute(env_var);
+					result = ft_strjoin(tmp, substituted);
+					free(substituted);
+					free(env_var);
+				}
+				else
+					result = ft_strjoin(tmp, *input - 1);
+				free(tmp);
+			}
+			else if (is_dquote(**input))
+				(*input)++;
+			else if (!**input)
+				result = tmp;
+		}
+		start = *input;
 	}
+	if (is_dquote(**input))
+		(*input)++;
 	return (result);
 }
 
