@@ -180,7 +180,7 @@ char	*process_dquote(char **input)
 		if (*input > start || is_dquote(**input))
 		{
 			prev = result;
-			tmp = ft_substr(start, 0, *input - start + is_dquote(**input));
+			tmp = ft_substr(start, 0, *input - start);
 			if (!tmp)
 				return (0);
 			result = tmp;
@@ -228,7 +228,12 @@ char	*process_dquote(char **input)
 		start = *input;
 	}
 	if (is_dquote(**input))
+	{
+		tmp = result;
+		result = ft_strjoin(result, "\"");
+		free(tmp);
 		(*input)++;
+	}
 	return (result);
 }
 
