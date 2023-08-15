@@ -569,7 +569,7 @@ set count [ expr \$count + 1 ] ;
 ### Test 38 ###
 send "export 123=A\r"
 expect {
-	"minishell: export: \`123=A': not a valid identifier" {
+	"minishell: export: 123=A: not a valid identifier" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
