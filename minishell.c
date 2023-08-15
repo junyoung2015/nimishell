@@ -14,8 +14,6 @@
 
 t_global_info g_info;
 
-#include <signal.h>
-
 void	get_git_branch(char *branch)
 {
 	int	fd;
@@ -187,35 +185,33 @@ int	main(int ac, char **av, char **envp)
 	t_token		*tokens;
 	t_size		num_tokens;
 	t_node		*ast;
-	// struct termios	term;
-	// int	status;
+	struct termios	term;
+	int	status;
 	// t_global_info	g_info;
 
-	// if (DEBUG)
-	// 	atexit(chk_leaks);
 	init_g_info(envp);
 	tokens = 0;
 	ast = 0;
 	exit_code = 0;
-	// status = tcgetattr(0, &term);
-	// if (status == -1)
-	// {
-	// 	exit_err_with_msg(EXIT_ERR, TCGETATTR, strerror(errno), 0);
-	// 	// write(STD_ERR, "minishell: tcgetattr: ", 22);
-	// 	// write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
-	// 	// write(STD_ERR, "\n", 1);
-	// 	// exit (1);
-	// }
-	// term.c_lflag &= ~ECHOCTL;
-	// status = tcsetattr(0, 0, &term);
-	// if (status == -1)
-	// {
-	// 	exit_err_with_msg(EXIT_ERR, TCGETATTR, strerror(errno), 0);
-	// 	// write(STD_ERR, "minishell: tcgetattr: ", 22);
-	// 	// write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
-	// 	// write(STD_ERR, "\n", 1);
-	// 	// exit (1);
-	// }
+	status = tcgetattr(0, &term);
+	if (status == -1)
+	{
+		exit_err_with_msg(EXIT_ERR, TCGETATTR, strerror(errno), 0);
+		// write(STD_ERR, "minishell: tcgetattr: ", 22);
+		// write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
+		// write(STD_ERR, "\n", 1);
+		// exit (1);
+	}
+	term.c_lflag &= ~ECHOCTL;
+	status = tcsetattr(0, 0, &term);
+	if (status == -1)
+	{
+		exit_err_with_msg(EXIT_ERR, TCGETATTR, strerror(errno), 0);
+		// write(STD_ERR, "minishell: tcgetattr: ", 22);
+		// write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
+		// write(STD_ERR, "\n", 1);
+		// exit (1);
+	}
 	signal(SIGINT, sig_handler);
 	print_logo();
 	while (TRUE)
@@ -263,23 +259,20 @@ int	main(int ac, char **av, char **envp)
 				}
 				else
 				{
-					if (DEBUG)
-						print_tokens(tokens, num_tokens);
+					// if (DEBUG)
+					// 	print_tokens(tokens, num_tokens);
 					ast = parse_tokens_ll(tokens, num_tokens);
-					// ast = parse_tokens(tokens, num_tokens);
-					if (ast && DEBUG)
-					{
-						printf("\n=================== AST ==================\n");
-						print_ast(ast, 0, "");
-						printf("==========================================\n");
-					}
+					// if (ast && DEBUG)
+					// {
+					// 	printf("\n=================== AST ==================\n");
+					// 	print_ast(ast, 0, "");
+					// 	printf("==========================================\n");
+					// }
 					g_info.root = ast;
 					exit_code = executor(g_info.root);
 					g_info.exit_status = exit_code; // do I need this here?
 				}
 			}
-			// if (status)
-			// 	update_exit_status(status);
 			if (tokens)
 				free_tokens(tokens, num_tokens);
 			tokens = 0;
