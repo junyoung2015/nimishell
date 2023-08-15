@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 21:55:34 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/15 15:55:48 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/15 21:12:46 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	cmd_not_found(char *cmd)
 {
-	write(STDERR_FILENO, "error: ", 7);
+	write(STDERR_FILENO, "minishell: ", 11);
 	write(STDERR_FILENO, cmd, ft_strlen(cmd));
 	write(STDERR_FILENO, ": command not found\n", 20);
 	clear_all(g_info.root);
@@ -26,7 +26,7 @@ void	command_in_child(t_node *node, t_exec_info *info)
 	char	*cmdpath;
 
 	if (!connect_pipe(node, info))
-		err_exit(EXIT_FAILURE, "error: dup2");
+		err_exit(EXIT_FAILURE, "minishell: dup2");
 	if (node->builtin == NOT_BUILTIN)
 	{
 		cmdpath = get_cmdpath(node->cmd_args[0]);
@@ -34,7 +34,7 @@ void	command_in_child(t_node *node, t_exec_info *info)
 			cmd_not_found(node->cmd_args[0]);
 		if (execve(cmdpath, node->cmd_args, g_info.env) < 0)
 		{
-			write(STDERR_FILENO, "error: ", 7);
+			write(STDERR_FILENO, "minishell: ", 11);
 			err_exit(EXIT_NOT_EXECUTABLE, node->cmd_args[0]);
 		}
 	}
@@ -55,7 +55,7 @@ void	command(t_node *node, t_exec_info *info)
 			return ;
 		if (!connect_pipe(node, info))
 		{
-			err("error: dup2", info);
+			err("minishell: dup2", info);
 			return ;
 		}
 		builtin(node, info);

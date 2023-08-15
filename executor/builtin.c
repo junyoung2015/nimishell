@@ -11,7 +11,7 @@ static int	_atoi(char *str)
 			num = num * 10 + *str++ - '0';
 		else
 		{
-			write(STDERR_FILENO, "error: exit: numeric argument required\n", 39);
+			write(STDERR_FILENO, "minishell: exit: numeric argument required\n", 43);
 			return (255);
 		}
 	}
