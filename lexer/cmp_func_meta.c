@@ -1,15 +1,26 @@
 
 #include "minishell.h"
 
-t_bool	is_meta_ch(char ch)
+t_bool	is_meta(char ch)
 {
 	return (ch == '|' || ch == '>' || ch == '<' || ch == '(' \
-		|| ch == ')' || ch == '&' || ch == '\t' || ch == '\n' || ch == ' ');
+		|| ch == ')' || ch == '&' || is_space(ch));
 }
 
 t_bool	is_dmeta_ch(char ch)
 {
 	return (ch == '|' || ch == '>' || ch == '<' || ch == '&');
+}
+
+t_bool	is_space(char ch)
+{
+	return (ch == ' ' || ch == '\t' || ch == '\f' || ch == '\n' || \
+		ch == '\v' || ch == '\r');
+}
+
+t_bool	is_not_space(char ch)
+{
+	return (!is_space(ch));
 }
 
 /**
@@ -33,15 +44,4 @@ t_bool	is_dmeta_str(char *input)
 	else if (!ft_strncmp(input, "&&", 2))
 		return (TOKEN_AND);
 	return (TOKEN_WORD);
-}
-
-t_bool	is_space(char ch)
-{
-	return (ch == ' ' || ch == '\t' || ch == '\f' || ch == '\n' || \
-		ch == '\v' || ch == '\r');
-}
-
-t_bool	is_not_space(char ch)
-{
-	return (!is_space(ch));
 }
