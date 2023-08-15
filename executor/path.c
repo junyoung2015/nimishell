@@ -79,6 +79,5 @@ char	*get_cmdpath(char *filename)
 		i++;
 	}
 	free_ptr(path);
-	cmd_not_found(filename);
 	return (NULL);
 }
