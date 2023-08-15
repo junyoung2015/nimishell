@@ -265,13 +265,18 @@ char			*ft_strnstr(const char *haystack, const char *needle, t_size n);
 /* ================== TOKENIZER ================== */
 typedef t_token *(*t_tokenizer_fn)(char **, t_token_state *);
 
+t_token 		*tokenize_input(char *input, t_size alloced, t_size *num_tokens);
+t_bool			init_tokenizer(char *input, t_token **tokens, t_size *alloced,  t_token_state *state);
+
+
 void			print_tokens(t_token *tokens, t_size num_tokens);
-t_token			*create_token(t_token_type type, const char *buffer, t_size buf_len);
+
 
 /* ============= CMP_FUNC_QUOTE ============== */
 t_bool			is_squote(char ch);
 t_bool			is_dquote(char ch);
 t_bool			is_quote(char ch);
+t_cmp			get_cmp_fn(char ch);
 
 /* ============== CMP_FUNC_META ============== */
 t_bool			is_meta(char ch);
@@ -280,27 +285,26 @@ t_bool			is_dmeta_str(char *input);
 t_bool			is_space(char ch);
 t_bool			is_not_space(char ch);
 
-
-t_bool			is_alnum(int c);
-t_bool			is_escaped(char ch);
-t_bool			is_space(char ch);
-t_bool			is_not_space(char ch);
-t_bool			is_env_var(char ch); // ?
-// FSM //
-t_token			*tokenize_input(char *input, t_size alloced, t_size *num_tokens);
-t_token_state	update_state(char ch);
-t_token			*tokenize_normal(char **input, t_token_state *state);
-t_token			*tokenize_squote(char **input, t_token_state *state);
-t_token			*tokenize_dquote(char **input, t_token_state *state);
-t_token			*tokenize_meta(char **input, t_token_state *state);
-t_token			*tokenize_whitespace(char **input, t_token_state *state);
-t_cmp			get_cmp_fn(char ch);
-
 /* ============= TOKENIZER_UTILS ============= */
 t_token			*create_token(t_token_type type, const char *buffer, t_size buf_len);
+t_token			*free_tokens(t_token *tokens, t_size size);
+t_token_type	get_operator_type(char ch);
+
+/* ============ TOKENIZER_STATES ============= */
+t_token_state 	update_state(char ch);
+t_token			*tokenize(char **input, t_cmp cmp, t_token_type type, t_token_state *state);
+t_token			*tokenize_operator(char **input, t_token_state *state);
+t_token			*tokenize_meta(char **input, t_token_state *state);
+t_bool			init_tokenizer(char *input, t_token **tokens, t_size *alloced,  t_token_state *state);
+
+/* ========= TOKENIZER_ERR_HANDLING ========== */
 t_token			*create_err_token(char *msg);
 t_token			*set_err_token(t_token *tokens, t_size *num_tokens, char *msg);
-t_token			*free_tokens(t_token *tokens, t_size size);
+t_bool			check_parenthesis(t_token* tokens, t_size num_tokens);
+
+/* ============= TOKENIZER_SPLIT ============= */
+t_bool			move_until_cmp(char **input, t_cmp cmp);
+t_token			*split_input(char *start, char **input, t_cmp cmp, t_token_type type);
 
 /* ============ TOKENIZER_REALLOC ============ */
 t_token			*realloc_tokens(t_token *tokens, t_size *num_tokens, t_size new_size);
