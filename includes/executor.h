@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/15 15:18:16 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/15 15:56:34 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,7 @@ int		heredoc(t_node *node, t_exec_info *info);
 void	free_ptr(char **ptr);
 void	clear_all(t_node *root);
 int		err(char *str, t_exec_info *info);
-int		display_err(char *file, char *exec, char *msg, t_exec_info *info);
 void	err_exit(int exit_code, char *msg);
-void	cmd_not_found(char *filename);
 
 /* command */
 void	builtin(t_node *node, t_exec_info *info);

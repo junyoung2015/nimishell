@@ -109,7 +109,9 @@ t_bool	try_chdir(char *path, t_exec_info *info)
 {
 	if (chdir(path))
 	{
-		display_err(CD_BUILTIN, path, 0, info);
+		write(STDERR_FILENO, "error: cd: ", 11);
+		perror(path);
+		info->exit_code = EXIT_FAILURE;
 		return (FALSE);
 	}
 	return (TRUE);
@@ -122,7 +124,8 @@ t_bool	cd_to_home(t_exec_info *info)
 	home = get_env("HOME");
 	if (!home)
 	{
-		display_err(CD_BUILTIN, 0, CD_HOME_NOT_SET, info);
+		write(STDERR_FILENO, "error: cd: HOME not set\n", 24);
+		info->exit_code = EXIT_FAILURE;
 		return (FALSE);
 	}
 	return (try_chdir(home, info));
@@ -135,7 +138,8 @@ t_bool	cd_to_oldpwd(t_exec_info *info)
 	oldpwd = get_env("OLDPWD");
 	if (!oldpwd)
 	{
-		display_err(CD_BUILTIN, 0, CD_OLDPWD_NOT_SET, info);
+		write(STDERR_FILENO, "error: cd: OLDPWD not set\n", 26);
+		info->exit_code = EXIT_FAILURE;
 		return (FALSE);
 	}
 	return (try_chdir(oldpwd, info));
@@ -150,7 +154,8 @@ t_bool	cd_to_path_with_home(char *path, t_exec_info *info)
 	home = get_env("HOME");
 	if (!home)
 	{
-		display_err(CD_BUILTIN, 0, CD_HOME_NOT_SET, info);
+		write(STDERR_FILENO, "error: cd: HOME not set\n", 24);
+		info->exit_code = EXIT_FAILURE;
 		return (FALSE);
 	}
 	full_path = ft_strjoin(home, path + 1);
