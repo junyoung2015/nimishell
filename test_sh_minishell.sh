@@ -8,7 +8,7 @@ set red "\033\[1;31m"
 set default "\033\[0m"
 set count 1
 
-set timeout 5
+set timeout 2
 
 send "\r"
 expect "" ;
@@ -506,21 +506,53 @@ expect {
 set count [ expr \$count + 1 ] ;
 
 #========== Error Test ==========#
-# send "export A.B=C\r"
-# expect "minishell: export: A.B=C: not a valid identifier"
-# set count [ expr \$count + 1 ] ;
+send "export A.B=C\r"
+expect {
+	"minishell: export: A.B=C: not a valid identifier" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
 
-# send "export A=B B=C C=D\r"
-# expect ""
-# set count [ expr \$count + 1 ] ;
+send "export A=B B=C C=D\r"
+expect {
+	"" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
 
-# send "echo \$A\$B\$C\r"
-# expect "BCD"
-# set count [ expr \$count + 1 ] ;
+send "echo \$A\$B\$C\r"
+expect {
+	"BCD" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
 
-# send "export 123=A\r"
-# expect "minishell: export: \`123=A': not a valid identifier"
-# set count [ expr \$count + 1 ] ;
+send "export 123=A\r"
+expect {
+	"minishell: export: \`123=A': not a valid identifier" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
 
 # Finish
 send "exit\r"
