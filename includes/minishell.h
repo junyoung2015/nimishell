@@ -142,7 +142,6 @@ typedef struct s_node
 	t_size			num_args;
 	struct s_node	*left;
 	struct s_node	*right;
-	struct s_node	*sibling; 
 	int				pipe_open;
 	t_node_type		parent_type;
 	t_builtin		builtin;
