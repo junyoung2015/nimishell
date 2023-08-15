@@ -19,7 +19,6 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 	t_node			*pipeline_node;
 	t_node			*list_tail_node;
 	t_node_type		state;
-	(void)			parent;
 
 	logic_node = 0;
 	state = AST_AND;
@@ -51,7 +50,7 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 		// append_child_node(list_tail_node, pipeline_node);
 		logic_node->left = parent;
 		logic_node->right = list_tail_node;
-		list_tail_node->left = pipeline_node;
+		// list_tail_node->left = pipeline_node;
 	}
 	else if (check(parser, TOKEN_AND))
 	{
