@@ -6,16 +6,16 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 11:22:59 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 12:18:38 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 13:06:53 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_token	*create_token(t_token_type type, const char *buffer, t_size buf_len)
+t_token	*create_token(t_type type, const char *buffer, t_size buf_len)
 {
 	t_token	*new_token;
-	
+
 	new_token = (t_token *) ft_calloc(1, sizeof(t_token));
 	if (!new_token)
 		return (0);
@@ -42,7 +42,7 @@ t_token	*free_tokens(t_token *tokens, t_size size)
 	return (0);
 }
 
-t_token_type	get_operator_type(char ch)
+t_type	get_operator_type(char ch)
 {
 	if (ch == '|')
 		return (TOKEN_PIPE);

@@ -44,7 +44,7 @@ typedef enum e_token_state
 	DQUOTE,
 	META_CH,
 	END,
-} t_token_state;
+} t_state;
 
 typedef enum e_token_type
 {
@@ -66,7 +66,7 @@ typedef enum e_token_type
 	TOKEN_ERROR,
 	TOKEN_UNKNOWN,
 	TOKEN_TYPES_CNT,
-} t_token_type;
+} t_type;
 
 typedef enum e_builtin
 {
@@ -82,7 +82,7 @@ typedef enum e_builtin
 
 typedef struct	s_token
 {
-	t_token_type type;
+	t_type type;
 	char *val;
 } t_token;
 
@@ -263,10 +263,10 @@ char			*ft_strjoin(char const *s1, char const *s2);
 char			*ft_strnstr(const char *haystack, const char *needle, t_size n);
 
 /* ================== TOKENIZER ================== */
-typedef t_token *(*t_tokenizer_fn)(char **, t_token_state *);
+typedef t_token *(*t_tokenizer_fn)(char **, t_state *);
 
 t_token 		*tokenize_input(char *input, t_size alloced, t_size *num_tokens);
-t_bool			init_tokenizer(char *input, t_token **tokens, t_size *alloced,  t_token_state *state);
+t_bool			init_tokenizer(char *input, t_token **tokens, t_size *alloced,  t_state *state);
 
 
 void			print_tokens(t_token *tokens, t_size num_tokens);
@@ -286,16 +286,16 @@ t_bool			is_space(char ch);
 t_bool			is_not_space(char ch);
 
 /* ============= TOKENIZER_UTILS ============= */
-t_token			*create_token(t_token_type type, const char *buffer, t_size buf_len);
+t_token			*create_token(t_type type, const char *buffer, t_size buf_len);
 t_token			*free_tokens(t_token *tokens, t_size size);
-t_token_type	get_operator_type(char ch);
+t_type	get_operator_type(char ch);
 
 /* ============ TOKENIZER_STATES ============= */
-t_token_state 	update_state(char ch);
-t_token			*tokenize(char **input, t_cmp cmp, t_token_type type, t_token_state *state);
-t_token			*tokenize_operator(char **input, t_token_state *state);
-t_token			*tokenize_meta(char **input, t_token_state *state);
-t_bool			init_tokenizer(char *input, t_token **tokens, t_size *alloced,  t_token_state *state);
+t_state 	update_state(char ch);
+t_token			*tokenize(char **input, t_cmp cmp, t_type type, t_state *state);
+t_token			*tokenize_operator(char **input, t_state *state);
+t_token			*tokenize_meta(char **input, t_state *state);
+t_bool			init_tokenizer(char *input, t_token **tokens, t_size *alloced,  t_state *state);
 
 /* ========= TOKENIZER_ERR_HANDLING ========== */
 t_token			*create_err_token(char *msg);
@@ -304,7 +304,7 @@ t_bool			check_parenthesis(t_token* tokens, t_size num_tokens);
 
 /* ============= TOKENIZER_SPLIT ============= */
 t_bool			move_until_cmp(char **input, t_cmp cmp);
-t_token			*split_input(char *start, char **input, t_cmp cmp, t_token_type type);
+t_token			*split_input(char *start, char **input, t_cmp cmp, t_type type);
 
 /* ============ TOKENIZER_REALLOC ============ */
 t_token			*realloc_tokens(t_token *tokens, t_size *num_tokens, t_size new_size);
@@ -340,7 +340,7 @@ t_node			*parse_err(t_parser *parser, t_node *parent);
 void			postorder_traversal(t_node *node, t_node **err_node);
 t_bool			check_err(t_node *new_node);
 t_node			*parse_err(t_parser *parser, t_node *parent);
-char			*tok_type(t_token_type type);
+char			*tok_type(t_type type);
 
 void			append_redir_node(t_node *parent, t_node *child);
 void			append_child_node(t_node *parent, t_node *child);
@@ -354,9 +354,9 @@ void			update_p_state(char **table, t_parser *parser, t_parse_state *parse_state
 
 /* =========== PARSER_STATUS_UTILS =========== */
 void			advance(t_parser *parser);
-t_bool			check(t_parser *parser, t_token_type type);
-t_token_type	cur_type(t_parser *parser);
-t_token_type	peek(t_parser *parser);
+t_bool			check(t_parser *parser, t_type type);
+t_type	cur_type(t_parser *parser);
+t_type	peek(t_parser *parser);
 
 /* ================== EXECUTOR ================== */
 int				executor(t_node *root);

@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:56:23 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 12:56:25 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 13:06:53 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ t_node *parse_err(t_parser *parser, t_node *parent)
 	return (err);
 }
 
-char	*tok_type(t_token_type type)
+char	*tok_type(t_type type)
 {
 	if (type == TOKEN_PIPE)
 		return ("|");

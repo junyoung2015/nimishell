@@ -40,7 +40,7 @@ char	*trim_outer_quotes(char *cmd_arg)
 	char			*trimmed;
 	char			*result;
 	char			*tmp;
-	t_token_state	state;
+	t_state	state;
 	const t_cmp		cmp[] = {
 		is_quote,
 		is_squote,

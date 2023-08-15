@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:51:11 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 12:51:13 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 13:06:53 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ t_bool	is_not_space(char ch)
  * @brief Check whether 'input' matches double-character operators.
  * 
  * @param input 
- * @return t_token_type
+ * @return t_type
  * 		enum, but also works as TRUE or FALSE, since TOKEN_WORD = 0,
  * 		and other enums are above 0.
  */

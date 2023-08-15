@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:56:38 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 12:56:39 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 13:06:53 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 {
 	t_node			*cmd_node;
 	t_node			*redir_node;
-	t_token_type	type;
+	t_type	type;
 
 	redir_node = 0;
 	if (is_redir_token(parser))

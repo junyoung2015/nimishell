@@ -6,14 +6,13 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 11:41:30 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 11:43:44 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 13:06:57 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "minishell.h"
 
-t_token_state update_state(char ch)
+t_state	update_state(char ch)
 {
 	if (is_squote(ch))
 		return (SQUOTE);
@@ -26,7 +25,7 @@ t_token_state update_state(char ch)
 	return (NORMAL);
 }
 
-t_token	*tokenize(char **input, t_cmp cmp, t_token_type type, t_token_state *state)
+t_token	*tokenize(char **input, t_cmp cmp, t_type type, t_state *state)
 {
 	t_token	*new_token;
 
@@ -40,7 +39,7 @@ t_token	*tokenize(char **input, t_cmp cmp, t_token_type type, t_token_state *sta
 	return (new_token);
 }
 
-t_token	*tokenize_operator(char **input, t_token_state *state)
+t_token	*tokenize_operator(char **input, t_state *state)
 {
 	t_token	*new_token;
 
@@ -55,7 +54,7 @@ t_token	*tokenize_operator(char **input, t_token_state *state)
 	return (new_token);
 }
 
-t_token	*tokenize_meta(char **input, t_token_state *state)
+t_token	*tokenize_meta(char **input, t_state *state)
 {
 	t_token	*new_token;
 
@@ -69,7 +68,7 @@ t_token	*tokenize_meta(char **input, t_token_state *state)
 	return (new_token);
 }
 
-t_bool	init_tokenizer(char *input, t_token **tokens, t_size *alloced,  t_token_state *state)
+t_bool	init_tokenizer(char *input, t_token **tokens, t_size *alloced, t_state *state)
 {
 	*alloced = 2;
 	*state = update_state(*input);

@@ -6,13 +6,13 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 11:34:41 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 11:36:07 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 13:05:30 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_token *realloc_tokens(t_token *tokens, t_size *num_tokens, t_size new_size)
+t_token	*realloc_tokens(t_token *tokens, t_size *num_tokens, t_size new_size)
 {
 	t_size		i;
 	t_size		cp_size;
@@ -21,7 +21,7 @@ t_token *realloc_tokens(t_token *tokens, t_size *num_tokens, t_size new_size)
 	if (new_size == 0)
 		return (free_tokens(tokens, *num_tokens));
 	new = ft_calloc(new_size, sizeof(t_token));
-	if (!new) 
+	if (!new)
 		return (set_err_token(tokens, num_tokens, MALLOC_ERR));
 	cp_size = new_size;
 	if (*num_tokens < new_size)
@@ -44,10 +44,10 @@ t_token	*should_realloc(t_token *tokens, t_size *num_tokens, t_size *alloced)
 	t_token	*new;
 
 	new = tokens;
-    if (*alloced <= *num_tokens + 1)
+	if (*alloced <= *num_tokens + 1)
 	{
-        *alloced = *alloced * 2;
-        new = realloc_tokens(tokens, num_tokens, *alloced);
-    }
+		*alloced = *alloced * 2;
+		new = realloc_tokens(tokens, num_tokens, *alloced);
+	}
 	return (new);
 }

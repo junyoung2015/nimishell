@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:57:04 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 12:57:06 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 13:06:53 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
  */
 t_bool	is_word_token(t_parser *parser)
 {
-	t_token_type	type;
+	t_type	type;
 
 	type = cur_type(parser);
 	if (parser->cur < parser->size)
@@ -37,7 +37,7 @@ t_bool	is_word_token(t_parser *parser)
  */
 t_bool	is_redir_token(t_parser *parser)
 {
-	t_token_type	type;
+	t_type	type;
 
 	type = cur_type(parser);
 	if (parser->cur < parser->size)
@@ -81,7 +81,7 @@ void	is_builtin_node(t_node *node)
 void update_p_state(char **table, t_parser *parser, t_parse_state *parse_state)
 {
 	t_token			cur;
-	t_token_type	next;
+	t_type	next;
 
 	if (parser->cur == 0)
 	{
