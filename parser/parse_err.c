@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:56:23 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 14:03:05 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 14:04:57 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,11 @@ t_node	*parse_err(t_parser *parser, t_node *parent)
 	if (!err->cmd_args)
 		return (0);
 	if (parser->tokens[parser->cur].val)
-		err->cmd_args[err->num_args++] = ft_strdup(parser->tokens[parser->cur].val);
+		err->cmd_args[err->num_args++] = \
+		ft_strdup(parser->tokens[parser->cur].val);
 	else
-		err->cmd_args[err->num_args++] = ft_strdup(tok_type(parser->tokens[parser->cur - 1].type));
+		err->cmd_args[err->num_args++] = \
+		ft_strdup(tok_type(parser->tokens[parser->cur - 1].type));
 	return (err);
 }
 
