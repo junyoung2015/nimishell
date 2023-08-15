@@ -12,85 +12,6 @@
 
 #include "minishell.h"
 
-t_token	*free_tokens(t_token *tokens, t_size size)
-{
-	t_size	i;
-
-	i = 0;
-	if (size != 0)
-		while (i < size)
-			free(tokens[i++].val);
-	free(tokens);
-	return (0);
-}
-
-t_token	*create_err_token(char *msg)
-{
-	t_token	*new_token;
-
-	new_token = create_token(TOKEN_ERROR, msg, ft_strlen(msg));
-	if (!new_token)
-		return (0);
-	return (new_token);
-}
-
-t_token	*set_err_token(t_token *tokens, t_size *num_tokens, char *msg)
-{
-	t_token	*new_token;
-
-	free_tokens(tokens, *num_tokens);
-	tokens = ft_calloc(1, sizeof(t_token));
-	if (!tokens)
-		return (0);
-	new_token = create_err_token(msg);
-	if (!new_token)
-		return (0);
-	*num_tokens = 0;
-	tokens[(*num_tokens)++] = *new_token;
-	free(new_token);
-	return (tokens);
-}
-
-t_token* realloc_tokens(t_token *tokens, t_size *num_tokens, t_size new_size)
-{
-	t_size		i;
-	t_size		cp_size;
-	t_token		*new;
-
-	if (new_size == 0)
-		return (free_tokens(tokens, *num_tokens));
-	new = ft_calloc(new_size, sizeof(t_token));
-	if (!new) 
-		return (set_err_token(tokens, num_tokens, MALLOC_ERR));
-	cp_size = new_size;
-	if (*num_tokens < new_size)
-		cp_size = *num_tokens;
-	ft_memcpy(new, tokens, cp_size * sizeof(t_token));
-	i = -1;
-	while (++i < cp_size)
-	{
-		new[i].val = ft_calloc(ft_strlen(tokens[i].val) + 1, 1);
-		if (!new[i].val)
-			return (set_err_token(tokens, num_tokens, MALLOC_ERR));
-		ft_memcpy(new[i].val, tokens[i].val, ft_strlen(tokens[i].val) + 1);
-	}
-	free_tokens(tokens, *num_tokens);
-	return (new);
-}
-
-t_token	*should_realloc(t_token *tokens, t_size *num_tokens, t_size *alloced)
-{
-	t_token	*new;
-
-	new = tokens;
-    if (*alloced <= *num_tokens + 1)
-	{
-        *alloced = *alloced * 2;
-        new = realloc_tokens(tokens, num_tokens, *alloced);
-    }
-	return (new);
-}
-
 t_bool	check_parenthesis(t_token* tokens, t_size num_tokens)
 {
 	int		depth;
@@ -111,66 +32,6 @@ t_bool	check_parenthesis(t_token* tokens, t_size num_tokens)
 	return (depth == 0);
 }
 
-t_bool	is_squote(char ch)
-{
-	return (ch == '\'');
-}
-
-t_bool	is_dquote(char ch)
-{
-	return (ch == '"');
-}
-
-t_bool	is_quote(char ch)
-{
-	return (is_squote(ch) || is_dquote(ch));
-}
-
-t_bool	is_space(char ch)
-{
-	return (ch == ' ' || ch == '\t' || ch == '\f' || ch == '\n' || \
-		ch == '\v' || ch == '\r');
-}
-
-t_bool	is_not_space(char ch)
-{
-	return (!is_space(ch));
-}
-
-t_bool	is_meta(char ch)
-{
-	return (ch == '|' || ch == '>' || ch == '<' || ch == '(' \
-		|| ch == ')' || ch == '&' || is_space(ch));
-}
-
-t_bool	is_dmeta_ch(char ch)
-{
-	return (ch == '|' || ch == '>' || ch == '<' || ch == '&');
-}
-
-/**
- * @brief Check whether 'input' matches double-character operators.
- * 
- * @param input 
- * @return t_token_type
- * 		enum, but also works as TRUE or FALSE, since TOKEN_WORD = 0,
- * 		and other enums are above 0.
- */
-t_bool	is_dmeta_str(char *input)
-{
-	if (!(is_dmeta_ch(0[input]) && is_dmeta_ch(1[input])))
-		return (TOKEN_WORD);
-	if (!ft_strncmp(input, "<<", 2))
-		return (TOKEN_HEREDOC);
-	else if (!ft_strncmp(input, ">>", 2))
-		return (TOKEN_APPEND);
-	else if (!ft_strncmp(input, "||", 2))
-		return (TOKEN_OR);
-	else if (!ft_strncmp(input, "&&", 2))
-		return (TOKEN_AND);
-	return (TOKEN_WORD);
-}
-
 t_token_type	get_operator_type(char ch)
 {
 	if (ch == '|')
@@ -186,24 +47,6 @@ t_token_type	get_operator_type(char ch)
 	else if (ch == '*')
 		return (TOKEN_WILDCARD);
 	return (TOKEN_UNKNOWN);
-}
-
-t_token	*create_token(t_token_type type, const char *buffer, t_size buf_len)
-{
-	t_token	*new_token;
-	
-	new_token = (t_token *) ft_calloc(1, sizeof(t_token));
-	if (!new_token)
-		return (0);
-	new_token->type = type;
-	new_token->val = (char *) ft_calloc(buf_len + 1, sizeof(char));
-	if (!new_token->val)
-	{
-		free(new_token);
-		return (0);
-	}
-	ft_strlcpy(new_token->val, buffer, buf_len + 1);
-	return (new_token);
 }
 
 /**
