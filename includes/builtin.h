@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:55:11 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 15:51:59 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/15 16:18:03 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 
 /* built-in function */
 void	export(t_node *node, t_exec_info *info);
-void	env(void);
+void	env(t_node *node, t_exec_info *info);
 void	unset(t_node *node, t_exec_info *info);
 void    pwd(t_exec_info *info);
 // void    cd(t_node *node, t_exec_info *info);
