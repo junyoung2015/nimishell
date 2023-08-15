@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 11:22:59 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 11:34:28 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 12:18:38 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,33 +30,6 @@ t_token	*create_token(t_token_type type, const char *buffer, t_size buf_len)
 	return (new_token);
 }
 
-t_token	*create_err_token(char *msg)
-{
-	t_token	*new_token;
-
-	new_token = create_token(TOKEN_ERROR, msg, ft_strlen(msg));
-	if (!new_token)
-		return (0);
-	return (new_token);
-}
-
-t_token	*set_err_token(t_token *tokens, t_size *num_tokens, char *msg)
-{
-	t_token	*new_token;
-
-	free_tokens(tokens, *num_tokens);
-	tokens = ft_calloc(1, sizeof(t_token));
-	if (!tokens)
-		return (0);
-	new_token = create_err_token(msg);
-	if (!new_token)
-		return (0);
-	*num_tokens = 0;
-	tokens[(*num_tokens)++] = *new_token;
-	free(new_token);
-	return (tokens);
-}
-
 t_token	*free_tokens(t_token *tokens, t_size size)
 {
 	t_size	i;
@@ -67,4 +40,21 @@ t_token	*free_tokens(t_token *tokens, t_size size)
 			free(tokens[i++].val);
 	free(tokens);
 	return (0);
+}
+
+t_token_type	get_operator_type(char ch)
+{
+	if (ch == '|')
+		return (TOKEN_PIPE);
+	else if (ch == '<')
+		return (TOKEN_REDIR_IN);
+	else if (ch == '>')
+		return (TOKEN_REDIR_OUT);
+	else if (ch == '(')
+		return (TOKEN_L_PAREN);
+	else if (ch == ')')
+		return (TOKEN_R_PAREN);
+	else if (ch == '*')
+		return (TOKEN_WILDCARD);
+	return (TOKEN_UNKNOWN);
 }
