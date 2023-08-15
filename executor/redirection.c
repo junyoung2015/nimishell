@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 21:50:47 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/16 00:45:52 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/16 02:08:21 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static void	redir_err(char *filename, t_exec_info *info)
 	info->exit_code = EXIT_FAILURE;
 	if (info->is_fork)
 	{
-		clear_all(info->root);
+		clear_all(info->ast);
 		exit(info->exit_code);
 	}
 }

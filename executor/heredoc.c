@@ -34,7 +34,7 @@ static char	*heredoc_err(t_exec_info *info, char *str, int code)
 		err("minishell: malloc", info);
 	if (info->is_fork)
 	{
-		clear_all(info->root);
+		clear_all(info->ast);
 		exit(EXIT_FAILURE);
 	}
 	return (NULL);
@@ -70,14 +70,14 @@ void	write_heredoc(char *limiter, t_exec_info *info, int fd)
 	size_t	str_len;
 
 	lmt_len = ft_strlen(limiter);
-	write(g_info.stdin_fd, "heredoc> ", 9);
-	str = get_next_line(g_info.stdin_fd, info, &str_len);
+	write(info->stdin_fd, "heredoc> ", 9);
+	str = get_next_line(info->stdin_fd, info, &str_len);
 	while (str && !(!ft_strncmp(str, limiter, lmt_len) && str[lmt_len] == '\n'))
 	{
 		write(fd, str, str_len);
 		free(str);
-		write(g_info.stdin_fd, "heredoc> ", 9);
-		str = get_next_line(g_info.stdin_fd, info, &str_len);
+		write(info->stdin_fd, "heredoc> ", 9);
+		str = get_next_line(info->stdin_fd, info, &str_len);
 	}
 	if (str)
 		free(str);

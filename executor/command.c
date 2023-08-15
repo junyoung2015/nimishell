@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 21:55:34 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/16 01:16:31 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/16 02:04:59 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	cmd_not_found(char *cmd, t_exec_info *info)
 	write(STDERR_FILENO, "minishell: ", 11);
 	write(STDERR_FILENO, cmd, ft_strlen(cmd));
 	write(STDERR_FILENO, ": command not found\n", 20);
-	clear_all(info->root);
+	clear_all(info->ast);
 	exit(EXIT_CMD_NOT_FOUND);
 }
 
@@ -43,7 +43,7 @@ void	command_in_child(t_node *node, t_exec_info *info)
 		}
 	}
 	builtin(node, info);
-	clear_all(info->root);
+	clear_all(info->ast);
 	exit(info->exit_code);
 }
 
