@@ -2,7 +2,7 @@
 
 int	cmp_ascii(void *a, void *b)
 {
-	return ft_strcmp((const char *)a, (const char *)b);
+	return (ft_strcmp((const char *)a, (const char *)b));
 }
 
 void	ft_swap(void **a, void **b)
