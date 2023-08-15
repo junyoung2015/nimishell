@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:56:23 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 13:06:53 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 14:03:05 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,14 @@
  */
 void	postorder_traversal(t_node *node, t_node **err)
 {
-    if (!node || (*err))
-		return ;	
+	if (!node || (*err))
+		return ;
 	if (node->left)
 		postorder_traversal(node->left, err);
 	if (node->right)
 		postorder_traversal(node->right, err);
-    if (node->type == AST_ERR)
-        *err = node;
+	if (node->type == AST_ERR)
+		*err = node;
 }
 
 /**
@@ -41,20 +41,20 @@ void	postorder_traversal(t_node *node, t_node **err)
  */
 t_bool	check_err(t_node *new_node)
 {
-    t_node *err;
+	t_node	*err;
 
 	err = 0;
-    if (!new_node)
-        return (FALSE);
-    postorder_traversal(new_node, &err);
-    if (err)
-    {
-        write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
-        write(STD_ERR, err->cmd_args[0], ft_strlen(err->cmd_args[0]));
-        write(STD_ERR, "`\n", 2);
-        return (TRUE);
-    }
-    return (FALSE);
+	if (!new_node)
+		return (FALSE);
+	postorder_traversal(new_node, &err);
+	if (err)
+	{
+		write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
+		write(STD_ERR, err->cmd_args[0], ft_strlen(err->cmd_args[0]));
+		write(STD_ERR, "`\n", 2);
+		return (TRUE);
+	}
+	return (FALSE);
 }
 
 /**
@@ -64,11 +64,11 @@ t_bool	check_err(t_node *new_node)
  * @param parser 	parser struct
  * @return t_node*	error node, indicating an error in syntax
  */
-t_node *parse_err(t_parser *parser, t_node *parent)
+t_node	*parse_err(t_parser *parser, t_node *parent)
 {
 	t_node	*err;
-	(void)	parent;
 
+	(void) parent;
 	err = create_node(AST_ERR);
 	if (!err)
 		return (0);

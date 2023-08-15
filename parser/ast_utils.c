@@ -6,15 +6,15 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:56:18 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 12:56:21 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 14:00:03 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_node *create_node(t_node_type type)
+t_node	*create_node(t_node_type type)
 {
-	t_node *new_node;
+	t_node	*new_node;
 
 	new_node = (t_node *)ft_calloc(1, sizeof(t_node));
 	if (!new_node)
@@ -30,8 +30,10 @@ t_node *create_node(t_node_type type)
 	return (new_node);
 }
 
-void free_ast(t_node *root)
+void	free_ast(t_node *root)
 {
+	t_size	idx;
+
 	if (root == 0)
 		return ;
 	if (!root->left)
@@ -40,14 +42,15 @@ void free_ast(t_node *root)
 		free_ast(root->right);
 	if (root->cmd_args)
 	{
-		for (t_size i = 0; i < root->num_args; i++)
-			free(root->cmd_args[i]);
+		idx = 0;
+		while (idx < root->num_args)
+			free(root->cmd_args[idx++]);
 		free(root->cmd_args);
 	}
 	free(root);
 }
 
-void append_child_node(t_node *parent, t_node *child)
+void	append_child_node(t_node *parent, t_node *child)
 {
 	if (!parent || !child || parent == child)
 		return ;
