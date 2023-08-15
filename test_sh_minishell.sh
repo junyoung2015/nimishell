@@ -579,6 +579,32 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 39 ###
+send "echo \"\$../\"'\$'\"\"\r"
+expect {
+	"\$../\$" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		# exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 40 ###
+send "echo \$USER\$USER\$USER../\$USER?\$.USER~\r"
+expect {
+	"../?$.USER~" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
 # Finish
 send "exit\r"
 expect eof
