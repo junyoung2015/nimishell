@@ -22,8 +22,6 @@ void	free_search_info(t_search *info)
 {
 	if (!info)
 		return ;
-	// if (info->files)
-	//     free(info->files);
 	if (info->prev_pos)
 		free(info->prev_pos);
 	free(info);

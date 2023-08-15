@@ -233,7 +233,7 @@ t_size			ft_strlcpy(char *dst, const char *src, t_size dstsize);
 char			*ft_itoa(int n);
 char			*ft_strchr(const char *s, int c);
 
-/* ================== EXPANSION ================== */
+/* ================ EXPANSION ================ */
 typedef t_bool	(*t_cmp)(char);
 typedef	char	*(*t_process_fn)(char **);
 typedef	char	*(*t_trim_fn)(char **, t_cmp);
@@ -245,7 +245,12 @@ char			**wildcard_substitution(t_node *node);
 char			*trim_outer_quotes(char *cmd_arg);
 char			*trim(char	**cmd_arg, t_cmp cmp);
 char			**str_expansion(t_node *node);
+
+/* =============== ARRAY_UTILS =============== */
 void			ft_arrfree(char **arr);
+t_size			ft_arrlen(char **arr);
+t_size			ft_arrcat(char ***arr, char **new_arr, t_size size);
+t_size 			ft_arr_append(char ***arr, char *str, t_size size);
 
 t_search		*create_search_info(char **files, int num_files);
 void			free_search_info(t_search *info);
