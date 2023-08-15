@@ -47,6 +47,7 @@ SRCS = ./minishell.c						\
 		$(PARSER_DIR)parse_word_list.c		\
 		$(STR_DIR)str_itoa.c				\
 		$(STR_DIR)str_utils.c				\
+		$(STR_DIR)str_utils2.c				\
 		$(STR_DIR)str_split.c				\
 		$(STR_DIR)str_utils_create.c		\
 		$(EXPANSION)quote_removal.c			\
