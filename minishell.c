@@ -132,8 +132,6 @@ void	init_g_info(char **envp)
 		i++;
 	}
 	g_info.env[i] = NULL;
-	g_info.stdin_fd = dup(STDIN_FILENO);
-	g_info.stdout_fd = dup(STDOUT_FILENO);
 }
 
 int	main(int ac, char **av, char **envp)

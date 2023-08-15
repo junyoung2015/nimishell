@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:26 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/16 01:07:26 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/16 02:05:21 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,6 @@ void	err_exit(t_exec_info *info, char *msg)
 {
 	if (msg)
 		perror(msg);
-	clear_all(info->root);
+	clear_all(info->ast);
 	exit(info->exit_code);
 }
