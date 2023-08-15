@@ -69,7 +69,7 @@ void	unset(t_node *node, t_exec_info *info)
 	{
 		result = arg_check(node->cmd_args[i], UNSET);
 		if (result < 0)
-			display_err(UNSET_BUILTIN, node->cmd_args[i], NOT_VALID_ID, info);
+			arg_err(UNSET, node->cmd_args[i], info);
 		else if (result >> 1)
 		{
 			idx = get_idx(node->cmd_args[i]);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 21:50:47 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/08 18:05:48 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 14:09:10 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,14 @@ int	redir_append(t_node *node, t_exec_info *info)
 
 static void	redir_err(char *filename, t_exec_info *info)
 {
-	// TODO: display_cmd_err 와 redir_err 를 합치는 것에 대해 고려하기
+	write(STDERR_FILENO, "error: ", 7);
+	perror(filename);
+	info->exit_code = EXIT_FAILURE;
 	if (info->is_fork)
-		err_exit(EXIT_FAILURE, filename, info);
-	else
-		err(0, info);
+	{
+		clear_all(g_info.root);
+		exit(info->exit_code);
+	}
 }
 
 void	redirection(t_node *node, t_exec_info *info)

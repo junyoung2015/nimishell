@@ -38,11 +38,12 @@ int arg_check(char *str, t_builtin func)
 	return (1 + (func == UNSET));
 }
 
-void	arg_err(char *func_name, char *arg, t_exec_info *info)
+void	arg_err(t_builtin func, char *arg, t_exec_info *info)
 {
-	write(STDERR_FILENO, "error: ", 7);
-	write(STDERR_FILENO, func_name, ft_strlen(func_name));
-	write(STDERR_FILENO, ": '", 3);
+	if (func == UNSET)
+		write(STDERR_FILENO, "error: unset: '", 15);
+	else
+		write(STDERR_FILENO, "error: export: '", 16);
 	write(STDERR_FILENO, arg, ft_strlen(arg)); 
 	write(STDERR_FILENO, "': not a valid identifier\n", 26);
 	info->exit_code = EXIT_FAILURE;
