@@ -25,6 +25,7 @@
 # include <fcntl.h>
 # include <errno.h>
 # include <termios.h>
+# include <signal.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
 # include <dirent.h>
