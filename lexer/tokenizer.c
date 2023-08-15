@@ -12,12 +12,20 @@
 
 #include "minishell.h"
 
+void	free_whitespace(t_token **tokens, t_size *num_tokens)
+{
+	free((*tokens)[(*num_tokens) - 1].val);
+	(*tokens)[(*num_tokens) - 1].val = 0;
+	(*tokens)[(*num_tokens) - 1].type = 0;
+	(*num_tokens)--;
+}
+
 t_token	*tokenize_input(char *input, t_size alloced, t_size *num_tokens)
 {
-	t_token				*tokens;
-	t_token				*new_token;
-	t_state		state;
-	const t_cmp			cmp_func[] = {is_meta, is_squote, is_dquote, is_space};
+	t_token			*tokens;
+	t_token			*new_token;
+	t_state			state;
+	const t_cmp		cmp_func[] = {is_meta, is_squote, is_dquote, is_space};
 
 	if (!init_tokenizer(input, &tokens, &alloced, &state))
 		return (set_err_token(tokens, num_tokens, MALLOC_ERR));
@@ -31,10 +39,7 @@ t_token	*tokenize_input(char *input, t_size alloced, t_size *num_tokens)
 		if (tokens[*num_tokens - 1].type == TOKEN_ERROR)
 			break ;
 		else if (tokens[*num_tokens - 1].type == TOKEN_WHITESPACE)
-		{
-			free(tokens[(*num_tokens) - 1].val);
-			tokens[(*num_tokens)-- - 1].val = 0;
-		}
+			free_whitespace(&tokens, num_tokens);
 		tokens = should_realloc(tokens, num_tokens, &alloced);
 		if (!tokens)
 			return (set_err_token(tokens, num_tokens, MALLOC_ERR));
