@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/15 21:13:30 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/16 00:45:32 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ int	executor(t_node *root)
 	size_t		i;
 	int			status;
 
+	info.root = root;
 	info.fork_cnt = 0;
 	info.prev_pipe = -1;
 	tree_search(root, &info);
@@ -111,7 +112,7 @@ int	executor(t_node *root)
 		close(info.prev_pipe);
 	dup2(g_info.stdin_fd, STDIN_FILENO);
 	dup2(g_info.stdout_fd, STDOUT_FILENO);
-	clear_all(g_info.root);
+	clear_all(root);
 	if (!info.fork_cnt)
 		return (info.exit_code);
 	waitpid(info.pid, &status, 0);

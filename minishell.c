@@ -213,8 +213,7 @@ int	main(int ac, char **av, char **envp)
 					// 	print_ast(ast, 0, "");
 					// 	printf("==========================================\n");
 					// }
-					g_info.root = ast;
-					exit_code = executor(g_info.root);
+					exit_code = executor(ast);
 					g_info.exit_status = exit_code; // do I need this here?
 				}
 			}
