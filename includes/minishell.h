@@ -129,8 +129,8 @@ typedef enum e_node_type
 	AST_REDIR_APPEND,
 	AST_REDIR_LIST,
 	AST_SUBSHELL,
-	AST_AND,
 	AST_OR,
+	AST_AND,
 	AST_WORD_LIST,
 	AST_ERR,
 } t_node_type;
@@ -190,6 +190,8 @@ extern t_global_info g_info;
 # define TRUE					1
 # define FALSE					0
 
+# define ANDOR					8
+
 /* ============= GENERAL MACRO =============== */
 # define MINISHELL				"minishell: "
 # define COLON					": "
@@ -202,7 +204,6 @@ extern t_global_info g_info;
 
 /* ================= BUILTIN ================= */
 # define CD_BUILTIN				"cd"
-
 
 /* ================ ERR MSG ================== */
 # define TCGETATTR				"tcgetattr"
