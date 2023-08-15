@@ -6,13 +6,12 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 21:55:34 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/08 18:05:44 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 13:02:11 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "executor.h"
-
-
+	
 void	command_in_child(t_node *node, t_exec_info *info)
 {
 	char	*cmdpath;
