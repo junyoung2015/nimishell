@@ -245,11 +245,11 @@ char			*trim(char	**cmd_arg, t_cmp cmp);
 char			**str_expansion(t_node *node);
 void			ft_arrfree(char **arr);
 
-t_search	*create_search_info(char **files, int num_files);
-void		free_search_info(t_search *info);
-// t_ssize 	match_pattern(char *str, char *pattern, int prev_pos);
-t_bool		search_files(t_search *info, char *pattern);
-t_bool		is_wildcard(char ch);
+t_search		*create_search_info(char **files, int num_files);
+void			free_search_info(t_search *info);
+// t_ssize 		match_pattern(char *str, char *pattern, int prev_pos);
+t_bool			search_files(t_search *info, char *pattern);
+t_bool			is_wildcard(char ch);
 
 /* ================== INIT ================== */
 void			print_logo(void);
@@ -266,15 +266,23 @@ char			*ft_strnstr(const char *haystack, const char *needle, t_size n);
 typedef t_token *(*t_tokenizer_fn)(char **, t_token_state *);
 
 void			print_tokens(t_token *tokens, t_size num_tokens);
-t_token			*free_tokens(t_token *tokens, t_size size);
 t_token			*create_token(t_token_type type, const char *buffer, t_size buf_len);
 
-t_bool			is_alnum(int c);
-t_bool			is_escaped(char ch);
-t_bool			is_meta_ch(char ch);
+/* ============= CMP_FUNC_QUOTE ============== */
 t_bool			is_squote(char ch);
 t_bool			is_dquote(char ch);
 t_bool			is_quote(char ch);
+
+/* ============== CMP_FUNC_META ============== */
+t_bool			is_meta(char ch);
+t_bool			is_dmeta_ch(char ch);
+t_bool			is_dmeta_str(char *input);
+t_bool			is_space(char ch);
+t_bool			is_not_space(char ch);
+
+
+t_bool			is_alnum(int c);
+t_bool			is_escaped(char ch);
 t_bool			is_space(char ch);
 t_bool			is_not_space(char ch);
 t_bool			is_env_var(char ch); // ?
@@ -288,8 +296,15 @@ t_token			*tokenize_meta(char **input, t_token_state *state);
 t_token			*tokenize_whitespace(char **input, t_token_state *state);
 t_cmp			get_cmp_fn(char ch);
 
-/* ================== LEXER ================== */
-void			categorize_tokens(t_token *tokens, t_size num_tokens);
+/* ============= TOKENIZER_UTILS ============= */
+t_token			*create_token(t_token_type type, const char *buffer, t_size buf_len);
+t_token			*create_err_token(char *msg);
+t_token			*set_err_token(t_token *tokens, t_size *num_tokens, char *msg);
+t_token			*free_tokens(t_token *tokens, t_size size);
+
+/* ============ TOKENIZER_REALLOC ============ */
+t_token			*realloc_tokens(t_token *tokens, t_size *num_tokens, t_size new_size);
+t_token			*should_realloc(t_token *tokens, t_size *num_tokens, t_size *alloced);
 
 /* ================== PARSER ================== */
 t_node			*parse_tokens(t_token *tokens, t_size num_tokens);
