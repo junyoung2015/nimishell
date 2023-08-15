@@ -32,6 +32,6 @@ t_node *parse_subshell(t_parser *parser, t_node *parent)
 	if (!list_node)
 		return (0);
 	append_child_node(subshell_node, list_node);
-	 advance(parser); // For ')', need to check where R_PAREN is advanced
+	advance(parser);
 	return (subshell_node);
 }

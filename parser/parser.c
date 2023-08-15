@@ -131,18 +131,18 @@
 // #define ROW13	"\2\5\6\6\4\4\4\4\2\0\2\2\2"
 // #define ROW14	"\0\0\0\0\0\0\0\0\0\0\0\0\0"
 
-// type for function pointer array
-typedef t_node *(*t_parser_fn)(t_parser *parser, t_node *parent);
-
 /**
  * @brief Initialize the parsing table
  *
  * @return char** table of parsing table
  */
-char **init_rule_table(void)
+char **init_parser(t_parser *parser, t_token *tokens, t_size num_tokens)
 {
 	char **table;
 
+	parser->tokens = tokens;
+	parser->size = num_tokens;
+	parser->cur = 0;
 	table = ft_calloc(15, sizeof(char *));
 	if (!table)
 		return (0);
@@ -173,11 +173,11 @@ char **init_rule_table(void)
  */
 t_node *parse_tokens(t_token *tokens, t_size num_tokens)
 {
-	t_parse_state parse_state;
-	t_node *root;
-	t_node *new_node;
-	t_parser parser;
-	char **table;
+	t_parse_state	parse_state;
+	t_node			*root;
+	t_node			*new_node;
+	t_parser		parser;
+	char			**table;
 	const t_parser_fn parser_fn_arr[8] = {
 		parse_err,
 		0,
@@ -198,10 +198,7 @@ t_node *parse_tokens(t_token *tokens, t_size num_tokens)
 	};
 
 	root = 0;
-	parser.tokens = tokens;
-	parser.size = num_tokens;
-	parser.cur = 0;
-	table = init_rule_table();
+	table = init_parser(&parser, tokens, num_tokens);
 	if (!table)
 		return (0);
 	while (parser.cur < parser.size)
@@ -223,7 +220,7 @@ t_node *parse_tokens(t_token *tokens, t_size num_tokens)
 			}
 			if (root == 0)
 				root = new_node;
-			else if (new_node->type == AST_REDIR_IN || new_node->type == AST_REDIR_OUT || new_node->type == AST_REDIR_APPEND || new_node->type == AST_HEREDOC)
+			else if (AST_REDIR_IN <= new_node->type && AST_REDIR_APPEND <= new_node->type)
 				append_redir_node(root, new_node);
 			else
 				append_child_node(root, new_node);

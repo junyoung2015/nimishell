@@ -25,7 +25,8 @@ t_bool	is_word_token(t_parser *parser)
 
 	type = cur_type(parser);
 	if (parser->cur < parser->size)
-		return (type == TOKEN_WORD || type == TOKEN_SQ_STR || type == TOKEN_DQ_STR);
+		return (type == TOKEN_WORD || type == TOKEN_SQ_STR \
+		|| type == TOKEN_DQ_STR);
 	return (FALSE);
 }
 
