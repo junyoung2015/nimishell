@@ -14,34 +14,6 @@
 
 t_global_info g_info;
 
-void	get_git_branch(char *branch)
-{
-	int	fd;
-	int	size;
-
-	if (access(GIT_BRANCH, F_OK) == -1)
-		ft_strlcpy(branch, "", 2);
-	else
-	{
-		fd = open(GIT_BRANCH, O_RDONLY);
-		if (fd == -1)
-			ft_strlcpy(branch, "", 2);
-		else
-		{
-			size = read(fd, branch, MAX_BRANCH_LEN);
-			close(fd);
-			if (size == -1 || size == 0)
-				branch = 0;
-			else
-				branch[size - 1] = 0;
-			if (ft_strncmp(branch, REF_HEAD, ft_strlen(REF_HEAD)) == 0)
-				ft_strlcpy(branch, branch + 16, ft_strlen(branch) - 15);
-			else
-				ft_strlcpy(branch, DETACHED_HEAD, ft_strlen(DETACHED_HEAD) + 1);
-		}
-	}
-}
-
 /**
  * @brief	Display err msg and exit with exit code. Free AST node if exists.
  * 
@@ -132,15 +104,6 @@ void print_ast(t_node *node, int depth, const char *indent)
 
 #ifdef DEBUG
 
-void chk_leaks(void)
-{
-	system("leaks minishell");
-}
-
-#endif
-
-#ifdef DEBUG
-
 void print_tokens(t_token *tokens, t_size num_tokens)
 {
 	printf("\n================= TOKENS =================\n");
@@ -180,8 +143,6 @@ int	main(int ac, char **av, char **envp)
 	int			exit_code;
 	char		*line;
 	char		*pwd;
-	char		*tmp;
-	char		branch[MAX_BRANCH_LEN + 1];
 	t_token		*tokens;
 	t_size		num_tokens;
 	t_node		*ast;
@@ -217,23 +178,7 @@ int	main(int ac, char **av, char **envp)
 	while (TRUE)
 	{
 		num_tokens = 0;
-		tmp = getcwd(NULL, 0);
-		// to show git branch, could be deleted later
-		get_git_branch(branch);
-		if (*branch)
-		{
-			pwd = ft_strjoin(tmp, " \033[0;35;40m[\033[0;32;40m");
-			free(tmp);
-			tmp = ft_strjoin(pwd, branch);
-			free(pwd);
-			pwd = ft_strjoin(tmp, "\033[0;35;40m]\033[0m ");
-			free(tmp);
-		}
-		else
-		{
-			pwd = ft_strjoin(tmp, "> ");
-			free(tmp);
-		}
+		pwd = get_prompt();
 		line = readline(pwd);
 		if (line)
 		{

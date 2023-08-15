@@ -25,6 +25,7 @@ EXPANSION = ./expansion/
 # -------------- SRCS  -------------- #
 SRCS = ./minishell.c							\
 		$(INIT_DIR)logo.c						\
+		$(INIT_DIR)prompt.c						\
 		$(LEXER_DIR)tokenizer.c					\
 		$(LEXER_DIR)tokenizer_err_handling.c	\
 		$(LEXER_DIR)tokenizer_utils.c			\
