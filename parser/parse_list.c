@@ -21,7 +21,7 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 	t_token_type	type;
 
 	logic_node = create_node(cur_type(parser) + ANDOR);
-	if (!logic_node)	// malloc err
+	if (!logic_node)
 		return (0);
 	advance(parser);
 	pipeline_node = parse_pipeline(parser, logic_node);
@@ -35,8 +35,12 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 	if (type == TOKEN_AND || type == TOKEN_OR)
 	{
 		list_tail_node = parse_list_tail(parser, pipeline_node);
-		if (!list_tail_node) // err?
+		if (!list_tail_node)
+		{
+			free_ast(logic_node);
+			free_ast(pipeline_node);
 			return (0);
+		}
 		logic_node->right = list_tail_node;
 		if (type == TOKEN_AND)
 		{
@@ -62,18 +66,14 @@ t_node *parse_list(t_parser *parser, t_node *parent)
 	t_node	*list_tail_node;
 
 	pipeline_node = parse_pipeline(parser, parent);
-	if (!pipeline_node) // err?
+	if (!pipeline_node)
 		return (0);
 	if (check(parser, TOKEN_AND) || check(parser, TOKEN_OR))
 	{
 		list_tail_node = parse_list_tail(parser, pipeline_node);
-		if (!list_tail_node) // err?
+		if (!list_tail_node)
 			return (0);
-		// list_tail_node->left = pipeline_node;
 		return (list_tail_node);
 	}
-	// else if (check(parser, TOKEN_AND))
-	// {
-	// }
 	return (pipeline_node);
 }
