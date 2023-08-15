@@ -50,6 +50,7 @@ SRCS = ./minishell.c						\
 		$(STR_DIR)str_utils2.c				\
 		$(STR_DIR)str_split.c				\
 		$(STR_DIR)str_utils_create.c		\
+		$(EXPANSION)2darray_utils.c			\
 		$(EXPANSION)quote_removal.c			\
 		$(EXPANSION)filename_expansion.c	\
 		$(EXPANSION)filename_exp_utils.c	\

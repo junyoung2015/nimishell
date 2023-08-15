@@ -12,8 +12,8 @@ t_bool	is_wsplit(char ch)
 
 t_bool	is_wildcard_expansion(char *cmd_arg)
 {
-    char            *tmp;
-	t_bool			in_quotes;
+	char	*tmp;
+	t_bool	in_quotes;
 	
 	tmp = cmd_arg;
 	in_quotes = FALSE;
@@ -25,71 +25,7 @@ t_bool	is_wildcard_expansion(char *cmd_arg)
 			return (TRUE);
 		tmp++;
 	}
-    return (FALSE);
-}
-
-void	ft_arrfree(char **arr)
-{
-	t_size	idx;
-
-	idx = 0;
-	while (arr && arr[idx])
-		free(arr[idx++]);
-	free(arr);
-}
-
-t_size	ft_arrlen(char **arr)
-{
-	t_size	len;
-
-	len = 0;
-	while (arr && arr[len])
-		len++;
-	return (len);
-}
-
-t_size ft_arrcat(char ***arr, char **new_arr, t_size size)
-{
-    t_size	new;
-	t_size	idx;
-
-	if (!new_arr)
-		return (size);
-	idx = -1;
-	new = size;
-    while (new_arr[new - size])
-        new++;
-    char **tmp = (char **)ft_calloc((new + 1), sizeof(char *));
-    if (!tmp)
-		return (0);
-	while (++idx < size)
-		tmp[idx] = (*arr)[idx];
-	while (size < new)
-	{
-		tmp[size] = new_arr[size - idx];
-		size++;
-	}
-    free(new_arr);
-	if (*arr)
-		free(*arr);
-    *arr = tmp;
-    return (new);
-}
-
-t_size ft_arr_append(char ***arr, char *str, t_size size)
-{
-	if (!str)
-		return (size);
-    char **tmp = (char **)ft_calloc((size + 2), sizeof(char *));
-    if (!tmp)
-        return (0);
-    for (t_size i = 0; i < size; i++)	// TODO: remove for loop
-        tmp[i] = (*arr)[i];
-    tmp[size] = str;
-	if (*arr)
-		free(*arr);
-    *arr = tmp;
-    return (size + 1);
+	return (FALSE);
 }
 
 t_search	*get_all_files(char *first_arg)
@@ -242,15 +178,12 @@ t_size	match_pattern_middle(t_search *info, char *pattern)
 		}
 		idx++;
 	}
-	idx = 0;
+	idx = -1;
 	prev_pos = ft_calloc(sizeof(t_size), size);
 	if (!prev_pos)
 		return (0);
-	while (idx < size)
-	{
+	while (++idx < size)
 		prev_pos[idx] = ft_strnstr(result[idx], pattern, ft_strlen(result[idx])) - result[idx] + 1;
-		idx++;
-	}
 	ft_arrfree(info->files);
 	info->files = result;
 	free(info->prev_pos);
@@ -347,7 +280,7 @@ char	**find_matching_files(t_search *info, char **pattern)
  * @param node      node to expand
  * @return char**   expanded string
  */
-char    **str_expansion(t_node *node)
+char	**str_expansion(t_node *node)
 {
 	t_size		idx;
 	t_size		len;
@@ -367,10 +300,10 @@ char    **str_expansion(t_node *node)
 			if (node->cmd_args[idx][0] == '.')
 				info = get_all_files(node->cmd_args[idx]);
 			else
-				info = get_all_files(0);	// TODO: free files?
+				info = get_all_files(0);
 			if (!info)
 				return (0);
-			ft_qsort((void **)info->files, 0, ft_arrlen(info->files) - 1, cmp_ascii);	// sort files in ascii order
+			ft_qsort((void **)info->files, 0, ft_arrlen(info->files) - 1, cmp_ascii);
 			new = split_pattern(node->cmd_args[idx]);
 			if (!new)
 				return (0);
@@ -399,9 +332,6 @@ char    **str_expansion(t_node *node)
 		idx++;
 	}
 	node->num_args = len;
-	// TODO: free node->cmd_args later?
-	// free(node->cmd_args);
 	ft_arrfree(node->cmd_args);
-	// size = ft_arrcat(&result, files, size);
 	return (result);
 }
