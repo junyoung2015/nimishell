@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:56:29 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 12:56:31 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 13:06:53 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ t_node *parse_list_tail(t_parser *parser, t_node *parent)
 	t_node			*logic_node;
 	t_node			*pipeline_node;
 	t_node			*list_tail_node;
-	t_token_type	type;
+	t_type	type;
 
 	logic_node = create_node(cur_type(parser) + ANDOR);
 	if (!logic_node)

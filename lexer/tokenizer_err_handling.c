@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:17:51 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 12:48:05 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 13:04:43 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ t_token	*set_err_token(t_token *tokens, t_size *num_tokens, char *msg)
 	return (tokens);
 }
 
-t_bool	check_parenthesis(t_token* tokens, t_size num_tokens)
+t_bool	check_parenthesis(t_token *tokens, t_size num_tokens)
 {
 	int		depth;
 	t_size	i;

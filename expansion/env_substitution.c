@@ -249,7 +249,7 @@ char	*check_env_var(char *cmd_arg)
 	char			*result;
 	char			*substr;
 	char			*tmp;
-	t_token_state	state;
+	t_state	state;
 	const t_process_fn	state_fn[] = { 
 		process_normal,
 		process_squote,

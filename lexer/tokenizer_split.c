@@ -6,11 +6,11 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 11:45:10 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 11:46:45 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 13:06:53 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "minishell.h"
+#include "minishell.h"
 
 t_bool	move_until_cmp(char **input, t_cmp cmp)
 {
@@ -38,7 +38,7 @@ t_bool	move_until_cmp(char **input, t_cmp cmp)
 	return (TRUE);
 }
 
-t_token	*split_input(char *start, char **input, t_cmp cmp, t_token_type type)
+t_token	*split_input(char *start, char **input, t_cmp cmp, t_type type)
 {
 	t_bool	quote;
 	t_token	*new_token;

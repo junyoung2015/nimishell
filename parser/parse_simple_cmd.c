@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:56:42 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 12:56:43 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 13:06:53 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ t_node *parse_command(t_parser *parser, t_node *parent)
 {
 	t_node			*cmd_node;
 	t_node			*redir_list_node;
-	t_token_type	state;
+	t_type	state;
 
 	state = cur_type(parser);
 	if (TOKEN_L_PAREN == state)

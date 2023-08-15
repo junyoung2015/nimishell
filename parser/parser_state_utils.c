@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_status_utils.c                              :+:      :+:    :+:   */
+/*   parser_state_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:56:56 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 12:57:09 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 13:06:53 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@
  * @brief Check the type of the current token.
  * 
  * @param parser 		parser struct
- * @return t_token_type	type of the current token
+ * @return t_type	type of the current token
  */
-t_token_type	cur_type(t_parser *parser)
+t_type	cur_type(t_parser *parser)
 {
 	if (parser->cur < parser->size)
 		return (parser->tokens[parser->cur].type);
@@ -26,13 +26,13 @@ t_token_type	cur_type(t_parser *parser)
 }
 
 /**
- * @brief Check the current token matches with t_token_type passed.
+ * @brief Check the current token matches with t_type passed.
  *
  * @param parser	parser struct
  * @param type		type of the token to compare
  * @return t_bool
  */
-t_bool check(t_parser *parser, t_token_type type)
+t_bool check(t_parser *parser, t_type type)
 {
 	if (parser->cur >= parser->size)
 		return (FALSE);
@@ -44,9 +44,9 @@ t_bool check(t_parser *parser, t_token_type type)
  * 		current token is the last one, return TOKENS_TYPES_CNT(20).
  *
  * @param parser		parser struct
- * @return t_token_type	type of the next token
+ * @return t_type	type of the next token
  */
-t_token_type peek(t_parser *parser)
+t_type peek(t_parser *parser)
 {
 	if (parser->cur < parser->size)
 		return (parser->tokens[parser->cur + 1].type);
