@@ -204,11 +204,14 @@ extern t_global_info g_info;
 
 /* ================= BUILTIN ================= */
 # define CD_BUILTIN				"cd"
+# define EXP_BUILTIN			"export"
+# define UNSET_BUILTIN			"unset"
 
 /* ================ ERR MSG ================== */
 # define TCGETATTR				"tcgetattr"
 # define CD_HOME_NOT_SET		"HOME not set\n"
 # define CD_OLDPWD_NOT_SET		"OLDPWD not set\n"
+# define NOT_VALID_ID			"not a valid identifier\n"
 # define CMD_NOT_FOUND			"command not found\n"
 # define NO_FILE_DIR			"No such file or directory\n"
 # define QUOTE_NOT_CLOSED		"Syntax Error: unmatched quote\n"
