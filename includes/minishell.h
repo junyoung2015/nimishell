@@ -246,6 +246,11 @@ char			*trim_outer_quotes(char *cmd_arg);
 char			*trim(char	**cmd_arg, t_cmp cmp);
 char			**str_expansion(t_node *node);
 
+/* ============= EXPANSION_SPLIT ============= */
+t_bool			is_wildcard(char ch);
+t_bool			is_wsplit(char ch);
+t_bool			is_wildcard_expansion(char *cmd_arg);
+
 /* =============== ARRAY_UTILS =============== */
 void			ft_arrfree(char **arr);
 t_size			ft_arrlen(char **arr);
