@@ -33,7 +33,7 @@ void	builtin(t_node *node, t_exec_info *info)
 	else if (node->builtin == EXPORT)
 		export(node, info);
 	else if (node->builtin == ENV)
-		env();
+		env(node, info);
 	else if (node->builtin == UNSET)
 		unset(node, info);
 	else if (node->builtin == PWD)
