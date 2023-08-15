@@ -1,6 +1,6 @@
 #include "executor.h"
 
-char	**get_path(char **env)
+char	**get_path(char **env, char *filename)
 {
 	char	**path;
 	size_t	i;
@@ -9,10 +9,15 @@ char	**get_path(char **env)
 	while (env[i] && ft_strncmp(env[i], "PATH=", 5))
 		i++;
 	if (!env[i])
-		return (NULL);
+	{
+		write(STDERR_FILENO, "error: ", 7);
+		write(STDERR_FILENO, filename, ft_strlen(filename));
+		write(STDERR_FILENO, ": No such file or directory\n", 28);
+		err_exit(EXIT_CMD_NOT_FOUND, NULL);
+	}
 	path = ft_split(env[i] + 5, ':');
 	if (!path)
-		err("error: malloc", NULL);
+		err_exit(EXIT_FAILURE, "error: malloc");
 	return (path);
 }
 
@@ -34,7 +39,7 @@ char	*join_path(char *path, char *filename)
 	return (filepath - len);
 }
 
-t_bool	check_access(char *filepath, char **path, t_exec_info *info)
+t_bool	check_access(char *filepath, char **path, char *filename)
 {
 	if (!access(filepath, F_OK))
 	{
@@ -43,13 +48,14 @@ t_bool	check_access(char *filepath, char **path, t_exec_info *info)
 		else
 		{
 			free_ptr(path);
-			err_exit(EXIT_NOT_EXECUTABLE, filepath, info);
+			write(STDERR_FILENO, "error: ", 7);
+			err_exit(EXIT_NOT_EXECUTABLE, filename);
 		}
 	}
 	return (FALSE);
 }
 
-char	*get_cmdpath(char *filename, t_exec_info *info)
+char	*get_cmdpath(char *filename)
 {
 	char	**path;
 	char	*cmdpath;
@@ -57,7 +63,7 @@ char	*get_cmdpath(char *filename, t_exec_info *info)
 
 	if (!*filename || *filename == '/' || *filename == '.')
 		return (filename);
-	path = get_path(g_info.env);
+	path = get_path(g_info.env, filename);
 	i = 0;
 	while (path && path[i])
 	{
@@ -65,14 +71,13 @@ char	*get_cmdpath(char *filename, t_exec_info *info)
 		if (!cmdpath)
 		{
 			free_ptr(path);
-			err("error: malloc", info);
+			err_exit(EXIT_FAILURE, "error: malloc");
 		}
-		if (check_access(cmdpath, path, info))
+		if (check_access(cmdpath, path, filename))
 			return (cmdpath);
 		free(cmdpath);
 		i++;
 	}
 	free_ptr(path);
-	display_cmd_err(filename);
 	return (NULL);
 }

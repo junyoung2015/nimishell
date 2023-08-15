@@ -386,6 +386,5 @@ int				executor(t_node *root);
 
 /* ================== BUILTIN ================== */
 char			*get_env(char *env_var);
-void			display_cmd_err(char *msg);
 
 #endif

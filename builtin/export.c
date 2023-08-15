@@ -104,7 +104,7 @@ void	export(t_node *node, t_exec_info *info)
 	{
 		result = arg_check(node->cmd_args[i], EXPORT);
 		if (result < 0)
-			display_err(EXP_BUILTIN, node->cmd_args[i], NOT_VALID_ID, info);
+			arg_err(EXPORT, node->cmd_args[i], info);
 		else if (result >> 1)
 			add_env(node->cmd_args[i], info);
 		i++;
