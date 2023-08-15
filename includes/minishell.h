@@ -258,10 +258,15 @@ t_bool			is_wsplit(char ch);
 t_bool			is_wildcard_expansion(char *cmd_arg);
 
 /* ============ EXPANSION_PATTERN ============ */
-char	**split_pattern(char *cmd_arg);
-t_size	handle_wildcard(char ***result, char **start, char **end, t_size size);
-t_size	handle_quotes(char ***result, char **start, char **end, t_size size);
-t_size	handle_normal(char ***result, char **start, char **end, t_size size);
+char			**split_pattern(char *cmd_arg);
+t_size			handle_wildcard(char ***result, char **start, char **end, t_size size);
+t_size			handle_quotes(char ***result, char **start, char **end, t_size size);
+t_size			handle_normal(char ***result, char **start, char **end, t_size size);
+
+/* ============= EXPANSION_MATCH ============= */
+t_size			match_pattern_first(t_search *info, char *pattern);
+t_size			match_pattern_middle(t_search *info, char *pattern);
+t_size			match_pattern_last(t_search *info, char *pattern, t_size last);
 
 /* =============== ARRAY_UTILS =============== */
 void			ft_arrfree(char **arr);
