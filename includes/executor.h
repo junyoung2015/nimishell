@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/08 18:05:39 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 15:09:54 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,8 @@ void	free_ptr(char **ptr);
 void	clear_all(t_node *root);
 int		err(char *str, t_exec_info *info);
 int		display_err(char *file, char *exec, char *msg, t_exec_info *info);
-void	err_exit(int code, char *file, t_exec_info *info);
-// void	err_exit(char *str, t_exec_info *info);
-void	cmd_not_found(void);
+void	err_exit(int exit_code, char *msg);
+void	cmd_not_found(char *filename);
 
 /* command */
 void	builtin(t_node *node, t_exec_info *info);

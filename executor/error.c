@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:26 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/08 18:07:25 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 15:10:34 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,31 +67,21 @@ int	display_err(char *exec, char *file, char *msg, t_exec_info *info)
 	return (EXIT_FAILURE);
 }
 
-void	err_exit(int code, char *file, t_exec_info *info)
+void	err_exit(int exit_code, char *msg)
 {
-	if (info)
-		info->exit_code = code;
-	else if (!code)
-		code = EXIT_FAILURE;
-	write(STD_ERR, MINISHELL, ft_strlen(MINISHELL));
-	if (file)
-	{
-		write(STD_ERR, file, ft_strlen(file));
-		write(STD_ERR, COLON, ft_strlen(COLON));
-	}
+	if (msg)
+		perror(msg);
 	clear_all(g_info.root);
-	// if (msg)
-	// 	write(STD_ERR, msg, ft_strlen(msg));
-	// else
-		perror(0);
-	exit(code);
+	exit(exit_code);
 }
 
 // TODO: display_cmd_err 가 cmd_not_found 를 대채할 예정
-void	cmd_not_found(void)
+void	cmd_not_found(char *filename)
 {
 	clear_all(g_info.root);
-	write(STDERR_FILENO, "error: command not found\n", 25);
+	write(STDERR_FILENO, "error: ", 7);
+	write(STDERR_FILENO, filename, ft_strlen(filename));
+	write(STDERR_FILENO, ": command not found\n", 20);
 	exit(EXIT_CMD_NOT_FOUND);
 }
 
