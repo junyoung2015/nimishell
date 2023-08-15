@@ -22,10 +22,10 @@ t_node *create_node(t_node_type type)
 void free_ast(t_node *root)
 {
 	if (root == 0)
-		return;
-	if (root->left != 0)
+		return ;
+	if (!root->left)
 		free_ast(root->left);
-	if (root->right != 0)
+	if (!root->right)
 		free_ast(root->right);
 	if (root->cmd_args)
 	{
