@@ -318,7 +318,7 @@ t_node			*create_node(t_node_type type);
 void			append_child_node(t_node *parent, t_node *child);
 void			free_ast(t_node *root);
 /* LL(1) */
-t_node			*parse_tokens_ll(t_token *tokens, t_size num_tokens);
+t_node			*parse_tokens(t_token *tokens, t_size num_tokens);
 void			is_builtin_node(t_node *node);
 
 char			*parse_word(t_parser *parser);
