@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/02 21:25:16 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/15 21:13:30 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ pid_t	is_fork(t_node *node, t_exec_info *info)
 		return (0);
 	pid = fork();
 	if (pid < 0)
-		err("error: fork", info);
+		err("minishell: fork", info);
 	else
 	{
 		info->fork_cnt += 1;
@@ -81,7 +81,7 @@ void	tree_search(t_node *root, t_exec_info *info)
 			is_builtin_node(root);
 	}
 	if (root->type == AST_CMD && !root->cmd_args)
-		err("error: malloc", info);
+		err("minishell: malloc", info);
 	if (root->left)
 		root->left->parent_type = root->type;
 	if (root->right)

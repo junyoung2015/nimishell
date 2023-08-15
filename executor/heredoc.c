@@ -29,9 +29,9 @@ static char	*heredoc_err(t_exec_info *info, char *str, int code)
 	if (str)
 		free(str);
 	if (code)
-		err("error: read", info);
+		err("minishell: read", info);
 	else
-		err("error: malloc", info);
+		err("minishell: malloc", info);
 	if (info->is_fork)
 	{
 		clear_all(g_info.root);
