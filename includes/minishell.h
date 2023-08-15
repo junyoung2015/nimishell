@@ -246,22 +246,28 @@ char			*trim_outer_quotes(char *cmd_arg);
 char			*trim(char	**cmd_arg, t_cmp cmp);
 char			**str_expansion(t_node *node);
 
+/* ============= EXPANSION_UTILS ============= */
+void			free_search_info(t_search *info);
+t_bool			search_files(t_search *info, char *pattern);
+t_ssize 		match_pattern(char *str, char *pattern, int prev_pos);
+t_search		*create_search_info(char **files, int num_files);
+
 /* ============= EXPANSION_SPLIT ============= */
 t_bool			is_wildcard(char ch);
 t_bool			is_wsplit(char ch);
 t_bool			is_wildcard_expansion(char *cmd_arg);
+
+/* ============ EXPANSION_PATTERN ============ */
+char	**split_pattern(char *cmd_arg);
+t_size	handle_wildcard(char ***result, char **start, char **end, t_size size);
+t_size	handle_quotes(char ***result, char **start, char **end, t_size size);
+t_size	handle_normal(char ***result, char **start, char **end, t_size size);
 
 /* =============== ARRAY_UTILS =============== */
 void			ft_arrfree(char **arr);
 t_size			ft_arrlen(char **arr);
 t_size			ft_arrcat(char ***arr, char **new_arr, t_size size);
 t_size 			ft_arr_append(char ***arr, char *str, t_size size);
-
-t_search		*create_search_info(char **files, int num_files);
-void			free_search_info(t_search *info);
-// t_ssize 		match_pattern(char *str, char *pattern, int prev_pos);
-t_bool			search_files(t_search *info, char *pattern);
-t_bool			is_wildcard(char ch);
 
 /* ================== INIT ================== */
 void			print_logo(void);
