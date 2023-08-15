@@ -21,7 +21,7 @@
  * @param parser 	paresr struct
  * @return t_node*	root node of the <REDIRECTION>
  */
-t_node *parse_redir(t_parser *parser, t_node *parent)
+t_node	*parse_redir(t_parser *parser, t_node *parent)
 {
 	t_node			*cmd_node;
 	t_node			*redir_node;
@@ -57,14 +57,8 @@ t_node *parse_redir(t_parser *parser, t_node *parent)
 				if (!cmd_node)
 					return (0);
 				cmd_node->type = AST_CMD;
-				// append_redir_node(cmd_node, redir_node);
 				append_child_node(cmd_node, redir_node);
 				return (cmd_node);
-				// cmd_node = parse_simple_cmd(parser, parent);
-				// if (!cmd_node)
-				// 	return (0);
-				// append_redir_node(cmd_node, redir_node);
-				// return (cmd_node);
 			}
 		}
 		else
@@ -103,7 +97,6 @@ t_node	*parse_redir_list_tail(t_parser *parser, t_node *parent)
 		redir_list_tail_node = parse_redir(parser, parent);
 		if (!redir_list_tail_node)
 			return (0);
-		// append_redir_node(parent, redir_list_tail_node);
 		append_child_node(parent, redir_list_tail_node);
 		if (is_redir_token(parser))
 		{
@@ -128,14 +121,14 @@ t_node	*parse_redir_list(t_parser *parser, t_node *parent)
 	t_node	*redir_list_tail_node;
 
 	redir_list_node = parse_redir(parser, parent);
-	if (!redir_list_node) // err?
+	if (!redir_list_node)
 		return (0);
 	else if (redir_list_node->type == AST_ERR)
 		return (redir_list_node);
 	if (is_redir_token(parser))
 	{
 		redir_list_tail_node = parse_redir_list_tail(parser, redir_list_node);
-		if (!redir_list_tail_node) // err?
+		if (!redir_list_tail_node)
 			return (0);
 	}
 	return (redir_list_node);

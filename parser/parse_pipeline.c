@@ -19,7 +19,7 @@
  * @param parser	parser struct
  * @return t_node*	root node of <PIPELINE-TAIL>, '|'.
  */
-t_node *parse_pipeline_tail(t_parser *parser, t_node *parent)
+t_node	*parse_pipeline_tail(t_parser *parser, t_node *parent)
 {
 	t_node	*right_node;
 	t_node	*pipe_node;
@@ -51,10 +51,9 @@ t_node *parse_pipeline_tail(t_parser *parser, t_node *parent)
  * @param parser	parser struct
  * @return t_node*	root node of <PIPELINE>
  */
-t_node *parse_pipeline(t_parser *parser, t_node *parent)
+t_node	*parse_pipeline(t_parser *parser, t_node *parent)
 {
 	t_node	*cmd_node;
-	// t_node	*right_node;
 	t_node	*pipe_node;
 
 	cmd_node = parse_command(parser, parent);

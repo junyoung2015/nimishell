@@ -19,7 +19,7 @@
  * @param parser	parser struct
  * @return t_node*	root node of the <SIMPLE-COMMAND-ELEMENT>
  */
-t_node *parse_simple_cmd_element(t_parser *parser, t_node *parent)
+t_node	*parse_simple_cmd_element(t_parser *parser, t_node *parent)
 {
 	t_node	*cmd_element;
 
@@ -37,10 +37,7 @@ t_node *parse_simple_cmd_element(t_parser *parser, t_node *parent)
 			return (0);
 	}
 	else
-	{
-		// err handling
 		cmd_element = parse_err(parser, parent);
-	}
 	return (cmd_element);
 }
 
@@ -72,7 +69,6 @@ t_node	*parse_simple_cmd_tail(t_parser *parser, t_node *parent)
 			cmd_node = parse_simple_cmd_tail(parser, simple_cmd_tail_node);
 			if (!cmd_node)
 				return (0);
-			// append_child_node(simple_cmd_tail_node, cmd_node);
 		}
 	}
 	return (simple_cmd_tail_node);
@@ -100,17 +96,10 @@ t_node	*parse_simple_cmd(t_parser *parser, t_node *parent)
 			cmd_tail = parse_simple_cmd_tail(parser, cmd_node);
 			if (!cmd_tail)
 				return (0);
-//			if (AST_REDIR_IN <= cmd_tail->type && cmd_tail->type <= AST_REDIR_APPEND)
-//				append_redir_node(cmd_node, cmd_tail);
-//			else
-//				append_child_node(cmd_node, cmd_tail);
 		}
 	}
 	else
-	{
 		cmd_node = parse_err(parser, parent);
-	}
-	// advance(parser);
 	return (cmd_node);
 }
 
@@ -121,10 +110,10 @@ t_node	*parse_simple_cmd(t_parser *parser, t_node *parent)
  * @param parser	parser struct
  * @return t_node*	root node from parse_simple_cmd or parse_subshell
  */
-t_node *parse_command(t_parser *parser, t_node *parent)
+t_node	*parse_command(t_parser *parser, t_node *parent)
 {
-	t_node			*cmd_node;
-	t_node			*redir_list_node;
+	t_node	*cmd_node;
+	t_node	*redir_list_node;
 	t_type	state;
 
 	state = cur_type(parser);
@@ -153,9 +142,6 @@ t_node *parse_command(t_parser *parser, t_node *parent)
 		cmd_node = parse_err(parser, parent);
 	}
 	else
-	{
-		// err handling
 		cmd_node = parse_err(parser, parent);
-	}
 	return (cmd_node);
 }
