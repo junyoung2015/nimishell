@@ -1,21 +1,29 @@
 #include "builtin.h"
 
-static int	_atoi(char *str)
+static int	_atoi(char *arg)
 {
-	int	num;
+	int		num;
+	int		sign;
+	size_t	i;
 
 	num = 0;
-	while (str && *str)
+	i = 0;
+	sign = 1 - 2 * (arg[i] == '-');
+	if (arg[i] == '-' || arg[i] == '+')
+		i++;
+	while (arg[i])
 	{
-		if ('0' <= *str && *str <= '9')
-			num = num * 10 + *str++ - '0';
+		if ('0' <= arg[i] && arg[i] <= '9')
+			num = num * 10 + arg[i++] - '0';
 		else
 		{
-			write(STDERR_FILENO, "minishell: exit: numeric argument required\n", 43);
+			write(STDERR_FILENO, "minishell: exit: ", 17);
+			write(STDERR_FILENO, arg, ft_strlen(arg));
+			write(STDERR_FILENO, ": numeric argument required\n", 28);
 			return (255);
 		}
 	}
-	return (num % 256);
+	return ((num * sign) % 256);
 }
 
 static void	__exit(t_node *node, t_exec_info *info)
