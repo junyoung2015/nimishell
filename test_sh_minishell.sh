@@ -17,6 +17,7 @@ expect "" ;
 ########## Testing cd builtin ##########
 ##########
 
+### Test 1 ###
 send "pwd\r"
 expect {
 	"$env(HOME)/nimishell" {
@@ -29,6 +30,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 2 ###
 send "cd includes\r"
 expect {
 	"" {
@@ -41,6 +43,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 3 ###
 send "pwd\r"
 expect {
 	"$env(HOME)/nimishell/includes" {
@@ -53,6 +56,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 4 ###
 send "cd -\r"
 expect {
 	"" {
@@ -65,6 +69,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 5 ###
 send "pwd\r"
 expect {
 	"$env(HOME)/nimishell" {
@@ -77,6 +82,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 6 ###
 send "cd\r"
 expect {
 	"" {
@@ -89,6 +95,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 7 ###
 send "pwd\r"
 expect {
 	"$env(HOME)" {
@@ -101,6 +108,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 8 ###
 send "cd dir_does_not_exist\r"
 expect {
 	"minishell: cd: dir_does_not_exist: No such file or directory" {
@@ -113,6 +121,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 9 ###
 send "export HOME_BACKUP=\$HOME\r"
 expect {
 	"" {
@@ -125,6 +134,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 10 ###
 send "unset HOME\r"
 expect {
 	"" {
@@ -137,6 +147,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 11 ###
 send "cd\r"
 expect {
 	"minishell: cd: HOME not set" {
@@ -153,6 +164,7 @@ set count [ expr \$count + 1 ] ;
 ########## Executing commands with relative and absolute path ##########
 ##########
 
+### Test 12 ###
 # Test wc
 send "echo \"\" | wc\r"
 expect {
@@ -166,10 +178,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
-# Test ls
-# send "ls includes\r"
-# expect "builtin.h	xecutor.h	lexer.h	minishell.h	parser.	tokenizer.h	" ;
-
+### Test 13 ###
 # Test executing command that does not exist 'cmd_nonexist'
 send "cmd_nonexist\r"
 # expect "minishell: cmd_nonexist: command not found" ;
@@ -184,6 +193,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 14 ###
 # Test executing program that does not exist, in absolute path './program_nonexist'
 send "./program_nonexist\r"
 # expect "error: command not found: No such file or directory" ;
@@ -202,6 +212,7 @@ set count [ expr \$count + 1 ] ;
 
 #========== Exit code for CMD_NOT_FOUND ==========#
 
+### Test 15 ###
 # Test exit code for when coommand not found
 send "echo \$?\r"
 # expect "127" ;
@@ -220,6 +231,7 @@ set count [ expr \$count + 1 ] ;
 ########## Input with wrong syntax ##########
 ##########
 
+### Test 16 ###
 # Test 'ls > '
 send "ls >\r"
 # expect "minishell: syntax error near unexpected token `>`" ;
@@ -238,6 +250,7 @@ set count [ expr \$count + 1 ] ;
 ########## Environment variables substitution ##########
 ##########
 
+### Test 17 ###
 # Test 'echo $USER'
 send "echo \$USER\r"
 # expect "$env(USER)" ;
@@ -253,6 +266,7 @@ expect {
 set count [ expr \$count + 1 ] ;
 
 #========== Exit code for normal exit ==========#
+### Test 18 ###
 # Test exit code for normal exit
 send "echo \$\?\r"
 expect {
@@ -266,6 +280,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 19 ###
 # Test 'echo '$USER''
 send "echo \'\$USER\'\r"
 # expect "\$USER" ;
@@ -280,6 +295,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 20 ###
 # Test 'echo "'$USER'"
 send "echo \"\'\$USER\'\"\r"
 # expect "'$env(USER)'" ;
@@ -299,6 +315,7 @@ set count [ expr \$count + 1 ] ;
 ##########
 
 #========== Normal Test ==========#
+### Test 21 ###
 # Test 'unset USER'
 send "unset USER\r"
 # expect "" ;
@@ -313,6 +330,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 22 ###
 # Test 'echo $USER' after unset USER
 send "echo \$USER\r"
 # expect "\n" ;
@@ -327,6 +345,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 23 ###
 # Test export
 send "export test=ch\r"
 # expect "" ;
@@ -341,6 +360,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 24 ###
 # Test env substitution for export
 send "e\$test'o'\r"
 # expect "\n" ;
@@ -355,6 +375,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 25 ###
 # Test env substitution for export
 send "e\$test'o' \$USER\r"
 # expect "$env(USER)" ;
@@ -369,6 +390,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 26 ###
 # Test env substitution for export
 send "e\$test\"o\" \$USER\r"
 # expect "$env(USER)" ;
@@ -383,6 +405,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 27 ###
 # Test export with whitespace
 send "export \"wspace=hi test\"\r"
 # expect "" ;
@@ -397,6 +420,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 28 ###
 # Test env substitution for export with whitespace
 send "e\$test'o' \$wspace\r"
 expect "hi test" ;
@@ -411,6 +435,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 29 ###
 # Test executing non-builtin commands after unset PATH
 send "unset PATH\r"
 # expect "" ;
@@ -425,6 +450,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 30 ###
 # Test executing non-builtin commands after unset PATH
 send "ls\r"
 # exepct "minishell: ls: No such file or directory" ;
@@ -440,6 +466,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 31 ###
 # Test executing non-builtin commands after export new PATH
 send "export PATH=/bin:/usr/sbin:/usr/local/bin\r"
 # expect "" ;
@@ -454,6 +481,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 32 ###
 # Test executing non-builtin commands after setting new PATH
 send "ls includesabc\r"
 expect {
@@ -467,15 +495,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
-# expect {
-# 	"builtin.h\nexecutor.h\nlexer.h\nminishell.h\nparser.h\ntokenizer.h\n" {
-# 		send_user "${green}Test passed${default}\n" ;
-# 	}
-# 	timeout {
-# 		send_user "${red}Test ${count} failed${default}\n"
-# 	}
-# }
-
+### Test 33 ###
 # Test executing non-builtin commands after export wrong PATH
 send "export PATH=/tmp\r"
 # expect "" ;
@@ -490,6 +510,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 34 ###
 # Test executing non-builtin commands after setting wrong PATH
 send "ls includes\r"
 # exepct "minishell: ls: No such file or directory" ;
@@ -506,6 +527,7 @@ expect {
 set count [ expr \$count + 1 ] ;
 
 #========== Error Test ==========#
+### Test 35 ###
 send "export A.B=C\r"
 expect {
 	"minishell: export: A.B=C: not a valid identifier" {
@@ -518,6 +540,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 36 ###
 send "export A=B B=C C=D\r"
 expect {
 	"" {
@@ -530,6 +553,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 37 ###
 send "echo \$A\$B\$C\r"
 expect {
 	"BCD" {
@@ -542,6 +566,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 38 ###
 send "export 123=A\r"
 expect {
 	"minishell: export: \`123=A': not a valid identifier" {
