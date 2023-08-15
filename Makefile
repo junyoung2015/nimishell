@@ -26,6 +26,10 @@ EXPANSION = ./expansion/
 SRCS = ./minishell.c						\
 		$(INIT_DIR)logo.c					\
 		$(LEXER_DIR)tokenizer.c				\
+		$(LEXER_DIR)tokenizer_utils.c		\
+		$(LEXER_DIR)tokenizer_realloc.c		\
+		$(LEXER_DIR)cmp_func_quote.c		\
+		$(LEXER_DIR)cmp_func_meta.c			\
 		$(MEMORY_DIR)mem_utils.c			\
 		$(PARSER_DIR)ast_utils.c			\
 		$(PARSER_DIR)parser_ll.c			\
