@@ -216,10 +216,7 @@ t_node *parse_tokens_ll(t_token *tokens, t_size num_tokens)
 			if (check_err(new_node))
 			{
 				if (root && root != new_node)
-				{
-					free_ast(new_node);
 					free_ast(root);
-				}
 				free(table);
 				free_ast(new_node);
 				return (0);
