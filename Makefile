@@ -35,9 +35,9 @@ SRCS = ./minishell.c						\
 		$(LEXER_DIR)cmp_func_meta.c			\
 		$(MEMORY_DIR)mem_utils.c			\
 		$(PARSER_DIR)ast_utils.c			\
-		$(PARSER_DIR)parser_ll.c			\
+		$(PARSER_DIR)parser.c			\
 		$(PARSER_DIR)parser_utils.c			\
-		$(PARSER_DIR)parser_status_utils.c	\
+		$(PARSER_DIR)parser_state_utils.c	\
 		$(PARSER_DIR)parse_err.c			\
 		$(PARSER_DIR)parse_list.c			\
 		$(PARSER_DIR)parse_pipeline.c		\
