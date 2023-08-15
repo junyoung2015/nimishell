@@ -30,7 +30,7 @@ static void	__exit(t_node *node, t_exec_info *info)
 {
 	if (node->cmd_args[1])
 		info->exit_code = _atoi(node->cmd_args[1]);
-	clear_all(g_info.root);
+	clear_all(info->root);
 	exit(info->exit_code);
 }
 

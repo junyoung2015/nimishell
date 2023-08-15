@@ -34,7 +34,7 @@ static char	*heredoc_err(t_exec_info *info, char *str, int code)
 		err("minishell: malloc", info);
 	if (info->is_fork)
 	{
-		clear_all(g_info.root);
+		clear_all(info->root);
 		exit(EXIT_FAILURE);
 	}
 	return (NULL);

@@ -161,7 +161,6 @@ typedef struct s_global_info
 	size_t	env_cnt;
 	int		stdin_fd;
 	int		stdout_fd;
-	t_node	*root;
 	int		exit_status;
 } t_global_info;
 
