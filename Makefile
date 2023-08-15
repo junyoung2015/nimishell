@@ -52,9 +52,10 @@ SRCS = ./minishell.c							\
 		$(STR_DIR)str_utils_create.c			\
 		$(EXPANSION)2darray_utils.c				\
 		$(EXPANSION)quote_removal.c				\
-		$(EXPANSION)wildcard_expansion.c		\
-		$(EXPANSION)wildcard_expansion_utils.c	\
-		$(EXPANSION)wildcard_expansion_split.c	\
+		$(EXPANSION)file_expansion.c			\
+		$(EXPANSION)file_expansion_utils.c		\
+		$(EXPANSION)file_expansion_split.c		\
+		$(EXPANSION)file_expansion_pattern.c	\
 		$(EXPANSION)ft_qsort.c					\
 		$(EXPANSION)env_substitution.c			\
 		$(EXECUTOR_DIR)path.c					\
