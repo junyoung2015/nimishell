@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 21:55:34 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/15 15:10:04 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/15 15:18:23 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	command_in_child(t_node *node, t_exec_info *info)
 		err_exit(EXIT_FAILURE, "error: dup2");
 	if (node->builtin == NOT_BUILTIN)
 	{
-		cmdpath = get_cmdpath(node->cmd_args[0], info);
+		cmdpath = get_cmdpath(node->cmd_args[0]);
 		if (execve(cmdpath, node->cmd_args, g_info.env) < 0)
 		{
 			write(STDERR_FILENO, "error: ", 7);
