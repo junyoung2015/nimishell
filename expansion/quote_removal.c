@@ -1,8 +1,5 @@
 #include "minishell.h"
 
-// TODO: 밑의 typedef 를 env_sub 에 있는 typedef 와 minishell.h에 합쳐 넣기
-typedef	char	*(*t_trim_fn)(char **, t_cmp);
-
 char	*trim(char	**cmd_arg, t_cmp cmp)
 {
 	char	*tmp;

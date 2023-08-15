@@ -235,6 +235,8 @@ char			*ft_strchr(const char *s, int c);
 
 /* ================== EXPANSION ================== */
 typedef t_bool	(*t_cmp)(char);
+typedef	char	*(*t_process_fn)(char **);
+typedef	char	*(*t_trim_fn)(char **, t_cmp);
 int				cmp_ascii(void *a, void *b);
 void			ft_qsort(void **arr, t_ssize low, t_ssize high, int (*cmp)(void *, void *));
 char			**env_substitution(t_node *node);
@@ -288,10 +290,10 @@ t_bool			is_not_space(char ch);
 /* ============= TOKENIZER_UTILS ============= */
 t_token			*create_token(t_type type, const char *buffer, t_size buf_len);
 t_token			*free_tokens(t_token *tokens, t_size size);
-t_type	get_operator_type(char ch);
+t_type			get_operator_type(char ch);
 
 /* ============ TOKENIZER_STATES ============= */
-t_state 	update_state(char ch);
+t_state 		update_state(char ch);
 t_token			*tokenize(char **input, t_cmp cmp, t_type type, t_state *state);
 t_token			*tokenize_operator(char **input, t_state *state);
 t_token			*tokenize_meta(char **input, t_state *state);
@@ -311,6 +313,7 @@ t_token			*realloc_tokens(t_token *tokens, t_size *num_tokens, t_size new_size);
 t_token			*should_realloc(t_token *tokens, t_size *num_tokens, t_size *alloced);
 
 /* ================== PARSER ================== */
+typedef t_node *(*t_parser_fn)(t_parser *parser, t_node *parent);
 t_node			*parse_tokens(t_token *tokens, t_size num_tokens);
 t_node			*parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens);
 void			free_ast(t_node *root);
@@ -353,8 +356,8 @@ void			update_p_state(char **table, t_parser *parser, t_parse_state *parse_state
 /* =========== PARSER_STATUS_UTILS =========== */
 void			advance(t_parser *parser);
 t_bool			check(t_parser *parser, t_type type);
-t_type	cur_type(t_parser *parser);
-t_type	peek(t_parser *parser);
+t_type			cur_type(t_parser *parser);
+t_type			peek(t_parser *parser);
 
 /* ================== EXECUTOR ================== */
 int				executor(t_node *root);
