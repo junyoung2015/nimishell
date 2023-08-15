@@ -55,7 +55,7 @@ t_bool	check_access(char *filepath, char **path, char *filename)
 	return (FALSE);
 }
 
-char	*get_cmdpath(char *filename, t_exec_info *info)
+char	*get_cmdpath(char *filename)
 {
 	char	**path;
 	char	*cmdpath;

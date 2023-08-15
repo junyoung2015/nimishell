@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:26 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/15 15:10:34 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/15 15:23:43 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,10 +78,10 @@ void	err_exit(int exit_code, char *msg)
 // TODO: display_cmd_err 가 cmd_not_found 를 대채할 예정
 void	cmd_not_found(char *filename)
 {
-	clear_all(g_info.root);
 	write(STDERR_FILENO, "error: ", 7);
 	write(STDERR_FILENO, filename, ft_strlen(filename));
 	write(STDERR_FILENO, ": command not found\n", 20);
+	clear_all(g_info.root);
 	exit(EXIT_CMD_NOT_FOUND);
 }
 

@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/15 15:09:54 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/15 15:18:16 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,6 @@ void	cmd_not_found(char *filename);
 /* command */
 void	builtin(t_node *node, t_exec_info *info);
 void	command(t_node *node, t_exec_info *info);
-char	*get_cmdpath(char *filename, t_exec_info *info);
+char	*get_cmdpath(char *filename);
 
 #endif
