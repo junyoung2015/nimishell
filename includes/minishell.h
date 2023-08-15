@@ -219,6 +219,10 @@ extern t_global_info g_info;
 # define PAREN_NOT_CLOSED		"Syntax Error: unmatched parenthesis\n"
 # define MALLOC_ERR				"malloc() error."
 
+/* ================== INIT ================== */
+void			print_logo(void);
+char		    *get_prompt(void);
+
 /* ============== MEMORY_UTILS =============== */
 void			ft_bzero(void *s, t_size n);
 void			*ft_calloc(t_size count, t_size size);
@@ -273,9 +277,6 @@ void			ft_arrfree(char **arr);
 t_size			ft_arrlen(char **arr);
 t_size			ft_arrcat(char ***arr, char **new_arr, t_size size);
 t_size 			ft_arr_append(char ***arr, char *str, t_size size);
-
-/* ================== INIT ================== */
-void			print_logo(void);
 
 /* ================ STR_UTILS_CREATE ================ */
 char			*ft_strtrim(char *str, char c);
