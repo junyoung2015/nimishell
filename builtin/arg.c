@@ -41,9 +41,9 @@ int arg_check(char *str, t_builtin func)
 void	arg_err(t_builtin func, char *arg, t_exec_info *info)
 {
 	if (func == UNSET)
-		write(STDERR_FILENO, "error: unset: '", 15);
+		write(STDERR_FILENO, "minishell: unset: '", 19);
 	else
-		write(STDERR_FILENO, "error: export: '", 16);
+		write(STDERR_FILENO, "minishell: export: '", 20);
 	write(STDERR_FILENO, arg, ft_strlen(arg)); 
 	write(STDERR_FILENO, "': not a valid identifier\n", 26);
 	info->exit_code = EXIT_FAILURE;

@@ -39,7 +39,7 @@ void	remove_env(t_exec_info *info, size_t idx)
 	env = ft_calloc(g_info.env_cnt, sizeof(char *));
 	if (!env)
 	{
-		err("error: malloc", info);
+		err("minishell: malloc", info);
 		return ;
 	}
 	i = 0;

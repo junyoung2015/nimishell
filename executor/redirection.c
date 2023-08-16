@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 21:50:47 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/15 14:09:10 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/16 02:08:21 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,12 @@ int	redir_append(t_node *node, t_exec_info *info)
 
 static void	redir_err(char *filename, t_exec_info *info)
 {
-	write(STDERR_FILENO, "error: ", 7);
+	write(STDERR_FILENO, "minishell: ", 11);
 	perror(filename);
 	info->exit_code = EXIT_FAILURE;
 	if (info->is_fork)
 	{
-		clear_all(g_info.root);
+		clear_all(info->ast);
 		exit(info->exit_code);
 	}
 }

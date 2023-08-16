@@ -26,7 +26,7 @@ void	append_last(char *arg, t_exec_info *info)
 	str = ft_strdup(arg);
 	if (!env || !arg)
 	{
-		err("error: malloc", info);
+		err("minishell: malloc", info);
 		return ;
 	}
 	i = 0;
@@ -79,7 +79,7 @@ void	add_env(char *arg, t_exec_info *info)
 				g_info.env[i] = str;
 			}
 			else
-				err("error: malloc", info);
+				err("minishell: malloc", info);
 			return ;
 		}
 		i++;

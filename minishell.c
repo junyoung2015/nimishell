@@ -132,8 +132,6 @@ void	init_g_info(char **envp)
 		i++;
 	}
 	g_info.env[i] = NULL;
-	g_info.stdin_fd = dup(STDIN_FILENO);
-	g_info.stdout_fd = dup(STDOUT_FILENO);
 }
 
 int	main(int ac, char **av, char **envp)
@@ -213,8 +211,7 @@ int	main(int ac, char **av, char **envp)
 					// 	print_ast(ast, 0, "");
 					// 	printf("==========================================\n");
 					// }
-					g_info.root = ast;
-					exit_code = executor(g_info.root);
+					exit_code = executor(ast);
 					g_info.exit_status = exit_code; // do I need this here?
 				}
 			}
