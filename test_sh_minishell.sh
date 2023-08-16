@@ -456,7 +456,7 @@ send "ls\r"
 # exepct "minishell: ls: No such file or directory" ;
 # expect "minishell: ls: command not found" ;
 expect {
-	"minishell: ls: command not found" {
+	"minishell: ls: No such file or directory" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
@@ -530,7 +530,7 @@ set count [ expr \$count + 1 ] ;
 ### Test 35 ###
 send "export A.B=C\r"
 expect {
-	"minishell: export: A.B=C: not a valid identifier" {
+	"minishell: export: 'A.B=C': not a valid identifier" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
@@ -569,7 +569,7 @@ set count [ expr \$count + 1 ] ;
 ### Test 38 ###
 send "export 123=A\r"
 expect {
-	"minishell: export: 123=A: not a valid identifier" {
+	"minishell: export: '123=A': not a valid identifier" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
