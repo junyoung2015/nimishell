@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/16 02:19:06 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/16 16:29:45 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,15 +27,15 @@ void	init_info(t_exec_info *info, t_node *ast)
 
 void	close_fd(t_exec_info *info)
 {
-	if (info->prev_pipe != -1)
+	if (info->prev_pipe >= 0)
 		close(info->prev_pipe);
 	dup2(info->stdin_fd, STDIN_FILENO);
 	dup2(info->stdout_fd, STDOUT_FILENO);
 	close(info->stdin_fd);
 	close(info->stdout_fd);
-	if (info->fd_in != -1)
+	if (info->fd_in >= 0)
 		close(info->fd_in);
-	if (info->fd_out != -1)
+	if (info->fd_out >= 0)
 		close(info->fd_out);
 }
 
