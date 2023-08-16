@@ -44,25 +44,6 @@ void	exit_err_with_msg(int code, char *file, char *msg, t_node *root)
 	exit(code);
 }
 
-void sig_handler(int signal)
-{	
-	if (signal == SIGINT)
-	{
-		rl_on_new_line();
-		rl_replace_line("", 1);
-	}
-	else if (signal == SIGQUIT)
-	{
-		// does nothing
-		rl_redisplay();
-	}
-	else if (signal == SIGTSTP)
-	{
-		// does nothing
-	}
-	rl_redisplay();
-}
-
 #ifdef DEBUG
 
 // TODO: remove for
@@ -134,6 +115,43 @@ void	init_g_info(char **envp)
 	g_info.env[i] = NULL;
 }
 
+// Set terminal to not print ^C when Ctrl-C is pressed
+void	init_terminal(void)
+{
+	struct termios	term;
+	int				status;
+
+	status = tcgetattr(0, &term);
+	if (status == -1)
+	{
+		write(STD_ERR, "minishell: tcgetattr: ", 22);
+		write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
+		write(STD_ERR, "\n", 1);
+		exit (1);
+	}
+	term.c_lflag &= ~ECHOCTL;
+	status = tcsetattr(0, 0, &term);
+	if (status == -1)
+	{
+		write(STD_ERR, "minishell: tcgetattr: ", 22);
+		write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
+		write(STD_ERR, "\n", 1);
+		exit (1);
+	}
+}
+
+// handle SIGINT to print new line
+void sig_handler(int signal)
+{	
+	if (signal == SIGINT)
+	{
+		write(STD_OUT, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 1);
+		rl_redisplay();
+	}
+}
+
 int	main(int ac, char **av, char **envp)
 {
 	(void) ac;
@@ -144,33 +162,14 @@ int	main(int ac, char **av, char **envp)
 	t_token		*tokens;
 	t_size		num_tokens;
 	t_node		*ast;
-	struct termios	term;
-	int	status;
 	// t_global_info	g_info;
 
-	init_g_info(envp);
 	tokens = 0;
 	ast = 0;
 	exit_code = 0;
-	status = tcgetattr(0, &term);
-	if (status == -1)
-	{
-		exit_err_with_msg(EXIT_ERR, TCGETATTR, strerror(errno), 0);
-		// write(STD_ERR, "minishell: tcgetattr: ", 22);
-		// write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
-		// write(STD_ERR, "\n", 1);
-		// exit (1);
-	}
-	term.c_lflag &= ~ECHOCTL;
-	status = tcsetattr(0, 0, &term);
-	if (status == -1)
-	{
-		exit_err_with_msg(EXIT_ERR, TCGETATTR, strerror(errno), 0);
-		// write(STD_ERR, "minishell: tcgetattr: ", 22);
-		// write(STD_ERR, strerror(errno), ft_strlen(strerror(errno)));
-		// write(STD_ERR, "\n", 1);
-		// exit (1);
-	}
+	init_g_info(envp);
+	init_terminal();
+	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, sig_handler);
 	print_logo();
 	while (TRUE)
