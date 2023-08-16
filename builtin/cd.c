@@ -43,7 +43,7 @@ void	append_new_env(char *new_env, t_exec_info *info)
 	env = ft_calloc(g_info.env_cnt + 2, sizeof(char *));
 	if (!env)
 	{
-		err("error: malloc", info);
+		err("minishell: malloc", info);
 		return ;
 	}
 	i = 0;
@@ -100,7 +100,7 @@ void	update_pwd(char *cwd, t_exec_info *info)
 	pwd = ft_strjoin("PWD=", cwd);
 	oldpwd = ft_strjoin("OLDPWD=", get_env("PWD"));
 	if (!pwd || !oldpwd)
-		err("error: malloc", info);
+		err("minishell: malloc", info);
 	update_env(pwd, info);
 	update_env(oldpwd, info);
 }
@@ -109,7 +109,7 @@ t_bool	try_chdir(char *path, t_exec_info *info)
 {
 	if (chdir(path))
 	{
-		write(STDERR_FILENO, "error: cd: ", 11);
+		write(STDERR_FILENO, "minishell: cd: ", 15);
 		perror(path);
 		info->exit_code = EXIT_FAILURE;
 		return (FALSE);
@@ -124,7 +124,7 @@ t_bool	cd_to_home(t_exec_info *info)
 	home = get_env("HOME");
 	if (!home)
 	{
-		write(STDERR_FILENO, "error: cd: HOME not set\n", 24);
+		write(STDERR_FILENO, "minishell: cd: HOME not set\n", 28);
 		info->exit_code = EXIT_FAILURE;
 		return (FALSE);
 	}
@@ -138,7 +138,7 @@ t_bool	cd_to_oldpwd(t_exec_info *info)
 	oldpwd = get_env("OLDPWD");
 	if (!oldpwd)
 	{
-		write(STDERR_FILENO, "error: cd: OLDPWD not set\n", 26);
+		write(STDERR_FILENO, "minishell: cd: OLDPWD not set\n", 30);
 		info->exit_code = EXIT_FAILURE;
 		return (FALSE);
 	}
@@ -154,14 +154,14 @@ t_bool	cd_to_path_with_home(char *path, t_exec_info *info)
 	home = get_env("HOME");
 	if (!home)
 	{
-		write(STDERR_FILENO, "error: cd: HOME not set\n", 24);
+		write(STDERR_FILENO, "minishell: cd: HOME not set\n", 28);
 		info->exit_code = EXIT_FAILURE;
 		return (FALSE);
 	}
 	full_path = ft_strjoin(home, path + 1);
 	if (!full_path)
 	{
-		err("error: malloc", info);
+		err("minishell: malloc", info);
 		return (FALSE);
 	}
 	bool = try_chdir(full_path, info);
