@@ -36,9 +36,9 @@ void	free_ast(t_node *root)
 
 	if (root == 0)
 		return ;
-	if (!root->left)
+	if (root->left)
 		free_ast(root->left);
-	if (!root->right)
+	if (root->right)
 		free_ast(root->right);
 	if (root->cmd_args)
 	{
