@@ -96,5 +96,5 @@ char	*tok_type(t_type type)
 		return (">>");
 	else if (type == TOKEN_HEREDOC)
 		return ("<<");
-	return ("UNKNOWN");
+	return ("newline");
 }
