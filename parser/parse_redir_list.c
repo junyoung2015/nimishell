@@ -39,7 +39,7 @@ t_node	*parse_redir(t_parser *parser, t_node *parent)
 			{
 				free(redir_node);
 				return (0);
-			}		
+			}
 			advance(parser);
 			if (is_word_token(parser))
 				redir_node->cmd_args[(redir_node->num_args)++] = parse_word(parser);
@@ -65,16 +65,13 @@ t_node	*parse_redir(t_parser *parser, t_node *parent)
 		{
 			advance(parser);
 			if (is_word_token(parser))
-				redir_node = parse_word_list(parser, parent);
-			else
 			{
-				redir_node = parse_err(parser, parent);
-				return (redir_node);
+				redir_node = parse_word_list(parser, parent);
+				redir_node->type = (t_node_type) type;
 			}
+			else
+				redir_node = parse_err(parser, parent);
 		}
-		if (!redir_node)
-			return (0);
-		redir_node->type = (t_node_type) type;
 	}
 	return (redir_node);
 }
@@ -97,12 +94,19 @@ t_node	*parse_redir_list_tail(t_parser *parser, t_node *parent)
 		redir_list_tail_node = parse_redir(parser, parent);
 		if (!redir_list_tail_node)
 			return (0);
+		else if (redir_list_tail_node->type == AST_ERR)
+			return (redir_list_tail_node);
 		append_child_node(parent, redir_list_tail_node);
 		if (is_redir_token(parser))
 		{
 			redir_node = parse_redir_list_tail(parser, redir_list_tail_node);
 			if (!redir_node)
 				return (0);
+			else if (redir_node->type == AST_ERR)
+			{
+				free_ast(redir_list_tail_node);
+				return (redir_node);
+			}
 		}
 	}
 	return (redir_list_tail_node);
@@ -130,6 +134,11 @@ t_node	*parse_redir_list(t_parser *parser, t_node *parent)
 		redir_list_tail_node = parse_redir_list_tail(parser, redir_list_node);
 		if (!redir_list_tail_node)
 			return (0);
+		else if (redir_list_tail_node->type == AST_ERR)
+		{
+			free_ast(redir_list_node);
+			return (redir_list_tail_node);
+		}
 	}
 	return (redir_list_node);
 }
