@@ -22,9 +22,11 @@ int arg_check(char *str, t_builtin func)
 {
 	size_t	i;
 
-	if (str[0] == '#' || (str[0] == '_' && str[1] == '='))
+	if (str[0] == '#')
 		return (0);
-	if (!ft_isalpha(str[0]))
+	if (str[0] == '_' && str[1] == '=' * (func == EXPORT))
+		return (1);
+	if (!ft_isalpha(str[0]) && str[0] != '_')
 		return (-1);
 	i = 0;
 	while (str[i] && str[i] != '=')
