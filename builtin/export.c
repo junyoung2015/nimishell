@@ -22,7 +22,7 @@ void	append_last(char *arg, t_exec_info *info)
 	char	*str;
 	size_t	i;
 
-	env = ft_calloc(g_info.env_cnt + 2, sizeof(char *));
+	env = ft_calloc(info->env_cnt + 2, sizeof(char *));
 	str = ft_strdup(arg);
 	if (!env || !arg)
 	{
@@ -39,7 +39,7 @@ void	append_last(char *arg, t_exec_info *info)
 	env[i] = NULL;
 	free(g_info.env);
 	g_info.env = env;
-	g_info.env_cnt += 1;
+	info->env_cnt += 1;
 }
 
 void	print_env()
