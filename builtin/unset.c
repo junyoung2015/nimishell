@@ -36,7 +36,7 @@ void	remove_env(t_exec_info *info, size_t idx)
 	size_t	i;
 	size_t	j;
 
-	env = ft_calloc(g_info.env_cnt, sizeof(char *));
+	env = ft_calloc(info->env_cnt, sizeof(char *));
 	if (!env)
 	{
 		err("minishell: malloc", info);
@@ -44,7 +44,7 @@ void	remove_env(t_exec_info *info, size_t idx)
 	}
 	i = 0;
 	j = 0;
-	while (i + 1 < g_info.env_cnt)
+	while (i + 1 < info->env_cnt)
 	{
 		if (i == idx)
 			j = 1;
@@ -54,7 +54,7 @@ void	remove_env(t_exec_info *info, size_t idx)
 	free(g_info.env[idx]);
 	free(g_info.env);
 	g_info.env = env;
-	g_info.env_cnt -= 1;
+	info->env_cnt -= 1;
 }
 
 void	unset(t_node *node, t_exec_info *info)
@@ -73,7 +73,7 @@ void	unset(t_node *node, t_exec_info *info)
 		else if (result >> 1)
 		{
 			idx = get_idx(node->cmd_args[i]);
-			if (idx < g_info.env_cnt)
+			if (g_info.env[idx])
 				remove_env(info, idx);
 		}
 		i++;
