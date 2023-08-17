@@ -33,6 +33,8 @@ static int	_atoi(char *arg)
 
 static void	__exit(t_node *node, t_exec_info *info)
 {
+	if (!info->is_fork)
+		write(info->stdout_fd, "exit\n", 5);
 	if (node->cmd_args[1])
 		info->exit_code = _atoi(node->cmd_args[1]);
 	clear_all(info->ast);
