@@ -96,17 +96,19 @@ void print_tokens(t_token *tokens, t_size num_tokens)
 
 # endif
 
-void	init_g_info(char **envp)
+void	init_g_info(char **envp, size_t *env_cnt)
 {
-	t_size	i;
-	
-	g_info.env_cnt = 0;
-	while (envp && envp[g_info.env_cnt])
-		g_info.env_cnt++;
-	g_info.env = ft_calloc((g_info.env_cnt + 1), sizeof(char *));
+	size_t	i;
+	size_t	cnt;
+
+	cnt = 0;
+	while (envp && envp[cnt])
+		cnt++;
+	*env_cnt = cnt;
+	g_info.env = ft_calloc((cnt + 1), sizeof(char *));
 	// 널가드 추가
 	i = 0;
-	while (i < g_info.env_cnt)
+	while (i < cnt)
 	{
 		g_info.env[i] = ft_strdup(envp[i]);
 		// 널가드
@@ -156,6 +158,7 @@ int	main(int ac, char **av, char **envp)
 {
 	(void) ac;
 	(void) av;
+	size_t		env_cnt;
 	int			exit_code;
 	char		*line;
 	char		*pwd;
@@ -164,6 +167,7 @@ int	main(int ac, char **av, char **envp)
 	t_node		*ast;
 	// t_global_info	g_info;
 
+	init_g_info(envp, &env_cnt);
 	tokens = 0;
 	ast = 0;
 	exit_code = 0;
@@ -210,7 +214,7 @@ int	main(int ac, char **av, char **envp)
 					// 	print_ast(ast, 0, "");
 					// 	printf("==========================================\n");
 					// }
-					exit_code = executor(ast);
+					exit_code = executor(ast, &env_cnt);
 					g_info.exit_status = exit_code; // do I need this here?
 				}
 			}

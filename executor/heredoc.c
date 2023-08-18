@@ -94,6 +94,8 @@ int	heredoc(t_node *node, t_exec_info *info)
 	if (info->exit_code != EXIT_SUCCESS)
 		return (2);
 	close(fd);
+	if (info->fd_in >= 0)
+		close(info->fd_in);
 	info->fd_in = open("/tmp/.heredoc", O_RDONLY);
 	if (info->fd_in < 0)
 		return (1);
