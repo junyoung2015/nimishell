@@ -31,6 +31,7 @@ pid_t is_fork(t_node *node, t_exec_info *info)
 		err("minishell: fork", info);
 	else
 	{
+		set_signal(pid, 0);
 		info->fork_cnt += 1;
 		info->is_fork = TRUE;
 		info->pid = pid;
