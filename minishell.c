@@ -96,10 +96,10 @@ void print_tokens(t_token *tokens, t_size num_tokens)
 
 # endif
 
-void	init_g_info(char **envp, size_t *env_cnt)
+void	init_g_info(char **envp, t_size *env_cnt)
 {
-	size_t	i;
-	size_t	cnt;
+	t_size	i;
+	t_size	cnt;
 
 	cnt = 0;
 	while (envp && envp[cnt])
@@ -156,17 +156,17 @@ void sig_handler(int signal)
 
 int	main(int ac, char **av, char **envp)
 {
-	(void) ac;
-	(void) av;
-	size_t		env_cnt;
 	int			exit_code;
 	char		*line;
 	char		*pwd;
-	t_token		*tokens;
+	t_size		env_cnt;
 	t_size		num_tokens;
 	t_node		*ast;
+	t_token		*tokens;
 	// t_global_info	g_info;
 
+	(void) ac;
+	(void) av;
 	init_g_info(envp, &env_cnt);
 	tokens = 0;
 	ast = 0;
