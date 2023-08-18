@@ -221,6 +221,8 @@ int	main(int ac, char **av, char **envp)
 			free(pwd);
 			line = 0;
 		}
+		else
+			break ;
 	}
 	exit(exit_code);
 	return (0);
