@@ -378,6 +378,6 @@ t_type			cur_type(t_parser *parser);
 t_type			peek(t_parser *parser);
 
 /* ================== EXECUTOR ================== */
-int				executor(t_node *ast, size_t *env_cnt);
+int				executor(t_node *ast, t_size *env_cnt);
 
 #endif
