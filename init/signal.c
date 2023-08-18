@@ -11,10 +11,10 @@ void sig_handler(int signal)
 	}
 }
 
-void    set_default_signal(void)
+void	set_ignore_signal(void)
 {
 	signal(SIGQUIT, SIG_IGN);
-	signal(SIGINT, sig_handler);
+	signal(SIGINT, SIG_IGN);
 }
 
 void    set_child_signal(void)

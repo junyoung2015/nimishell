@@ -4,12 +4,12 @@ spawn ./minishell
 
 set green "\033\[1;32;40m"
 set red "\033\[1;31m"
-# set yellow "\033\[1;33m"
 set default "\033\[0m"
 set count 1
 
 set timeout 2
 
+### Test 0 ###
 send "\r"
 expect "" ;
 
@@ -21,7 +21,7 @@ expect "" ;
 send "pwd\r"
 expect {
 	"$env(HOME)/nimishell" {
-		send_user "${green}Test ${count} passed${default}\n" ;
+		send_user "\n${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
 		send_user "${red}Test ${count} failed${default}\n" ;
@@ -596,6 +596,20 @@ set count [ expr \$count + 1 ] ;
 send "echo \$USER\$USER\$USER../\$USER?\$.USER~\r"
 expect {
 	"../?$.USER~" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 41 ###
+# Send Ctrl-C (SIGINT)
+send \x03
+expect {
+	"\n" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {

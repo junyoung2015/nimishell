@@ -274,7 +274,7 @@ t_size			ft_arrlen(char **arr);
 t_size			ft_arrcat(char ***arr, char **new_arr, t_size size);
 t_size 			ft_arr_append(char ***arr, char *str, t_size size);
 
-/* ================ STR_UTILS_CREATE ================ */
+/* ============ STR_UTILS_CREATE ============= */
 char			*ft_strtrim(char *str, char c);
 char			*ft_strdup(char *src);
 char			*ft_substr(char const *s, t_size start, t_size len);
@@ -282,7 +282,7 @@ char			**ft_split(char const *str, char c);
 char			*ft_strjoin(char const *s1, char const *s2);
 char			*ft_strnstr(const char *haystack, const char *needle, t_size n);
 
-/* ================== TOKENIZER ================== */
+/* ================ TOKENIZER ================ */
 typedef t_token *(*t_tokenizer_fn)(char **, t_state *);
 
 t_token 		*tokenize_input(char *input, t_size alloced, t_size *num_tokens);
@@ -330,7 +330,7 @@ t_token			*split_input(char *start, char **input, t_cmp cmp, t_type type);
 t_token			*realloc_tokens(t_token *tokens, t_size *num_tokens, t_size new_size);
 t_token			*should_realloc(t_token *tokens, t_size *num_tokens, t_size *alloced);
 
-/* ================== PARSER ================== */
+/* ================= PARSER ================== */
 typedef t_node *(*t_parser_fn)(t_parser *parser, t_node *parent);
 t_node			*parse_tokens(t_token *tokens, t_size num_tokens);
 t_node			*parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens);
@@ -370,7 +370,6 @@ t_bool			is_redir_token(t_parser *parser);
 void			is_builtin_node(t_node *node);
 void			update_p_state(char **table, t_parser *parser, t_parse_state *parse_state);
 
-
 /* =========== PARSER_STATUS_UTILS =========== */
 void			advance(t_parser *parser);
 t_bool			check(t_parser *parser, t_type type);
@@ -379,5 +378,11 @@ t_type			peek(t_parser *parser);
 
 /* ================== EXECUTOR ================== */
 int				executor(t_node *ast, t_size *env_cnt);
+
+/* ================= SIGNAL ================== */
+void    		set_parent_signal(void);
+void    		set_child_signal(void);
+void			set_ignore_signal(void);
+
 
 #endif
