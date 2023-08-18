@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 21:50:47 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/16 02:08:21 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/16 16:30:27 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 int	redir_in(t_node *node, t_exec_info *info)
 {
+	if (info->fd_in >= 0)
+		close(info->fd_in);
 	info->fd_in = open(node->cmd_args[0], O_RDONLY);
 	if (info->fd_in < 0)
 		return (1);
@@ -22,6 +24,8 @@ int	redir_in(t_node *node, t_exec_info *info)
 
 int	redir_out(t_node *node, t_exec_info *info)
 {
+	if (info->fd_in >= 0)
+		close(info->fd_in);
 	info->fd_out = open(node->cmd_args[0], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (info->fd_out < 0)
 		return (1);
@@ -30,6 +34,8 @@ int	redir_out(t_node *node, t_exec_info *info)
 
 int	redir_append(t_node *node, t_exec_info *info)
 {
+	if (info->fd_in >= 0)
+		close(info->fd_in);
 	info->fd_out = open(node->cmd_args[0], O_WRONLY | O_CREAT | O_APPEND, 0644);
 	if (info->fd_out < 0)
 		return (1);

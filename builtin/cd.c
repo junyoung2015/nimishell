@@ -40,7 +40,7 @@ void	append_new_env(char *new_env, t_exec_info *info)
 	t_size	i;
 	char	**env;
 
-	env = ft_calloc(g_info.env_cnt + 2, sizeof(char *));
+	env = ft_calloc(info->env_cnt + 2, sizeof(char *));
 	if (!env)
 	{
 		err("minishell: malloc", info);
@@ -89,7 +89,7 @@ void	update_env(char *new_env, t_exec_info *info)
 	}
 	append_new_env(new_env, info);
 	if (!info->exit_code)
-		g_info.env_cnt += 1;
+		info->env_cnt += 1;
 }
 
 void	update_pwd(char *cwd, t_exec_info *info)
