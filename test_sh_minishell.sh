@@ -605,6 +605,20 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 41 ###
+# Send Ctrl-C (SIGINT)
+send \x03
+expect {
+	"\n" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
 # Finish
 send "exit\r"
 expect eof
