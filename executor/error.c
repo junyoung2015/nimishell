@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:26 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/16 02:05:21 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/18 14:43:20 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,16 +37,17 @@ void	clear_all(t_node *root)
 	free(root);
 }
 
-int	err(char *str, t_exec_info *info)
+void	err(char *str, t_exec_info *info)
 {
 	if (info)
 		info->exit_code = EXIT_FAILURE;
 	perror(str);
-	return (EXIT_FAILURE);
 }
 
-void	err_exit(t_exec_info *info, char *msg)
+void	err_exit(t_exec_info *info, char *msg, int exit_code)
 {
+	if (exit_code)
+		info->exit_code = exit_code;
 	if (msg)
 		perror(msg);
 	clear_all(info->ast);

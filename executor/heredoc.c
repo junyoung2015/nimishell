@@ -24,19 +24,11 @@ static char	*str_join(char *str, char buf, size_t len)
 	return (ret);
 }
 
-static char	*heredoc_err(t_exec_info *info, char *str, int code)
+static char	*heredoc_err(t_exec_info *info, char *str, char *msg)
 {
 	if (str)
 		free(str);
-	if (code)
-		err("minishell: read", info);
-	else
-		err("minishell: malloc", info);
-	if (info->is_fork)
-	{
-		clear_all(info->ast);
-		exit(EXIT_FAILURE);
-	}
+	err_exit(info, msg, EXIT_FAILURE);
 	return (NULL);
 }
 
@@ -52,28 +44,33 @@ char	*get_next_line(int fd, t_exec_info *info, size_t *str_len)
 	while (buf != '\n')
 	{
 		if (read(fd, &buf, 1) < 0)
-			return (heredoc_err(info, str, 1));
+			return (heredoc_err(info, str, "minishell: heredoc: read"));
 		if (buf == 0)
 			return (str);
 		str = str_join(str, buf, len++);
 		if (!str)
-			return (heredoc_err(info, NULL, 0));
+			return (heredoc_err(info, NULL, "minishell: heredoc: malloc"));
 	}
 	*str_len = len;
 	return (str);
 }
 
-void	write_heredoc(char *limiter, t_exec_info *info, int fd)
+void	create_heredoc(char *limiter, t_exec_info *info)
 {
+	int		fd;
 	char	*str;
 	size_t	lmt_len;
 	size_t	str_len;
 
+	fd = open("/tmp/.heredoc", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fd < 0)
+		err_exit(info, "minishell: heredoc: open", EXIT_FAILURE);
 	lmt_len = ft_strlen(limiter);
 	write(info->stdin_fd, "heredoc> ", 9);
 	str = get_next_line(info->stdin_fd, info, &str_len);
 	while (str && !(!ft_strncmp(str, limiter, lmt_len) && str[lmt_len] == '\n'))
 	{
+		// str 치환
 		write(fd, str, str_len);
 		free(str);
 		write(info->stdin_fd, "heredoc> ", 9);
@@ -81,24 +78,32 @@ void	write_heredoc(char *limiter, t_exec_info *info, int fd)
 	}
 	if (str)
 		free(str);
+	close(fd);
 }
 
-int	heredoc(t_node *node, t_exec_info *info)
+void	heredoc(t_node *node, t_exec_info *info)
 {
-	int	fd;
+	pid_t	pid;
+	int		status;
 
-	fd = open("/tmp/.heredoc", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd < 0)
-		return (1);
-	write_heredoc(node->cmd_args[0], info, fd);
+	
+	pid = fork();
+	if (pid < 0)
+		return (err("minishell: heredoc: fork", info));
+	else if (!pid)
+	{
+		create_heredoc(node->cmd_args[0], info);
+		clear_all(info->ast);
+		exit(EXIT_SUCCESS);
+	}
+	waitpid(pid, &status, 0);
+	info->exit_code = WEXITSTATUS(status);
 	if (info->exit_code != EXIT_SUCCESS)
-		return (2);
-	close(fd);
+		return ;
 	if (info->fd_in >= 0)
 		close(info->fd_in);
 	info->fd_in = open("/tmp/.heredoc", O_RDONLY);
 	if (info->fd_in < 0)
-		return (1);
+		err("minishell: heredoc: open", info);
 	unlink("/tmp/.heredoc");
-	return (0);
 }
