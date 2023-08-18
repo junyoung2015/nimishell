@@ -171,7 +171,6 @@ int	main(int ac, char **av, char **envp)
 	tokens = 0;
 	ast = 0;
 	exit_code = 0;
-	init_g_info(envp);
 	init_terminal();
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, sig_handler);
