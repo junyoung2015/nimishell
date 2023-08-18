@@ -158,7 +158,6 @@ typedef struct s_parser
 typedef struct s_global_info
 {
 	char	**env;
-	size_t	env_cnt;
 	int		exit_status;
 } t_global_info;
 
@@ -377,11 +376,8 @@ t_bool			check(t_parser *parser, t_type type);
 t_type			cur_type(t_parser *parser);
 t_type			peek(t_parser *parser);
 
-/* ================ EXECUTOR ================= */
-int				executor(t_node *root);
-
-/* ================= BUILTIN ================= */
-char			*get_env(char *env_var);
+/* ================== EXECUTOR ================== */
+int				executor(t_node *ast, t_size *env_cnt);
 
 /* ================= SIGNAL ================== */
 void    		set_parent_signal(void);

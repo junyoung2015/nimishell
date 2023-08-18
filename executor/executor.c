@@ -6,15 +6,16 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/16 02:19:06 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/17 17:07:41 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "executor.h"
 
-void	init_info(t_exec_info *info, t_node *ast)
+void	init_info(t_exec_info *info, t_node *ast, t_size env_cnt)
 {
 	info->ast = ast;
+	info->env_cnt = env_cnt;
 	info->fork_cnt = 0;
 	info->prev_pipe = -1;
 	info->stdin_fd = dup(STDIN_FILENO);
@@ -27,28 +28,29 @@ void	init_info(t_exec_info *info, t_node *ast)
 
 void	close_fd(t_exec_info *info)
 {
-	if (info->prev_pipe != -1)
+	if (info->prev_pipe >= 0)
 		close(info->prev_pipe);
 	dup2(info->stdin_fd, STDIN_FILENO);
 	dup2(info->stdout_fd, STDOUT_FILENO);
 	close(info->stdin_fd);
 	close(info->stdout_fd);
-	if (info->fd_in != -1)
+	if (info->fd_in >= 0)
 		close(info->fd_in);
-	if (info->fd_out != -1)
+	if (info->fd_out >= 0)
 		close(info->fd_out);
 }
 
-int	executor(t_node *ast)
+int	executor(t_node *ast, t_size *env_cnt)
 {
 	t_exec_info	info;	
-	size_t		i;
+	t_size		i;
 	int			status;
 
-	init_info(&info, ast);
+	init_info(&info, ast, *env_cnt);
 	ast_search(ast, &info);
 	close_fd(&info);
 	clear_all(ast);
+	*env_cnt = info.env_cnt;
 	if (!info.fork_cnt)
 		return (info.exit_code);
 	waitpid(info.pid, &status, 0);
