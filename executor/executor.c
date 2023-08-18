@@ -12,7 +12,7 @@
 
 #include "executor.h"
 
-void	init_info(t_exec_info *info, t_node *ast, size_t env_cnt)
+void	init_info(t_exec_info *info, t_node *ast, t_size env_cnt)
 {
 	info->ast = ast;
 	info->env_cnt = env_cnt;
@@ -40,10 +40,10 @@ void	close_fd(t_exec_info *info)
 		close(info->fd_out);
 }
 
-int	executor(t_node *ast, size_t *env_cnt)
+int	executor(t_node *ast, t_size *env_cnt)
 {
 	t_exec_info	info;	
-	size_t		i;
+	t_size		i;
 	int			status;
 
 	init_info(&info, ast, *env_cnt);
