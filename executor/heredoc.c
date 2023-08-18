@@ -88,6 +88,7 @@ void	heredoc(t_node *node, t_exec_info *info)
 
 	
 	pid = fork();
+	set_signal(pid, info->is_fork);
 	if (pid < 0)
 		return (err("minishell: heredoc: fork", info));
 	else if (!pid)
