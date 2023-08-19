@@ -12,6 +12,44 @@
 
 #include "minishell.h"
 
+char	*ft_strchr(const char *s, int c)
+{
+	t_size	i;
+	char	*tmp;
+
+	i = 0;
+	tmp = (char *) s;
+	while (tmp[i])
+	{
+		if (tmp[i] == (char) c)
+			return (tmp + i);
+		i++;
+	}
+	if (tmp[i] == (char) c)
+		return (tmp + i);
+	return (NULL);
+}
+
+char	*ft_strrchr(const char *s, int c)
+{
+	size_t	i;
+	char	*tmp;
+
+	i = 0;
+	tmp = (char *) s;
+	while (tmp[i])
+		i++;
+	while (i > 0)
+	{
+		if (tmp[i] == (char) c)
+			return (tmp + i);
+		i--;
+	}
+	if (tmp[i] == (char) c)
+		return (tmp + i);
+	return (0);
+}
+
 char	*ft_strnstr(const char *haystack, const char *needle, t_size n)
 {
 	size_t	i;

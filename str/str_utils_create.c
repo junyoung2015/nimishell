@@ -12,28 +12,18 @@
 
 #include "minishell.h"
 
-char	*ft_strtrim(char *str, char c)
+char	*ft_strtrim(char const *s1, char const *s2)
 {
-	char	*result;
-	t_size	start;
-	t_size	end;
 	t_size	idx;
 
-	if (!(str && *str))
-		return (0);
-	start = 0;
-	end = ft_strlen(str);
-	while (str[start] == c)
-		start++;
-	while (str[end] == c)
-		end--;
-	result = (char *) ft_calloc((end - start + 1), sizeof(char));
-	if (!result)
-		return (0);
-	idx = 0;
-	while (start < end)
-		result[idx++] = str[start++];
-	return (result);
+	if (!s1 || !s2)
+		return (NULL);
+	while (*s1 && ft_strchr(s2, *s1))
+		s1++;
+	idx = ft_strlen(s1);
+	while (idx > 0 && ft_strchr(s2, s1[idx]))
+		idx--;
+	return (ft_substr(s1, 0, idx + 1));
 }
 
 char	*ft_strdup(char *src)
