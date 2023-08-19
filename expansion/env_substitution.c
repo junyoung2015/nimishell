@@ -53,6 +53,24 @@ char	*ft_getenv(char *env_var)
 	return (0);
 }
 
+char	*wrap_env_var(char *env_var)
+{
+	char	*tmp;
+	char	*quote;
+
+	tmp = env_var;
+	if (is_squote(*env_var))
+		quote = "\"";
+	else
+		quote = "'";
+	env_var = ft_strjoin(quote, env_var);
+	free(tmp);
+	tmp = env_var;
+	env_var = ft_strjoin(env_var, quote);
+	free(tmp);
+	return (env_var);
+}
+
 char	*substitute(char *env_var)
 {
 	char	*result;
@@ -65,7 +83,10 @@ char	*substitute(char *env_var)
 		return (0);
 	value = ft_strchr(key, '=');
 	if (value)
+	{
 		result = ft_strtrim(value + 1, " ");
+		// result = wrap_env_var(result);
+	}
 	return (result);
 }
 
