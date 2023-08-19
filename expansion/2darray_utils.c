@@ -20,7 +20,7 @@ t_size	ft_arrlen(char **arr)
 	return (len);
 }
 
-t_size ft_arrcat(char ***arr, char **new_arr, t_size size)
+t_size	ft_arrcat(char ***arr, char **new_arr, t_size size)
 {
 	t_size	new;
 	t_size	idx;
@@ -48,15 +48,21 @@ t_size ft_arrcat(char ***arr, char **new_arr, t_size size)
 	return (new);
 }
 
-t_size ft_arr_append(char ***arr, char *str, t_size size)
+t_size	ft_arr_append(char ***arr, char *str, t_size size)
 {
+	t_size	idx;
+
+	idx = 0;
 	if (!str)
 		return (size);
 	char **tmp = (char **)ft_calloc((size + 2), sizeof(char *));
 	if (!tmp)
 		return (0);
-	for (t_size i = 0; i < size; i++)	// TODO: remove for loop
-		tmp[i] = (*arr)[i];
+	while (idx < size)
+	{
+		tmp[idx] = (*arr)[idx];
+		idx++;
+	}
 	tmp[size] = str;
 	if (*arr)
 		free(*arr);
