@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 21:55:34 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/16 02:04:59 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/20 01:07:02 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	command_in_child(t_node *node, t_exec_info *info)
 		cmdpath = get_cmdpath(node->cmd_args[0], info);
 		if (!cmdpath)
 			cmd_not_found(node->cmd_args[0], info);
-		if (execve(cmdpath, node->cmd_args, g_info.env) < 0)
+		if (execve(cmdpath, node->cmd_args, g_env) < 0)
 		{
 			write(STDERR_FILENO, "minishell: ", 11);
 			info->exit_code = EXIT_CMD_NOT_FOUND;

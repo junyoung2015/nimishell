@@ -13,9 +13,9 @@ void	env(t_node *node, t_exec_info *info)
 		info->exit_code = EXIT_CMD_NOT_FOUND;
 		return ;
 	}
-	while (g_info.env && g_info.env[i])
+	while (g_env && g_env[i])
 	{
-		write(STDOUT_FILENO, g_info.env[i], ft_strlen(g_info.env[i]));
+		write(STDOUT_FILENO, g_env[i], ft_strlen(g_env[i]));
 		write(STDOUT_FILENO, "\n", 1);
 		i++;
 	}
