@@ -53,7 +53,34 @@ char	*ft_getenv(char *env_var)
 	return (0);
 }
 
-char	*substitute(char *env_var)
+char	*wrap_env_var(char *env_var, char *quote)
+{
+	char	*tmp;
+	char	*wrapper;
+
+	tmp = env_var;
+	if (is_squote(*env_var))
+		wrapper = "\"";
+	else
+		wrapper = "'";
+	env_var = ft_strjoin(wrapper, env_var);
+	free(tmp);
+	tmp = env_var;
+	env_var = ft_strjoin(env_var, wrapper);
+	free(tmp);
+	if (quote)
+	{
+		tmp = env_var;
+		env_var = ft_strjoin(env_var, quote);
+		free(tmp);
+		tmp = env_var;
+		env_var = ft_strjoin(quote, env_var);
+		free(tmp);
+	}
+	return (env_var);
+}
+
+char	*substitute(char *env_var, char *quote)
 {
 	char	*result;
 	char	*key;
@@ -65,7 +92,10 @@ char	*substitute(char *env_var)
 		return (0);
 	value = ft_strchr(key, '=');
 	if (value)
-		result = ft_strdup(value + 1);
+	{
+		result = ft_strtrim(value + 1, " ");
+		result = wrap_env_var(result, quote);
+	}
 	return (result);
 }
 
@@ -99,7 +129,7 @@ char	*process_normal(char **input)
 		env_var = ft_substr(start, 0, *input - start);
 		if (!env_var)
 			return (result);
-		substituted = substitute(env_var);
+		substituted = substitute(env_var, 0);
 		result = ft_strjoin(tmp, substituted);
 		free(substituted);
 	}
@@ -205,7 +235,7 @@ char	*process_dquote(char **input)
 					env_var = ft_substr(start, 0, *input - start);
 					if (!env_var)
 						return (0);
-					substituted = substitute(env_var);
+					substituted = substitute(env_var, "\"");
 					result = ft_strjoin(tmp, substituted);
 					free(substituted);
 					free(env_var);
@@ -251,10 +281,13 @@ char	*check_env_var(char *cmd_arg)
 		process_normal,
 		process_squote,
 		process_dquote,
+		process_normal
 	};
 
 	result = 0;
 	state = update_state(*cmd_arg);
+	if (state == END)
+		return (ft_strdup(cmd_arg));
 	while (*cmd_arg && state != END)
 	{
 		tmp = result;
@@ -265,8 +298,6 @@ char	*check_env_var(char *cmd_arg)
 		free(substr);
 		free(tmp);
 		state = update_state(*cmd_arg);
-		if (META_CH <= state && state <= END)
-			break ;
 	}
 	return (result);
 }
