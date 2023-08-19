@@ -65,7 +65,7 @@ char	*substitute(char *env_var)
 		return (0);
 	value = ft_strchr(key, '=');
 	if (value)
-		result = ft_strtrim(value + 1, ' ');
+		result = ft_strdup(value + 1);
 	return (result);
 }
 
