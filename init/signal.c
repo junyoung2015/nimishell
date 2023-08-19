@@ -11,16 +11,20 @@ void sig_handler(int signal)
 	}
 }
 
-void	set_ignore_signal(void)
+void	set_signal(pid_t pid, t_bool flag)
 {
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGINT, SIG_IGN);
-}
-
-void    set_child_signal(void)
-{
-    signal(SIGQUIT, SIG_DFL);
-    signal(SIGINT, SIG_DFL);
+	if (flag)
+		return ;
+	if (!pid)
+	{
+		signal(SIGQUIT, SIG_DFL);
+		signal(SIGINT, SIG_DFL);
+	}
+	else
+	{
+		signal(SIGQUIT, SIG_IGN);
+		signal(SIGINT, SIG_IGN);
+	}
 }
 
 void    set_parent_signal(void)
