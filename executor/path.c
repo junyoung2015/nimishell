@@ -73,7 +73,7 @@ char	*get_cmdpath(char *cmd, t_exec_info *info)
 		return (NULL);
 	if (cmd[0] == '/' || (cmd[0] == '.' && cmd[1] == '/'))
 		return (cmd);
-	path = get_path(g_info.env, cmd, info);
+	path = get_path(g_env, cmd, info);
 	i = 0;
 	while (path && path[i])
 	{

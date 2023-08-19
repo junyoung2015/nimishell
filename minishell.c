@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-t_global_info g_info;
+char	**g_env;
 
 /**
  * @brief	Display err msg and exit with exit code. Free AST node if exists.
@@ -96,25 +96,27 @@ void print_tokens(t_token *tokens, t_size num_tokens)
 
 # endif
 
-void	init_g_info(char **envp, t_size *env_cnt)
+static void	init_sh_info(char **envp, t_sh_info *info)
 {
 	t_size	i;
 	t_size	cnt;
 
+	info->ast = 0;
+	info->exit_code = 0;
 	cnt = 0;
 	while (envp && envp[cnt])
 		cnt++;
-	*env_cnt = cnt;
-	g_info.env = ft_calloc((cnt + 1), sizeof(char *));
+	info->env_cnt = cnt;
+	g_env = ft_calloc((cnt + 1), sizeof(char *));
 	// 널가드 추가
 	i = 0;
 	while (i < cnt)
 	{
-		g_info.env[i] = ft_strdup(envp[i]);
+		g_env[i] = ft_strdup(envp[i]);
 		// 널가드
 		i++;
 	}
-	g_info.env[i] = NULL;
+	g_env[i] = NULL;
 }
 
 // Set terminal to not print ^C when Ctrl-C is pressed
@@ -144,21 +146,16 @@ void	init_terminal(void)
 
 int	main(int ac, char **av, char **envp)
 {
-	int			exit_code;
+	t_sh_info	info;
 	char		*line;
 	char		*pwd;
-	t_size		env_cnt;
 	t_size		num_tokens;
-	t_node		*ast;
 	t_token		*tokens;
-	// t_global_info	g_info;
 
 	(void) ac;
 	(void) av;
-	init_g_info(envp, &env_cnt);
+	init_sh_info(envp, &info);
 	tokens = 0;
-	ast = 0;
-	exit_code = 0;
 	init_terminal();
 	print_logo();
 	while (TRUE)
@@ -193,15 +190,14 @@ int	main(int ac, char **av, char **envp)
 				{
 					// if (DEBUG)
 					// 	print_tokens(tokens, num_tokens);
-					ast = parse_tokens(tokens, num_tokens);
+					info.ast = parse_tokens(tokens, num_tokens);
 					// if (ast && DEBUG)
 					// {
 					// 	printf("\n=================== AST ==================\n");
 					// 	print_ast(ast, 0, "");
 					// 	printf("==========================================\n");
 					// }
-					exit_code = executor(ast, &env_cnt);
-					g_info.exit_status = exit_code; // do I need this here?
+					info.exit_code = executor(&info);
 				}
 			}
 			if (tokens)
@@ -214,6 +210,6 @@ int	main(int ac, char **av, char **envp)
 		else
 			break ;
 	}
-	exit(exit_code);
+	exit(info.exit_code);
 	return (0);
 }

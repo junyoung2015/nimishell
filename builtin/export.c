@@ -30,15 +30,15 @@ void	append_last(char *arg, t_exec_info *info)
 		return ;
 	}
 	i = 0;
-	while (g_info.env && g_info.env[i])
+	while (g_env && g_env[i])
 	{
-		env[i] = g_info.env[i];
-		g_info.env[i++] = NULL;
+		env[i] = g_env[i];
+		g_env[i++] = NULL;
 	}
 	env[i++] = str;
 	env[i] = NULL;
-	free(g_info.env);
-	g_info.env = env;
+	free(g_env);
+	g_env = env;
 	info->env_cnt += 1;
 }
 
@@ -48,15 +48,15 @@ void	print_env()
 	size_t	len;
 
 	i = 0;
-	while (g_info.env && g_info.env[i])
+	while (g_env && g_env[i])
 	{
 		write(STDOUT_FILENO, "declare -x ", 11);
 		len = 0;
-		while (g_info.env[i][len] != '=')
+		while (g_env[i][len] != '=')
 			len++;
-		write(STDOUT_FILENO, g_info.env[i], ++len);
+		write(STDOUT_FILENO, g_env[i], ++len);
 		write(STDOUT_FILENO, "\"", 1);
-		write(STDOUT_FILENO, g_info.env[i] + len, ft_strlen(g_info.env[i]) - len);
+		write(STDOUT_FILENO, g_env[i] + len, ft_strlen(g_env[i]) - len);
 		write(STDOUT_FILENO, "\"\n", 2);
 		i++;
 	}
@@ -68,15 +68,15 @@ void	add_env(char *arg, t_exec_info *info)
 	char	*str;
 
 	i = 0;
-	while (g_info.env && g_info.env[i])
+	while (g_env && g_env[i])
 	{
-		if (is_in_env(arg, g_info.env[i]))
+		if (is_in_env(arg, g_env[i]))
 		{
 			str = ft_strdup(arg);
 			if (str)
 			{
-				free(g_info.env[i]);
-				g_info.env[i] = str;
+				free(g_env[i]);
+				g_env[i] = str;
 			}
 			else
 				err("minishell: malloc", info);

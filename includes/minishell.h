@@ -168,8 +168,14 @@ typedef struct s_search_info
 	t_size	*prev_pos;
 } t_search;
 
-// TODO: re-write the global variable 'extern' declaration
-extern t_global_info g_info;
+typedef struct s_minishell_info
+{
+	t_size	env_cnt;
+	int		exit_code;
+	t_node	*ast;
+} t_sh_info;
+
+extern char	**g_env;
 
 /* ================== MACRO ================== */
 # define STD_IN					0
@@ -247,11 +253,11 @@ char			*ft_itoa(int n);
 char			**ft_split(char const *str, char c);
 /* ================ EXPANSION ================ */
 typedef t_bool	(*t_cmp)(char);
-typedef	char	*(*t_process_fn)(char **);
+// typedef	char	*(*t_process_fn)(char **);
 typedef	char	*(*t_trim_fn)(char **, t_cmp);
 int				cmp_ascii(void *a, void *b);
 void			ft_qsort(void **arr, t_ssize low, t_ssize high, int (*cmp)(void *, void *));
-char			**env_substitution(t_node *node);
+// char			**env_substitution(t_node *node);
 char		    **remove_quotes(t_node *node);
 char			**wildcard_substitution(t_node *node);
 char			*trim_outer_quotes(char *cmd_arg);
@@ -382,7 +388,7 @@ t_type			cur_type(t_parser *parser);
 t_type			peek(t_parser *parser);
 
 /* ================== EXECUTOR ================== */
-int				executor(t_node *ast, t_size *env_cnt);
+int				executor(t_sh_info *sh_info);
 
 /* ================= SIGNAL ================== */
 void    		set_parent_signal(void);
