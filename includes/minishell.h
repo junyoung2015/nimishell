@@ -230,9 +230,21 @@ int				ft_strcmp(const char *s1, const char *s2);
 int				ft_strncmp(const char *s1, const char *s2, t_size n);
 t_size			ft_strlen(const char *str);
 t_size			ft_strlcpy(char *dst, const char *src, t_size dstsize);
-char			*ft_itoa(int n);
-char			*ft_strchr(const char *s, int c);
 
+/* =============== STR_UTILS_2 ================ */
+char			*ft_strchr(const char *s, int c);
+char			*ft_strrchr(const char *s, int c);
+char			*ft_strnstr(const char *haystack, const char *needle, t_size n);
+
+
+/* ============ STR_UTILS_CREATE ============= */
+char			*ft_strtrim(char const *s1, char const *s2);
+char			*ft_strdup(char *src);
+char			*ft_substr(char const *s, t_size start, t_size len);
+char			*ft_strjoin(char const *s1, char const *s2);
+
+char			*ft_itoa(int n);
+char			**ft_split(char const *str, char c);
 /* ================ EXPANSION ================ */
 typedef t_bool	(*t_cmp)(char);
 typedef	char	*(*t_process_fn)(char **);
@@ -274,13 +286,6 @@ t_size			ft_arrlen(char **arr);
 t_size			ft_arrcat(char ***arr, char **new_arr, t_size size);
 t_size 			ft_arr_append(char ***arr, char *str, t_size size);
 
-/* ============ STR_UTILS_CREATE ============= */
-char			*ft_strtrim(char *str, char c);
-char			*ft_strdup(char *src);
-char			*ft_substr(char const *s, t_size start, t_size len);
-char			**ft_split(char const *str, char c);
-char			*ft_strjoin(char const *s1, char const *s2);
-char			*ft_strnstr(const char *haystack, const char *needle, t_size n);
 
 /* ================ TOKENIZER ================ */
 typedef t_token *(*t_tokenizer_fn)(char **, t_state *);
