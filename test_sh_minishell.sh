@@ -18,7 +18,6 @@ expect "" ;
 ##########
 
 ### Test 1 ###
-send "pwd\r"
 expect {
 	"$env(HOME)/nimishell" {
 		send_user "\n${green}Test ${count} passed${default}\n" ;
@@ -619,7 +618,7 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
-### Test 42 - 43 ###
+### Test 42 - 45 ###
 ### Test 42 ###
 # Export with whitespaces and quotes - by. seojichoi
 send "export a=\"             \'a\'  \"\r";
@@ -639,6 +638,77 @@ set count [ expr \$count + 1 ] ;
 send "echo \$a\r";
 expect {
 	"\'a\'" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 44 ###
+# Export with whitespaces and quotes - by. seojichoi
+send "export b=\'             \"b\"  \'\r";
+expect {
+	"" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 45 ###
+# Export with whitespaces and quotes - by. seojichoi
+send "echo \$b\r";
+expect {
+	"\"b\"" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+##########
+########## Test for unmatched quotes and parenthesis ##########
+##########
+
+### Test 46 ###
+send "echo \'\r";
+expect {
+	"minishell: syntax error: unmatched quote" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 47 ###
+send "echo (()\r";
+expect {
+	"minishell: syntax error: unmatched parenthesis" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 48 ###
+send "echo ))((\r";
+expect {
+	"minishell: syntax error: unmatched parenthesis" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
