@@ -619,6 +619,35 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 42 - 43 ###
+### Test 42 ###
+# Export with whitespaces and quotes - by. seojichoi
+send "export a=\"             \'a\'  \"\r";
+expect {
+	"" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 43 ###
+# Export with whitespaces and quotes - by. seojichoi
+send "echo \$a\r";
+expect {
+	"\'a\'" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
 # Finish
 send "exit\r"
 expect eof
