@@ -53,25 +53,34 @@ char	*ft_getenv(char *env_var)
 	return (0);
 }
 
-char	*wrap_env_var(char *env_var)
+char	*wrap_env_var(char *env_var, char *quote)
 {
 	char	*tmp;
-	char	*quote;
+	char	*wrapper;
 
 	tmp = env_var;
 	if (is_squote(*env_var))
-		quote = "\"";
+		wrapper = "\"";
 	else
-		quote = "'";
-	env_var = ft_strjoin(quote, env_var);
+		wrapper = "'";
+	env_var = ft_strjoin(wrapper, env_var);
 	free(tmp);
 	tmp = env_var;
-	env_var = ft_strjoin(env_var, quote);
+	env_var = ft_strjoin(env_var, wrapper);
 	free(tmp);
+	if (quote)
+	{
+		tmp = env_var;
+		env_var = ft_strjoin(env_var, quote);
+		free(tmp);
+		tmp = env_var;
+		env_var = ft_strjoin(quote, env_var);
+		free(tmp);
+	}
 	return (env_var);
 }
 
-char	*substitute(char *env_var)
+char	*substitute(char *env_var, char *quote)
 {
 	char	*result;
 	char	*key;
@@ -85,7 +94,7 @@ char	*substitute(char *env_var)
 	if (value)
 	{
 		result = ft_strtrim(value + 1, " ");
-		// result = wrap_env_var(result);
+		result = wrap_env_var(result, quote);
 	}
 	return (result);
 }
@@ -120,7 +129,7 @@ char	*process_normal(char **input)
 		env_var = ft_substr(start, 0, *input - start);
 		if (!env_var)
 			return (result);
-		substituted = substitute(env_var);
+		substituted = substitute(env_var, 0);
 		result = ft_strjoin(tmp, substituted);
 		free(substituted);
 	}
@@ -226,7 +235,7 @@ char	*process_dquote(char **input)
 					env_var = ft_substr(start, 0, *input - start);
 					if (!env_var)
 						return (0);
-					substituted = substitute(env_var);
+					substituted = substitute(env_var, "\"");
 					result = ft_strjoin(tmp, substituted);
 					free(substituted);
 					free(env_var);
