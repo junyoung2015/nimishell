@@ -386,8 +386,6 @@ int				executor(t_node *ast, t_size *env_cnt);
 
 /* ================= SIGNAL ================== */
 void    		set_parent_signal(void);
-void    		set_child_signal(void);
-void			set_ignore_signal(void);
-
+void    		set_signal(pid_t pid, t_bool flag);
 
 #endif
