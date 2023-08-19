@@ -96,10 +96,10 @@ void print_tokens(t_token *tokens, t_size num_tokens)
 
 # endif
 
-void	init_g_info(char **envp, size_t *env_cnt)
+void	init_g_info(char **envp, t_size *env_cnt)
 {
-	size_t	i;
-	size_t	cnt;
+	t_size	i;
+	t_size	cnt;
 
 	cnt = 0;
 	while (envp && envp[cnt])
@@ -142,42 +142,29 @@ void	init_terminal(void)
 	}
 }
 
-// handle SIGINT to print new line
-void sig_handler(int signal)
-{	
-	if (signal == SIGINT)
-	{
-		write(STD_OUT, "\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 1);
-		rl_redisplay();
-	}
-}
-
 int	main(int ac, char **av, char **envp)
 {
-	(void) ac;
-	(void) av;
-	size_t		env_cnt;
 	int			exit_code;
 	char		*line;
 	char		*pwd;
-	t_token		*tokens;
+	t_size		env_cnt;
 	t_size		num_tokens;
 	t_node		*ast;
+	t_token		*tokens;
 	// t_global_info	g_info;
 
+	(void) ac;
+	(void) av;
 	init_g_info(envp, &env_cnt);
 	tokens = 0;
 	ast = 0;
 	exit_code = 0;
 	init_terminal();
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGINT, sig_handler);
 	print_logo();
 	while (TRUE)
 	{
 		num_tokens = 0;
+		set_parent_signal();
 		pwd = get_prompt();
 		line = readline(pwd);
 		if (line)
@@ -224,6 +211,8 @@ int	main(int ac, char **av, char **envp)
 			free(pwd);
 			line = 0;
 		}
+		else
+			break ;
 	}
 	exit(exit_code);
 	return (0);

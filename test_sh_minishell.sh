@@ -4,12 +4,12 @@ spawn ./minishell
 
 set green "\033\[1;32;40m"
 set red "\033\[1;31m"
-# set yellow "\033\[1;33m"
 set default "\033\[0m"
 set count 1
 
 set timeout 2
 
+### Test 0 ###
 send "\r"
 expect "" ;
 
@@ -18,10 +18,9 @@ expect "" ;
 ##########
 
 ### Test 1 ###
-send "pwd\r"
 expect {
 	"$env(HOME)/nimishell" {
-		send_user "${green}Test ${count} passed${default}\n" ;
+		send_user "\n${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
 		send_user "${red}Test ${count} failed${default}\n" ;
@@ -596,6 +595,120 @@ set count [ expr \$count + 1 ] ;
 send "echo \$USER\$USER\$USER../\$USER?\$.USER~\r"
 expect {
 	"../?$.USER~" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 41 ###
+# Send Ctrl-C (SIGINT)
+send \x03
+expect {
+	"\n" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 42 - 45 ###
+### Test 42 ###
+# Export with whitespaces and quotes - by. seojichoi
+send "export a=\"             \'a\'  \"\r";
+expect {
+	"" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 43 ###
+# Export with whitespaces and quotes - by. seojichoi
+send "echo \$a\r";
+expect {
+	"\'a\'" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 44 ###
+# Export with whitespaces and quotes - by. seojichoi
+send "export b=\'             \"b\"  \'\r";
+expect {
+	"" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 45 ###
+# Export with whitespaces and quotes - by. seojichoi
+send "echo \$b\r";
+expect {
+	"\"b\"" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+##########
+########## Test for unmatched quotes and parenthesis ##########
+##########
+
+### Test 46 ###
+send "echo \'\r";
+expect {
+	"minishell: syntax error: unmatched quote" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 47 ###
+send "echo (()\r";
+expect {
+	"minishell: syntax error: unmatched parenthesis" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 48 ###
+send "echo ))((\r";
+expect {
+	"minishell: syntax error: unmatched parenthesis" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {

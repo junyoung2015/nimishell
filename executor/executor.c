@@ -12,7 +12,7 @@
 
 #include "executor.h"
 
-void	init_info(t_exec_info *info, t_node *ast, size_t env_cnt)
+void	init_info(t_exec_info *info, t_node *ast, t_size env_cnt)
 {
 	info->ast = ast;
 	info->env_cnt = env_cnt;
@@ -40,11 +40,12 @@ void	close_fd(t_exec_info *info)
 		close(info->fd_out);
 }
 
-int	executor(t_node *ast, size_t *env_cnt)
+int	executor(t_node *ast, t_size *env_cnt)
 {
 	t_exec_info	info;	
-	size_t		i;
+	t_size		i;
 	int			status;
+	int			sig_num;
 
 	init_info(&info, ast, *env_cnt);
 	ast_search(ast, &info);
@@ -59,6 +60,15 @@ int	executor(t_node *ast, size_t *env_cnt)
 	{
 		wait(NULL);
 		i++;
+	}
+	if (WIFSIGNALED(status))
+	{
+		sig_num = WTERMSIG(status);
+		if (sig_num == SIGINT)
+			write(STD_ERR, "^C\n", 3);
+		else if (sig_num == SIGQUIT)
+			write(STD_ERR, "^\\Quit: 3\n", 10);
+		return (128 + sig_num);
 	}
 	return (WEXITSTATUS(status));
 }

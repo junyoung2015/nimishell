@@ -37,12 +37,8 @@ char	*trim_outer_quotes(char *cmd_arg)
 	char			*trimmed;
 	char			*result;
 	char			*tmp;
-	t_state	state;
-	const t_cmp		cmp[] = {
-		is_quote,
-		is_squote,
-		is_dquote,
-	};
+	t_state			state;
+	const t_cmp		cmp[] = { is_quote, is_squote, is_dquote };
 
 	result = 0;
 	state = update_state(*cmd_arg);
