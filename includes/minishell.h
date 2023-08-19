@@ -211,8 +211,8 @@ extern t_global_info g_info;
 # define NOT_VALID_ID			"not a valid identifier\n"
 # define CMD_NOT_FOUND			"command not found\n"
 # define NO_FILE_DIR			"No such file or directory\n"
-# define QUOTE_NOT_CLOSED		"Syntax Error: unmatched quote\n"
-# define PAREN_NOT_CLOSED		"Syntax Error: unmatched parenthesis\n"
+# define QUOTE_NOT_CLOSED		"minishell: syntax error: unmatched quote\n"
+# define PAREN_NOT_CLOSED		"minishell: syntax error: unmatched parenthesis\n"
 # define MALLOC_ERR				"malloc() error."
 
 /* ================== INIT ================== */
