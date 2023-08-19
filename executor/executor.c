@@ -45,6 +45,7 @@ int	executor(t_node *ast, t_size *env_cnt)
 	t_exec_info	info;	
 	t_size		i;
 	int			status;
+	int			sig_num;
 
 	init_info(&info, ast, *env_cnt);
 	ast_search(ast, &info);
@@ -59,6 +60,15 @@ int	executor(t_node *ast, t_size *env_cnt)
 	{
 		wait(NULL);
 		i++;
+	}
+	if (WIFSIGNALED(status))
+	{
+		sig_num = WTERMSIG(status);
+		if (sig_num == SIGINT)
+			write(STD_ERR, "^C\n", 3);
+		else if (sig_num == SIGQUIT)
+			write(STD_ERR, "^\\Quit\n", 7);
+		return (128 + sig_num);
 	}
 	return (WEXITSTATUS(status));
 }
