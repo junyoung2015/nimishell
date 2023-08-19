@@ -67,7 +67,7 @@ int	executor(t_node *ast, t_size *env_cnt)
 		if (sig_num == SIGINT)
 			write(STD_ERR, "^C\n", 3);
 		else if (sig_num == SIGQUIT)
-			write(STD_ERR, "^\\Quit\n", 7);
+			write(STD_ERR, "^\\Quit: 3\n", 10);
 		return (128 + sig_num);
 	}
 	return (WEXITSTATUS(status));
