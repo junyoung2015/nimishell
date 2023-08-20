@@ -14,9 +14,9 @@ char	*get_env(char *env_var)
 	char		*tmp;
 
 	i = 0;
-	while (g_info.env && g_info.env[i])
+	while (g_env && g_env[i])
 	{
-		start = g_info.env[i];
+		start = g_env[i];
 		end = ft_strchr(start, '=');
 		if (!end)
 			return (0);
@@ -47,15 +47,15 @@ void	append_new_env(char *new_env, t_exec_info *info)
 		return ;
 	}
 	i = 0;
-	while (g_info.env && g_info.env[i])
+	while (g_env && g_env[i])
 	{
-		env[i] = g_info.env[i];
-		g_info.env[i++] = 0;
+		env[i] = g_env[i];
+		g_env[i++] = 0;
 	}
 	env[i++] = new_env;
 	env[i] = 0;
-	free(g_info.env);
-	g_info.env = env;
+	free(g_env);
+	g_env = env;
 }
 
 /**
@@ -71,16 +71,16 @@ void	update_env(char *new_env, t_exec_info *info)
 	char	*tmp;
 
 	i = -1;
-	while (g_info.env && g_info.env[++i])
+	while (g_env && g_env[++i])
 	{
-		start = g_info.env[i];
+		start = g_env[i];
 		if (ft_strchr(start, '='))
 		{
 			tmp = ft_substr(start, 0, ft_strchr(start, '=') - start);
 			if (tmp && ft_strncmp(tmp, new_env, ft_strlen(tmp)) == 0)
 			{
-				free(g_info.env[i]);
-				g_info.env[i] = new_env;
+				free(g_env[i]);
+				g_env[i] = new_env;
 				free(tmp);
 				return ;
 			}

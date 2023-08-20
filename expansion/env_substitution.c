@@ -1,5 +1,5 @@
 
-#include "minishell.h"
+#include "executor.h"
 
 int	is_alnum(int c)
 {
@@ -32,9 +32,9 @@ char	*ft_getenv(char *env_var)
 	char	*tmp;
 
 	i = 0;
-	while (g_info.env && g_info.env[i])
+	while (g_env && g_env[i])
 	{
-		start = g_info.env[i];
+		start = g_env[i];
 		if (start)
 			end = ft_strchr(start, '=');
 		else
@@ -99,7 +99,7 @@ char	*substitute(char *env_var, char *quote)
 	return (result);
 }
 
-char	*process_normal(char **input)
+char	*process_normal(char **input, t_exec_info *info)
 {
 	char	*start;
 	char	*tmp;
@@ -135,7 +135,7 @@ char	*process_normal(char **input)
 	}
 	else if (**input == '?')
 	{
-		substituted = ft_itoa(g_info.exit_status);
+		substituted = ft_itoa(info->prev_exit_code);
 		result = ft_strjoin(tmp, substituted);
 		free(substituted);
 		(*input)++;
@@ -159,11 +159,12 @@ char	*process_normal(char **input)
 	return (result);
 }
 
-char	*process_squote(char **input)
+char	*process_squote(char **input, t_exec_info *info)
 {
 	char	*start;
 	char	*result;
 
+	(void)info;
 	start = *input;
 	(*input)++;
 	while(**input && !is_squote(**input))
@@ -183,7 +184,7 @@ char	*process_squote(char **input)
  * @param state 
  * @return char* 
  */
-char	*process_dquote(char **input)
+char	*process_dquote(char **input, t_exec_info *info)
 {
 	char	*start;
 	char	*end;
@@ -220,7 +221,7 @@ char	*process_dquote(char **input)
 				(*input)++;
 				if (**input == '?')
 				{
-					substituted = ft_itoa(g_info.exit_status);
+					substituted = ft_itoa(info->prev_exit_code);
 					result = ft_strjoin(tmp, substituted);
 					(*input)++;
 					free(substituted);
@@ -271,7 +272,7 @@ char	*process_dquote(char **input)
  * @param cmd_arg	argument to check
  * @return
  */
-char	*check_env_var(char *cmd_arg)
+char	*check_env_var(char *cmd_arg, t_exec_info *info)
 {
 	char			*result;
 	char			*substr;
@@ -291,7 +292,7 @@ char	*check_env_var(char *cmd_arg)
 	while (*cmd_arg && state != END)
 	{
 		tmp = result;
-		substr = state_fn[state](&cmd_arg);
+		substr = state_fn[state](&cmd_arg, info);
 		if (!substr)
 			return (result);
 		result = ft_strjoin(result, substr);
@@ -311,7 +312,7 @@ char	*check_env_var(char *cmd_arg)
  * @param node		node to substitute appropriate cmd_args with env var
  * @return char**	substituted cmd_args
  */
-char	**env_substitution(t_node *node)
+char	**env_substitution(t_node *node, t_exec_info *info)
 {
 	char    **result;
 	t_size  idx;
@@ -324,7 +325,7 @@ char	**env_substitution(t_node *node)
 		return (0);
 	while (idx < node->num_args)
 	{
-		result[idx] = check_env_var(node->cmd_args[idx]);
+		result[idx] = check_env_var(node->cmd_args[idx], info);
 		if (!result[idx])
 		{
 			while(idx > 0)
