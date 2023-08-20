@@ -392,8 +392,6 @@ int				executor(t_sh_info *sh_info);
 
 /* ================= SIGNAL ================== */
 void    		set_parent_signal(void);
-void    		set_child_signal(void);
-void			set_ignore_signal(void);
-
+void    		set_signal(pid_t pid, t_bool flag);
 
 #endif

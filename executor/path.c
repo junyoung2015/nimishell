@@ -13,19 +13,15 @@ char	**get_path(char **env, char *cmd, t_exec_info *info)
 		write(STDERR_FILENO, "minishell: ", 11);
 		write(STDERR_FILENO, cmd, ft_strlen(cmd));
 		write(STDERR_FILENO, ": No such file or directory\n", 28);
-		info->exit_code = EXIT_CMD_NOT_FOUND; 
-		err_exit(info, NULL);
+		err_exit(info, NULL, EXIT_CMD_NOT_FOUND);
 	}
 	path = ft_split(env[i] + 5, ':');
 	if (!path)
-	{
-		info->exit_code = EXIT_FAILURE;
-		err_exit(info, "minishell: malloc");
-	}
+		err_exit(info, "minishell: malloc", EXIT_FAILURE);
 	return (path);
 }
 
-char	*join_path(char *path, char *cmd, t_exec_info *info)
+char	*join_path(char *path, char *cmd)
 {
 	int		len;
 	char	*filepath;
@@ -33,10 +29,7 @@ char	*join_path(char *path, char *cmd, t_exec_info *info)
 	len = ft_strlen(path) + ft_strlen(cmd) + 1;
 	filepath = (char *)malloc(sizeof(char) * (len + 1));
 	if (!filepath)
-	{
-		info->exit_code = EXIT_FAILURE;
 		return (NULL);
-	}
 	while (*path)
 		*filepath++ = *path++;
 	*filepath++ = '/';
@@ -56,8 +49,7 @@ t_bool	check_access(char *filepath, char **path, char *cmd, t_exec_info *info)
 		{
 			free_ptr(path);
 			write(STDERR_FILENO, "minishell: ", 11);
-			info->exit_code = EXIT_NOT_EXECUTABLE;
-			err_exit(info, cmd);
+			err_exit(info, cmd, EXIT_NOT_EXECUTABLE);
 		}
 	}
 	return (FALSE);
@@ -77,11 +69,11 @@ char	*get_cmdpath(char *cmd, t_exec_info *info)
 	i = 0;
 	while (path && path[i])
 	{
-		cmdpath = join_path(path[i], cmd, info);
+		cmdpath = join_path(path[i], cmd);
 		if (!cmdpath)
 		{
 			free_ptr(path);
-			err_exit(info, "minishell: malloc");
+			err_exit(info, "minishell: malloc", EXIT_FAILURE);
 		}
 		if (check_access(cmdpath, path, cmd, info))
 			return (cmdpath);
