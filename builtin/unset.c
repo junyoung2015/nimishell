@@ -21,9 +21,9 @@ size_t	get_idx(char *key)
 	size_t	idx;
 
 	idx = 0;
-	while (g_info.env && g_info.env[idx])
+	while (g_env && g_env[idx])
 	{
-		if (is_env(key, g_info.env[idx]))
+		if (is_env(key, g_env[idx]))
 			return (idx);
 		idx++;
 	}
@@ -48,12 +48,12 @@ void	remove_env(t_exec_info *info, size_t idx)
 	{
 		if (i == idx)
 			j = 1;
-		env[i] = g_info.env[i + j];
-		g_info.env[i++ + j] = NULL;
+		env[i] = g_env[i + j];
+		g_env[i++ + j] = NULL;
 	}
-	free(g_info.env[idx]);
-	free(g_info.env);
-	g_info.env = env;
+	free(g_env[idx]);
+	free(g_env);
+	g_env = env;
 	info->env_cnt -= 1;
 }
 
@@ -73,7 +73,7 @@ void	unset(t_node *node, t_exec_info *info)
 		else if (result >> 1)
 		{
 			idx = get_idx(node->cmd_args[i]);
-			if (g_info.env[idx])
+			if (g_env[idx])
 				remove_env(info, idx);
 		}
 		i++;

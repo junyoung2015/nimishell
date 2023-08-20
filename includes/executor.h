@@ -19,7 +19,7 @@
 # include <stdio.h>
 # include "minishell.h"
 
-typedef struct s_exec_info
+typedef struct s_executor_info
 {
 	int		stdin_fd;
 	int		stdout_fd;
@@ -30,12 +30,15 @@ typedef struct s_exec_info
 	t_bool	is_fork;
 	size_t	fork_cnt;
 	pid_t	pid;
+	int		prev_exit_code;
 	int		exit_code;
 	int		pipe[2];
 	int		prev_pipe;
 }	t_exec_info;
 
 void	ast_search(t_node *root, t_exec_info *info);
+char	**env_substitution(t_node *node, t_exec_info *info);
+typedef	char	*(*t_process_fn)(char **, t_exec_info *);
 
 /* pipe */
 void	open_pipe(t_node *node, t_exec_info *info);
