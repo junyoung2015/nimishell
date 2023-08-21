@@ -5,6 +5,7 @@ t_search	*get_all_files(char *first_arg)
 	DIR				*dir;
 	struct dirent	*entry;
 	char			**result;
+	char            *tmp;
 	t_size			size;
 	t_search		*info;
 
@@ -18,6 +19,16 @@ t_search	*get_all_files(char *first_arg)
 		entry = readdir(dir);
 		if (!entry)
 			break ;
+		else if (ft_strlen(first_arg) > 1 && first_arg[0] == '.' && first_arg[1] == '/')
+		{
+			if (entry->d_name[0] != '.')
+			{
+				tmp = ft_strjoin("./", entry->d_name);
+				size = ft_arr_append(&result, tmp, size);
+				if (!size)
+					break ;
+			}
+		}
 		else if (entry->d_name[0] != '.' || (first_arg && *first_arg == '.'))
 		{
 			size = ft_arr_append(&result, ft_strdup(entry->d_name), size);
