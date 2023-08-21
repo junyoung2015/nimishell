@@ -116,8 +116,6 @@
 #define ROW12	"\2\5\6\6\4\4\4\4\2\0\2\2\2"
 #define ROW13	"\2\5\6\6\4\4\4\4\2\0\2\2\2"
 
-typedef t_node *(*t_parser_fn)(t_parser *parser, t_node *parent);
-
 char	*parse_word(t_parser *parser, t_node *parent);
 t_node	*parse_word_list(t_parser *parser, t_node *parent);
 t_node	*parse_redir(t_parser *parser, t_node *parent);

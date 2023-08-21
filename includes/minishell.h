@@ -250,7 +250,6 @@ char			*ft_strchr(const char *s, int c);
 char			*ft_strrchr(const char *s, int c);
 char			*ft_strnstr(const char *haystack, const char *needle, t_size n);
 
-
 /* ============ STR_UTILS_CREATE ============= */
 char			*ft_strtrim(char const *s1, char const *s2);
 char			*ft_strdup(char *src);
@@ -262,7 +261,6 @@ char			**ft_split(char const *str, char c);
 /* ================ EXPANSION ================ */
 typedef t_bool	(*t_cmp)(char);
 // typedef	char	*(*t_process_fn)(char **);
-typedef	char	*(*t_trim_fn)(char **, t_cmp);
 int				cmp_ascii(void *a, void *b);
 void			ft_qsort(void **arr, t_ssize low, t_ssize high, int (*cmp)(void *, void *));
 // char			**env_substitution(t_node *node);
@@ -302,8 +300,6 @@ t_size 			ft_arr_append(char ***arr, char *str, t_size size);
 
 
 /* ================ TOKENIZER ================ */
-typedef t_token *(*t_tokenizer_fn)(char **, t_state *);
-
 t_token 		*tokenize_input(char *input, t_size alloced, t_size *num_tokens);
 t_bool			init_tokenizer(char *input, t_token **tokens, t_size *alloced,  t_state *state);
 
