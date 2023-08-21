@@ -32,16 +32,6 @@ void	*ft_calloc(t_size count, t_size size)
 	return (ptr);
 }
 
-void	*ft_memset(void *b, int c, t_size len)
-{
-	unsigned char	*tmp;
-
-	tmp = (unsigned char *) b;
-	while (0 < len--)
-		*(tmp++) = (unsigned char) c;
-	return (b);
-}
-
 void	*ft_memcpy(void *dst, const void *src, t_size n)
 {
 	unsigned char	*tmp_dst;

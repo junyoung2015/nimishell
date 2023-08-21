@@ -238,7 +238,6 @@ char		    *get_prompt(void);
 /* ============== MEMORY_UTILS =============== */
 void			ft_bzero(void *s, t_size n);
 void			*ft_calloc(t_size count, t_size size);
-void			*ft_memset(void *b, int c, t_size len);
 void			*ft_memcpy(void *dst, const void *src, t_size n);
 
 /* ================ STR_UTILS ================ */
