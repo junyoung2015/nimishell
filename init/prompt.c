@@ -2,8 +2,8 @@
 
 void	get_git_branch(char *branch)
 {
-	int	fd;
-	int	size;
+	int     fd;
+	t_ssize	size;
 
 	if (access(GIT_BRANCH, F_OK) == -1)
 		ft_strlcpy(branch, "", 2);
