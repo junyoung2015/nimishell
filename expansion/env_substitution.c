@@ -1,16 +1,16 @@
 
 #include "executor.h"
 
-int	is_number(int c)
+t_bool	is_number(int c)
 {
 	return ('0' <= c && c <= '9');
 }
 
-int	is_alpha(int c)
+t_bool	is_alpha(int c)
 {
 	return (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z'));
 }
-int	is_alnum(int c)
+t_bool	is_alnum(int c)
 {
 	return (is_number(c) || is_alpha(c));
 }
