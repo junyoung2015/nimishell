@@ -32,7 +32,7 @@ t_size	match_pattern_middle(t_search *info, char *pattern)
 	char	**result;
 	t_size	*prev_pos;
 	t_size	size;
-	t_size	idx;
+	t_ssize	idx;
 
 	size = 0;
 	result = 0;

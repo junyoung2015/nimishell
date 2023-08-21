@@ -36,7 +36,7 @@ int	ft_strncmp(const char *s1, const char *s2, t_size n)
 
 t_size	ft_strlen(const char *str)
 {
-	t_size	idx;
+	t_ssize	idx;
 
 	if (!str || !*str)
 		return (0);
