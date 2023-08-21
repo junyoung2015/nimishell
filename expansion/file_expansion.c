@@ -135,6 +135,7 @@ char	**str_expansion(t_node *node)
 			}
 			else
 				len = ft_arrcat(&result, info->files, len);
+			free_search_info(info);
 			if (!result)
 				return (0);
 		}
