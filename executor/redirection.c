@@ -44,7 +44,7 @@ int	redir_append(t_node *node, t_exec_info *info)
 
 static void	redir_err(char *filename, t_exec_info *info)
 {
-	write(STDERR_FILENO, "minishell: ", 11);
+	write(STDERR_FILENO, MINISHELL, 11);
 	perror(filename);
 	info->exit_code = EXIT_FAILURE;
 }

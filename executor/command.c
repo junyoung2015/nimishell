@@ -21,7 +21,7 @@ void	check_directory(char *cmdpath, char *cmd, t_exec_info *info, t_bool flag)
 	{
 		if (!flag)
 			free(cmdpath);
-		write(STDERR_FILENO, "minishell: ", 11);
+		write(STDERR_FILENO, MINISHELL, 11);
 		write(STDERR_FILENO, cmd, ft_strlen(cmd));
 		write(STDERR_FILENO, ": is a directory\n", 17);
 		clear_all(info->ast);
@@ -36,7 +36,7 @@ void	validate_path(char *cmdpath, char *cmd, t_exec_info *info)
 	flag = (cmd[0] == '/' || (cmd[0] == '.' && cmd[1] == '/'));
 	if (!cmdpath)
 	{	
-		write(STDERR_FILENO, "minishell: ", 11);
+		write(STDERR_FILENO, MINISHELL, 11);
 		write(STDERR_FILENO, cmd, ft_strlen(cmd));
 		write(STDERR_FILENO, ": command not found\n", 20);
 		clear_all(info->ast);
@@ -46,7 +46,7 @@ void	validate_path(char *cmdpath, char *cmd, t_exec_info *info)
 	{
 		if (!flag)
 			free(cmdpath);
-		write(STDERR_FILENO, "minishell: ", 11);
+		write(STDERR_FILENO, MINISHELL, 11);
 		err_exit(info, cmd, EXIT_NOT_EXECUTABLE);
 	}
 	check_directory(cmdpath, cmd, info, flag);
@@ -64,7 +64,7 @@ void	command_in_child(t_node *node, t_exec_info *info)
 		validate_path(cmdpath, node->cmd_args[0], info);
 		if (execve(cmdpath, node->cmd_args, g_env) < 0)
 		{
-			write(STDERR_FILENO, "minishell: ", 11);
+			write(STDERR_FILENO, MINISHELL, 11);
 			err_exit(info, node->cmd_args[0], EXIT_CMD_NOT_FOUND);
 		}
 	}
