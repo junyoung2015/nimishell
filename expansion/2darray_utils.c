@@ -23,7 +23,7 @@ t_size	ft_arrlen(char **arr)
 t_size	ft_arrcat(char ***arr, char **new_arr, t_size size)
 {
 	t_size	new;
-	t_size	idx;
+	t_ssize	idx;
 
 	if (!new_arr)
 		return (size);

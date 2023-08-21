@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-char	*trim(char	**cmd_arg, t_cmp cmp)
+char	*trim(char	**cmd_arg, t_cmp cmp, t_state *state)
 {
 	char	*tmp;
 	char	*start;
@@ -24,6 +24,8 @@ char	*trim(char	**cmd_arg, t_cmp cmp)
 		result = ft_strdup("");
 	if (**cmd_arg && cmp != is_quote && cmp(**cmd_arg))
 		(*cmd_arg)++;
+	if (state)
+		*state = update_state(**cmd_arg);
 	return (result);
 }
 
@@ -38,18 +40,17 @@ char	*trim_outer_quotes(char *cmd_arg)
 	char			*result;
 	char			*tmp;
 	t_state			state;
-	const t_cmp		cmp[] = { is_quote, is_squote, is_dquote };
+	const t_cmp		cmp[] = {is_quote, is_squote, is_dquote};
 
 	result = 0;
 	state = update_state(*cmd_arg);
 	while (*cmd_arg)
 	{
 		tmp = result;
-		trimmed = trim(&cmd_arg, cmp[state]);
+		trimmed = trim(&cmd_arg, cmp[state], &state);
 		if (!trimmed)
 			return (0);
 		result = ft_strjoin(result, trimmed);
-		state = update_state(*cmd_arg);
 		free(tmp);
 		free(trimmed);
 		if (!result)
