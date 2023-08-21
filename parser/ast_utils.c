@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:56:18 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 14:00:03 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/21 20:34:03 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ t_node	*create_node(t_node_type type)
 	new_node->left = 0;
 	new_node->right = 0;
 	new_node->pipe_open = 0;
-	new_node->parent_type = AST_NULL;
 	new_node->builtin = NOT_BUILTIN;
 	return (new_node);
 }

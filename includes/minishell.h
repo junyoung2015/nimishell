@@ -144,7 +144,6 @@ typedef struct s_node
 	struct s_node	*left;
 	struct s_node	*right;
 	int				pipe_open;
-	t_node_type		parent_type;
 	t_builtin		builtin;
 }   t_node;
 
