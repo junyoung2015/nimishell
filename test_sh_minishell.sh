@@ -9,6 +9,10 @@ set count 1
 
 set timeout 2
 
+### Test -1 ###
+send "export ORIGIN=\$PWD\r"
+expect "" ;
+
 ### Test 0 ###
 send "\r"
 expect "" ;
@@ -719,10 +723,49 @@ expect {
 set count [ expr \$count + 1 ] ;
 
 ### Test 49 ###
-send "cd nimishell\r";
+send "cd \$ORIGIN\r";
 send "echo *\r";
 expect {
 	"GRAMMAR LICENSE Makefile README.md bin builtin executor expansion include includes init lexer lib memory minishell minishell.c minishell.en.subject.pdf minishell.o parser readline-8.2.tar.gz share str test_sh_minishell.sh" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+#		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 50 ###
+send "echo ./*\r";
+expect {
+	"./GRAMMAR ./LICENSE ./Makefile ./README.md ./bin ./builtin ./executor ./expansion ./include ./includes ./init ./lexer ./lib ./memory ./minishell ./minishell.c ./minishell.en.subject.pdf ./minishell.o ./parser ./readline-8.2.tar.gz ./share ./str ./test_sh_minishell.sh" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+#		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 51 ###
+send "echo .*\r";
+expect {
+	"" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+#		exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 52 ###
+send "echo *.*.*\r";
+expect {
+	"minishell.en.subject.pdf readline-8.2.tar.gz" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
