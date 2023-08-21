@@ -267,7 +267,7 @@ void			ft_qsort(void **arr, t_ssize low, t_ssize high, int (*cmp)(void *, void *
 char		    **remove_quotes(t_node *node);
 char			**wildcard_substitution(t_node *node);
 char			*trim_outer_quotes(char *cmd_arg);
-char			*trim(char	**cmd_arg, t_cmp cmp);
+char			*trim(char	**cmd_arg, t_cmp cmp, t_state *state);
 char			**str_expansion(t_node *node);
 
 /* ============= EXPANSION_UTILS ============= */
