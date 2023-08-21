@@ -24,7 +24,7 @@ pid_t is_fork(t_node *node, t_exec_info *info)
 {
 	pid_t pid;
 
-	if (node->type != AST_CMD || (node->builtin != NOT_BUILTIN && node->parent_type != AST_PIPE))
+	if (node->type != AST_CMD || (node->builtin != NOT_BUILTIN && !node->pipe_open))
 		return (0);
 	pid = fork();
 	if (pid < 0)
@@ -62,6 +62,8 @@ void ast_search(t_node *root, t_exec_info *info)
 		return;
 	if (root->cmd_args && root->type != AST_HEREDOC)
 	{
+		if (root->pipe_open > 1)
+			info->prev_exit_code = 0;
 		root->cmd_args = env_substitution(root, info);
 		root->cmd_args = str_expansion(root);
 		root->cmd_args = remove_quotes(root);
@@ -70,10 +72,6 @@ void ast_search(t_node *root, t_exec_info *info)
 	}
 	if (root->type == AST_CMD && !root->cmd_args)
 		err("minishell: malloc", info);
-	if (root->left)
-		root->left->parent_type = root->type;
-	if (root->right)
-		root->right->parent_type = root->type;
 	open_pipe(root, info);
 	reset_info(root, info);
 	if (is_fork(root, info))

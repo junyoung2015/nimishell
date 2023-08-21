@@ -6,19 +6,50 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 21:55:34 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/18 14:01:54 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/21 20:08:52 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "executor.h"
 
-void	cmd_not_found(char *cmd, t_exec_info *info)
+void	check_directory(char *cmdpath, char *cmd, t_exec_info *info, t_bool flag)
 {
-	write(STDERR_FILENO, "minishell: ", 11);
-	write(STDERR_FILENO, cmd, ft_strlen(cmd));
-	write(STDERR_FILENO, ": command not found\n", 20);
-	clear_all(info->ast);
-	exit(EXIT_CMD_NOT_FOUND);
+	struct stat	buf;
+	
+	stat(cmdpath, &buf);
+	if ((buf.st_mode & S_IFMT) == S_IFDIR)
+	{
+		if (!flag)
+			free(cmdpath);
+		write(STDERR_FILENO, "minishell: ", 11);
+		write(STDERR_FILENO, cmd, ft_strlen(cmd));
+		write(STDERR_FILENO, ": is a directory\n", 17);
+		clear_all(info->ast);
+		exit(EXIT_NOT_EXECUTABLE);		
+	}
+}
+
+void	validate_path(char *cmdpath, char *cmd, t_exec_info *info)
+{
+	t_bool	flag;
+
+	flag = (cmd[0] == '/' || (cmd[0] == '.' && cmd[1] == '/'));
+	if (!cmdpath)
+	{	
+		write(STDERR_FILENO, "minishell: ", 11);
+		write(STDERR_FILENO, cmd, ft_strlen(cmd));
+		write(STDERR_FILENO, ": command not found\n", 20);
+		clear_all(info->ast);
+		exit(EXIT_CMD_NOT_FOUND);
+	}
+	else if (access(cmdpath, X_OK) < 0)
+	{
+		if (!flag)
+			free(cmdpath);
+		write(STDERR_FILENO, "minishell: ", 11);
+		err_exit(info, cmd, EXIT_NOT_EXECUTABLE);
+	}
+	check_directory(cmdpath, cmd, info, flag);
 }
 
 void	command_in_child(t_node *node, t_exec_info *info)
@@ -30,8 +61,7 @@ void	command_in_child(t_node *node, t_exec_info *info)
 	if (node->builtin == NOT_BUILTIN)
 	{
 		cmdpath = get_cmdpath(node->cmd_args[0], info);
-		if (!cmdpath)
-			cmd_not_found(node->cmd_args[0], info);
+		validate_path(cmdpath, node->cmd_args[0], info);
 		if (execve(cmdpath, node->cmd_args, g_env) < 0)
 		{
 			write(STDERR_FILENO, "minishell: ", 11);
