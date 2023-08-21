@@ -10,7 +10,7 @@ char	**get_path(char **env, char *cmd, t_exec_info *info)
 		i++;
 	if (!env[i])
 	{
-		write(STDERR_FILENO, "minishell: ", 11);
+		write(STDERR_FILENO, MINISHELL, 11);
 		write(STDERR_FILENO, cmd, ft_strlen(cmd));
 		write(STDERR_FILENO, ": No such file or directory\n", 28);
 		err_exit(info, NULL, EXIT_CMD_NOT_FOUND);
@@ -69,7 +69,7 @@ char	*get_cmdpath(char *cmd, t_exec_info *info)
 	{
 		if (is_exist(cmd, NULL, info))
 			return (cmd);
-		write(STDERR_FILENO, "minishell: ", 11);
+		write(STDERR_FILENO, MINISHELL, 11);
 		err_exit(info, cmd, EXIT_CMD_NOT_FOUND);
 	}
 	path = get_path(g_env, cmd, info);

@@ -228,7 +228,7 @@ extern char	**g_env;
 # define NO_FILE_DIR			"No such file or directory\n"
 # define QUOTE_NOT_CLOSED		"minishell: syntax error: unmatched quote\n"
 # define PAREN_NOT_CLOSED		"minishell: syntax error: unmatched parenthesis\n"
-# define MALLOC_ERR				"malloc() error."
+# define MALLOC_ERR				"malloc() error\n"
 
 /* ================== INIT ================== */
 void			print_logo(void);
