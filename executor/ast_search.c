@@ -62,6 +62,8 @@ void ast_search(t_node *root, t_exec_info *info)
 		return;
 	if (root->cmd_args && root->type != AST_HEREDOC)
 	{
+		if (root->pipe_open > 1)
+			info->prev_exit_code = 0;
 		root->cmd_args = env_substitution(root, info);
 		root->cmd_args = str_expansion(root);
 		root->cmd_args = remove_quotes(root);
