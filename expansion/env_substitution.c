@@ -317,8 +317,8 @@ char	*check_env_var(char *cmd_arg, t_exec_info *info)
  */
 char	**env_substitution(t_node *node, t_exec_info *info)
 {
-	char    **result;
-	t_size  idx;
+	char	**result;
+	t_ssize	idx;
 
 	idx = -1;
 	if (!node || !node->cmd_args)

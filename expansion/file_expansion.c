@@ -73,7 +73,7 @@ char	**find_matching_files(t_search *info, char **pattern)
 			if (is_quote(*(pattern[idx])))
 			{
 				tmp = pattern[idx];
-				trimmed = trim(&tmp, cmp);
+				trimmed = trim(&tmp, cmp, 0);
 			}
 			if (idx == 0)
 				size = match_pattern_first(info, trimmed);
@@ -90,7 +90,7 @@ char	**find_matching_files(t_search *info, char **pattern)
 		if (is_quote(*(pattern[idx - 1])))
 		{
 			tmp = pattern[idx - 1];
-			trimmed = trim(&tmp, cmp);
+			trimmed = trim(&tmp, cmp, 0);
 		}
 		size = match_pattern_last(info, trimmed, ft_strlen(trimmed));
 	}
