@@ -46,13 +46,13 @@ t_bool	is_dmeta_str(char *input)
 {
 	if (!(is_dmeta_ch(0[input]) && is_dmeta_ch(1[input])))
 		return (TOKEN_WORD);
-	if (!ft_strncmp(input, "<<", 2))
+	if (!ft_strncmp(input, HEREDOC, 2))
 		return (TOKEN_HEREDOC);
-	else if (!ft_strncmp(input, ">>", 2))
+	else if (!ft_strncmp(input, APPEND, 2))
 		return (TOKEN_APPEND);
-	else if (!ft_strncmp(input, "||", 2))
+	else if (!ft_strncmp(input, OR, 2))
 		return (TOKEN_OR);
-	else if (!ft_strncmp(input, "&&", 2))
+	else if (!ft_strncmp(input, AND, 2))
 		return (TOKEN_AND);
 	return (TOKEN_WORD);
 }
