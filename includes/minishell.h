@@ -205,6 +205,16 @@ extern char	**g_env;
 # define DETACHED_HEAD			"detached HEAD"
 # define MAX_BRANCH_LEN			100
 
+/* ================= PARSER ================== */
+# define PIPE                   "|"
+# define REDIR_IN               "<"
+# define REDIR_OUT              ">"
+# define APPEND                 ">>"
+# define HEREDOC                "<<"
+# define NL                     "newline"
+# define AND					"&&"
+# define OR						"||"
+
 /* ================= BUILTIN ================= */
 # define CD_BUILTIN				"cd"
 # define EXP_BUILTIN			"export"

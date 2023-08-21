@@ -87,14 +87,14 @@ t_node	*parse_err(t_parser *parser, t_node *parent)
 char	*tok_type(t_type type)
 {
 	if (type == TOKEN_PIPE)
-		return ("|");
+		return (PIPE);
 	else if (type == TOKEN_REDIR_IN)
-		return ("<");
+		return (REDIR_IN);
 	else if (type == TOKEN_REDIR_OUT)
-		return (">");
+		return (REDIR_OUT);
 	else if (type == TOKEN_APPEND)
-		return (">>");
+		return (APPEND);
 	else if (type == TOKEN_HEREDOC)
-		return ("<<");
-	return ("newline");
+		return (HEREDOC);
+	return (NL);
 }
