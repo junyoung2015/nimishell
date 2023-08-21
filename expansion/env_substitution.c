@@ -1,10 +1,18 @@
 
 #include "executor.h"
 
+int	is_number(int c)
+{
+	return ('0' <= c && c <= '9');
+}
+
+int	is_alpha(int c)
+{
+	return (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z'));
+}
 int	is_alnum(int c)
 {
-	return (('0' <= c && c <= '9') || ('A' <= c && c <= 'Z')
-		|| ('a' <= c && c <= 'z'));
+	return (is_number(c) || is_alpha(c));
 }
 
 /**
@@ -274,16 +282,11 @@ char	*process_dquote(char **input, t_exec_info *info)
  */
 char	*check_env_var(char *cmd_arg, t_exec_info *info)
 {
-	char			*result;
-	char			*substr;
-	char			*tmp;
-	t_state	state;
-	const t_process_fn	state_fn[] = { 
-		process_normal,
-		process_squote,
-		process_dquote,
-		process_normal
-	};
+	char				*result;
+	char				*substr;
+	char				*tmp;
+	t_state				state;
+	const t_process_fn	state_fn[] = {process_normal, process_squote, process_dquote, process_normal};
 
 	result = 0;
 	state = update_state(*cmd_arg);
@@ -317,13 +320,13 @@ char	**env_substitution(t_node *node, t_exec_info *info)
 	char    **result;
 	t_size  idx;
 
-	idx = 0;
+	idx = -1;
 	if (!node || !node->cmd_args)
 		return (0);
 	result = (char **)ft_calloc(node->num_args + 1, sizeof(char *));
 	if (!result)
 		return (0);
-	while (idx < node->num_args)
+	while (++idx < node->num_args)
 	{
 		result[idx] = check_env_var(node->cmd_args[idx], info);
 		if (!result[idx])
@@ -336,10 +339,7 @@ char	**env_substitution(t_node *node, t_exec_info *info)
 			free(result);
 			return (0);
 		}
-		// free(node->cmd_args[idx]);
-		idx++;
 	}
 	ft_arrfree(node->cmd_args);
-	// free(node->cmd_args);
 	return (result);
 }
