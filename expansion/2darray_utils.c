@@ -7,6 +7,7 @@ void	ft_arrfree(char **arr)
 	idx = 0;
 	while (arr && arr[idx])
 		free(arr[idx++]);
+	free(arr[idx]);
 	free(arr);
 }
 
