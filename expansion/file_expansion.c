@@ -138,6 +138,7 @@ char	**str_expansion(t_node *node)
 			info->files = find_matching_files(info, new);
 			if (!info->files || (*(info->files) && !(*(info->files))[0]))
 			{
+				ft_arrfree(new);
 				new = (char **)ft_calloc(2, sizeof(char *));
 				if (!new)
 					return (0);
