@@ -107,7 +107,7 @@ char	*substitute(char *env_var, char *quote)
 	return (result);
 }
 
-char	*substitute_exit_code(char **input, char *tmp, t_exec_info *info)
+char	*sub_exit_code(char **input, char *tmp, t_exec_info *info)
 {
 	char	*substituted;
 	char	*result;
@@ -123,7 +123,7 @@ char	*substitute_exit_code(char **input, char *tmp, t_exec_info *info)
 	return (result);
 }
 
-char	*substitute_env_var(char **input, char *tmp, char *quote)
+char	*sub_env_var(char **input, char *tmp, char *quote)
 {
 	char	*substituted;
 	char	*result;
@@ -144,16 +144,26 @@ char	*substitute_env_var(char **input, char *tmp, char *quote)
 	return (result);
 }
 
+char	*trim_single_char(char **input, char *tmp)
+{
+	char	*result;
+	char	*character;
+
+	character = ft_substr(*input - 1, 0, 1);
+	if (!character)
+		return (result);
+	result = ft_strjoin(tmp, character);
+	free(character);
+	return (result);
+}
+
 char	*process_normal(char **input, t_exec_info *info)
 {
 	char	*start;
 	char	*tmp;
-	char	*env_var;
 	char	*result;
-	// char	*substituted;
 
 	tmp = 0;
-	env_var = 0;
 	start = *input;
 	while(**input && !is_dollar(**input))
 		(*input)++;
@@ -167,36 +177,12 @@ char	*process_normal(char **input, t_exec_info *info)
 	if (!**input || !is_dollar(**input))
 		return (tmp);
 	start = ++(*input);
-	// while(**input && is_env_var(**input) && **input != '?')
-	// 	(*input)++;
-	// if (*input > start)
-	// {
-	// 	env_var = ft_substr(start, 0, *input - start);
-	// 	if (!env_var)
-	// 		return (result);
-	// 	substituted = substitute(env_var, 0);
-	// 	result = ft_strjoin(tmp, substituted);
-	// 	free(substituted);
-	// }
 	if (is_env_var(**input))
-		result = substitute_env_var(input, tmp, 0);
+		result = sub_env_var(input, tmp, 0);
 	else if (**input == '?')
-		result = substitute_exit_code(input, tmp, info);
-	else if (is_dollar(*((*input) - 1)) && **input && !is_env_var(**input)) // do I need to check \0 here?
-	{
-		env_var = ft_substr(*input - 1, 0, 1);
-		if (!env_var)
-			return (result);
-		result = ft_strjoin(tmp, env_var);
-	}
+		result = sub_exit_code(input, tmp, info);
 	else
-	{
-		env_var = ft_substr(*input - 1, 0, 1);
-		if (!env_var)
-			return (result);
-		result = ft_strjoin(tmp, env_var);
-	}
-	free(env_var);
+		result = trim_single_char(input, tmp);
 	free(tmp);
 	return (result);
 }
@@ -231,10 +217,8 @@ char	*process_dquote(char **input, t_exec_info *info)
 	char	*start;
 	char	*end;
 	char	*tmp;
-	char	*env_var;
 	char	*prev;
 	char	*result;
-	// char	*substituted;
 
 	tmp = 0;
 	result = 0;
@@ -262,41 +246,13 @@ char	*process_dquote(char **input, t_exec_info *info)
 			{
 				(*input)++;
 				if (**input == '?')
-					result = substitute_exit_code(input, tmp, info);
+					result = sub_exit_code(input, tmp, info);
 				else if (!**input)
 					result = ft_strjoin(tmp, *input - 1);
 				else if (is_env_var(**input))
-				{
-					result = substitute_env_var(input, tmp, "\"");
-					// start = *input;
-					// while(**input && is_env_var(**input))
-					// 	(*input)++;
-					// env_var = ft_substr(start, 0, *input - start);
-					// if (!env_var)
-					// 	return (0);
-					// substituted = substitute(env_var, "\"");
-					// result = ft_strjoin(tmp, substituted);
-					// free(substituted);
-					// free(env_var);
-				}
-				else if (is_dquote(**input))
-				{
-					env_var = ft_substr(*input - 1, 0, 1);
-					if (!env_var)
-						return (0);
-					result = ft_strjoin(tmp, env_var);
-					free(env_var);
-					// (*input)++;
-				}
+					result = sub_env_var(input, tmp, "\"");
 				else
-				{
-					env_var = ft_substr(*input - 1, 0, 2);
-					if (!env_var)
-						return (0);
-					result = ft_strjoin(tmp, env_var);
-					free(env_var);
-					(*input)++;
-				}
+					result = trim_single_char(input, tmp);
 				free(tmp);
 			}
 		}
