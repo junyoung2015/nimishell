@@ -2,11 +2,8 @@
 
 t_size	handle_wildcard(char ***result, char **start, char **end, t_size size)
 {
-	char	*tmp;
-
 	*end = *start;
-	tmp = ft_strdup("*");
-	size = ft_arr_append(result, tmp, size);
+	size = ft_arr_append(result, ft_strdup("*"), size);
 	(*end)++;
 	return (size);
 }
@@ -32,13 +29,10 @@ t_size	handle_quotes(char ***result, char **start, char **end, t_size size)
 
 t_size	handle_normal(char ***result, char **start, char **end, t_size size)
 {
-	char	*tmp;
-
 	*end = *start + 1;
 	while (**end && !is_wsplit(**end))
 		(*end)++;
-	tmp = ft_substr(*start, 0, *end - *start);
-	size = ft_arr_append(result, tmp, size);
+	size = ft_arr_append(result, ft_substr(*start, 0, *end - *start), size);
 	return (size);
 }
 
