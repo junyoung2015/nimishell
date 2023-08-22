@@ -107,6 +107,22 @@ char	*substitute(char *env_var, char *quote)
 	return (result);
 }
 
+char	*substitute_exit_code(char **input, char *tmp, t_exec_info *info)
+{
+	char	*substituted;
+	char	*result;
+
+	result = 0;
+	if (**input == '?')
+	{
+		substituted = ft_itoa(info->prev_exit_code);
+		result = ft_strjoin(tmp, substituted);
+		(*input)++;
+		free(substituted);
+	}
+	return (result);
+}
+
 char	*process_normal(char **input, t_exec_info *info)
 {
 	char	*start;
@@ -143,10 +159,11 @@ char	*process_normal(char **input, t_exec_info *info)
 	}
 	else if (**input == '?')
 	{
-		substituted = ft_itoa(info->prev_exit_code);
-		result = ft_strjoin(tmp, substituted);
-		free(substituted);
-		(*input)++;
+		result = substitute_exit_code(input, tmp, info);
+		// substituted = ft_itoa(info->prev_exit_code);
+		// result = ft_strjoin(tmp, substituted);
+		// free(substituted);
+		// (*input)++;
 	}
 	else if (is_dollar(*((*input) - 1)) && **input && !is_env_var(**input)) // do I need to check \0 here?
 	{
@@ -229,10 +246,11 @@ char	*process_dquote(char **input, t_exec_info *info)
 				(*input)++;
 				if (**input == '?')
 				{
-					substituted = ft_itoa(info->prev_exit_code);
-					result = ft_strjoin(tmp, substituted);
-					(*input)++;
-					free(substituted);
+					result = substitute_exit_code(input, tmp, info);
+					// substituted = ft_itoa(info->prev_exit_code);
+					// result = ft_strjoin(tmp, substituted);
+					// (*input)++;
+					// free(substituted);
 				}
 				else if (!**input)
 					result = ft_strjoin(tmp, *input - 1);
