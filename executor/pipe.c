@@ -14,10 +14,15 @@
 
 void	open_pipe(t_node *node, t_exec_info *info)
 {
-	if (node->type != AST_PIPE)
+	if (node->type != AST_PIPE && node->type != AST_SUBSHELL)
 		return ;
-	node->left->pipe_open = node->pipe_open + 1;
-	node->right->pipe_open = 2;
+	if (node->type == AST_SUBSHELL)
+		node->left->pipe_open = node->pipe_open;
+	else
+	{
+		node->left->pipe_open = node->pipe_open + 1;
+		node->right->pipe_open = 2;
+	}
 	if (pipe(info->pipe))
 		err("minishell: pipe:", info);
 }
