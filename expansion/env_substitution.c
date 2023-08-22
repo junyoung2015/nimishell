@@ -217,6 +217,31 @@ char	*env_squote(char **input, t_exec_info *info)
 	return (result);
 }
 
+char	*process_env_dquote(char **input, char **result, char **start, t_exec_info *info)
+{
+	char	*tmp;
+	char	*prev;
+
+	while(**input && !is_dquote(**input) && !is_dollar(**input))
+		(*input)++;
+	if (*input > *start || is_dquote(**input) || is_dollar(**input))
+	{
+		prev = *result;
+		tmp = ft_substr(*start, 0, *input - *start);
+		if (!tmp)
+			return (0);
+		*result = tmp;
+		tmp = ft_strjoin(prev, tmp);
+		free(prev);
+		free(*result);
+		*result = tmp;
+		if (tmp && is_dollar(**input))
+			*result = handle_dollar_sign(input, tmp, "\"", info);
+	}
+	*start = *input;
+	return (*result);
+}
+
 /**
  * @brief Process double-quoted string, substituting environment variables.
  * 
@@ -229,7 +254,6 @@ char	*env_dquote(char **input, t_exec_info *info)
 	char	*start;
 	char	*end;
 	char	*tmp;
-	char	*prev;
 	char	*result;
 
 	tmp = 0;
@@ -239,25 +263,7 @@ char	*env_dquote(char **input, t_exec_info *info)
 	while (*end && !is_dquote(*end))
 		end++;
 	while(**input && start < end)
-	{
-		while(**input && !is_dquote(**input) && !is_dollar(**input))
-			(*input)++;
-		if (*input > start || is_dquote(**input) || is_dollar(**input))
-		{
-			prev = result;
-			tmp = ft_substr(start, 0, *input - start);
-			if (!tmp)
-				return (0);
-			result = tmp;
-			tmp = ft_strjoin(prev, tmp);
-			free(prev);
-			free(result);
-			result = tmp;
-			if (tmp && is_dollar(**input))
-				result = handle_dollar_sign(input, tmp, "\"", info);
-		}
-		start = *input;
-	}
+		result = process_env_dquote(input, &result, &start, info);
 	tmp = result;
 	result = ft_strjoin(result, "\"");
 	free(tmp);
