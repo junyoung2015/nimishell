@@ -162,10 +162,5 @@ char	**str_expansion(t_node *node)
 	}
 	node->num_args = len;
 	ft_arrfree(node->cmd_args);
-	// print result
-	for (t_size i = 0; i < len; i++)
-	{
-		printf("result[%llu]: %s\n", i, result[i]);
-	}
 	return (result);
 }
