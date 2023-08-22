@@ -176,7 +176,7 @@ char	*handle_dollar_sign(char **input, char *tmp, char *quote, t_exec_info *info
 	return (result);
 }
 
-char	*process_normal(char **input, t_exec_info *info)
+char	*env_str(char **input, t_exec_info *info)
 {
 	char	*start;
 	char	*tmp;
@@ -199,7 +199,7 @@ char	*process_normal(char **input, t_exec_info *info)
 	return (result);
 }
 
-char	*process_squote(char **input, t_exec_info *info)
+char	*env_squote(char **input, t_exec_info *info)
 {
 	char	*start;
 	char	*result;
@@ -224,7 +224,7 @@ char	*process_squote(char **input, t_exec_info *info)
  * @param state 
  * @return char* 
  */
-char	*process_dquote(char **input, t_exec_info *info)
+char	*env_dquote(char **input, t_exec_info *info)
 {
 	char	*start;
 	char	*end;
@@ -274,11 +274,11 @@ char	*process_dquote(char **input, t_exec_info *info)
  */
 char	*check_env_var(char *cmd_arg, t_exec_info *info)
 {
-	char				*result;
-	char				*substr;
-	char				*tmp;
-	t_state				state;
-	const t_process_fn	state_fn[] = {process_normal, process_squote, process_dquote, process_normal};
+	char			*result;
+	char			*substr;
+	char			*tmp;
+	t_state			state;
+	const t_env_fn	state_fn[] = {env_str, env_squote, env_dquote, env_str};
 
 	result = 0;
 	state = update_state(*cmd_arg);

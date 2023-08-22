@@ -260,7 +260,7 @@ char			*ft_itoa(int n);
 char			**ft_split(char const *str, char c);
 /* ================ EXPANSION ================ */
 typedef t_bool	(*t_cmp)(char);
-// typedef	char	*(*t_process_fn)(char **);
+// typedef	char	*(*t_env_fn)(char **);
 int				cmp_ascii(void *a, void *b);
 void			ft_qsort(void **arr, t_ssize low, t_ssize high, int (*cmp)(void *, void *));
 // char			**env_substitution(t_node *node);
