@@ -149,11 +149,30 @@ char	*trim_single_char(char **input, char *tmp)
 	char	*result;
 	char	*character;
 
+	result = 0;
 	character = ft_substr(*input - 1, 0, 1);
 	if (!character)
 		return (result);
 	result = ft_strjoin(tmp, character);
 	free(character);
+	return (result);
+}
+
+char	*handle_dollar_sign(char **input, char *tmp, char *quote, t_exec_info *info)
+{
+	char	*result;
+
+	(*input)++;
+	result = 0;
+	if (**input == '?')
+		result = sub_exit_code(input, tmp, info);
+	else if (!**input)
+		result = ft_strjoin(tmp, *input - 1);
+	else if (is_env_var(**input))
+		result = sub_env_var(input, tmp, quote);
+	else
+		result = trim_single_char(input, tmp);
+	free(tmp);
 	return (result);
 }
 
@@ -176,14 +195,7 @@ char	*process_normal(char **input, t_exec_info *info)
 	result = tmp;
 	if (!**input || !is_dollar(**input))
 		return (tmp);
-	start = ++(*input);
-	if (is_env_var(**input))
-		result = sub_env_var(input, tmp, 0);
-	else if (**input == '?')
-		result = sub_exit_code(input, tmp, info);
-	else
-		result = trim_single_char(input, tmp);
-	free(tmp);
+	result = handle_dollar_sign(input, tmp, 0, info);
 	return (result);
 }
 
@@ -222,8 +234,7 @@ char	*process_dquote(char **input, t_exec_info *info)
 
 	tmp = 0;
 	result = 0;
-	start = *input;
-	(*input)++;
+	start = (*input)++;
 	end = *input;
 	while (*end && !is_dquote(*end))
 		end++;
@@ -242,29 +253,15 @@ char	*process_dquote(char **input, t_exec_info *info)
 			free(prev);
 			free(result);
 			result = tmp;
-			if (is_dollar(**input))
-			{
-				(*input)++;
-				if (**input == '?')
-					result = sub_exit_code(input, tmp, info);
-				else if (!**input)
-					result = ft_strjoin(tmp, *input - 1);
-				else if (is_env_var(**input))
-					result = sub_env_var(input, tmp, "\"");
-				else
-					result = trim_single_char(input, tmp);
-				free(tmp);
-			}
+			if (tmp && is_dollar(**input))
+				result = handle_dollar_sign(input, tmp, "\"", info);
 		}
 		start = *input;
 	}
-	if (is_dquote(**input))
-	{
-		tmp = result;
-		result = ft_strjoin(result, "\"");
-		free(tmp);
-		(*input)++;
-	}
+	tmp = result;
+	result = ft_strjoin(result, "\"");
+	free(tmp);
+	(*input)++;
 	return (result);
 }
 
