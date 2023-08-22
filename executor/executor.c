@@ -69,9 +69,9 @@ int	executor(t_sh_info *sh_info)
 	{
 		sig_num = WTERMSIG(status);
 		if (sig_num == SIGINT)
-			write(STD_ERR, "^C\n", 3);
+			write(STD_ERR, SIGINT_ECHO, ft_strlen(SIGINT_ECHO));
 		else if (sig_num == SIGQUIT)
-			write(STD_ERR, "^\\Quit: 3\n", 10);
+			write(STD_ERR, SIGQUIT_ECHO, ft_strlen(SIGQUIT_ECHO));
 		return (128 + sig_num);
 	}
 	return (WEXITSTATUS(status));
