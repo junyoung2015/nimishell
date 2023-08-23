@@ -89,7 +89,7 @@ t_size	match_pattern_first(t_search *info, char *pattern)
 	return (size);
 }
 
-void	match_execpt_last(t_search *info, char **pattern, t_size *idx, t_cmp *cmp)
+void	match_except_last(t_search *info, char **pattern, t_size *idx, t_cmp *cmp)
 {
 	char	*tmp;
 	char	*trimmed;
