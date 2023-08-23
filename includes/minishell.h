@@ -282,7 +282,7 @@ t_bool			is_wsplit(char ch);
 t_bool			is_wildcard_expansion(char *cmd_arg);
 
 /* ============ EXPANSION_PATTERN ============ */
-char			**get_search_pattern(char *cmd_arg);
+char			**get_search_pattern(char *cmd_arg, t_size size);
 t_size			handle_wildcard(char ***result, char **start, char **end, t_size size);
 t_size			handle_quotes(char ***result, char **start, char **end, t_size size);
 t_size			handle_normal(char ***result, char **start, char **end, t_size size);

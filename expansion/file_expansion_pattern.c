@@ -5,6 +5,7 @@ t_size	handle_wildcard(char ***result, char **start, char **end, t_size size)
 	*end = *start;
 	size = ft_arr_append(result, ft_strdup("*"), size);
 	(*end)++;
+	*start = *end;
 	return (size);
 }
 
@@ -24,6 +25,7 @@ t_size	handle_quotes(char ***result, char **start, char **end, t_size size)
 		return (0);
 	size = ft_arr_append(result, substr, size);
 	(*end)++;
+	*start = *end;
 	return (size);
 }
 
@@ -33,17 +35,16 @@ t_size	handle_normal(char ***result, char **start, char **end, t_size size)
 	while (**end && !is_wsplit(**end))
 		(*end)++;
 	size = ft_arr_append(result, ft_substr(*start, 0, *end - *start), size);
+	*start = *end;
 	return (size);
 }
 
-char	**get_search_pattern(char *cmd_arg)
+char	**get_search_pattern(char *cmd_arg, t_size size)
 {
 	char	*start;
 	char	*end;
 	char	**result;
-	t_size	size;
 
-	size = 0;
 	result = 0;
 	start = cmd_arg;
 	end = start;
@@ -58,8 +59,10 @@ char	**get_search_pattern(char *cmd_arg)
 		if (!size)
 			return (0);
 		else if (!*(result[size - 1]))
-			free(result[size-- - 1]);
-		start = end;
+		{
+			free(result[size - 1]);
+			result[size-- - 1] = 0;
+		}
 	}
 	return (result);
 }
