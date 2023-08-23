@@ -13,15 +13,19 @@ void	get_all_files(char *first, char *tmp, t_size *size, char ***result)
 		entry = readdir(dir);
 		if (!entry)
 			break ;
-		if (entry->d_name[0] != '.' || (first && *first == '.'))
+		else if (ft_strlen(first) > 1 && first[0] == '.' && first[1] == '/')
 		{
-			if (ft_strlen(first) > 1 && first[0] == '.' && first[1] == '/')
+			if (entry->d_name[0] != '.' || (ft_strlen(first) > 2 && first[2] == '.'))
 			{
 				tmp = ft_strjoin("./", entry->d_name);
 				*size = ft_arr_append(result, tmp, *size);
+				if (!size)
+					break ;
 			}
-			else
-				*size = ft_arr_append(result, ft_strdup(entry->d_name), *size);
+		}
+		else if (entry->d_name[0] != '.' || (first && *first == '.'))
+		{
+			*size = ft_arr_append(result, ft_strdup(entry->d_name), *size);
 			if (!*size)
 				break ;
 		}
@@ -56,7 +60,6 @@ t_search	*init_search_info(char *first)
 char	**find_matching_files(t_search *info, char **pattern)
 {
 	t_size	idx;
-	t_size	size;
 	char	**result;
 	char	*trimmed;
 	char	*tmp;
@@ -64,27 +67,8 @@ char	**find_matching_files(t_search *info, char **pattern)
 
 	idx = 0;
 	result = 0;
-	size = 0;
 	while (pattern[idx])
-	{
-		trimmed = pattern[idx];
-		if (!is_wildcard_expansion(pattern[idx]))
-		{
-			cmp = get_cmp_fn(*(pattern[idx]));
-			if (is_quote(*(pattern[idx])))
-			{
-				tmp = pattern[idx];
-				trimmed = trim(&tmp, cmp, 0);
-			}
-			if (idx == 0)
-				size = match_pattern_first(info, trimmed);
-			else
-				size = match_pattern_middle(info, trimmed);
-			if (!size)
-				return (0);
-		}
-		idx++;
-	}
+		match_except_last(info, pattern, &idx, &cmp);
 	if (idx && !(is_wildcard(*(pattern[idx - 1])) && ft_strlen(pattern[idx - 1]) == 1))	// If last pattern is not wildcard, filter the files with last pattern
 	{
 		trimmed = pattern[idx - 1];
@@ -93,12 +77,12 @@ char	**find_matching_files(t_search *info, char **pattern)
 			tmp = pattern[idx - 1];
 			trimmed = trim(&tmp, cmp, 0);
 		}
-		size = match_pattern_last(info, trimmed, ft_strlen(trimmed));
+		match_pattern_last(info, trimmed, ft_strlen(trimmed));
 	}
 	ft_arrfree(pattern);
 	if (!info->files)
 		return (0);
-	size = ft_arrcat(&result, info->files, 0);
+	ft_arrcat(&result, info->files, 0);
 	return (result);
 }
 
@@ -151,7 +135,7 @@ char	**str_expansion(t_node *node)
 			info->files = find_matching_files(info, new);
 			if (!info->files || (*(info->files) && !(*(info->files))[0]))
 			{
-				ft_arrfree(new);
+				// ft_arrfree(new);
 				len = file_not_found(&result, len, node->cmd_args[idx]);
 			}
 			else
