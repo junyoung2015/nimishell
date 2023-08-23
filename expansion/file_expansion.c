@@ -14,7 +14,7 @@ void	get_all_files(char *first, t_size *size, char ***result)
 		entry = readdir(dir);
 		if (!entry)
 			break ;
-		if (ft_strlen(first) > 2 && ft_strncmp(first, "./", 2) == 0 && \
+		if (ft_strlen(first) >= 2 && ft_strncmp(first, "./", 2) == 0 && \
 			(entry->d_name[0] != '.' || first[2] == '.'))
 			tmp = ft_strjoin("./", entry->d_name);
 		else if (entry->d_name[0] != '.' || (first && *first == '.'))
@@ -132,17 +132,10 @@ char	**str_expansion(t_node *node)
 	{
 		if (is_wildcard_expansion(node->cmd_args[idx]))
 		{
-			info = init_search_info(node->cmd_args[idx]);
-			// if (node->cmd_args[idx][0] == '.')
-			// 	info = get_search_info(node->cmd_args[idx]);
-			// else
-			// 	info = get_search_info(0);
-			// if (!info)
-			// 	return (0);
-			// ft_qsort((void **)info->files, 0, ft_arrlen(info->files) - 1, cmp_ascii);
 			new = split_pattern(node->cmd_args[idx]);
 			if (!new)
 				return (0);
+			info = init_search_info(new[0]);
 			info->files = find_matching_files(info, new);
 			if (!info->files || (*(info->files) && !(*(info->files))[0]))
 				len = file_not_found(&result, len, node->cmd_args[idx]);
