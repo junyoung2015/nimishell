@@ -108,6 +108,28 @@ t_size	file_not_found(char ***result, t_size len, char *cmd_arg)
 	return (len);
 }
 
+t_size	handle_wildcard_expansion(t_size len, char *cmd_arg, char ***result)
+{
+	char		**new;
+	t_search	*info;
+
+	new = get_search_pattern(cmd_arg, 0);
+	if (!new)
+		return (0);
+	info = init_search_info(new[0]);
+	if (!info)
+		return (0);
+	info->files = find_matching_files(info, new);
+	if (!info->files || (*(info->files) && !(*(info->files))[0]))
+		len = file_not_found(result, len, cmd_arg);
+	else
+		len = ft_arrcat(result, info->files, len);
+	free_search_info(info);
+	if (!result)
+		return (0);
+	return (len);
+}
+
 /**
  * @brief   Expand the wildcard inside cmd_args. Also expand the string inside
  *        quotes if needed.
@@ -119,9 +141,7 @@ char	**str_expansion(t_node *node)
 {
 	t_size		idx;
 	t_size		len;
-	t_search	*info;
 	char		**result;
-	char		**new;
 
 	idx = 0;
 	len = 0;
@@ -131,20 +151,7 @@ char	**str_expansion(t_node *node)
 	while (idx < node->num_args)
 	{
 		if (is_wildcard_expansion(node->cmd_args[idx]))
-		{
-			new = get_search_pattern(node->cmd_args[idx]);
-			if (!new)
-				return (0);
-			info = init_search_info(new[0]);
-			info->files = find_matching_files(info, new);
-			if (!info->files || (*(info->files) && !(*(info->files))[0]))
-				len = file_not_found(&result, len, node->cmd_args[idx]);
-			else
-				len = ft_arrcat(&result, info->files, len);
-			free_search_info(info);
-			if (!result)
-				return (0);
-		}
+			len = handle_wildcard_expansion(len, node->cmd_args[idx], &result);
 		else
 			len = file_not_found(&result, len, node->cmd_args[idx]);
 		idx++;
