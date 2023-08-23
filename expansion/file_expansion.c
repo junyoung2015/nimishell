@@ -132,7 +132,7 @@ char	**str_expansion(t_node *node)
 	{
 		if (is_wildcard_expansion(node->cmd_args[idx]))
 		{
-			new = split_pattern(node->cmd_args[idx]);
+			new = get_search_pattern(node->cmd_args[idx]);
 			if (!new)
 				return (0);
 			info = init_search_info(new[0]);

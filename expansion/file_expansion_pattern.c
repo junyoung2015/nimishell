@@ -36,7 +36,7 @@ t_size	handle_normal(char ***result, char **start, char **end, t_size size)
 	return (size);
 }
 
-char	**split_pattern(char *cmd_arg)
+char	**get_search_pattern(char *cmd_arg)
 {
 	char	*start;
 	char	*end;
