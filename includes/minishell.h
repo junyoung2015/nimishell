@@ -260,7 +260,7 @@ char			*ft_itoa(int n);
 char			**ft_split(char const *str, char c);
 /* ================ EXPANSION ================ */
 typedef t_bool	(*t_cmp)(char);
-// typedef	char	*(*t_process_fn)(char **);
+// typedef	char	*(*t_env_fn)(char **);
 int				cmp_ascii(void *a, void *b);
 void			ft_qsort(void **arr, t_ssize low, t_ssize high, int (*cmp)(void *, void *));
 // char			**env_substitution(t_node *node);
@@ -282,15 +282,17 @@ t_bool			is_wsplit(char ch);
 t_bool			is_wildcard_expansion(char *cmd_arg);
 
 /* ============ EXPANSION_PATTERN ============ */
-char			**split_pattern(char *cmd_arg);
+char			**get_search_pattern(char *cmd_arg, t_size size);
 t_size			handle_wildcard(char ***result, char **start, char **end, t_size size);
 t_size			handle_quotes(char ***result, char **start, char **end, t_size size);
 t_size			handle_normal(char ***result, char **start, char **end, t_size size);
 
 /* ============= EXPANSION_MATCH ============= */
+void			match_except_last(t_search *info, char **pattern, t_size *idx, t_cmp *cmp);
 t_size			match_pattern_first(t_search *info, char *pattern);
 t_size			match_pattern_middle(t_search *info, char *pattern);
 t_size			match_pattern_last(t_search *info, char *pattern, t_size last);
+
 
 /* =============== ARRAY_UTILS =============== */
 void			ft_arrfree(char **arr);

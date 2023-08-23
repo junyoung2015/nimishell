@@ -1,15 +1,28 @@
 #include "minishell.h"
 
+/**
+ * @brief Free 2d array
+ * 
+ * @param arr	2d array to free
+ */
 void	ft_arrfree(char **arr)
 {
 	t_size	idx;
 
 	idx = 0;
+	if (!arr)
+		return ;
 	while (arr && arr[idx])
 		free(arr[idx++]);
 	free(arr);
 }
 
+/**
+ * @brief	Get the size of a 2d array
+ * 
+ * @param arr		2d array to get size of
+ * @return t_size	size of the 2d array
+ */
 t_size	ft_arrlen(char **arr)
 {
 	t_size	len;
@@ -20,6 +33,14 @@ t_size	ft_arrlen(char **arr)
 	return (len);
 }
 
+/**
+ * @brief Concatenate two 2d arrays
+ * 
+ * @param arr		2d array to concatenate to
+ * @param new_arr	2d array to concatenate from
+ * @param size		size of the 2d array
+ * @return t_size	new size of the 2d array
+ */
 t_size	ft_arrcat(char ***arr, char **new_arr, t_size size)
 {
 	t_size	new;
@@ -48,6 +69,14 @@ t_size	ft_arrcat(char ***arr, char **new_arr, t_size size)
 	return (new);
 }
 
+/**
+ * @brief	Append string element to 2d array
+ * 
+ * @param arr		2d array to append to
+ * @param str		string to append
+ * @param size		size of the 2d array
+ * @return t_size	new size of the 2d array
+ */
 t_size	ft_arr_append(char ***arr, char *str, t_size size)
 {
 	t_size	idx;

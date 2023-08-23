@@ -107,16 +107,82 @@ char	*substitute(char *env_var, char *quote)
 	return (result);
 }
 
-char	*process_normal(char **input, t_exec_info *info)
+char	*sub_exit_code(char **input, char *tmp, t_exec_info *info)
+{
+	char	*substituted;
+	char	*result;
+
+	result = 0;
+	if (**input == '?')
+	{
+		substituted = ft_itoa(info->prev_exit_code);
+		result = ft_strjoin(tmp, substituted);
+		(*input)++;
+		free(substituted);
+	}
+	return (result);
+}
+
+char	*sub_env_var(char **input, char *tmp, char *quote)
+{
+	char	*substituted;
+	char	*result;
+	char	*env_var;
+	char	*start;
+
+	result = 0;
+	start = *input;
+	while(**input && is_env_var(**input))
+		(*input)++;
+	env_var = ft_substr(start, 0, *input - start);
+	if (!env_var)
+		return (0);
+	substituted = substitute(env_var, quote);
+	result = ft_strjoin(tmp, substituted);
+	free(substituted);
+	free(env_var);
+	return (result);
+}
+
+char	*trim_single_char(char **input, char *tmp)
+{
+	char	*result;
+	char	*character;
+
+	result = 0;
+	character = ft_substr(*input - 1, 0, 1);
+	if (!character)
+		return (result);
+	result = ft_strjoin(tmp, character);
+	free(character);
+	return (result);
+}
+
+char	*handle_dollar_sign(char **input, char *tmp, char *quote, t_exec_info *info)
+{
+	char	*result;
+
+	(*input)++;
+	result = 0;
+	if (**input == '?')
+		result = sub_exit_code(input, tmp, info);
+	else if (!**input)
+		result = ft_strjoin(tmp, *input - 1);
+	else if (is_env_var(**input))
+		result = sub_env_var(input, tmp, quote);
+	else
+		result = trim_single_char(input, tmp);
+	free(tmp);
+	return (result);
+}
+
+char	*env_str(char **input, t_exec_info *info)
 {
 	char	*start;
 	char	*tmp;
-	char	*env_var;
 	char	*result;
-	char	*substituted;
 
 	tmp = 0;
-	env_var = 0;
 	start = *input;
 	while(**input && !is_dollar(**input))
 		(*input)++;
@@ -129,45 +195,11 @@ char	*process_normal(char **input, t_exec_info *info)
 	result = tmp;
 	if (!**input || !is_dollar(**input))
 		return (tmp);
-	start = ++(*input);
-	while(**input && is_env_var(**input) && **input != '?')
-		(*input)++;
-	if (*input > start)
-	{
-		env_var = ft_substr(start, 0, *input - start);
-		if (!env_var)
-			return (result);
-		substituted = substitute(env_var, 0);
-		result = ft_strjoin(tmp, substituted);
-		free(substituted);
-	}
-	else if (**input == '?')
-	{
-		substituted = ft_itoa(info->prev_exit_code);
-		result = ft_strjoin(tmp, substituted);
-		free(substituted);
-		(*input)++;
-	}
-	else if (is_dollar(*((*input) - 1)) && **input && !is_env_var(**input)) // do I need to check \0 here?
-	{
-		env_var = ft_substr(*input - 1, 0, 1);
-		if (!env_var)
-			return (result);
-		result = ft_strjoin(tmp, env_var);
-	}
-	else
-	{
-		env_var = ft_substr(*input - 1, 0, 1);
-		if (!env_var)
-			return (result);
-		result = ft_strjoin(tmp, env_var);
-	}
-	free(env_var);
-	free(tmp);
+	result = handle_dollar_sign(input, tmp, 0, info);
 	return (result);
 }
 
-char	*process_squote(char **input, t_exec_info *info)
+char	*env_squote(char **input, t_exec_info *info)
 {
 	char	*start;
 	char	*result;
@@ -185,6 +217,31 @@ char	*process_squote(char **input, t_exec_info *info)
 	return (result);
 }
 
+char	*process_env_dquote(char **input, char **result, char **start, t_exec_info *info)
+{
+	char	*tmp;
+	char	*prev;
+
+	while(**input && !is_dquote(**input) && !is_dollar(**input))
+		(*input)++;
+	if (*input > *start || is_dquote(**input) || is_dollar(**input))
+	{
+		prev = *result;
+		tmp = ft_substr(*start, 0, *input - *start);
+		if (!tmp)
+			return (0);
+		*result = tmp;
+		tmp = ft_strjoin(prev, tmp);
+		free(prev);
+		free(*result);
+		*result = tmp;
+		if (tmp && is_dollar(**input))
+			*result = handle_dollar_sign(input, tmp, "\"", info);
+	}
+	*start = *input;
+	return (*result);
+}
+
 /**
  * @brief Process double-quoted string, substituting environment variables.
  * 
@@ -192,84 +249,25 @@ char	*process_squote(char **input, t_exec_info *info)
  * @param state 
  * @return char* 
  */
-char	*process_dquote(char **input, t_exec_info *info)
+char	*env_dquote(char **input, t_exec_info *info)
 {
 	char	*start;
 	char	*end;
 	char	*tmp;
-	char	*env_var;
-	char	*prev;
 	char	*result;
-	char	*substituted;
 
 	tmp = 0;
 	result = 0;
-	start = *input;
-	(*input)++;
+	start = (*input)++;
 	end = *input;
 	while (*end && !is_dquote(*end))
 		end++;
 	while(**input && start < end)
-	{
-		while(**input && !is_dquote(**input) && !is_dollar(**input))
-			(*input)++;
-		if (*input > start || is_dquote(**input))
-		{
-			prev = result;
-			tmp = ft_substr(start, 0, *input - start);
-			if (!tmp)
-				return (0);
-			result = tmp;
-			tmp = ft_strjoin(prev, tmp);
-			free(prev);
-			free(result);
-			result = tmp;
-			if (is_dollar(**input))
-			{
-				(*input)++;
-				if (**input == '?')
-				{
-					substituted = ft_itoa(info->prev_exit_code);
-					result = ft_strjoin(tmp, substituted);
-					(*input)++;
-					free(substituted);
-				}
-				else if (!**input)
-					result = ft_strjoin(tmp, *input - 1);
-				else if (is_env_var(**input))
-				{
-					start = *input;
-					while(**input && is_env_var(**input))
-						(*input)++;
-					env_var = ft_substr(start, 0, *input - start);
-					if (!env_var)
-						return (0);
-					substituted = substitute(env_var, "\"");
-					result = ft_strjoin(tmp, substituted);
-					free(substituted);
-					free(env_var);
-				}
-				else
-				{
-					env_var = ft_substr(*input - 1, 0, 2);
-					if (!env_var)
-						return (0);
-					result = ft_strjoin(tmp, env_var);
-					free(env_var);
-					(*input)++;
-				}
-				free(tmp);
-			}
-		}
-		start = *input;
-	}
-	if (is_dquote(**input))
-	{
-		tmp = result;
-		result = ft_strjoin(result, "\"");
-		free(tmp);
-		(*input)++;
-	}
+		result = process_env_dquote(input, &result, &start, info);
+	tmp = result;
+	result = ft_strjoin(result, "\"");
+	free(tmp);
+	(*input)++;
 	return (result);
 }
 
@@ -282,11 +280,11 @@ char	*process_dquote(char **input, t_exec_info *info)
  */
 char	*check_env_var(char *cmd_arg, t_exec_info *info)
 {
-	char				*result;
-	char				*substr;
-	char				*tmp;
-	t_state				state;
-	const t_process_fn	state_fn[] = {process_normal, process_squote, process_dquote, process_normal};
+	char			*result;
+	char			*substr;
+	char			*tmp;
+	t_state			state;
+	const t_env_fn	state_fn[] = {env_str, env_squote, env_dquote, env_str};
 
 	result = 0;
 	state = update_state(*cmd_arg);
