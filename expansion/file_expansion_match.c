@@ -105,7 +105,7 @@ void	match_execpt_last(t_search *info, char **pattern, t_size *idx, t_cmp *cmp)
 				tmp = pattern[*idx];
 				trimmed = trim(&tmp, *cmp, 0);
 			}	
-			if (idx == 0)
+			if (*idx == 0)
 				match_pattern_first(info, trimmed);
 			else
 				match_pattern_middle(info, trimmed);
