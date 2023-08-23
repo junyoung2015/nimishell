@@ -1,8 +1,9 @@
 #include "minishell.h"
 
-void	get_all_files(char *first, char *tmp, t_size *size, char ***result)
+void	get_all_files(char *first, t_size *size, char ***result)
 {
 	DIR				*dir;
+	char			*tmp;
 	struct dirent	*entry;
 
 	dir = opendir(".");
@@ -13,27 +14,21 @@ void	get_all_files(char *first, char *tmp, t_size *size, char ***result)
 		entry = readdir(dir);
 		if (!entry)
 			break ;
-		else if (ft_strlen(first) > 1 && first[0] == '.' && first[1] == '/')
-		{
-			if (entry->d_name[0] != '.' || (ft_strlen(first) > 2 && first[2] == '.'))
-			{
-				tmp = ft_strjoin("./", entry->d_name);
-				*size = ft_arr_append(result, tmp, *size);
-				if (!size)
-					break ;
-			}
-		}
+		if (ft_strlen(first) > 2 && ft_strncmp(first, "./", 2) == 0 && \
+			(entry->d_name[0] != '.' || first[2] == '.'))
+			tmp = ft_strjoin("./", entry->d_name);
 		else if (entry->d_name[0] != '.' || (first && *first == '.'))
-		{
-			*size = ft_arr_append(result, ft_strdup(entry->d_name), *size);
-			if (!*size)
-				break ;
-		}
+			tmp = ft_strdup(entry->d_name);
+		else
+			continue ;
+		*size = ft_arr_append(result, tmp, *size);
+		if (!*size)
+			break ;
 	}
 	closedir(dir);
 }
 
-t_search	*init_search_info(char *first)
+t_search	*get_search_info(char *first)
 {
 	char			**result;
 	t_size			size;
@@ -41,12 +36,27 @@ t_search	*init_search_info(char *first)
 
 	size = 0;
 	result = 0;
-	get_all_files(first, 0, &size, &result);
+	get_all_files(first, &size, &result);
 	if (!result && !size)
 		size = ft_arr_append(&result, ft_strdup(""), size);
 	info = create_search_info(result, size);
 	if (!info)
 		ft_arrfree(result);
+	return (info);
+}
+
+t_search	*init_search_info(char *cmd_arg)
+{
+	t_search	*info;
+
+	info = 0;
+	if (cmd_arg[0] == '.')
+		info = get_search_info(cmd_arg);
+	else
+		info = get_search_info(0);
+	if (!info)
+		return (0);
+	ft_qsort((void **)info->files, 0, ft_arrlen(info->files) - 1, cmp_ascii);
 	return (info);
 }
 
@@ -59,22 +69,22 @@ t_search	*init_search_info(char *first)
  */
 char	**find_matching_files(t_search *info, char **pattern)
 {
-	t_size	idx;
+	t_size	i;
 	char	**result;
 	char	*trimmed;
 	char	*tmp;
 	t_cmp	cmp;
 
-	idx = 0;
+	i = 0;
 	result = 0;
-	while (pattern[idx])
-		match_except_last(info, pattern, &idx, &cmp);
-	if (idx && !(is_wildcard(*(pattern[idx - 1])) && ft_strlen(pattern[idx - 1]) == 1))	// If last pattern is not wildcard, filter the files with last pattern
+	while (pattern[i])
+		match_except_last(info, pattern, &i, &cmp);
+	if (i && !(is_wildcard(*(pattern[i - 1])) && ft_strlen(pattern[i - 1]) == 1))	// If last pattern is not wildcard, filter the files with last pattern
 	{
-		trimmed = pattern[idx - 1];
-		if (is_quote(*(pattern[idx - 1])))
+		trimmed = pattern[i - 1];
+		if (is_quote(*(pattern[i - 1])))
 		{
-			tmp = pattern[idx - 1];
+			tmp = pattern[i - 1];
 			trimmed = trim(&tmp, cmp, 0);
 		}
 		match_pattern_last(info, trimmed, ft_strlen(trimmed));
@@ -122,22 +132,20 @@ char	**str_expansion(t_node *node)
 	{
 		if (is_wildcard_expansion(node->cmd_args[idx]))
 		{
-			if (node->cmd_args[idx][0] == '.')
-				info = init_search_info(node->cmd_args[idx]);
-			else
-				info = init_search_info(0);
-			if (!info)
-				return (0);
-			ft_qsort((void **)info->files, 0, ft_arrlen(info->files) - 1, cmp_ascii);
+			info = init_search_info(node->cmd_args[idx]);
+			// if (node->cmd_args[idx][0] == '.')
+			// 	info = get_search_info(node->cmd_args[idx]);
+			// else
+			// 	info = get_search_info(0);
+			// if (!info)
+			// 	return (0);
+			// ft_qsort((void **)info->files, 0, ft_arrlen(info->files) - 1, cmp_ascii);
 			new = split_pattern(node->cmd_args[idx]);
 			if (!new)
 				return (0);
 			info->files = find_matching_files(info, new);
 			if (!info->files || (*(info->files) && !(*(info->files))[0]))
-			{
-				// ft_arrfree(new);
 				len = file_not_found(&result, len, node->cmd_args[idx]);
-			}
 			else
 				len = ft_arrcat(&result, info->files, len);
 			free_search_info(info);
