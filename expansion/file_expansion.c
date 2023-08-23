@@ -1,42 +1,43 @@
 #include "minishell.h"
 
-t_search	*get_all_files(char *first_arg)
+void	get_all_files(char *first, char *tmp, t_size *size, char ***result)
 {
 	DIR				*dir;
 	struct dirent	*entry;
-	char			**result;
-	char            *tmp;
-	t_size			size;
-	t_search		*info;
 
-	size = 0;
-	result = 0;
 	dir = opendir(".");
 	if (!dir)
-		return (0);
+		return ;
 	while (TRUE)
 	{
 		entry = readdir(dir);
 		if (!entry)
 			break ;
-		else if (ft_strlen(first_arg) > 1 && first_arg[0] == '.' && first_arg[1] == '/')
+		if (entry->d_name[0] != '.' || (first && *first == '.'))
 		{
-			if (entry->d_name[0] != '.')
+			if (ft_strlen(first) > 1 && first[0] == '.' && first[1] == '/')
 			{
 				tmp = ft_strjoin("./", entry->d_name);
-				size = ft_arr_append(&result, tmp, size);
-				if (!size)
-					break ;
+				*size = ft_arr_append(result, tmp, *size);
 			}
-		}
-		else if (entry->d_name[0] != '.' || (first_arg && *first_arg == '.'))
-		{
-			size = ft_arr_append(&result, ft_strdup(entry->d_name), size);
-			if (!size)
+			else
+				*size = ft_arr_append(result, ft_strdup(entry->d_name), *size);
+			if (!*size)
 				break ;
 		}
 	}
 	closedir(dir);
+}
+
+t_search	*init_search_info(char *first)
+{
+	char			**result;
+	t_size			size;
+	t_search		*info;
+
+	size = 0;
+	result = 0;
+	get_all_files(first, 0, &size, &result);
 	if (!result && !size)
 		size = ft_arr_append(&result, ft_strdup(""), size);
 	info = create_search_info(result, size);
@@ -138,9 +139,9 @@ char	**str_expansion(t_node *node)
 		if (is_wildcard_expansion(node->cmd_args[idx]))
 		{
 			if (node->cmd_args[idx][0] == '.')
-				info = get_all_files(node->cmd_args[idx]);
+				info = init_search_info(node->cmd_args[idx]);
 			else
-				info = get_all_files(0);
+				info = init_search_info(0);
 			if (!info)
 				return (0);
 			ft_qsort((void **)info->files, 0, ft_arrlen(info->files) - 1, cmp_ascii);
