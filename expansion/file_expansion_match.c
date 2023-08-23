@@ -84,7 +84,6 @@ t_size	match_pattern_first(t_search *info, char *pattern)
 		}
 		idx++;
 	}
-	idx = 0;
 	ft_arrfree(info->files);
 	info->files = result;
 	return (size);
