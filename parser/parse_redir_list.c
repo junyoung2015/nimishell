@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_redir_list.c                                 :+:      :+:    :+:   */
+/*   p_redir_l.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -47,7 +47,7 @@ t_node	*parse_redir(t_parser *parser, t_node *parent)
 			{
 				free(redir_node->cmd_args);
 				free(redir_node);
-				redir_node = parse_err(parser, parent);
+				redir_node = p_err(parser, parent);
 				return (redir_node);
 			}
 			advance(parser);
@@ -70,7 +70,7 @@ t_node	*parse_redir(t_parser *parser, t_node *parent)
 				redir_node->type = (t_node_type) type;
 			}
 			else
-				redir_node = parse_err(parser, parent);
+				redir_node = p_err(parser, parent);
 		}
 	}
 	return (redir_node);
@@ -83,7 +83,7 @@ t_node	*parse_redir(t_parser *parser, t_node *parent)
  * @param parser	parser struct
  * @return t_node*	root node of <REDIRECTION-LIST-TAIL>
  */
-t_node	*parse_redir_list_tail(t_parser *parser, t_node *parent)
+t_node	*p_redir_l_tail(t_parser *parser, t_node *parent)
 {
 	t_node	*redir_node;
 	t_node	*redir_list_tail_node;
@@ -97,7 +97,7 @@ t_node	*parse_redir_list_tail(t_parser *parser, t_node *parent)
 		append_child_node(parent, redir_list_tail_node);
 		if (is_redir_token(parser))
 		{
-			redir_node = parse_redir_list_tail(parser, redir_list_tail_node);
+			redir_node = p_redir_l_tail(parser, redir_list_tail_node);
 			if (!redir_node)
 				return (0);
 		}
@@ -112,7 +112,7 @@ t_node	*parse_redir_list_tail(t_parser *parser, t_node *parent)
  * @param parser	parser struct
  * @return t_node*	root node of <REDIRECTION-LIST>
  */
-t_node	*parse_redir_list(t_parser *parser, t_node *parent)
+t_node	*p_redir_l(t_parser *parser, t_node *parent)
 {
 	t_node	*redir_list_node;
 	t_node	*redir_list_tail_node;
@@ -124,7 +124,7 @@ t_node	*parse_redir_list(t_parser *parser, t_node *parent)
 		return (redir_list_node);
 	if (is_redir_token(parser))
 	{
-		redir_list_tail_node = parse_redir_list_tail(parser, redir_list_node);
+		redir_list_tail_node = p_redir_l_tail(parser, redir_list_node);
 		if (!redir_list_tail_node)
 			return (0);
 	}

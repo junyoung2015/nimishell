@@ -58,7 +58,7 @@ t_node	*parse_word_list(t_parser *parser, t_node *parent)
 	{
 		free(word_list_node->cmd_args);
 		free(word_list_node);
-		return (parse_err(parser, parent));
+		return (p_err(parser, parent));
 	}
 	while (parser->cur < parser->size && is_word_token(parser))
 	{

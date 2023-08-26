@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_subshell.c                                   :+:      :+:    :+:   */
+/*   p_sub.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -18,7 +18,7 @@
  * @param parser	parser struct
  * @return t_node*	root node of <SUBSHELL>
  */
-t_node *parse_subshell(t_parser *parser, t_node *parent)
+t_node *p_sub(t_parser *parser, t_node *parent)
 {
 	t_node	*subshell_node;
 	t_node	*list_node;
@@ -28,7 +28,7 @@ t_node *parse_subshell(t_parser *parser, t_node *parent)
 		return (0);
 	append_child_node(parent, subshell_node);
 	advance(parser);
-	list_node = parse_list(parser, subshell_node);
+	list_node = p_l(parser, subshell_node);
 	if (!list_node)
 		return (0);
 	append_child_node(subshell_node, list_node);

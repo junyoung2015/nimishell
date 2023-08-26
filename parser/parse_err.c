@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_err.c                                        :+:      :+:    :+:   */
+/*   p_err.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -39,7 +39,7 @@ void	postorder_traversal(t_node *node, t_node **err)
  * @param new_node	root node of the subtree to check for errors
  * @return t_bool	TRUE if there is an error node, FALSE otherwise
  */
-t_bool	check_err(t_node *new_node)
+t_bool	check_err_node(t_node *new_node)
 {
 	t_node	*err;
 
@@ -64,7 +64,7 @@ t_bool	check_err(t_node *new_node)
  * @param parser 	parser struct
  * @return t_node*	error node, indicating an error in syntax
  */
-t_node	*parse_err(t_parser *parser, t_node *parent)
+t_node	*p_err(t_parser *parser, t_node *parent)
 {
 	t_node	*err;
 
