@@ -801,6 +801,32 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+### Test 55 ###
+send "(ls) | wc\r";
+expect {
+	"	24	24	235" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		# exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 56 ###
+# send "ls | (wc)\r";
+# expect {
+# 	"	24	24	235" {
+# 		send_user "${green}Test ${count} passed${default}\n" ;
+# 	}
+# 	timeout {
+# 		send_user "${red}Test ${count} failed${default}\n"
+# 		# exit 1 ;
+# 	}
+# }
+# set count [ expr \$count + 1 ] ;
+
 # Finish
 send "exit\r"
 expect eof
