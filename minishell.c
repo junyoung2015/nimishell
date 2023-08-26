@@ -96,14 +96,16 @@ void print_tokens(t_token *tokens, t_size num_tokens)
 
 # endif
 
-static void	init_sh_info(char **envp, t_sh_info *info)
+static void	init_sh_info(int ac, char ** av, char **envp, t_sh_info *info)
 {
 	t_size	i;
 	t_size	cnt;
 
+	(void) ac;
+	(void) av;
+	cnt = 0;
 	info->ast = 0;
 	info->exit_code = 0;
-	cnt = 0;
 	while (envp && envp[cnt])
 		cnt++;
 	info->env_cnt = cnt;
@@ -142,6 +144,7 @@ void	init_terminal(void)
 		write(STD_ERR, "\n", 1);
 		exit (1);
 	}
+	print_logo();
 }
 
 int	main(int ac, char **av, char **envp)
@@ -152,14 +155,11 @@ int	main(int ac, char **av, char **envp)
 	t_size		num_tokens;
 	t_token		*tokens;
 
-	(void) ac;
-	(void) av;
-	init_sh_info(envp, &info);
-	tokens = 0;
+	init_sh_info(ac, av, envp, &info);
 	init_terminal();
-	print_logo();
 	while (TRUE)
 	{
+		tokens = 0;
 		num_tokens = 0;
 		set_parent_signal();
 		pwd = get_prompt();
@@ -167,9 +167,6 @@ int	main(int ac, char **av, char **envp)
 		if (line)
 		{
 			add_history(line);
-			// TODO: ft_strtrim(line, space);
-			// Maybe - remove spaces at the start and end
-			// tokenize the input into an array of tokens
 			if (*line)
 			{
 				tokens = tokenize_input(line, 0, &num_tokens);
@@ -178,7 +175,6 @@ int	main(int ac, char **av, char **envp)
 					free(line);
 					free(pwd);
 					continue ;
-					// return (0);
 				}
 				else if (num_tokens >= 1 && tokens[num_tokens - 1].type == TOKEN_ERROR)
 				{
@@ -188,24 +184,22 @@ int	main(int ac, char **av, char **envp)
 				}
 				else
 				{
-					// if (DEBUG)
-					// 	print_tokens(tokens, num_tokens);
+					if (DEBUG)
+						print_tokens(tokens, num_tokens);
 					info.ast = parse_tokens(tokens, num_tokens);
-					// if (ast && DEBUG)
-					// {
-					// 	printf("\n=================== AST ==================\n");
-					// 	print_ast(ast, 0, "");
-					// 	printf("==========================================\n");
-					// }
+					if (info.ast && DEBUG)
+					{
+						printf("\n=================== AST ==================\n");
+						print_ast(info.ast, 0, "");
+						printf("==========================================\n");
+					}
 					info.exit_code = executor(&info);
 				}
 			}
 			if (tokens)
 				free_tokens(tokens, num_tokens);
-			tokens = 0;
 			free(line);
 			free(pwd);
-			line = 0;
 		}
 		else
 			break ;
