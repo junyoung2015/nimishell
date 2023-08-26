@@ -95,34 +95,18 @@ typedef struct	s_lexer
 typedef enum e_parse_state
 {
 	ERR,
-	ENV_VAR,
 	CMD,
-	WORD,
 	REDIR_LIST,
 	PIPELINE,
 	LIST,
-	SIMPLE_CMD,
-	ASSIGN_WORD,
 	SUBSHELL,
-	SIMPLE_CMD_ELE,
-	REDIR,
-	REDIR_TAIL,
-	WORD_LIST,
-	WORD_LIST_TAIL,
-	SIMPLE_CMD_TAIL,
-	PIPELINE_TAIL,
-	LIST_TAIL,
 	PARSE_STATES_CNT,
 } t_parse_state;
 
 typedef enum e_node_type
 {
 	AST_NULL,
-	AST_SIMPLE_CMD,
-	AST_SIMPLE_CMD_ELEMENT,
 	AST_CMD,
-	AST_LIST,
-	AST_LIST_TAIL,
 	AST_PIPE,
 	AST_REDIR_IN,
 	AST_HEREDOC,
@@ -348,7 +332,7 @@ t_token			*realloc_tokens(t_token *tokens, t_size *num_tokens, t_size new_size);
 t_token			*should_realloc(t_token *tokens, t_size *num_tokens, t_size *alloced);
 
 /* ================= PARSER ================== */
-typedef t_node *(*t_parser_fn)(t_parser *parser, t_node *parent);
+typedef t_node *(*t_parse)(t_parser *parser, t_node *parent);
 t_node			*parse_tokens(t_token *tokens, t_size num_tokens);
 t_node			*parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens);
 void			free_ast(t_node *root);
@@ -360,22 +344,22 @@ void			is_builtin_node(t_node *node);
 char			*parse_word(t_parser *parser);
 t_node			*parse_word_list(t_parser *parser, t_node *parent);
 t_node			*parse_redir(t_parser *parser, t_node *parent);
-t_node			*parse_redir_list_tail(t_parser *parser, t_node *parent);
-t_node			*parse_redir_list(t_parser *parser, t_node *parent);
+t_node			*p_redir_l_tail(t_parser *parser, t_node *parent);
+t_node			*p_redir_l(t_parser *parser, t_node *parent);
 t_node			*parse_simple_cmd_element(t_parser *parser, t_node *parent);
 t_node			*parse_simple_cmd_tail(t_parser *parser, t_node *parent);
 t_node			*parse_simple_cmd(t_parser *parser, t_node *parent);
-t_node			*parse_command(t_parser *parser, t_node *parent);
-t_node			*parse_subshell(t_parser *parser, t_node *parent);
-t_node			*parse_list_tail(t_parser *parser, t_node *parent);
-t_node			*parse_list(t_parser *parser, t_node *parent);
-t_node			*parse_pipeline_tail(t_parser *parser, t_node *parent);
-t_node			*parse_pipeline(t_parser *parser, t_node *parent);
-t_node			*parse_err(t_parser *parser, t_node *parent);
+t_node			*p_cmd(t_parser *parser, t_node *parent);
+t_node			*p_sub(t_parser *parser, t_node *parent);
+t_node			*p_l_tail(t_parser *parser, t_node *parent);
+t_node			*p_l(t_parser *parser, t_node *parent);
+t_node			*p_pipe_l_tail(t_parser *parser, t_node *parent);
+t_node			*p_pipe_l(t_parser *parser, t_node *parent);
+t_node			*p_err(t_parser *parser, t_node *parent);
 
 void			postorder_traversal(t_node *node, t_node **err_node);
-t_bool			check_err(t_node *new_node);
-t_node			*parse_err(t_parser *parser, t_node *parent);
+t_bool			check_err_node(t_node *new_node);
+t_node			*p_err(t_parser *parser, t_node *parent);
 char			*tok_type(t_type type);
 
 void			append_redir_node(t_node *parent, t_node *child);
