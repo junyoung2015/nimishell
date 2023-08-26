@@ -316,9 +316,9 @@ t_bool			is_quote(char ch);
 t_cmp			get_cmp_fn(char ch);
 
 /* ============== CMP_FUNC_META ============== */
+int				is_dmeta_str(char *input);
 t_bool			is_meta(char ch);
 t_bool			is_dmeta_ch(char ch);
-t_bool			is_dmeta_str(char *input);
 t_bool			is_space(char ch);
 t_bool			is_not_space(char ch);
 
