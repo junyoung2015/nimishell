@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/21 19:54:41 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/27 02:00:16 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,5 +60,9 @@ void	err_exit(t_exec_info *info, char *msg, int exit_code);
 void	builtin(t_node *node, t_exec_info *info);
 void	command(t_node *node, t_exec_info *info);
 char	*get_cmdpath(char *cmd, t_exec_info *info);
+
+/* subshell */
+void	check_subshell_parent(t_node *node, t_exec_info *info);
+void	check_subshell_child(t_node *node, t_exec_info *info);
 
 #endif

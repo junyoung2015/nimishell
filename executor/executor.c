@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/21 20:34:29 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/27 01:42:18 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,23 +48,21 @@ void	set_sh_info(t_exec_info *info, t_sh_info *sh_info)
 	sh_info->env_cnt = info->env_cnt;
 }
 
-int	executor(t_sh_info *sh_info)
+int	get_exit_code(t_exec_info info)
 {
-	t_exec_info	info;	
-	t_size		i;
 	int			status;
 	int			sig_num;
-
-	init_exec_info(&info, sh_info);
-	ast_search(info.ast, &info);
-	close_fd(&info);
-	set_sh_info(&info, sh_info);
-	if (!info.fork_cnt)
-		return (info.exit_code);
-	waitpid(info.pid, &status, 0);
-	i = 0;
-	while (++i < info.fork_cnt)
+	
+	if (info.pid > 0)
+	{
+		waitpid(info.pid, &status, 0);
+		info.fork_cnt--;	
+	}
+	while (info.fork_cnt > 0)
+	{
 		wait(NULL);
+		info.fork_cnt--;
+	}
 	if (WIFSIGNALED(status))
 	{
 		sig_num = WTERMSIG(status);
@@ -74,5 +72,20 @@ int	executor(t_sh_info *sh_info)
 			write(STD_ERR, SIGQUIT_ECHO, ft_strlen(SIGQUIT_ECHO));
 		return (128 + sig_num);
 	}
-	return (WEXITSTATUS(status));
+	if (info.pid > 0)
+		return (WEXITSTATUS(status));
+	return (info.exit_code);
+}
+
+int	executor(t_sh_info *sh_info)
+{
+	t_exec_info	info;	
+
+	init_exec_info(&info, sh_info);
+	ast_search(info.ast, &info);
+	close_fd(&info);
+	set_sh_info(&info, sh_info);
+	if (!info.fork_cnt)
+		return (info.exit_code);
+	return (get_exit_code(info));
 }

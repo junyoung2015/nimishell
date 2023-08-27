@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:37:25 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/23 19:55:20 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/27 14:42:17 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 
 void	open_pipe(t_node *node, t_exec_info *info)
 {
-	if (node->type == AST_SUBSHELL)
-		node->left->pipe_open = node->pipe_open;
 	if (node->type != AST_PIPE)
 		return ;
 	node->left->pipe_open = node->pipe_open + 1;
@@ -28,7 +26,7 @@ int	connect_pipe(t_node *node, t_exec_info *info)
 {
 	if (info->fd_in < 0 && (node->pipe_open >> 1) & 1)
 		info->fd_in = info->prev_pipe;
-	if (info->fd_out < 0 && (node->pipe_open >> 0) & 1)
+	if (info->fd_out < 0 && node->pipe_open & 1)
 		info->fd_out = info->pipe[1];
 	if (info->fd_in >= 0)
 	{
