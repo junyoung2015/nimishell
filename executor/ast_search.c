@@ -9,6 +9,7 @@ t_bool is_stop(t_node *node, t_exec_info *info)
 	if (info->is_fork)
 	{
 		waitpid(info->pid, &status, 0);
+		info->pid = -1;
 		info->fork_cnt -= 1;
 		info->exit_code = WEXITSTATUS(status);
 		info->is_fork = FALSE;
@@ -24,7 +25,8 @@ pid_t is_fork(t_node *node, t_exec_info *info)
 {
 	pid_t pid;
 
-	if (node->type != AST_CMD || (node->builtin != NOT_BUILTIN && !node->pipe_open))
+	if ((node->type != AST_CMD && node->type != AST_SUBSHELL) \
+			|| (node->builtin != NOT_BUILTIN && !node->pipe_open))
 		return (0);
 	pid = fork();
 	if (pid < 0)
@@ -36,7 +38,10 @@ pid_t is_fork(t_node *node, t_exec_info *info)
 		info->is_fork = TRUE;
 		info->pid = pid;
 		if (pid > 0)
+		{
 			close_pipe(node, info);
+			check_subshell_parent(node, info);
+		}
 	}
 	return (pid);
 }
@@ -76,6 +81,7 @@ void ast_search(t_node *root, t_exec_info *info)
 	reset_info(root, info);
 	if (is_fork(root, info))
 		return;
+	check_subshell_child(root, info);
 	redirection(root, info);
 	ast_search(root->left, info);
 	if (is_stop(root, info))
