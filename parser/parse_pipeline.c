@@ -24,23 +24,22 @@ t_node	*p_pipe_l_tail(t_parser *parser, t_node *parent)
 	t_node	*right_node;
 	t_node	*pipe_node;
 
+	(void) parent;
 	pipe_node = 0;
 	if (check(parser, TOKEN_PIPE))
 	{
+		pipe_node = create_node(AST_PIPE);
+		if (!pipe_node)
+			return (0);
 		advance(parser);
-		right_node = p_pipe_l(parser, parent);
+		right_node = p_pipe_l(parser, pipe_node);
 		if (!right_node)
 			return (0);
 		else if (right_node->type == AST_ERR)
 			return (right_node);
-		pipe_node = create_node(AST_PIPE);
-		if (!pipe_node)
-			return (0);
 		pipe_node->right = right_node;
 		return (pipe_node);
 	}
-	else
-		return (0);
 	return (pipe_node);
 }
 
