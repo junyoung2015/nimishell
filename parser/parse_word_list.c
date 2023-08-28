@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:56:48 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 12:56:50 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/28 20:16:23 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
  * @param parser	paresr struct
  * @return t_node*	root node of the <REDIRECTION>, or <WORD>
  */
-char *parse_word(t_parser *parser)
+char	*parse_word(t_parser *parser)
 {
 	char	*word;
 
