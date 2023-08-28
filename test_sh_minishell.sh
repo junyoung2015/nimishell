@@ -770,7 +770,7 @@ expect {
 	}
 	timeout {
 		send_user "${red}Test ${count} failed${default}\n"
-#		exit 1 ;
+		exit 1 ;
 	}
 }
 set count [ expr \$count + 1 ] ;
@@ -801,6 +801,9 @@ expect {
 }
 set count [ expr \$count + 1 ] ;
 
+# Reset PATH
+send "export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki\r";
+
 ### Test 55 ###
 send "(ls) | wc\r";
 expect {
@@ -815,17 +818,56 @@ expect {
 set count [ expr \$count + 1 ] ;
 
 ### Test 56 ###
-# send "ls | (wc)\r";
-# expect {
-# 	"	24	24	235" {
-# 		send_user "${green}Test ${count} passed${default}\n" ;
-# 	}
-# 	timeout {
-# 		send_user "${red}Test ${count} failed${default}\n"
-# 		# exit 1 ;
-# 	}
-# }
-# set count [ expr \$count + 1 ] ;
+send "ls | (wc)\r";
+expect {
+	"	24	24	235" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		# exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 57 ###
+send "ls && echo\r";
+expect {
+	"\n" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		# exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 58 ###
+send "abcde || echo\r";
+expect {
+	"minishell: abcde: command not found" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		# exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
+
+### Test 59 ###
+send "abcde || echo test && echo and\r";
+expect {
+	"test\nand" {
+		send_user "${green}Test ${count} passed${default}\n" ;
+	}
+	timeout {
+		send_user "${red}Test ${count} failed${default}\n"
+		# exit 1 ;
+	}
+}
+set count [ expr \$count + 1 ] ;
 
 # Finish
 send "exit\r"
