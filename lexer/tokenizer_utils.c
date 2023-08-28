@@ -54,7 +54,5 @@ t_type	get_operator_type(char ch)
 		return (TOKEN_L_PAREN);
 	else if (ch == ')')
 		return (TOKEN_R_PAREN);
-	else if (ch == '*')
-		return (TOKEN_WILDCARD);
 	return (TOKEN_UNKNOWN);
 }

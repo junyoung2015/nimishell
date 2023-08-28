@@ -34,6 +34,27 @@ char *parse_word(t_parser *parser)
 	return (word);
 }
 
+t_node	*parse_each_word(t_parser *parser, t_node *parent, t_node *list)
+{
+	t_size	idx;
+
+	(void) parent;
+	idx = 0;
+	list->cmd_args[list->num_args] = parse_word(parser);
+	if (!list->cmd_args[list->num_args])
+	{
+		while (idx < list->num_args)
+			free(list->cmd_args[idx++]);
+		free(list);
+		return (0);
+	}
+	if (list->cmd_args[list->num_args])
+		is_builtin_node(list);
+	list->num_args++;
+	advance(parser);
+	return (list);
+}
+
 /**
  * @brief Parse function for <WORD-LIST-TAIL>, calling <WORD> until the next
  * 		token is not a <WORD>.
@@ -43,37 +64,28 @@ char *parse_word(t_parser *parser)
  */
 t_node	*parse_word_list(t_parser *parser, t_node *parent)
 {
-	t_node	*word_list_node;
+	t_node	*list;
 
-	word_list_node = create_node(AST_WORD_LIST);
-	if (!word_list_node)
+	list = create_node(AST_WORD_LIST);
+	if (!list)
 		return (0);
-	word_list_node->cmd_args = ft_calloc(parser->size - parser->cur + 2, sizeof(char *));
-	if (!word_list_node->cmd_args)
+	list->cmd_args = ft_calloc(parser->size - parser->cur + 2, sizeof(char *));
+	if (!list->cmd_args)
 	{
-		free(word_list_node);
+		free(list);
 		return (0);
 	}
 	else if (!parser->tokens[parser->cur].val)
 	{
-		free(word_list_node->cmd_args);
-		free(word_list_node);
-		return (parse_err(parser, parent));
+		free(list->cmd_args);
+		free(list);
+		return (p_err(parser, parent));
 	}
 	while (parser->cur < parser->size && is_word_token(parser))
 	{
-		word_list_node->cmd_args[word_list_node->num_args] = parse_word(parser);
-		if (!word_list_node->cmd_args[word_list_node->num_args])
-		{
-			for (t_size i = 0; i < word_list_node->num_args; i++)
-				free(word_list_node->cmd_args[i++]);
-			free(word_list_node);
+		list = parse_each_word(parser, parent, list);
+		if (!list)
 			return (0);
-		}
-		if (word_list_node->cmd_args[word_list_node->num_args])
-			is_builtin_node(word_list_node);
-		word_list_node->num_args++;
-		advance(parser);
 	}
-	return (word_list_node);
+	return (list);
 }

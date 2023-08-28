@@ -13,10 +13,6 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# ifndef DEBUG
-#  define DEBUG 1
-# endif
-
 /* ================ INCLUDES ================= */
 # include <stdio.h>
 # include <stdlib.h>
@@ -95,34 +91,18 @@ typedef struct	s_lexer
 typedef enum e_parse_state
 {
 	ERR,
-	ENV_VAR,
 	CMD,
-	WORD,
 	REDIR_LIST,
 	PIPELINE,
 	LIST,
-	SIMPLE_CMD,
-	ASSIGN_WORD,
 	SUBSHELL,
-	SIMPLE_CMD_ELE,
-	REDIR,
-	REDIR_TAIL,
-	WORD_LIST,
-	WORD_LIST_TAIL,
-	SIMPLE_CMD_TAIL,
-	PIPELINE_TAIL,
-	LIST_TAIL,
 	PARSE_STATES_CNT,
 } t_parse_state;
 
 typedef enum e_node_type
 {
 	AST_NULL,
-	AST_SIMPLE_CMD,
-	AST_SIMPLE_CMD_ELEMENT,
 	AST_CMD,
-	AST_LIST,
-	AST_LIST_TAIL,
 	AST_PIPE,
 	AST_REDIR_IN,
 	AST_HEREDOC,
@@ -169,9 +149,13 @@ typedef struct s_search_info
 
 typedef struct s_minishell_info
 {
-	t_size	env_cnt;
+	char	*pwd;
+	char	*line;
 	int		exit_code;
 	t_node	*ast;
+	t_size	env_cnt;
+	t_size	num_tokens;
+	t_token	*tokens;
 } t_sh_info;
 
 extern char	**g_env;
@@ -193,6 +177,7 @@ extern char	**g_env;
 # define FALSE					0
 
 # define ANDOR					8
+# define REDIR					4
 
 /* ============= GENERAL MACRO =============== */
 # define MINISHELL				"minishell: "
@@ -294,7 +279,6 @@ t_size			match_pattern_first(t_search *info, char *pattern);
 t_size			match_pattern_middle(t_search *info, char *pattern);
 t_size			match_pattern_last(t_search *info, char *pattern, t_size last);
 
-
 /* =============== ARRAY_UTILS =============== */
 void			ft_arrfree(char **arr);
 t_size			ft_arrlen(char **arr);
@@ -306,10 +290,6 @@ t_size 			ft_arr_append(char ***arr, char *str, t_size size);
 t_token 		*tokenize_input(char *input, t_size alloced, t_size *num_tokens);
 t_bool			init_tokenizer(char *input, t_token **tokens, t_size *alloced,  t_state *state);
 
-
-void			print_tokens(t_token *tokens, t_size num_tokens);
-
-
 /* ============= CMP_FUNC_QUOTE ============== */
 t_bool			is_squote(char ch);
 t_bool			is_dquote(char ch);
@@ -317,9 +297,9 @@ t_bool			is_quote(char ch);
 t_cmp			get_cmp_fn(char ch);
 
 /* ============== CMP_FUNC_META ============== */
+int				is_dmeta_str(char *input);
 t_bool			is_meta(char ch);
 t_bool			is_dmeta_ch(char ch);
-t_bool			is_dmeta_str(char *input);
 t_bool			is_space(char ch);
 t_bool			is_not_space(char ch);
 
@@ -349,7 +329,7 @@ t_token			*realloc_tokens(t_token *tokens, t_size *num_tokens, t_size new_size);
 t_token			*should_realloc(t_token *tokens, t_size *num_tokens, t_size *alloced);
 
 /* ================= PARSER ================== */
-typedef t_node *(*t_parser_fn)(t_parser *parser, t_node *parent);
+typedef t_node *(*t_parse)(t_parser *parser, t_node *parent);
 t_node			*parse_tokens(t_token *tokens, t_size num_tokens);
 void			free_ast(t_node *root);
 t_node			*create_node(t_node_type type);
@@ -360,22 +340,23 @@ void			is_builtin_node(t_node *node);
 char			*parse_word(t_parser *parser);
 t_node			*parse_word_list(t_parser *parser, t_node *parent);
 t_node			*parse_redir(t_parser *parser, t_node *parent);
-t_node			*parse_redir_list_tail(t_parser *parser, t_node *parent);
-t_node			*parse_redir_list(t_parser *parser, t_node *parent);
+t_node			*p_redir_l_tail(t_parser *parser, t_node *parent);
+t_node			*p_redir_l(t_parser *parser, t_node *parent);
 t_node			*parse_simple_cmd_element(t_parser *parser, t_node *parent);
 t_node			*parse_simple_cmd_tail(t_parser *parser, t_node *parent);
 t_node			*parse_simple_cmd(t_parser *parser, t_node *parent);
-t_node			*parse_command(t_parser *parser, t_node *parent);
-t_node			*parse_subshell(t_parser *parser, t_node *parent);
-t_node			*parse_list_tail(t_parser *parser, t_node *parent);
-t_node			*parse_list(t_parser *parser, t_node *parent);
-t_node			*parse_pipeline_tail(t_parser *parser, t_node *parent);
-t_node			*parse_pipeline(t_parser *parser, t_node *parent);
-t_node			*parse_err(t_parser *parser, t_node *parent);
+t_node			*p_cmd(t_parser *parser, t_node *parent);
+t_node			*p_sub(t_parser *parser, t_node *parent);
+t_node			*parse_subshell_list(t_parser *parser, t_node *parent);
+t_node			*p_l_tail(t_parser *parser, t_node *parent);
+t_node			*p_l(t_parser *parser, t_node *parent);
+t_node			*p_pipe_l_tail(t_parser *parser, t_node *parent);
+t_node			*p_pipe_l(t_parser *parser, t_node *parent);
+t_node			*p_err(t_parser *parser, t_node *parent);
 
 void			postorder_traversal(t_node *node, t_node **err_node);
-t_bool			check_err(t_node *new_node);
-t_node			*parse_err(t_parser *parser, t_node *parent);
+t_bool			check_err_node(t_node *new_node);
+t_node			*p_err(t_parser *parser, t_node *parent);
 char			*tok_type(t_type type);
 
 void			append_redir_node(t_node *parent, t_node *child);
@@ -385,7 +366,7 @@ void			append_child_node(t_node *parent, t_node *child);
 t_bool			is_word_token(t_parser *parser);
 t_bool			is_redir_token(t_parser *parser);
 void			is_builtin_node(t_node *node);
-void			update_p_state(char **table, t_parser *parser, t_parse_state *parse_state);
+void			update_p_state(t_parser *parser, t_parse_state *parse_state);
 
 /* =========== PARSER_STATUS_UTILS =========== */
 void			advance(t_parser *parser);

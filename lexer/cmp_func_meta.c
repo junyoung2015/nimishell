@@ -42,7 +42,7 @@ t_bool	is_not_space(char ch)
  * 		enum, but also works as TRUE or FALSE, since TOKEN_WORD = 0,
  * 		and other enums are above 0.
  */
-t_bool	is_dmeta_str(char *input)
+int	is_dmeta_str(char *input)
 {
 	if (!(is_dmeta_ch(0[input]) && is_dmeta_ch(1[input])))
 		return (TOKEN_WORD);
