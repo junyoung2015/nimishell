@@ -12,9 +12,19 @@
 
 #include "minishell.h"
 
-t_node	*parse_heredoc(t_parser *parser, t_node *parent)
+t_node	*parse_heredoc_cmd(t_parser *parser, t_node *parent, t_node *heredoc_node)
 {
 	t_node	*cmd_node;
+
+	cmd_node = parse_simple_cmd_element(parser, parent);
+	if (!cmd_node)
+		return (0);
+	append_child_node(cmd_node, heredoc_node);
+	return (cmd_node);
+}
+
+t_node	*parse_heredoc(t_parser *parser, t_node *parent)
+{
 	t_node	*heredoc_node;
 
 	heredoc_node = create_node(AST_HEREDOC);
@@ -36,11 +46,7 @@ t_node	*parse_heredoc(t_parser *parser, t_node *parent)
 	}
 	advance(parser);
 	if (is_word_token(parser))
-	{
-		cmd_node = parse_simple_cmd_element(parser, parent);
-		append_child_node(cmd_node, heredoc_node);
-		return (cmd_node);
-	}
+		return (parse_heredoc_cmd(parser, parent, heredoc_node));
 	return (heredoc_node);
 }
 
