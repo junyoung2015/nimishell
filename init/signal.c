@@ -6,13 +6,13 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 20:10:56 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/28 20:11:00 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/28 20:12:43 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void sig_handler(int signal)
+void	sig_handler(int signal)
 {	
 	if (signal == SIGINT)
 	{
@@ -39,8 +39,8 @@ void	set_signal(pid_t pid, t_bool flag)
 	}
 }
 
-void    set_parent_signal(void)
+void	set_parent_signal(void)
 {
-    signal(SIGQUIT, SIG_IGN);
-    signal(SIGINT, sig_handler);
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, sig_handler);
 }
