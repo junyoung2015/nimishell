@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   file_expansion_split.c                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/08/28 20:38:43 by jusohn            #+#    #+#             */
+/*   Updated: 2023/08/28 20:39:47 by jusohn           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 t_bool	is_wildcard(char ch)
@@ -14,7 +26,7 @@ t_bool	is_wildcard_expansion(char *cmd_arg)
 {
 	char	*tmp;
 	t_bool	in_quotes;
-	
+
 	tmp = cmd_arg;
 	in_quotes = FALSE;
 	while (*tmp)

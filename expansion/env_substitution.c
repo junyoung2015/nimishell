@@ -1,156 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env_substitution.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/08/28 20:35:09 by jusohn            #+#    #+#             */
+/*   Updated: 2023/08/28 20:51:34 by jusohn           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "executor.h"
 
-t_bool	is_number(int c)
-{
-	return ('0' <= c && c <= '9');
-}
-
-t_bool	is_alpha(int c)
-{
-	return (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z'));
-}
-t_bool	is_alnum(int c)
-{
-	return (is_number(c) || is_alpha(c));
-}
-
-/**
- * @brief Check whether 'ch' is a valid character for an environment variable.
- * 
- * @param ch		character to check
- * @return t_bool	TRUE if 'ch' is a valid character for an environment variable,
- * 					FALSE otherwise.
- */
-t_bool	is_env_var(char ch)
-{
-	return (is_alnum(ch) || ch == '_');
-}
-
-t_bool	is_dollar(char ch)
-{
-	return (ch == '$');
-}
-
-char	*ft_getenv(char *env_var)
-{
-	t_size	i;
-	char	*start;
-	char	*end;
-	char	*tmp;
-
-	i = 0;
-	while (g_env && g_env[i])
-	{
-		start = g_env[i];
-		if (start)
-			end = ft_strchr(start, '=');
-		else
-			return (0);
-		if (!end)
-			return (0);
-		tmp = ft_substr(start, 0, end - start);
-		if (tmp && ft_strcmp(tmp, env_var) == 0)
-		{
-			free(tmp);
-			return (start);
-		}
-		free(tmp);
-		i++;
-	}
-	return (0);
-}
-
-char	*wrap_env_var(char *env_var, char *quote)
-{
-	char	*tmp;
-	char	*wrapper;
-
-	tmp = env_var;
-	if (is_squote(*env_var))
-		wrapper = "\"";
-	else
-		wrapper = "'";
-	env_var = ft_strjoin(wrapper, env_var);
-	free(tmp);
-	tmp = env_var;
-	env_var = ft_strjoin(env_var, wrapper);
-	free(tmp);
-	if (quote)
-	{
-		tmp = env_var;
-		env_var = ft_strjoin(env_var, quote);
-		free(tmp);
-		tmp = env_var;
-		env_var = ft_strjoin(quote, env_var);
-		free(tmp);
-	}
-	return (env_var);
-}
-
-char	*substitute(char *env_var, char *quote)
-{
-	char	*result;
-	char	*key;
-	char	*value;
-
-	result = 0;
-	key = ft_getenv(env_var);
-	if (!key)
-		return (0);
-	value = ft_strchr(key, '=');
-	if (value)
-	{
-		result = ft_strtrim(value + 1, " ");
-		result = wrap_env_var(result, quote);
-	}
-	return (result);
-}
-
-char	*sub_exit_code(char **input, char *tmp, t_exec_info *info)
-{
-	char	*substituted;
-	char	*result;
-
-	result = 0;
-	if (**input == '?')
-	{
-		substituted = ft_itoa(info->prev_exit_code);
-		result = ft_strjoin(tmp, substituted);
-		(*input)++;
-		free(substituted);
-	}
-	return (result);
-}
-
-char	*sub_env_var(char **input, char *tmp, char *quote)
-{
-	char	*substituted;
-	char	*result;
-	char	*env_var;
-	char	*start;
-
-	result = 0;
-	start = *input;
-	while(**input && is_env_var(**input))
-		(*input)++;
-	env_var = ft_substr(start, 0, *input - start);
-	if (!env_var)
-		return (0);
-	substituted = substitute(env_var, quote);
-	result = ft_strjoin(tmp, substituted);
-	free(substituted);
-	free(env_var);
-	return (result);
-}
-
-char	*trim_single_char(char **input, char *tmp)
+char	*trim_single_char(char **in, char *tmp)
 {
 	char	*result;
 	char	*character;
 
 	result = 0;
-	character = ft_substr(*input - 1, 0, 1);
+	character = ft_substr(*in - 1, 0, 1);
 	if (!character)
 		return (result);
 	result = ft_strjoin(tmp, character);
@@ -158,116 +26,21 @@ char	*trim_single_char(char **input, char *tmp)
 	return (result);
 }
 
-char	*handle_dollar_sign(char **input, char *tmp, char *quote, t_exec_info *info)
+char	*handle_dollar_sign(char **in, char *tmp, char *quo, t_exec_info *info)
 {
 	char	*result;
 
-	(*input)++;
+	(*in)++;
 	result = 0;
-	if (**input == '?')
-		result = sub_exit_code(input, tmp, info);
-	else if (!**input)
-		result = ft_strjoin(tmp, *input - 1);
-	else if (is_env_var(**input))
-		result = sub_env_var(input, tmp, quote);
+	if (**in == '?')
+		result = sub_exit_code(in, tmp, info);
+	else if (!**in)
+		result = ft_strjoin(tmp, *in - 1);
+	else if (is_env_var(**in))
+		result = sub_env_var(in, tmp, quo);
 	else
-		result = trim_single_char(input, tmp);
+		result = trim_single_char(in, tmp);
 	free(tmp);
-	return (result);
-}
-
-char	*env_str(char **input, t_exec_info *info)
-{
-	char	*start;
-	char	*tmp;
-	char	*result;
-
-	tmp = 0;
-	start = *input;
-	while(**input && !is_dollar(**input))
-		(*input)++;
-	if (*input > start)
-	{
-		tmp = ft_substr(start, 0, *input - start);
-		if (!tmp)
-			return (0);
-	}
-	result = tmp;
-	if (!**input || !is_dollar(**input))
-		return (tmp);
-	result = handle_dollar_sign(input, tmp, 0, info);
-	return (result);
-}
-
-char	*env_squote(char **input, t_exec_info *info)
-{
-	char	*start;
-	char	*result;
-
-	(void)info;
-	start = *input;
-	(*input)++;
-	while(**input && !is_squote(**input))
-		(*input)++;
-	result = ft_substr(start, 0, *input - start + is_squote(**input));
-	if (!result)
-		return (0);
-	if (is_squote(**input))
-		(*input)++;
-	return (result);
-}
-
-char	*process_env_dquote(char **input, char **result, char **start, t_exec_info *info)
-{
-	char	*tmp;
-	char	*prev;
-
-	while(**input && !is_dquote(**input) && !is_dollar(**input))
-		(*input)++;
-	if (*input > *start || is_dquote(**input) || is_dollar(**input))
-	{
-		prev = *result;
-		tmp = ft_substr(*start, 0, *input - *start);
-		if (!tmp)
-			return (0);
-		*result = tmp;
-		tmp = ft_strjoin(prev, tmp);
-		free(prev);
-		free(*result);
-		*result = tmp;
-		if (tmp && is_dollar(**input))
-			*result = handle_dollar_sign(input, tmp, "\"", info);
-	}
-	*start = *input;
-	return (*result);
-}
-
-/**
- * @brief Process double-quoted string, substituting environment variables.
- * 
- * @param input 
- * @param state 
- * @return char* 
- */
-char	*env_dquote(char **input, t_exec_info *info)
-{
-	char	*start;
-	char	*end;
-	char	*tmp;
-	char	*result;
-
-	tmp = 0;
-	result = 0;
-	start = (*input)++;
-	end = *input;
-	while (*end && !is_dquote(*end))
-		end++;
-	while(**input && start < end)
-		result = process_env_dquote(input, &result, &start, info);
-	tmp = result;
-	result = ft_strjoin(result, "\"");
-	free(tmp);
-	(*input)++;
 	return (result);
 }
 
@@ -329,7 +102,7 @@ char	**env_substitution(t_node *node, t_exec_info *info)
 		result[idx] = check_env_var(node->cmd_args[idx], info);
 		if (!result[idx])
 		{
-			while(idx > 0)
+			while (idx > 0)
 			{
 				idx--;
 				free(result[idx]);

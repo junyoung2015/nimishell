@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   2darray_utils.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/08/28 20:33:49 by jusohn            #+#    #+#             */
+/*   Updated: 2023/08/28 20:35:02 by jusohn           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 /**
@@ -43,6 +55,7 @@ t_size	ft_arrlen(char **arr)
  */
 t_size	ft_arrcat(char ***arr, char **new_arr, t_size size)
 {
+	char	**tmp;
 	t_size	new;
 	t_size	idx;
 
@@ -52,7 +65,7 @@ t_size	ft_arrcat(char ***arr, char **new_arr, t_size size)
 	new = size;
 	while (new_arr[new - size])
 		new++;
-	char **tmp = (char **)ft_calloc((new + 1), sizeof(char *));
+	tmp = (char **)ft_calloc((new + 1), sizeof(char *));
 	if (!tmp)
 		return (0);
 	while (++idx < size)
@@ -79,12 +92,13 @@ t_size	ft_arrcat(char ***arr, char **new_arr, t_size size)
  */
 t_size	ft_arr_append(char ***arr, char *str, t_size size)
 {
+	char	**tmp;
 	t_size	idx;
 
 	idx = 0;
 	if (!str)
 		return (size);
-	char **tmp = (char **)ft_calloc((size + 2), sizeof(char *));
+	tmp = (char **)ft_calloc((size + 2), sizeof(char *));
 	if (!tmp)
 		return (0);
 	while (idx < size)

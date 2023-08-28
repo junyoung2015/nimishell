@@ -1,64 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   file_expansion.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/08/28 20:38:38 by jusohn            #+#    #+#             */
+/*   Updated: 2023/08/28 20:59:13 by jusohn           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
-
-void	get_all_files(char *first, t_size *size, char ***result)
-{
-	DIR				*dir;
-	char			*tmp;
-	struct dirent	*entry;
-
-	dir = opendir(".");
-	if (!dir)
-		return ;
-	while (TRUE)
-	{
-		entry = readdir(dir);
-		if (!entry)
-			break ;
-		if (ft_strlen(first) >= 2 && ft_strncmp(first, "./", 2) == 0 && \
-			(entry->d_name[0] != '.' || first[2] == '.'))
-			tmp = ft_strjoin("./", entry->d_name);
-		else if (entry->d_name[0] != '.' || (first && *first == '.'))
-			tmp = ft_strdup(entry->d_name);
-		else
-			continue ;
-		*size = ft_arr_append(result, tmp, *size);
-		if (!*size)
-			break ;
-	}
-	closedir(dir);
-}
-
-t_search	*get_search_info(char *first)
-{
-	char			**result;
-	t_size			size;
-	t_search		*info;
-
-	size = 0;
-	result = 0;
-	get_all_files(first, &size, &result);
-	if (!result && !size)
-		size = ft_arr_append(&result, ft_strdup(""), size);
-	info = create_search_info(result, size);
-	if (!info)
-		ft_arrfree(result);
-	return (info);
-}
-
-t_search	*init_search_info(char *cmd_arg)
-{
-	t_search	*info;
-
-	info = 0;
-	if (cmd_arg[0] == '.')
-		info = get_search_info(cmd_arg);
-	else
-		info = get_search_info(0);
-	if (!info)
-		return (0);
-	_qs((void **)info->files, 0, ft_arrlen(info->files) - 1, cmp_ascii);
-	return (info);
-}
 
 /**
  * @brief   Find all files that match the pattern
@@ -67,7 +19,7 @@ t_search	*init_search_info(char *cmd_arg)
  * @param pattern	Pattern of the files to search for
  * @return char**	List of files that match the pattern
  */
-char	**find_matching_files(t_search *info, char **pattern)
+char	**find_matching_files(t_search *info, char **pat)
 {
 	t_size	i;
 	char	**result;
@@ -77,19 +29,19 @@ char	**find_matching_files(t_search *info, char **pattern)
 
 	i = 0;
 	result = 0;
-	while (pattern[i])
-		match_except_last(info, pattern, &i, &cmp);
-	if (i && !(is_wildcard(*(pattern[i - 1])) && ft_strlen(pattern[i - 1]) == 1))	// If last pattern is not wildcard, filter the files with last pattern
+	while (pat[i])
+		match_except_last(info, pat, &i, &cmp);
+	if (i && !(is_wildcard(*(pat[i - 1])) && ft_strlen(pat[i - 1]) == 1))
 	{
-		trimmed = pattern[i - 1];
-		if (is_quote(*(pattern[i - 1])))
+		trimmed = pat[i - 1];
+		if (is_quote(*(pat[i - 1])))
 		{
-			tmp = pattern[i - 1];
+			tmp = pat[i - 1];
 			trimmed = trim(&tmp, cmp, 0);
 		}
 		match_pattern_last(info, trimmed, ft_strlen(trimmed));
 	}
-	ft_arrfree(pattern);
+	ft_arrfree(pat);
 	if (!info->files)
 		return (0);
 	ft_arrcat(&result, info->files, 0);

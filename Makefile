@@ -56,11 +56,15 @@ SRCS = ./minishell.c							\
 		$(EXPANSION)quote_removal.c				\
 		$(EXPANSION)file_expansion.c			\
 		$(EXPANSION)file_expansion_utils.c		\
+		$(EXPANSION)file_expansion_info.c		\
 		$(EXPANSION)file_expansion_match.c		\
 		$(EXPANSION)file_expansion_split.c		\
 		$(EXPANSION)file_expansion_pattern.c	\
 		$(EXPANSION)ft_qsort.c					\
 		$(EXPANSION)env_substitution.c			\
+		$(EXPANSION)env_substitution_cmp_fn.c	\
+		$(EXPANSION)env_substitution_env_fn.c	\
+		$(EXPANSION)env_substitution_sub_fn.c	\
 		$(EXECUTOR_DIR)path.c					\
 		$(EXECUTOR_DIR)command.c				\
 		$(EXECUTOR_DIR)error.c					\

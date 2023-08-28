@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   file_expansion_utils.c                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/08/28 20:38:41 by jusohn            #+#    #+#             */
+/*   Updated: 2023/08/28 20:43:18 by jusohn           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 t_search	*create_search_info(char **files, int num_files)
 {
 	t_search	*info;
-	
+
 	info = ft_calloc(1, sizeof(t_search));
 	if (!info)
 		return (0);
@@ -27,7 +39,7 @@ void	free_search_info(t_search *info)
 	free(info);
 }
 
-t_ssize match_pattern(char *str, char *pattern, int prev_pos)
+t_ssize	match_pattern(char *str, char *pattern, int prev_pos)
 {
 	t_ssize	pos;
 
@@ -44,7 +56,7 @@ t_ssize match_pattern(char *str, char *pattern, int prev_pos)
 	return (-1);
 }
 
-t_bool search_files(t_search *info, char *pattern)
+t_bool	search_files(t_search *info, char *pattern)
 {
 	t_ssize	pos;
 	t_size	idx;
