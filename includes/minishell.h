@@ -276,7 +276,7 @@ t_size			handle_quotes(char ***r, char **s, char **e, t_size size);
 t_size			handle_normal(char ***r, char **s, char **e, t_size size);
 
 /* ============= EXPANSION_MATCH ============= */
-void			match_except_last(t_search *i, char **p, t_size *i, t_cmp *c);
+void			match_except_last(t_search *i, char **p, t_size *n, t_cmp *c);
 t_size			match_pattern_first(t_search *info, char *pattern);
 t_size			match_pattern_middle(t_search *info, char *pattern);
 t_size			match_pattern_last(t_search *info, char *pattern, t_size last);
