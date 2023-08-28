@@ -77,7 +77,8 @@ SRCS = ./minishell.c							\
 		$(BUILTIN_DIR)pwd.c						\
 		$(BUILTIN_DIR)echo.c					\
 		$(BUILTIN_DIR)arg.c						\
-		$(BUILTIN_DIR)cd.c
+		$(BUILTIN_DIR)cd.c						\
+		$(BUILTIN_DIR)cd2.c
 
 CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2
 # ----------- BONUS SRCS  ----------- #
