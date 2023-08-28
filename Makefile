@@ -70,6 +70,7 @@ SRCS = ./minishell.c							\
 		$(EXECUTOR_DIR)heredoc.c				\
 		$(EXECUTOR_DIR)redirection.c			\
 		$(EXECUTOR_DIR)builtin.c				\
+		$(EXECUTOR_DIR)subshell.c				\
 		$(BUILTIN_DIR)export.c					\
 		$(BUILTIN_DIR)unset.c					\
 		$(BUILTIN_DIR)env.c						\
