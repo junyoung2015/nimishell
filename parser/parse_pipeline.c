@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   p_pipe_l.c                                   :+:      :+:    :+:   */
+/*   parse_pipeline.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -24,23 +24,22 @@ t_node	*p_pipe_l_tail(t_parser *parser, t_node *parent)
 	t_node	*right_node;
 	t_node	*pipe_node;
 
-	// do I need to check whether token == TOKEN_PIPE again?
 	pipe_node = 0;
 	if (check(parser, TOKEN_PIPE))
 	{
 		advance(parser);
 		right_node = p_pipe_l(parser, parent);
-		if (!right_node) // err?
+		if (!right_node)
 			return (0);
 		else if (right_node->type == AST_ERR)
 			return (right_node);
 		pipe_node = create_node(AST_PIPE);
-		if (!pipe_node)	// malloc err
+		if (!pipe_node)
 			return (0);
 		pipe_node->right = right_node;
 		return (pipe_node);
 	}
-	else	// syntax error
+	else
 		return (0);
 	return (pipe_node);
 }
@@ -57,7 +56,7 @@ t_node	*p_pipe_l(t_parser *parser, t_node *parent)
 	t_node	*pipe_node;
 
 	cmd_node = p_cmd(parser, parent);
-	if (!cmd_node) // err? no command before '|'
+	if (!cmd_node)
 		return (0);
 	else if (cmd_node->type == AST_ERR)
 		return (cmd_node);
