@@ -120,16 +120,16 @@ char	*parse_word(t_parser *parser, t_node *parent);
 t_node	*parse_word_list(t_parser *parser, t_node *parent);
 t_node	*parse_redir(t_parser *parser, t_node *parent);
 t_node	*parse_simple_cmd_element(t_parser *parser, t_node *parent);
-t_node	*parse_redir_list(t_parser *parser, t_node *parent);
-t_node	*parse_redir_list_tail(t_parser *parser, t_node *parent);
+t_node	*p_redir_l(t_parser *parser, t_node *parent);
+t_node	*p_redir_l_tail(t_parser *parser, t_node *parent);
 t_node	*parse_simple_cmd(t_parser *parser, t_node *parent);
 t_node	*parse_simple_cmd_tail(t_parser *parser, t_node *parent);
-t_node	*parse_command(t_parser *parser, t_node *parent);
-t_node	*parse_subshell(t_parser *parser, t_node *parent);
-t_node	*parse_list(t_parser *parser, t_node *parent);
-t_node	*parse_list_tail(t_parser *parser, t_node *parent);
-t_node	*parse_pipeline(t_parser *parser, t_node *parent);
-t_node	*parse_pipeline_tail(t_parser *parser, t_node *parent);
-t_node	*parse_err(t_parser *parser, t_node *parent);
+t_node	*p_cmd(t_parser *parser, t_node *parent);
+t_node	*p_sub(t_parser *parser, t_node *parent);
+t_node	*p_l(t_parser *parser, t_node *parent);
+t_node	*p_l_tail(t_parser *parser, t_node *parent);
+t_node	*p_pipe_l(t_parser *parser, t_node *parent);
+t_node	*p_pipe_l_tail(t_parser *parser, t_node *parent);
+t_node	*p_err(t_parser *parser, t_node *parent);
 
 # endif

@@ -32,12 +32,12 @@ t_node	*parse_simple_cmd_element(t_parser *parser, t_node *parent)
 	}
 	else if (is_redir_token(parser))
 	{
-		cmd_element = parse_redir_list(parser, parent);
+		cmd_element = p_redir_l(parser, parent);
 		if (!cmd_element)
 			return (0);
 	}
 	else
-		cmd_element = parse_err(parser, parent);
+		cmd_element = p_err(parser, parent);
 	return (cmd_element);
 }
 
@@ -54,7 +54,6 @@ t_node	*parse_simple_cmd_tail(t_parser *parser, t_node *parent)
 	t_node	*simple_cmd_tail_node;
 
 	simple_cmd_tail_node = 0;
-	// Do I have to check the token type here again, when its already checked before?
 	if (is_word_token(parser) || is_redir_token(parser))
 	{
 		simple_cmd_tail_node = parse_simple_cmd_element(parser, parent);
@@ -99,7 +98,7 @@ t_node	*parse_simple_cmd(t_parser *parser, t_node *parent)
 		}
 	}
 	else
-		cmd_node = parse_err(parser, parent);
+		cmd_node = p_err(parser, parent);
 	return (cmd_node);
 }
 
@@ -108,27 +107,19 @@ t_node	*parse_simple_cmd(t_parser *parser, t_node *parent)
  * 		<SUBSHELL>
  *
  * @param parser	parser struct
- * @return t_node*	root node from parse_simple_cmd or parse_subshell
+ * @return t_node*	root node from parse_simple_cmd or p_sub
  */
-t_node	*parse_command(t_parser *parser, t_node *parent)
+t_node	*p_cmd(t_parser *parser, t_node *parent)
 {
-	t_node	*cmd_node;
-	t_node	*redir_list_node;
 	t_type	state;
+	t_node	*cmd_node;
 
 	state = cur_type(parser);
 	if (TOKEN_L_PAREN == state)
 	{
-		cmd_node = parse_subshell(parser, parent);
+		cmd_node = parse_subshell_list(parser, parent);
 		if (!cmd_node)
 			return (0);
-		if (is_redir_token(parser))
-		{
-			redir_list_node = parse_redir_list(parser, cmd_node);
-			if (!redir_list_node)
-				return (0);
-			append_child_node(cmd_node, redir_list_node);
-		}
 	}
 	else if (is_word_token(parser) || is_redir_token(parser))
 	{
@@ -136,12 +127,11 @@ t_node	*parse_command(t_parser *parser, t_node *parent)
 		if (!cmd_node)
 			return (0);
 	}
-	else if (state == TOKEN_TYPES_CNT)
-	{
-		parser->cur--;
-		cmd_node = parse_err(parser, parent);
-	}
 	else
-		cmd_node = parse_err(parser, parent);
+	{
+		if (state == TOKEN_TYPES_CNT)
+			parser->cur--;
+		cmd_node = p_err(parser, parent);
+	}
 	return (cmd_node);
 }
