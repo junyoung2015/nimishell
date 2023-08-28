@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   heredoc.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/08/28 20:37:34 by sejinkim          #+#    #+#             */
+/*   Updated: 2023/08/28 20:38:15 by sejinkim         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "executor.h"
 
 static char	*str_join(char *str, char buf, size_t len)
@@ -70,7 +82,6 @@ void	create_heredoc(char *limiter, t_exec_info *info)
 	str = get_next_line(info->stdin_fd, info, &str_len);
 	while (str && !(!ft_strncmp(str, limiter, lmt_len) && str[lmt_len] == '\n'))
 	{
-		// str 치환
 		write(fd, str, str_len);
 		free(str);
 		write(info->stdin_fd, "heredoc> ", 9);
@@ -86,7 +97,6 @@ void	heredoc(t_node *node, t_exec_info *info)
 	pid_t	pid;
 	int		status;
 
-	
 	pid = fork();
 	set_signal(pid, info->is_fork);
 	if (pid < 0)

@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ast_search.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/08/28 20:34:17 by sejinkim          #+#    #+#             */
+/*   Updated: 2023/08/28 20:35:15 by sejinkim         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "executor.h"
 
-t_bool is_stop(t_node *node, t_exec_info *info)
+t_bool	is_stop(t_node *node, t_exec_info *info)
 {
-	int status;
+	int	status;
 
 	if (node->type != AST_AND && node->type != AST_OR)
 		return (FALSE);
@@ -21,9 +33,9 @@ t_bool is_stop(t_node *node, t_exec_info *info)
 	return (FALSE);
 }
 
-pid_t is_fork(t_node *node, t_exec_info *info)
+pid_t	is_fork(t_node *node, t_exec_info *info)
 {
-	pid_t pid;
+	pid_t	pid;
 
 	if ((node->type != AST_CMD && node->type != AST_SUBSHELL) \
 			|| (node->builtin != NOT_BUILTIN && !node->pipe_open))
@@ -46,10 +58,10 @@ pid_t is_fork(t_node *node, t_exec_info *info)
 	return (pid);
 }
 
-void reset_info(t_node *node, t_exec_info *info)
+void	reset_info(t_node *node, t_exec_info *info)
 {
 	if (node->type != AST_CMD)
-		return;
+		return ;
 	info->exit_code = EXIT_SUCCESS;
 	info->is_fork = FALSE;
 	info->fd_in = -1;
@@ -61,10 +73,10 @@ void reset_info(t_node *node, t_exec_info *info)
 	}
 }
 
-void ast_search(t_node *root, t_exec_info *info)
+void	ast_search(t_node *root, t_exec_info *info)
 {
 	if (!root)
-		return;
+		return ;
 	if (root->cmd_args && root->type != AST_HEREDOC)
 	{
 		if (root->pipe_open > 1)
@@ -80,12 +92,12 @@ void ast_search(t_node *root, t_exec_info *info)
 	open_pipe(root, info);
 	reset_info(root, info);
 	if (is_fork(root, info))
-		return;
+		return ;
 	check_subshell_child(root, info);
 	redirection(root, info);
 	ast_search(root->left, info);
 	if (is_stop(root, info))
-		return;
+		return ;
 	ast_search(root->right, info);
 	command(root, info);
 }

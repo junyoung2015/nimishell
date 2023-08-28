@@ -6,26 +6,26 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 21:55:34 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/21 20:08:52 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/28 20:36:50 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "executor.h"
 
-void	check_directory(char *cmdpath, char *cmd, t_exec_info *info, t_bool flag)
+void	check_directory(char *path, char *cmd, t_exec_info *info, t_bool flag)
 {
 	struct stat	buf;
-	
-	stat(cmdpath, &buf);
+
+	stat(path, &buf);
 	if ((buf.st_mode & S_IFMT) == S_IFDIR)
 	{
 		if (!flag)
-			free(cmdpath);
+			free(path);
 		write(STDERR_FILENO, MINISHELL, 11);
 		write(STDERR_FILENO, cmd, ft_strlen(cmd));
 		write(STDERR_FILENO, ": is a directory\n", 17);
 		clear_all(info->ast);
-		exit(EXIT_NOT_EXECUTABLE);		
+		exit(EXIT_NOT_EXECUTABLE);
 	}
 }
 

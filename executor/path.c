@@ -1,10 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   path.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/08/28 20:38:26 by sejinkim          #+#    #+#             */
+/*   Updated: 2023/08/28 20:38:27 by sejinkim         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "executor.h"
 
 char	**get_path(char **env, char *cmd, t_exec_info *info)
 {
 	char	**path;
 	size_t	i;
-	
+
 	i = 0;
 	while (env[i] && ft_strncmp(env[i], "PATH=", 5))
 		i++;

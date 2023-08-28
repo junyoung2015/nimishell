@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/08/28 20:35:24 by sejinkim          #+#    #+#             */
+/*   Updated: 2023/08/28 20:35:53 by sejinkim         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
 static int	exit_err(char *arg)
@@ -25,8 +37,9 @@ static int	_atoi(char *arg)
 			num = num * 10 + arg[i++] - '0';
 		else
 			return (exit_err(arg));
-		if (num > 9223372036854775808ULL || (num == 9223372036854775808ULL && sign > 0))
-			return (exit_err(arg));		
+		if (num > 9223372036854775808ULL \
+				|| (num == 9223372036854775808ULL && sign > 0))
+			return (exit_err(arg));
 	}
 	return ((num * sign) % 256);
 }
