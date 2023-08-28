@@ -64,7 +64,6 @@ t_node	*parse_each_word(t_parser *parser, t_node *parent, t_node *list)
  */
 t_node	*parse_word_list(t_parser *parser, t_node *parent)
 {
-	// t_size	idx;
 	t_node	*list;
 
 	list = create_node(AST_WORD_LIST);
