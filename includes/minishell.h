@@ -149,9 +149,13 @@ typedef struct s_search_info
 
 typedef struct s_minishell_info
 {
-	t_size	env_cnt;
+	char	*pwd;
+	char	*line;
 	int		exit_code;
 	t_node	*ast;
+	t_size	env_cnt;
+	t_size	num_tokens;
+	t_token	*tokens;
 } t_sh_info;
 
 extern char	**g_env;
