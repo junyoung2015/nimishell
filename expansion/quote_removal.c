@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   quote_removal.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/08/28 20:38:51 by jusohn            #+#    #+#             */
+/*   Updated: 2023/08/28 20:43:37 by jusohn           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 char	*trim(char	**cmd_arg, t_cmp cmp, t_state *state)
@@ -69,7 +81,7 @@ char	*trim_outer_quotes(char *cmd_arg)
  * @param node		node to remove quotes
  * @return char**	new arr of cmd_args, without quotes
  */
-char    **remove_quotes(t_node *node)
+char	**remove_quotes(t_node *node)
 {
 	char	**result;
 	t_size	idx;
@@ -85,7 +97,7 @@ char    **remove_quotes(t_node *node)
 		result[idx] = trim_outer_quotes(node->cmd_args[idx]);
 		if (!result[idx])
 		{
-			while(idx-- > 0)
+			while (idx-- > 0)
 				free(result[idx]);
 			free(result);
 			return (0);

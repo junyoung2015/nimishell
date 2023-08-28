@@ -146,6 +146,7 @@ typedef struct s_search_info
 	char	**files;
 	t_size	num_files;
 	t_size	*prev_pos;
+	char	**res;
 }	t_search;
 
 typedef struct s_minishell_info
@@ -256,12 +257,15 @@ char			**remove_quotes(t_node *node);
 char			*trim_outer_quotes(char *cmd_arg);
 char			*trim(char	**cmd_arg, t_cmp cmp, t_state *state);
 char			**str_expansion(t_node *node);
+t_search		*get_search_info(char *first);
+t_search		*init_search_info(char *cmd_arg);
 
 /* ============= EXPANSION_UTILS ============= */
 void			free_search_info(t_search *info);
 t_bool			search_files(t_search *info, char *pattern);
 t_ssize			match_pattern(char *str, char *pattern, int prev_pos);
 t_search		*create_search_info(char **files, int num_files);
+void			get_all_files(char *first, t_size *size, char ***result);
 
 /* ============= EXPANSION_SPLIT ============= */
 t_bool			is_wildcard(char ch);

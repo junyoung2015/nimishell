@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:56:29 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/28 20:30:41 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/28 21:05:12 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,9 @@ t_node	*p_l_tail_handler(t_parser *parser, t_node *p, t_node *logic, t_type t)
  */
 t_node	*p_l_tail(t_parser *parser, t_node *parent)
 {
+	t_type	type;
 	t_node	*logic_node;
 	t_node	*pipeline_node;
-	t_node	*list_tail_node;
-	t_type	type;
 
 	logic_node = create_node(cur_type(parser) + ANDOR);
 	if (!logic_node)
@@ -65,22 +64,7 @@ t_node	*p_l_tail(t_parser *parser, t_node *parent)
 	logic_node->left = parent;
 	type = cur_type(parser);
 	if (type == TOKEN_AND || type == TOKEN_OR)
-	{
-		list_tail_node = p_l_tail(parser, pipeline_node);
-		if (!list_tail_node)
-		{
-			free_ast(logic_node);
-			free_ast(pipeline_node);
-			return (0);
-		}
-		logic_node->right = list_tail_node;
-		if (type == TOKEN_AND)
-		{
-			logic_node->right = pipeline_node;
-			list_tail_node->left = logic_node;
-			return (list_tail_node);
-		}
-	}
+		return (p_l_tail_handler(parser, parent, logic_node, type));
 	else
 		logic_node->right = pipeline_node;
 	return (logic_node);

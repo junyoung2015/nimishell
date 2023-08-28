@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/28 20:09:01 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/28 20:52:09 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,22 @@ typedef struct s_executor_info
 
 void	ast_search(t_node *root, t_exec_info *info);
 char	**env_substitution(t_node *node, t_exec_info *info);
+t_bool	is_number(int c);
+t_bool	is_alpha(int c);
+t_bool	is_alnum(int c);
+t_bool	is_env_var(char ch);
+t_bool	is_dollar(char ch);
+char	*env_str(char **in, t_exec_info *info);
+char	*env_squote(char **in, t_exec_info *info);
+char	*process_env_dquote(char **in, char **res, char **s, t_exec_info *info);
+char	*env_dquote(char **in, t_exec_info *info);
+char	*ft_getenv(char *env_var);
+char	*substitute(char *env_var, char *quote);
+char	*sub_exit_code(char **in, char *tmp, t_exec_info *info);
+char	*sub_env_var(char **in, char *tmp, char *quote);
+char	*trim_single_char(char **in, char *tmp);
+char	*handle_dollar_sign(char **in, char *tmp, char *quo, t_exec_info *info);
+char	*check_env_var(char *cmd_arg, t_exec_info *info);
 typedef char	*(*t_env_fn)(char **, t_exec_info *);
 
 /* pipe */
