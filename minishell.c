@@ -29,13 +29,13 @@ static void	init_sh_info(int ac, char **av, char **envp, t_sh_info *info)
 	info->env_cnt = cnt;
 	g_env = ft_calloc((cnt + 1), sizeof(char *));
 	if (!g_env)
-		exit_err_with_msg(1, 0, MALLOC_ERR, 0);
+		exit_err_msg(1, 0, MALLOC_ERR, 0);
 	i = 0;
 	while (i < cnt)
 	{
 		g_env[i] = ft_strdup(envp[i]);
 		if (!g_env[i])
-			exit_err_with_msg(1, 0, MALLOC_ERR, 0);
+			exit_err_msg(1, 0, MALLOC_ERR, 0);
 		i++;
 	}
 	g_env[i] = NULL;
@@ -48,11 +48,11 @@ void	init_terminal(void)
 
 	status = tcgetattr(0, &term);
 	if (status == -1)
-		exit_err_with_msg(1, "tcgetattr", strerror(errno), 0);
+		exit_err_msg(1, "tcgetattr", strerror(errno), 0);
 	term.c_lflag &= ~ECHOCTL;
 	status = tcsetattr(0, 0, &term);
 	if (status == -1)
-		exit_err_with_msg(1, "tcgetattr", strerror(errno), 0);
+		exit_err_msg(1, "tcgetattr", strerror(errno), 0);
 	print_logo();
 }
 
@@ -63,7 +63,7 @@ void	init_prompt(t_sh_info *info)
 	set_parent_signal();
 	info->pwd = get_prompt();
 	if (!info->pwd)
-		exit_err_with_msg(1, 0, MALLOC_ERR, 0);
+		exit_err_msg(1, 0, MALLOC_ERR, 0);
 	info->line = readline(info->pwd);
 }
 

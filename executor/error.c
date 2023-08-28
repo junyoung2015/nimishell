@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:26 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/18 14:43:20 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/28 19:50:10 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	err_exit(t_exec_info *info, char *msg, int exit_code)
  * @param msg	err msg to display
  * @param root	root of the ast node to free
  */
-void	exit_err_with_msg(int code, char *file, char *msg, t_node *root)
+void	exit_err_msg(int code, char *file, char *msg, t_node *root)
 {
 	if (msg)
 	{
