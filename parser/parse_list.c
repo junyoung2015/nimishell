@@ -64,7 +64,7 @@ t_node	*p_l_tail(t_parser *parser, t_node *parent)
 	logic_node->left = parent;
 	type = cur_type(parser);
 	if (type == TOKEN_AND || type == TOKEN_OR)
-		return (p_l_tail_handler(parser, parent, logic_node, type));
+		return (p_l_tail_handler(parser, pipeline_node, logic_node, type));
 	else
 		logic_node->right = pipeline_node;
 	return (logic_node);
