@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   arg.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/08/28 19:48:33 by sejinkim          #+#    #+#             */
+/*   Updated: 2023/08/28 19:48:34 by sejinkim         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
-static t_bool _isalpha(char c)
+static t_bool	_isalpha(char c)
 {
 	if (c == '_')
 		return (TRUE);
@@ -11,7 +23,7 @@ static t_bool _isalpha(char c)
 	return (FALSE);
 }
 
-static t_bool _isalnum(char c)
+static t_bool	_isalnum(char c)
 {
 	if (_isalpha(c))
 		return (TRUE);
@@ -20,7 +32,7 @@ static t_bool _isalnum(char c)
 	return (FALSE);
 }
 
-int arg_check(char *str, t_builtin func)
+int	arg_check(char *str, t_builtin func)
 {
 	size_t	i;
 
@@ -48,8 +60,7 @@ void	arg_err(t_builtin func, char *arg, t_exec_info *info)
 		write(STDERR_FILENO, "minishell: unset: '", 19);
 	else
 		write(STDERR_FILENO, "minishell: export: '", 20);
-	write(STDERR_FILENO, arg, ft_strlen(arg)); 
+	write(STDERR_FILENO, arg, ft_strlen(arg));
 	write(STDERR_FILENO, "': not a valid identifier\n", 26);
 	info->exit_code = EXIT_FAILURE;
 }
-

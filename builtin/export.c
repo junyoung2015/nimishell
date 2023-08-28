@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   export.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/08/28 19:52:17 by sejinkim          #+#    #+#             */
+/*   Updated: 2023/08/28 19:52:34 by sejinkim         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
 t_bool	is_in_env(char *key, char *env)
@@ -42,7 +54,7 @@ void	append_last(char *arg, t_exec_info *info)
 	info->env_cnt += 1;
 }
 
-void	print_env()
+void	print_env(void)
 {
 	size_t	i;
 	size_t	len;

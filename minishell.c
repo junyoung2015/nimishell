@@ -14,7 +14,7 @@
 
 char	**g_env;
 
-static void	init_sh_info(int ac, char ** av, char **envp, t_sh_info *info)
+static void	init_sh_info(int ac, char **av, char **envp, t_sh_info *info)
 {
 	t_size	i;
 	t_size	cnt;
