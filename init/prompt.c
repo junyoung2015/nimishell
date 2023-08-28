@@ -1,20 +1,20 @@
 /* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   prompt.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/28 20:10:58 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/28 20:10:59 by jusohn           ###   ########.fr       */
-/*                                                                            */
+/*																			*/
+/*														:::	  ::::::::   */
+/*   prompt.c										   :+:	  :+:	:+:   */
+/*													+:+ +:+		 +:+	 */
+/*   By: jusohn <jusohn@student.42seoul.kr>		 +#+  +:+	   +#+		*/
+/*												+#+#+#+#+#+   +#+		   */
+/*   Created: 2023/08/28 20:10:58 by jusohn			#+#	#+#			 */
+/*   Updated: 2023/08/28 20:12:18 by jusohn		   ###   ########.fr	   */
+/*																			*/
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 void	get_git_branch(char *branch)
 {
-	int     fd;
+	int		fd;
 	t_ssize	size;
 
 	if (access(GIT_BRANCH, F_OK) == -1)
@@ -40,26 +40,26 @@ void	get_git_branch(char *branch)
 	}
 }
 
-char    *get_prompt(void)
+char	*get_prompt(void)
 {
-    char    *tmp;
-    char    *pwd;
-    char	branch[MAX_BRANCH_LEN + 1];
+	char	*tmp;
+	char	*pwd;
+	char	branch[MAX_BRANCH_LEN + 1];
 
-    tmp = getcwd(NULL, 0);
-    if (!tmp)
-        return (0);
-    get_git_branch(branch);
-    if (*branch)
-    {
-        pwd = ft_strjoin(tmp, " \033[0;35;40m[\033[0;32;40m");
-        free(tmp);
-        tmp = ft_strjoin(pwd, branch);
-        free(pwd);
-        pwd = ft_strjoin(tmp, "\033[0;35;40m]\033[0m ");
-    }
-    else
-        pwd = ft_strjoin(tmp, "> ");
-    free(tmp);
-    return (pwd);
+	tmp = getcwd(NULL, 0);
+	if (!tmp)
+		return (0);
+	get_git_branch(branch);
+	if (*branch)
+	{
+		pwd = ft_strjoin(tmp, " \033[0;35;40m[\033[0;32;40m");
+		free(tmp);
+		tmp = ft_strjoin(pwd, branch);
+		free(pwd);
+		pwd = ft_strjoin(tmp, "\033[0;35;40m]\033[0m ");
+	}
+	else
+		pwd = ft_strjoin(tmp, "> ");
+	free(tmp);
+	return (pwd);
 }
