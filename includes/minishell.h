@@ -13,10 +13,6 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# ifndef DEBUG
-#  define DEBUG 1
-# endif
-
 /* ================ INCLUDES ================= */
 # include <stdio.h>
 # include <stdlib.h>
@@ -288,10 +284,6 @@ t_size 			ft_arr_append(char ***arr, char *str, t_size size);
 /* ================ TOKENIZER ================ */
 t_token 		*tokenize_input(char *input, t_size alloced, t_size *num_tokens);
 t_bool			init_tokenizer(char *input, t_token **tokens, t_size *alloced,  t_state *state);
-
-
-void			print_tokens(t_token *tokens, t_size num_tokens);
-
 
 /* ============= CMP_FUNC_QUOTE ============== */
 t_bool			is_squote(char ch);
