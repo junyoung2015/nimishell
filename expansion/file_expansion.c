@@ -56,7 +56,7 @@ t_search	*init_search_info(char *cmd_arg)
 		info = get_search_info(0);
 	if (!info)
 		return (0);
-	ft_qsort((void **)info->files, 0, ft_arrlen(info->files) - 1, cmp_ascii);
+	_qs((void **)info->files, 0, ft_arrlen(info->files) - 1, cmp_ascii);
 	return (info);
 }
 

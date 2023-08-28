@@ -29,9 +29,11 @@
 # include "readline/history.h"
 
 /* ================== TYPES ================== */
-typedef int t_bool;
-typedef unsigned long long t_size;
-typedef long long t_ssize;
+typedef int					t_bool;
+typedef unsigned long long	t_size;
+typedef long long			t_ssize;
+typedef t_bool				(*t_cmp)(char);
+typedef t_node				*(*t_parse)(t_parser *parser, t_node *parent);
 
 typedef enum e_token_state
 {
@@ -40,7 +42,7 @@ typedef enum e_token_state
 	DQUOTE,
 	META_CH,
 	END,
-} t_state;
+}	t_state;
 
 typedef enum e_token_type
 {
@@ -62,7 +64,7 @@ typedef enum e_token_type
 	TOKEN_ERROR,
 	TOKEN_UNKNOWN,
 	TOKEN_TYPES_CNT,
-} t_type;
+}	t_type;
 
 typedef enum e_builtin
 {
@@ -74,19 +76,19 @@ typedef enum e_builtin
 	UNSET,
 	ENV,
 	EXIT,
-} t_builtin;
+}	t_builtin;
 
-typedef struct	s_token
+typedef struct s_token
 {
-	t_type type;
-	char *val;
-} t_token;
+	t_type	type;
+	char	*val;
+}	t_token;
 
-typedef struct	s_lexer
+typedef struct s_lexer
 {
 	t_token	*tokens;
 	t_size	num_tokens;
-} t_lexer;
+}	t_lexer;
 
 typedef enum e_parse_state
 {
@@ -97,7 +99,7 @@ typedef enum e_parse_state
 	LIST,
 	SUBSHELL,
 	PARSE_STATES_CNT,
-} t_parse_state;
+}	t_parse_state;
 
 typedef enum e_node_type
 {
@@ -114,7 +116,7 @@ typedef enum e_node_type
 	AST_AND,
 	AST_WORD_LIST,
 	AST_ERR,
-} t_node_type;
+}	t_node_type;
 
 typedef struct s_node
 {
@@ -125,27 +127,27 @@ typedef struct s_node
 	struct s_node	*right;
 	int				pipe_open;
 	t_builtin		builtin;
-}   t_node;
+}	t_node;
 
 typedef struct s_parser
 {
 	t_token			*tokens;
 	t_size			cur;
 	t_size			size;
-} t_parser;
+}	t_parser;
 
 typedef struct s_global_info
 {
 	char	**env;
 	int		exit_status;
-} t_global_info;
+}	t_global_info;
 
 typedef struct s_search_info
 {
 	char	**files;
 	t_size	num_files;
 	t_size	*prev_pos;
-} t_search;
+}	t_search;
 
 typedef struct s_minishell_info
 {
@@ -156,9 +158,9 @@ typedef struct s_minishell_info
 	t_size	env_cnt;
 	t_size	num_tokens;
 	t_token	*tokens;
-} t_sh_info;
+}	t_sh_info;
 
-extern char	**g_env;
+extern char					**g_env;
 
 /* ================== MACRO ================== */
 # define STD_IN					0
@@ -214,13 +216,14 @@ extern char	**g_env;
 # define CMD_NOT_FOUND			"command not found\n"
 # define NO_FILE_DIR			"No such file or directory\n"
 # define QUOTE_NOT_CLOSED		"minishell: syntax error: unmatched quote\n"
-# define PAREN_NOT_CLOSED		"minishell: syntax error: unmatched parenthesis\n"
+# define PAREN_NOT_CLOSED		"minishell: syntax error:\
+ unmatched parenthesis\n"
 # define MALLOC_ERR				"malloc() error\n"
 
 /* ================== INIT ================== */
 void			print_logo(void);
-char		    *get_prompt(void);
-void			exit_err_with_msg(int code, char *file, char *msg, t_node *root);
+char			*get_prompt(void);
+void			exit_err_msg(int code, char *file, char *msg, t_node *root);
 
 /* ============== MEMORY_UTILS =============== */
 void			ft_bzero(void *s, t_size n);
@@ -248,10 +251,9 @@ char			*ft_itoa(int n);
 char			**ft_split(char const *str, char c);
 
 /* ================ EXPANSION ================ */
-typedef t_bool	(*t_cmp)(char);
 int				cmp_ascii(void *a, void *b);
-void			ft_qsort(void **arr, t_ssize low, t_ssize high, int (*cmp)(void *, void *));
-char		    **remove_quotes(t_node *node);
+void			_qs(void **a, t_ssize l, t_ssize h, int (*c)(void *, void *));
+char			**remove_quotes(t_node *node);
 char			*trim_outer_quotes(char *cmd_arg);
 char			*trim(char	**cmd_arg, t_cmp cmp, t_state *state);
 char			**str_expansion(t_node *node);
@@ -259,7 +261,7 @@ char			**str_expansion(t_node *node);
 /* ============= EXPANSION_UTILS ============= */
 void			free_search_info(t_search *info);
 t_bool			search_files(t_search *info, char *pattern);
-t_ssize 		match_pattern(char *str, char *pattern, int prev_pos);
+t_ssize			match_pattern(char *str, char *pattern, int prev_pos);
 t_search		*create_search_info(char **files, int num_files);
 
 /* ============= EXPANSION_SPLIT ============= */
@@ -269,12 +271,12 @@ t_bool			is_wildcard_expansion(char *cmd_arg);
 
 /* ============ EXPANSION_PATTERN ============ */
 char			**get_search_pattern(char *cmd_arg, t_size size);
-t_size			handle_wildcard(char ***result, char **start, char **end, t_size size);
-t_size			handle_quotes(char ***result, char **start, char **end, t_size size);
-t_size			handle_normal(char ***result, char **start, char **end, t_size size);
+t_size			handle_wildcard(char ***r, char **s, char **e, t_size size);
+t_size			handle_quotes(char ***r, char **s, char **e, t_size size);
+t_size			handle_normal(char ***r, char **s, char **e, t_size size);
 
 /* ============= EXPANSION_MATCH ============= */
-void			match_except_last(t_search *info, char **pattern, t_size *idx, t_cmp *cmp);
+void			match_except_last(t_search *i, char **p, t_size *i, t_cmp *c);
 t_size			match_pattern_first(t_search *info, char *pattern);
 t_size			match_pattern_middle(t_search *info, char *pattern);
 t_size			match_pattern_last(t_search *info, char *pattern, t_size last);
@@ -283,12 +285,11 @@ t_size			match_pattern_last(t_search *info, char *pattern, t_size last);
 void			ft_arrfree(char **arr);
 t_size			ft_arrlen(char **arr);
 t_size			ft_arrcat(char ***arr, char **new_arr, t_size size);
-t_size 			ft_arr_append(char ***arr, char *str, t_size size);
-
+t_size			ft_arr_append(char ***arr, char *str, t_size size);
 
 /* ================ TOKENIZER ================ */
-t_token 		*tokenize_input(char *input, t_size alloced, t_size *num_tokens);
-t_bool			init_tokenizer(char *input, t_token **tokens, t_size *alloced,  t_state *state);
+t_token			*tokenize_input(char *in, t_size alloced, t_size *num);
+t_bool			init_tokenizer(char *i, t_token **t, t_size *a, t_state *s);
 
 /* ============= CMP_FUNC_QUOTE ============== */
 t_bool			is_squote(char ch);
@@ -309,27 +310,26 @@ t_token			*free_tokens(t_token *tokens, t_size size);
 t_type			get_operator_type(char ch);
 
 /* ============ TOKENIZER_STATES ============= */
-t_state 		update_state(char ch);
+t_state			update_state(char ch);
 t_token			*tokenize(char **input, t_cmp cmp, t_type type, t_state *state);
 t_token			*tokenize_operator(char **input, t_state *state);
 t_token			*tokenize_meta(char **input, t_state *state);
-t_bool			init_tokenizer(char *input, t_token **tokens, t_size *alloced,  t_state *state);
+t_bool			init_tokenizer(char *i, t_token **t, t_size *a, t_state *s);
 
 /* ========= TOKENIZER_ERR_HANDLING ========== */
 t_token			*create_err_token(char *msg);
 t_token			*set_err_token(t_token *tokens, t_size *num_tokens, char *msg);
-t_bool			check_parenthesis(t_token* tokens, t_size num_tokens);
+t_bool			check_parenthesis(t_token *tokens, t_size num_tokens);
 
 /* ============= TOKENIZER_SPLIT ============= */
 t_bool			move_until_cmp(char **input, t_cmp cmp);
 t_token			*split_input(char *start, char **input, t_cmp cmp, t_type type);
 
 /* ============ TOKENIZER_REALLOC ============ */
-t_token			*realloc_tokens(t_token *tokens, t_size *num_tokens, t_size new_size);
-t_token			*should_realloc(t_token *tokens, t_size *num_tokens, t_size *alloced);
+t_token			*realloc_tokens(t_token *tokens, t_size *num, t_size new_size);
+t_token			*should_realloc(t_token *tokens, t_size *num, t_size *alloced);
 
 /* ================= PARSER ================== */
-typedef t_node *(*t_parse)(t_parser *parser, t_node *parent);
 t_node			*parse_tokens(t_token *tokens, t_size num_tokens);
 void			free_ast(t_node *root);
 t_node			*create_node(t_node_type type);
@@ -378,7 +378,7 @@ t_type			peek(t_parser *parser);
 int				executor(t_sh_info *sh_info);
 
 /* ================= SIGNAL ================== */
-void    		set_parent_signal(void);
-void    		set_signal(pid_t pid, t_bool flag);
+void			set_parent_signal(void);
+void			set_signal(pid_t pid, t_bool flag);
 
 #endif

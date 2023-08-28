@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_qsort.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/08/28 19:55:21 by jusohn            #+#    #+#             */
+/*   Updated: 2023/08/28 19:55:22 by jusohn           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	cmp_ascii(void *a, void *b)
@@ -36,14 +48,14 @@ int	ft_partition(void **arr, t_ssize l, t_ssize h, int (*cmp)(void *, void *))
 	return (i + 1);
 }
 
-void	ft_qsort(void **arr, t_ssize l, t_ssize h, int (*cmp)(void *, void *))
+void	_qs(void **arr, t_ssize l, t_ssize h, int (*cmp)(void *, void *))
 {
 	t_ssize	pivot;
 
 	if (l < h)
 	{
 		pivot = ft_partition(arr, l, h, cmp);
-		ft_qsort(arr, l, pivot - 1, cmp);
-		ft_qsort(arr, pivot + 1, h, cmp);
+		_qs(arr, l, pivot - 1, cmp);
+		_qs(arr, pivot + 1, h, cmp);
 	}
 }
