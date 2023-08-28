@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 19:52:17 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/28 19:52:34 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/28 20:31:35 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,6 @@ void	add_env(char *arg, t_exec_info *info)
 
 void	export(t_node *node, t_exec_info *info)
 {
-
 	size_t	i;
 	int		result;
 
@@ -122,5 +121,3 @@ void	export(t_node *node, t_exec_info *info)
 		i++;
 	}
 }
-
-
