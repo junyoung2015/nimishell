@@ -37,7 +37,7 @@ void	clear_screen(void)
 void	print_logo(void)
 {
 	clear_screen();
-	write(STD_OUT, "              \033\[33mo8o                     \033\[34mo8o\           \033\[0moooo                  oooo  oooo\n", 100);
+	write(STD_OUT, "              \033\[33mo8o                     \033\[34mo8o           \033\[0moooo                  oooo  oooo\n", 100);
 	write(STD_OUT, "              \033\[33m`\"'                     \033\[34m`\"'           \033\[0m`888                  `888  `888\n", 100);
 	write(STD_OUT, " \033\[31mooo. .oo.\033\[33m   oooo  \033\[32mooo. .oo.  .oo.   \033\[34moooo   \033\[0m.oooo.o  888 .oo.    .ooooo.   888   888\n", 110);
 	write(STD_OUT, " \033\[31m`888P\"Y88b\033\[33m  `888  \033\[32m`888P\"Y88bP\"Y88b  \033\[34m`888  \033\[0md88(  \"8  888P\"Y88b  d88' `88b  888   888\n", 110);
