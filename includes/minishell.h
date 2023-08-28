@@ -278,7 +278,6 @@ t_size			match_pattern_first(t_search *info, char *pattern);
 t_size			match_pattern_middle(t_search *info, char *pattern);
 t_size			match_pattern_last(t_search *info, char *pattern, t_size last);
 
-
 /* =============== ARRAY_UTILS =============== */
 void			ft_arrfree(char **arr);
 t_size			ft_arrlen(char **arr);
@@ -352,6 +351,7 @@ t_node			*parse_simple_cmd_tail(t_parser *parser, t_node *parent);
 t_node			*parse_simple_cmd(t_parser *parser, t_node *parent);
 t_node			*p_cmd(t_parser *parser, t_node *parent);
 t_node			*p_sub(t_parser *parser, t_node *parent);
+t_node			*parse_subshell_list(t_parser *parser, t_node *parent);
 t_node			*p_l_tail(t_parser *parser, t_node *parent);
 t_node			*p_l(t_parser *parser, t_node *parent);
 t_node			*p_pipe_l_tail(t_parser *parser, t_node *parent);
@@ -370,7 +370,7 @@ void			append_child_node(t_node *parent, t_node *child);
 t_bool			is_word_token(t_parser *parser);
 t_bool			is_redir_token(t_parser *parser);
 void			is_builtin_node(t_node *node);
-void			update_p_state(char **table, t_parser *parser, t_parse_state *parse_state);
+void			update_p_state(t_parser *parser, t_parse_state *parse_state);
 
 /* =========== PARSER_STATUS_UTILS =========== */
 void			advance(t_parser *parser);
