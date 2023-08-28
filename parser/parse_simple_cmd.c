@@ -54,7 +54,6 @@ t_node	*parse_simple_cmd_tail(t_parser *parser, t_node *parent)
 	t_node	*simple_cmd_tail_node;
 
 	simple_cmd_tail_node = 0;
-	// Do I have to check the token type here again, when its already checked before?
 	if (is_word_token(parser) || is_redir_token(parser))
 	{
 		simple_cmd_tail_node = parse_simple_cmd_element(parser, parent);
@@ -112,23 +111,15 @@ t_node	*parse_simple_cmd(t_parser *parser, t_node *parent)
  */
 t_node	*p_cmd(t_parser *parser, t_node *parent)
 {
-	t_node	*cmd_node;
-	t_node	*redir_list_node;
 	t_type	state;
+	t_node	*cmd_node;
 
 	state = cur_type(parser);
 	if (TOKEN_L_PAREN == state)
 	{
-		cmd_node = p_sub(parser, parent);
+		cmd_node = parse_subshell_list(parser, parent);
 		if (!cmd_node)
 			return (0);
-		if (is_redir_token(parser))
-		{
-			redir_list_node = p_redir_l(parser, cmd_node);
-			if (!redir_list_node)
-				return (0);
-			append_child_node(cmd_node, redir_list_node);
-		}
 	}
 	else if (is_word_token(parser) || is_redir_token(parser))
 	{
@@ -136,12 +127,11 @@ t_node	*p_cmd(t_parser *parser, t_node *parent)
 		if (!cmd_node)
 			return (0);
 	}
-	else if (state == TOKEN_TYPES_CNT)
+	else
 	{
-		parser->cur--;
+		if (state == TOKEN_TYPES_CNT)
+			parser->cur--;
 		cmd_node = p_err(parser, parent);
 	}
-	else
-		cmd_node = p_err(parser, parent);
 	return (cmd_node);
 }
