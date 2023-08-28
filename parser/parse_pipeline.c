@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:56:33 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 12:56:35 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/28 20:14:00 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ t_node	*p_pipe_l(t_parser *parser, t_node *parent)
 	if (check(parser, TOKEN_PIPE))
 	{
 		pipe_node = p_pipe_l_tail(parser, cmd_node);
-		if (!pipe_node) // err?
+		if (!pipe_node)
 			return (0);
 		if (pipe_node->type == AST_ERR)
 		{

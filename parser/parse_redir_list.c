@@ -6,48 +6,48 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:56:38 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 13:06:53 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/28 20:14:34 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_node	*parse_heredoc_cmd(t_parser *parser, t_node *parent, t_node *heredoc_node)
+t_node	*parse_heredoc_cmd(t_parser *parser, t_node *parent, t_node *heredoc)
 {
 	t_node	*cmd_node;
 
 	cmd_node = parse_simple_cmd_element(parser, parent);
 	if (!cmd_node)
 		return (0);
-	append_child_node(cmd_node, heredoc_node);
+	append_child_node(cmd_node, heredoc);
 	return (cmd_node);
 }
 
 t_node	*parse_heredoc(t_parser *parser, t_node *parent)
 {
-	t_node	*heredoc_node;
+	t_node	*heredoc;
 
-	heredoc_node = create_node(AST_HEREDOC);
-	if (!heredoc_node)
+	heredoc = create_node(AST_HEREDOC);
+	if (!heredoc)
 		return (0);
-	heredoc_node->cmd_args = ft_calloc(2, sizeof(char *));
-	if (!heredoc_node->cmd_args)
+	heredoc->cmd_args = ft_calloc(2, sizeof(char *));
+	if (!heredoc->cmd_args)
 	{
-		free(heredoc_node);
+		free(heredoc);
 		return (0);
 	}
 	if (is_word_token(parser))
-		heredoc_node->cmd_args[(heredoc_node->num_args)++] = parse_word(parser);
+		heredoc->cmd_args[(heredoc->num_args)++] = parse_word(parser);
 	else
 	{
-		free(heredoc_node->cmd_args);
-		free(heredoc_node);
+		free(heredoc->cmd_args);
+		free(heredoc);
 		return (p_err(parser, parent));
 	}
 	advance(parser);
 	if (is_word_token(parser))
-		return (parse_heredoc_cmd(parser, parent, heredoc_node));
-	return (heredoc_node);
+		return (parse_heredoc_cmd(parser, parent, heredoc));
+	return (heredoc);
 }
 
 /**
@@ -61,7 +61,7 @@ t_node	*parse_heredoc(t_parser *parser, t_node *parent)
  */
 t_node	*parse_redir(t_parser *parser, t_node *parent)
 {
-	t_node			*redir_node;
+	t_node	*redir_node;
 	t_type	type;
 
 	redir_node = 0;
@@ -76,7 +76,7 @@ t_node	*parse_redir(t_parser *parser, t_node *parent)
 			if (is_word_token(parser))
 			{
 				redir_node = parse_word_list(parser, parent);
-				redir_node->type = (t_node_type) (type - REDIR);
+				redir_node->type = (t_node_type)(type - REDIR);
 			}
 			else
 				redir_node = p_err(parser, parent);
