@@ -197,6 +197,8 @@ extern char	**g_env;
 /* ============= GENERAL MACRO =============== */
 # define MINISHELL				"minishell: "
 # define COLON					": "
+# define SIGINT_ECHO            "^C\n"
+# define SIGQUIT_ECHO           "^\\Quit: 3\n"
 
 /* =============== PROMPT GIT ================ */
 # define GIT_BRANCH				".git/HEAD"
@@ -265,7 +267,6 @@ int				cmp_ascii(void *a, void *b);
 void			ft_qsort(void **arr, t_ssize low, t_ssize high, int (*cmp)(void *, void *));
 // char			**env_substitution(t_node *node);
 char		    **remove_quotes(t_node *node);
-char			**wildcard_substitution(t_node *node);
 char			*trim_outer_quotes(char *cmd_arg);
 char			*trim(char	**cmd_arg, t_cmp cmp, t_state *state);
 char			**str_expansion(t_node *node);
@@ -350,7 +351,6 @@ t_token			*should_realloc(t_token *tokens, t_size *num_tokens, t_size *alloced);
 /* ================= PARSER ================== */
 typedef t_node *(*t_parser_fn)(t_parser *parser, t_node *parent);
 t_node			*parse_tokens(t_token *tokens, t_size num_tokens);
-t_node			*parse_pipe(t_token **tokens, t_size *token_idx, t_size num_tokens);
 void			free_ast(t_node *root);
 t_node			*create_node(t_node_type type);
 void			append_child_node(t_node *parent, t_node *child);

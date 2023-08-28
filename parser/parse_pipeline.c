@@ -63,7 +63,7 @@ t_node	*parse_pipeline(t_parser *parser, t_node *parent)
 		return (cmd_node);
 	if (check(parser, TOKEN_PIPE))
 	{
-		pipe_node = parse_pipeline_tail(parser, cmd_node);
+		pipe_node = parse_pipeline_tail(parser, parent);
 		if (!pipe_node) // err?
 			return (0);
 		if (pipe_node->type == AST_ERR)
