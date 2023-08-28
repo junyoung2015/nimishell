@@ -6,11 +6,32 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:56:29 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 14:02:41 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/28 20:30:41 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+t_node	*p_l_tail_handler(t_parser *parser, t_node *p, t_node *logic, t_type t)
+{
+	t_node	*list_tail_node;
+
+	list_tail_node = p_l_tail(parser, p);
+	if (!list_tail_node)
+	{
+		free_ast(logic);
+		free_ast(p);
+		return (0);
+	}
+	logic->right = list_tail_node;
+	if (t == TOKEN_AND)
+	{
+		logic->right = p;
+		list_tail_node->left = logic;
+		return (list_tail_node);
+	}
+	return (logic);
+}
 
 /**
  * @brief Parse function for <LIST-TAIL>, calling <PIPELINE> and <LIST-TAIL>
