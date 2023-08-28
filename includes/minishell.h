@@ -220,6 +220,7 @@ extern char	**g_env;
 /* ================== INIT ================== */
 void			print_logo(void);
 char		    *get_prompt(void);
+void			exit_err_with_msg(int code, char *file, char *msg, t_node *root);
 
 /* ============== MEMORY_UTILS =============== */
 void			ft_bzero(void *s, t_size n);
@@ -245,12 +246,11 @@ char			*ft_strjoin(char const *s1, char const *s2);
 
 char			*ft_itoa(int n);
 char			**ft_split(char const *str, char c);
+
 /* ================ EXPANSION ================ */
 typedef t_bool	(*t_cmp)(char);
-// typedef	char	*(*t_env_fn)(char **);
 int				cmp_ascii(void *a, void *b);
 void			ft_qsort(void **arr, t_ssize low, t_ssize high, int (*cmp)(void *, void *));
-// char			**env_substitution(t_node *node);
 char		    **remove_quotes(t_node *node);
 char			*trim_outer_quotes(char *cmd_arg);
 char			*trim(char	**cmd_arg, t_cmp cmp, t_state *state);
