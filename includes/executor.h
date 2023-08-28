@@ -39,7 +39,7 @@ typedef struct s_executor_info
 
 void	ast_search(t_node *root, t_exec_info *info);
 char	**env_substitution(t_node *node, t_exec_info *info);
-typedef	char	*(*t_process_fn)(char **, t_exec_info *);
+typedef	char	*(*t_env_fn)(char **, t_exec_info *);
 
 /* pipe */
 void	open_pipe(t_node *node, t_exec_info *info);

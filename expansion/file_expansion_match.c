@@ -9,7 +9,7 @@ t_size	match_pattern_last(t_search *info, char *pattern, t_size last)
 	size = 0;
 	result = 0;
 	idx = 0;
-	while (info->files[idx])
+	while (info->files && info->files[idx])
 	{
 		if (ft_strlen(info->files[idx]) >= last)
 		{
@@ -37,7 +37,7 @@ t_size	match_pattern_middle(t_search *info, char *pattern)
 	size = 0;
 	result = 0;
 	idx = 0;
-	while (info->files[idx])
+	while (info->files && info->files[idx])
 	{
 		if (ft_strlen(info->files[idx]) > info->prev_pos[idx])
 		{
@@ -73,7 +73,7 @@ t_size	match_pattern_first(t_search *info, char *pattern)
 	size = 0;
 	result = 0;
 	idx = 0;
-	while (info->files[idx])
+	while (info->files && info->files[idx])
 	{
 		if (ft_strncmp(info->files[idx], pattern, ft_strlen(pattern)) == 0)
 		{
@@ -84,8 +84,32 @@ t_size	match_pattern_first(t_search *info, char *pattern)
 		}
 		idx++;
 	}
-	idx = 0;
 	ft_arrfree(info->files);
 	info->files = result;
 	return (size);
+}
+
+void	match_except_last(t_search *info, char **pattern, t_size *idx, t_cmp *cmp)
+{
+	char	*tmp;
+	char	*trimmed;
+
+	while (pattern[*idx])
+	{
+		trimmed = pattern[*idx];
+		if (!is_wildcard_expansion(pattern[*idx]))
+		{
+			*cmp = get_cmp_fn(*(pattern[*idx]));
+			if (is_quote(*(pattern[*idx])))
+			{
+				tmp = pattern[*idx];
+				trimmed = trim(&tmp, *cmp, 0);
+			}
+			if (*idx == 0)
+				match_pattern_first(info, trimmed);
+			else
+				match_pattern_middle(info, trimmed);
+		}
+		(*idx)++;
+	}
 }
