@@ -859,9 +859,7 @@ set count [ expr \$count + 1 ] ;
 ### Test 59 ###
 send "abcde || echo test && echo and\r";
 expect {
-	"minishell: abcde: command not found
-test
-and" {
+	"minishell: abcde: command not found\ntest\nand" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
@@ -872,5 +870,5 @@ and" {
 set count [ expr \$count + 1 ] ;
 
 # Finish
-send "exit\r"
+send "exit \$?\r"
 expect eof
