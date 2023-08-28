@@ -86,57 +86,56 @@ void	init_terminal(void)
 	print_logo();
 }
 
-void	init_prompt(char **tokens, t_size *num_tokens, char **pwd)
+void	init_prompt(t_sh_info *info)
 {
-	*tokens = 0;
-	*num_tokens = 0;
+	info->tokens = 0;
+	info->num_tokens = 0;
 	set_parent_signal();
-	*pwd = get_prompt();
+	info->pwd = get_prompt();
+	if (!info->pwd)
+		exit_err_with_msg(1, 0, MALLOC_ERR, 0);
+	info->line = readline(info->pwd);
+}
+
+void	handle_input(t_sh_info *info)
+{
+	add_history(info->line);
+	if (*(info->line))
+	{
+		info->tokens = tokenize_input(info->line, 0, &info->num_tokens);
+		if (!info->tokens || info->num_tokens == 0)
+		{
+			free(info->line);
+			free(info->pwd);
+			return ;
+		}
+		else if (info->num_tokens >= 1 && \
+			info->tokens[info->num_tokens - 1].type == TOKEN_ERROR)
+			write(STD_ERR, info->tokens[info->num_tokens - 1].val, \
+			ft_strlen(info->tokens[info->num_tokens - 1].val));
+		else
+		{
+			info->ast = parse_tokens(info->tokens, info->num_tokens);
+			info->exit_code = executor(info);
+		}
+	}
+	if (info->tokens)
+		free_tokens(info->tokens, info->num_tokens);
+	free(info->line);
+	free(info->pwd);
 }
 
 int	main(int ac, char **av, char **envp)
 {
 	t_sh_info	info;
-	char		*line;
-	char		*pwd;
-	t_size		num_tokens;
-	t_token		*tokens;
 
 	init_sh_info(ac, av, envp, &info);
 	init_terminal();
 	while (TRUE)
 	{
-		init_prompt(&line, &num_tokens, &pwd);
-		line = readline(pwd);
-		if (line)
-		{
-			add_history(line);
-			if (*line)
-			{
-				tokens = tokenize_input(line, 0, &num_tokens);
-				if (!tokens || num_tokens == 0)
-				{
-					free(line);
-					free(pwd);
-					continue ;
-				}
-				else if (num_tokens >= 1 && tokens[num_tokens - 1].type == TOKEN_ERROR)
-				{
-					// write(STD_ERR, "minishell: syntax error near unexpected token `", 47);
-					write(STD_ERR, tokens[num_tokens - 1].val, ft_strlen(tokens[num_tokens - 1].val));
-					// write(STD_ERR, "`\n", 2);
-				}
-				else
-				{
-					info.ast = parse_tokens(tokens, num_tokens);
-					info.exit_code = executor(&info);
-				}
-			}
-			if (tokens)
-				free_tokens(tokens, num_tokens);
-			free(line);
-			free(pwd);
-		}
+		init_prompt(&info);
+		if (info.line)
+			handle_input(&info);
 		else
 			break ;
 	}
