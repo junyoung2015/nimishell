@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/27 02:00:16 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/28 20:09:01 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ typedef struct s_executor_info
 
 void	ast_search(t_node *root, t_exec_info *info);
 char	**env_substitution(t_node *node, t_exec_info *info);
-typedef	char	*(*t_env_fn)(char **, t_exec_info *);
+typedef char	*(*t_env_fn)(char **, t_exec_info *);
 
 /* pipe */
 void	open_pipe(t_node *node, t_exec_info *info);
