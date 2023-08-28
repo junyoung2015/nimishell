@@ -33,7 +33,6 @@ typedef int					t_bool;
 typedef unsigned long long	t_size;
 typedef long long			t_ssize;
 typedef t_bool				(*t_cmp)(char);
-typedef t_node				*(*t_parse)(t_parser *parser, t_node *parent);
 
 typedef enum e_token_state
 {
@@ -330,6 +329,7 @@ t_token			*realloc_tokens(t_token *tokens, t_size *num, t_size new_size);
 t_token			*should_realloc(t_token *tokens, t_size *num, t_size *alloced);
 
 /* ================= PARSER ================== */
+typedef t_node				*(*t_parse)(t_parser *parser, t_node *parent);
 t_node			*parse_tokens(t_token *tokens, t_size num_tokens);
 void			free_ast(t_node *root);
 t_node			*create_node(t_node_type type);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:55:11 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 16:18:03 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/28 20:05:47 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,11 @@ void	export(t_node *node, t_exec_info *info);
 void	env(t_node *node, t_exec_info *info);
 void	unset(t_node *node, t_exec_info *info);
 void    pwd(t_exec_info *info);
-// void    cd(t_node *node, t_exec_info *info);
+char	*get_env(char *env_var);
+void	append_new_env(char *new_env, t_exec_info *info);
+void	update_env(char *new_env, t_exec_info *info);
+void	update_pwd(char *cwd, t_exec_info *info);
+t_bool	try_chdir(char *path, t_exec_info *info);
 t_bool	cd(t_node *node, t_exec_info *info);
 void	echo(t_node *node);
 
