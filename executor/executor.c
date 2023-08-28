@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/27 01:42:18 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/28 20:37:19 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,13 @@ void	set_sh_info(t_exec_info *info, t_sh_info *sh_info)
 
 int	get_exit_code(t_exec_info info)
 {
-	int			status;
-	int			sig_num;
-	
+	int	status;
+	int	sig_num;
+
 	if (info.pid > 0)
 	{
 		waitpid(info.pid, &status, 0);
-		info.fork_cnt--;	
+		info.fork_cnt--;
 	}
 	while (info.fork_cnt > 0)
 	{
