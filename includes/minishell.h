@@ -177,6 +177,7 @@ extern char	**g_env;
 # define FALSE					0
 
 # define ANDOR					8
+# define REDIR					4
 
 /* ============= GENERAL MACRO =============== */
 # define MINISHELL				"minishell: "
