@@ -84,7 +84,7 @@ SRCS = ./minishell.c							\
 		$(BUILTIN_DIR)cd.c						\
 		$(BUILTIN_DIR)cd2.c
 
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2
+CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -g2
 # ----------- BONUS SRCS  ----------- #
 # BO_SRCS = ./minishell_bonus.c
 HEADER = \
@@ -145,7 +145,7 @@ clean:
 
 fclean:
 	$(MAKE) clean
-	rm -rf bin include/readline lib share
+	rm -rf bin include lib share
 	rm -rf ${NAME}
 
 re:
