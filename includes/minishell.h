@@ -178,7 +178,7 @@ extern char					**g_env;
 # define TRUE					1
 # define FALSE					0
 
-# define ANDOR					8
+# define ANDOR					4
 # define REDIR					4
 
 /* ============= GENERAL MACRO =============== */
