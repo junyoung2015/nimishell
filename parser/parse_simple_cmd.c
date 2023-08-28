@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:56:42 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 13:06:53 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/28 20:15:41 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ t_node	*parse_simple_cmd_element(t_parser *parser, t_node *parent)
 /**
  * @brief Parse function for <SIMPLE-COMMAND-TAIL>, calling
  * 		<SIMPLE-COMMAND-ELEMENT> and <SIMPLE-COMMAND-TAIL>.
+ * 		Appends to the first cmd when there is a redirection - ls | wc > a.txt,
+ * 		appending to ls here
  * 
  * @param parser 
  * @return t_node* 
@@ -59,7 +61,8 @@ t_node	*parse_simple_cmd_tail(t_parser *parser, t_node *parent)
 		simple_cmd_tail_node = parse_simple_cmd_element(parser, parent);
 		if (!simple_cmd_tail_node)
 			return (0);
-		if (AST_REDIR_IN <= simple_cmd_tail_node->type && simple_cmd_tail_node->type <= AST_REDIR_APPEND) // appending to the first cmd when there is a redirection - ls | wc > a.txt, appending to ls here
+		if (AST_REDIR_IN <= simple_cmd_tail_node->type && \
+		simple_cmd_tail_node->type <= AST_REDIR_APPEND)
 			append_redir_node(parent, simple_cmd_tail_node);
 		else
 			append_child_node(parent, simple_cmd_tail_node);
