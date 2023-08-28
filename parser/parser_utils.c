@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:57:04 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 13:06:53 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/28 20:18:19 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,7 @@ void	is_builtin_node(t_node *node)
  * @param parser		parser struct
  * @param parse_state	current state of the parser
  */
-void update_p_state(t_parser *parser, t_parse_state *parse_state)
+void	update_p_state(t_parser *parser, t_parse_state *parse_state)
 {
 	t_token		cur;
 	t_type		next;

@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:56:56 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 13:06:53 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/28 20:18:04 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ t_type	cur_type(t_parser *parser)
  * @param type		type of the token to compare
  * @return t_bool
  */
-t_bool check(t_parser *parser, t_type type)
+t_bool	check(t_parser *parser, t_type type)
 {
 	if (parser->cur >= parser->size)
 		return (FALSE);
@@ -46,7 +46,7 @@ t_bool check(t_parser *parser, t_type type)
  * @param parser		parser struct
  * @return t_type	type of the next token
  */
-t_type peek(t_parser *parser)
+t_type	peek(t_parser *parser)
 {
 	if (parser->cur < parser->size)
 		return (parser->tokens[parser->cur + 1].type);
@@ -58,7 +58,7 @@ t_type peek(t_parser *parser)
  *
  * @param parser	parser struct
  */
-void advance(t_parser *parser)
+void	advance(t_parser *parser)
 {
 	if (parser->cur < parser->size)
 		parser->cur++;

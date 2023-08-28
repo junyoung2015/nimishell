@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 12:56:45 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/15 12:56:45 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/28 20:16:15 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
  * @param parser	parser struct
  * @return t_node*	root node of <SUBSHELL>
  */
-t_node *p_sub(t_parser *parser, t_node *parent)
+t_node	*p_sub(t_parser *parser, t_node *parent)
 {
 	t_node	*list_node;
 	t_node	*subshell_node;
@@ -40,7 +40,7 @@ t_node	*parse_subshell_list(t_parser *parser, t_node *parent)
 {
 	t_node	*cmd_node;
 	t_node	*redir_list_node;
-	
+
 	cmd_node = p_sub(parser, parent);
 	if (!cmd_node)
 		return (0);

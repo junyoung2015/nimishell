@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_ll.c                                        :+:      :+:    :+:   */
+/*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -17,11 +17,11 @@
  *
  * @return char** table of parsing table
  */
-void	init_parser(t_node **root, t_parser *parser, t_token *tokens, t_size num_tokens)
+void	init_parser(t_node **root, t_parser *parser, t_token *toks, t_size num)
 {
 	*root = 0;
-	parser->tokens = tokens;
-	parser->size = num_tokens;
+	parser->tokens = toks;
+	parser->size = num;
 	parser->cur = 0;
 }
 
@@ -51,13 +51,13 @@ t_node	*append_node(t_node *root, t_node *node)
  * @param num_tokens	length of the array
  * @return t_node*		root node of AST generated
  */
-t_node *parse_tokens(t_token *tokens, t_size num_tokens)
+t_node	*parse_tokens(t_token *tokens, t_size num_tokens)
 {
 	t_parse_state	parse_state;
 	t_node			*root;
 	t_node			*node;
 	t_parser		parser;
-	const t_parse	fn_arr[8] = {p_err,p_cmd,p_redir_l,p_pipe_l,p_l,p_sub};
+	const t_parse	fn_arr[8] = {p_err, p_cmd, p_redir_l, p_pipe_l, p_l, p_sub};
 
 	init_parser(&root, &parser, tokens, num_tokens);
 	while (parser.cur < parser.size)
