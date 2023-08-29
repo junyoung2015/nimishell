@@ -38,7 +38,7 @@ void	print_logo(void)
 {
 	clear_screen();
 	write(STD_OUT, "              \033\[33mo8o                     \033\[34mo8\
-o\033\[0moooo                  oooo  oooo\n", 89);
+o\033\[0m           oooo                  oooo  oooo\n", 100);
 	write(STD_OUT, "              \033\[33m`\"'                     \033\[34m`\
 \"'           \033\[0m`888                  `888  `888\n", 100);
 	write(STD_OUT, " \033\[31mooo. .oo.\033\[33m   oooo  \033\[32mooo. .oo.  .\
