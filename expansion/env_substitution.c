@@ -58,7 +58,7 @@ char	**handle_dollar_sign(char **in, char *tmp, char *quo, t_exec_info *info)
  */
 char	**check_env_var(char *cmd_arg, t_exec_info *info)
 {
-	// char			*tmp;
+	char			*tmp;
 	char			**result;
 	char			**substr;
 	t_size			len;
@@ -82,7 +82,14 @@ char	**check_env_var(char *cmd_arg, t_exec_info *info)
 		substr = state_fn[state](&cmd_arg, info);
 		if (!substr)
 			return (result);
-		len = ft_arrcat(&result, substr, len);
+		if (ft_arrlen(substr) > 1 || !len)
+			len = ft_arrcat(&result, substr, len);
+		else
+		{
+			tmp = result[len - 1];
+			result[len - 1] = ft_strjoin(result[len - 1], substr[0]);
+			free(tmp);
+		}
 		// result = ft_strjoin(result, substr);
 		// free(substr);
 		// free(tmp);
