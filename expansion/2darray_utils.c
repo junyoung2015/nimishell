@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 20:33:49 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/28 20:35:02 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/30 15:34:55 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ t_size	ft_arrcat(char ***arr, char **new_arr, t_size size)
  * @param size		size of the 2d array
  * @return t_size	new size of the 2d array
  */
-t_size	ft_arr_append(char ***arr, char *str, t_size size)
+t_size	ft_arr_append_back(char ***arr, char *str, t_size size)
 {
 	char	**tmp;
 	t_size	idx;
@@ -107,6 +107,37 @@ t_size	ft_arr_append(char ***arr, char *str, t_size size)
 		idx++;
 	}
 	tmp[size] = str;
+	if (*arr)
+		free(*arr);
+	*arr = tmp;
+	return (size + 1);
+}
+
+/**
+ * @brief	Append string element to 2d array
+ * 
+ * @param arr		2d array to append to
+ * @param str		string to append
+ * @param size		size of the 2d array
+ * @return t_size	new size of the 2d array
+ */
+t_size	ft_arr_append_front(char ***arr, char *str, t_size size)
+{
+	char	**tmp;
+	t_size	idx;
+
+	idx = 0;
+	if (!str)
+		return (size);
+	tmp = (char **)ft_calloc((size + 2), sizeof(char *));
+	if (!tmp)
+		return (0);
+	tmp[idx++] = str;
+	while (idx <= size)
+	{
+		tmp[idx] = (*arr)[idx];
+		idx++;
+	}
 	if (*arr)
 		free(*arr);
 	*arr = tmp;
