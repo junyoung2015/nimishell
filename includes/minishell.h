@@ -125,6 +125,7 @@ typedef struct s_node
 	struct s_node	*left;
 	struct s_node	*right;
 	int				pipe_open;
+	int				fd;
 	t_builtin		builtin;
 }	t_node;
 
@@ -383,6 +384,6 @@ int				executor(t_sh_info *sh_info);
 
 /* ================= SIGNAL ================== */
 void			set_parent_signal(void);
-void			set_signal(pid_t pid, t_bool flag);
+void			set_signal(pid_t pid);
 
 #endif
