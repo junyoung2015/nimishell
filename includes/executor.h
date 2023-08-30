@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/28 20:52:09 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/31 01:05:26 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,10 @@ typedef struct s_executor_info
 	int		prev_pipe;
 }	t_exec_info;
 
+int		execute(t_sh_info *info);
 void	ast_search(t_node *root, t_exec_info *info);
+
+/* expansion */
 char	**env_substitution(t_node *node, t_exec_info *info);
 t_bool	is_number(int c);
 t_bool	is_alpha(int c);
@@ -64,11 +67,14 @@ void	close_pipe(t_node *node, t_exec_info *info);
 
 /* redirection */
 void	redirection(t_node *node, t_exec_info *info);
-void	heredoc(t_node *node, t_exec_info *info);
+t_bool	check_heredoc(t_node *node);
 
-/* error */
+/* util */
 void	free_ptr(char **ptr);
 void	clear_all(t_node *root);
+
+/* error */
+char	*heredoc_err(char *str, char *msg);
 void	err(char *str, t_exec_info *info);
 void	err_exit(t_exec_info *info, char *msg, int exit_code);
 
