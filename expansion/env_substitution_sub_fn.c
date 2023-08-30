@@ -68,6 +68,24 @@ char	*wrap_env_var(char *env_var, char *quote)
 	return (env_var);
 }
 
+t_bool	is_split_required(char *cmd_arg)
+{
+	char	*tmp;
+	t_bool	in_quotes;
+
+	tmp = cmd_arg;
+	in_quotes = FALSE;
+	while (*tmp)
+	{
+		if (is_quote(*tmp))
+			in_quotes = !in_quotes;
+		if (is_space(*tmp) && !in_quotes)
+			return (TRUE);
+		tmp++;
+	}
+	return (FALSE);
+}
+
 t_size	split_env_substituted(char ***splitted, char *env_var)
 {
 	t_size	len;
@@ -113,7 +131,15 @@ char	**substitute(char *env_var, char *quote)
 	if (value)
 	{
 		result = ft_strtrim(value + 1, " ");
-		len = split_env_substituted(&splitted, result);
+		if (!result)
+			return (0);
+		else if (is_split_required(result))
+			len = split_env_substituted(&splitted, result);
+		else
+		{
+			splitted = ft_calloc(2, sizeof(char **));
+			splitted[0] = result;
+		}
 		for (t_size i = 0; i < len; i ++)
 		{
 			splitted[i] = wrap_env_var(splitted[i], quote);
@@ -165,7 +191,16 @@ char	**sub_env_var(char **in, char *tmp, char *quote)
 		return (0);
 	substituted = substitute(env_var, quote);
 	// len = ft_arr_append_front(&substituted, tmp, ft_arrlen(substituted));
-	ft_arr_append_front(&substituted, tmp, ft_arrlen(substituted));
+	if (!substituted)
+		return (0);
+	else if (ft_arrlen(substituted) > 1)
+	{
+		ft_arr_append_front(&substituted, tmp, ft_arrlen(substituted));
+	}
+	else
+	{
+		substituted[0] = ft_strjoin(tmp, substituted[0]);
+	}
 	// result = ft_strjoin(tmp, substituted);
 	// free(substituted);
 	// free(env_var);
