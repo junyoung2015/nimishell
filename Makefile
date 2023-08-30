@@ -27,6 +27,7 @@ SRCS = ./minishell.c							\
 		$(INIT_DIR)logo.c						\
 		$(INIT_DIR)prompt.c						\
 		$(INIT_DIR)signal.c						\
+		$(INIT_DIR)init_env.c					\
 		$(LEXER_DIR)tokenizer.c					\
 		$(LEXER_DIR)tokenizer_err_handling.c	\
 		$(LEXER_DIR)tokenizer_utils.c			\
@@ -82,7 +83,7 @@ SRCS = ./minishell.c							\
 		$(BUILTIN_DIR)echo.c					\
 		$(BUILTIN_DIR)arg.c						\
 		$(BUILTIN_DIR)cd.c						\
-		$(BUILTIN_DIR)cd2.c
+		$(BUILTIN_DIR)cd_util.c
 
 CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -g2
 # ----------- BONUS SRCS  ----------- #
