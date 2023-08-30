@@ -25,22 +25,22 @@ void	init_parser(t_node **root, t_parser *parser, t_token *toks, t_size num)
 	parser->cur = 0;
 }
 
-t_node	*append_node(t_node *root, t_node *node)
+t_node	*append_node(t_node **root, t_node *node)
 {
+	if (*root == 0)
+		*root = node;
 	if (check_err_node(node))
 	{
-		if (root && root != node)
-			free_ast(root);
+		if (*root && *root != node)
+			free_ast(*root);
 		free_ast(node);
 		return (0);
 	}
-	if (root == 0)
-		root = node;
 	else if (AST_REDIR_IN <= node->type && AST_REDIR_APPEND <= node->type)
-		append_redir_node(root, node);
+		append_redir_node(*root, node);
 	else
-		append_child_node(root, node);
-	return (root);
+		append_child_node(*root, node);
+	return (*root);
 }
 
 /**
@@ -67,13 +67,15 @@ t_node	*parse_tokens(t_token *tokens, t_size num_tokens)
 			break ;
 		node = fn_arr[parse_state](&parser, root);
 		if (node != 0)
-			root = append_node(root, node);
+			root = append_node(&root, node);
 		else
 		{
 			if (root)
 				free_ast(root);
 			return (0);
 		}
+		if (!root)
+			return (0);
 	}
 	return (root);
 }
