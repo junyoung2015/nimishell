@@ -147,6 +147,11 @@ char	**substitute(char *env_var, char *quote)
 		}
 		// result = wrap_env_var(result, quote);
 	}
+	else
+	{
+		splitted = ft_calloc(2, sizeof(char **));
+		splitted[0] = ft_strdup("");
+	}
 	// return (result);
 	return (splitted);
 }
@@ -179,6 +184,7 @@ char	**sub_env_var(char **in, char *tmp, char *quote)
 	// char	**result;
 	char	*env_var;
 	char	*start;
+	char	*temp;
 	// t_size	len;
 
 	// len = 0;
@@ -192,14 +198,19 @@ char	**sub_env_var(char **in, char *tmp, char *quote)
 	substituted = substitute(env_var, quote);
 	// len = ft_arr_append_front(&substituted, tmp, ft_arrlen(substituted));
 	if (!substituted)
-		return (0);
+	{
+		substituted = ft_calloc(2, sizeof(char **));
+		substituted[0] = ft_strjoin(tmp, substituted[0]);
+	}
 	else if (ft_arrlen(substituted) > 1)
 	{
 		ft_arr_append_front(&substituted, tmp, ft_arrlen(substituted));
 	}
 	else
 	{
+		temp = substituted[0];
 		substituted[0] = ft_strjoin(tmp, substituted[0]);
+		free(temp);
 	}
 	// result = ft_strjoin(tmp, substituted);
 	// free(substituted);

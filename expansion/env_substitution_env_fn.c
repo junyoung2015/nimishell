@@ -84,6 +84,8 @@ char	*process_env_dquote(char **in, char **res, char **s, t_exec_info *info)
 			res = handle_dollar_sign(in, tmp, "\"", info);
 	}
 	*s = *in;
+	if (!res)
+		return (0);
 	return (*res);
 }
 

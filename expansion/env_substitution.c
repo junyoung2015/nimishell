@@ -80,8 +80,8 @@ char	**check_env_var(char *cmd_arg, t_exec_info *info)
 	{
 		// tmp = result;
 		substr = state_fn[state](&cmd_arg, info);
-		if (!substr)
-			return (result);
+		// if (!substr)
+		// 	return (result);
 		if (ft_arrlen(substr) > 1 || !len)
 			len = ft_arrcat(&result, substr, len);
 		else
