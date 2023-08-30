@@ -130,14 +130,14 @@ char	**sub_exit_code(char **in, char *tmp, t_exec_info *info)
 	char	*substituted;
 	char	**result;
 
-	(void) tmp;
 	result = ft_calloc(2, sizeof(char **));
 	if (!result)
 		return (0);
 	if (**in == '?')
 	{
 		substituted = ft_itoa(info->prev_exit_code);
-		result[0] = substituted;
+		result[0] = ft_strjoin(tmp, substituted);
+		free(substituted);
 		// ft_arr_append_back(&result, substituted, 1);
 		// result = ft_strjoin(tmp, substituted);
 		// result[1] = substituted;
@@ -150,13 +150,13 @@ char	**sub_exit_code(char **in, char *tmp, t_exec_info *info)
 char	**sub_env_var(char **in, char *tmp, char *quote)
 {
 	char	**substituted;
-	char	**result;
+	// char	**result;
 	char	*env_var;
 	char	*start;
-	t_size	len;
+	// t_size	len;
 
-	len = 0;
-	result = 0;
+	// len = 0;
+	// result = 0;
 	start = *in;
 	while (**in && is_env_var(**in))
 		(*in)++;
@@ -164,7 +164,8 @@ char	**sub_env_var(char **in, char *tmp, char *quote)
 	if (!env_var)
 		return (0);
 	substituted = substitute(env_var, quote);
-	len = ft_arr_append_front(&substituted, tmp, ft_arrlen(substituted));
+	// len = ft_arr_append_front(&substituted, tmp, ft_arrlen(substituted));
+	ft_arr_append_front(&substituted, tmp, ft_arrlen(substituted));
 	// result = ft_strjoin(tmp, substituted);
 	// free(substituted);
 	// free(env_var);
