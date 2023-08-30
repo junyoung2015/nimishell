@@ -288,7 +288,8 @@ t_size			match_pattern_last(t_search *info, char *pattern, t_size last);
 void			ft_arrfree(char **arr);
 t_size			ft_arrlen(char **arr);
 t_size			ft_arrcat(char ***arr, char **new_arr, t_size size);
-t_size			ft_arr_append(char ***arr, char *str, t_size size);
+t_size			ft_arr_append_back(char ***arr, char *str, t_size size);
+t_size			ft_arr_append_front(char ***arr, char *str, t_size size);
 
 /* ================ TOKENIZER ================ */
 t_token			*tokenize_input(char *in, t_size alloced, t_size *num);

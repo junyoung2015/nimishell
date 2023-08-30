@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 20:50:40 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/28 20:51:39 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/30 15:50:08 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,46 @@ char	*wrap_env_var(char *env_var, char *quote)
 	return (env_var);
 }
 
+t_size	split_env_substituted(char ***splitted, char *env_var)
+{
+	t_size	len;
+	char	*start;
+	char	*end;
+	char	*substr;
+
+	len = 0;
+	start = env_var;
+	end = start;
+	*splitted = ft_calloc(1, sizeof(char **));
+	while (end && *end)
+	{
+		while (*end && is_not_space(*end))
+			end++;
+		printf("start: %s || end: %s\n", start, end);
+		// printf("start: %s || end: %s\n", start, end);
+		substr = ft_substr(start, 0, end - start);
+		if (!substr)
+			return (0);
+		printf("substr in split_env_sub: %s\n", substr);
+		printf("substr in split_env_sub: %p\n", substr);
+		len = ft_arr_append_back(splitted, substr, len);
+		if (is_space(*end))
+			end++;
+		start = end;
+	}
+	// free(env_var);
+	return (len);
+}
+
 char	*substitute(char *env_var, char *quote)
 {
 	char	*result;
 	char	*key;
 	char	*value;
+	// char	**splitted;
+	// t_size	len;
 
+	// len = 0;
 	result = 0;
 	key = ft_getenv(env_var);
 	if (!key)
@@ -82,6 +116,14 @@ char	*substitute(char *env_var, char *quote)
 	if (value)
 	{
 		result = ft_strtrim(value + 1, " ");
+		// printf("result in substitute: %s\n", result);
+		// len = split_env_substituted(&splitted, result);
+		// for (t_size i = 0; i < len; i ++)
+		// {
+		// 	splitted[i] = wrap_env_var(splitted[i], quote);
+		// 	printf("splitted[%llu]: %s\n", i, splitted[i]);
+		// 	// free(splitted[i]);
+		// }
 		result = wrap_env_var(result, quote);
 	}
 	return (result);
@@ -118,6 +160,7 @@ char	*sub_env_var(char **in, char *tmp, char *quote)
 	if (!env_var)
 		return (0);
 	substituted = substitute(env_var, quote);
+	// result = ft_arr_append_front(&substituted, tmp, ft_arrlen(substituted));
 	result = ft_strjoin(tmp, substituted);
 	free(substituted);
 	free(env_var);
