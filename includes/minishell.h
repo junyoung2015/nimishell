@@ -136,12 +136,6 @@ typedef struct s_parser
 	t_size			size;
 }	t_parser;
 
-typedef struct s_global_info
-{
-	char	**env;
-	int		exit_status;
-}	t_global_info;
-
 typedef struct s_search_info
 {
 	char	**files;
@@ -225,6 +219,7 @@ extern char					**g_env;
 void			print_logo(void);
 char			*get_prompt(void);
 void			exit_err_msg(int code, char *file, char *msg, t_node *root);
+void			init_env(char **envp, t_sh_info *info);
 
 /* ============== MEMORY_UTILS =============== */
 void			ft_bzero(void *s, t_size n);
@@ -289,7 +284,8 @@ t_size			match_pattern_last(t_search *info, char *pattern, t_size last);
 void			ft_arrfree(char **arr);
 t_size			ft_arrlen(char **arr);
 t_size			ft_arrcat(char ***arr, char **new_arr, t_size size);
-t_size			ft_arr_append(char ***arr, char *str, t_size size);
+t_size			ft_arr_append_back(char ***arr, char *str, t_size size);
+t_size			ft_arr_append_front(char ***arr, char *str, t_size size);
 
 /* ================ TOKENIZER ================ */
 t_token			*tokenize_input(char *in, t_size alloced, t_size *num);
