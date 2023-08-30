@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 20:59:26 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/28 21:01:19 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/30 15:33:48 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	get_all_files(char *first, t_size *size, char ***result)
 			tmp = ft_strdup(entry->d_name);
 		else
 			continue ;
-		*size = ft_arr_append(result, tmp, *size);
+		*size = ft_arr_append_back(result, tmp, *size);
 		if (!*size)
 			break ;
 	}
@@ -50,7 +50,7 @@ t_search	*get_search_info(char *first)
 	result = 0;
 	get_all_files(first, &size, &result);
 	if (!result && !size)
-		size = ft_arr_append(&result, ft_strdup(""), size);
+		size = ft_arr_append_back(&result, ft_strdup(""), size);
 	info = create_search_info(result, size);
 	if (!info)
 		ft_arrfree(result);
