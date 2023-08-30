@@ -16,29 +16,11 @@ char	**g_env;
 
 static void	init_sh_info(int ac, char **av, char **envp, t_sh_info *info)
 {
-	t_size	i;
-	t_size	cnt;
-
 	(void) ac;
 	(void) av;
-	cnt = 0;
 	info->ast = 0;
 	info->exit_code = 0;
-	while (envp && envp[cnt])
-		cnt++;
-	info->env_cnt = cnt;
-	g_env = ft_calloc((cnt + 1), sizeof(char *));
-	if (!g_env)
-		exit_err_msg(1, 0, MALLOC_ERR, 0);
-	i = 0;
-	while (i < cnt)
-	{
-		g_env[i] = ft_strdup(envp[i]);
-		if (!g_env[i])
-			exit_err_msg(1, 0, MALLOC_ERR, 0);
-		i++;
-	}
-	g_env[i] = NULL;
+	init_env(envp, info);
 }
 
 void	init_terminal(void)
