@@ -85,7 +85,7 @@ SRCS = ./minishell.c							\
 		$(BUILTIN_DIR)cd.c						\
 		$(BUILTIN_DIR)cd_util.c
 
-CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -g2
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g2
 # ----------- BONUS SRCS  ----------- #
 # BO_SRCS = ./minishell_bonus.c
 HEADER = \
