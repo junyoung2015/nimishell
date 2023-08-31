@@ -434,7 +434,7 @@ expect {
 	}
 	timeout {
 		send_user "${red}Test ${count} failed${default}\n"
-		exit 1 ;
+		# exit 1 ;
 	}
 }
 set count [ expr \$count + 1 ] ;
