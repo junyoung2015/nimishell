@@ -17,6 +17,7 @@ char	**env_str(char **in, t_exec_info *info)
 	t_size	len;
 	char	*start;
 	char	*tmp;
+	char	**prev;
 	char	**result;
 
 	len = 0;
@@ -34,10 +35,11 @@ char	**env_str(char **in, t_exec_info *info)
 			return (0);
 	}
 	len = ft_arr_append_back(&result, tmp, len);
-	// result = tmp;
+	prev = result;
 	if (!**in || !is_dollar(**in))
 		return (result);
-	result = handle_dollar_sign(in, tmp, 0, info);
+	result = handle_dollar_sign(in, result[0], 0, info);
+	ft_arrfree(prev);
 	return (result);
 }
 

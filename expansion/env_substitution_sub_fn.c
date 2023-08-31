@@ -181,14 +181,10 @@ char	**sub_exit_code(char **in, char *tmp, t_exec_info *info)
 char	**sub_env_var(char **in, char *tmp, char *quote)
 {
 	char	**substituted;
-	// char	**result;
 	char	*env_var;
 	char	*start;
 	char	*temp;
-	// t_size	len;
 
-	// len = 0;
-	// result = 0;
 	start = *in;
 	while (**in && is_env_var(**in))
 		(*in)++;
@@ -196,24 +192,20 @@ char	**sub_env_var(char **in, char *tmp, char *quote)
 	if (!env_var)
 		return (0);
 	substituted = substitute(env_var, quote);
-	// len = ft_arr_append_front(&substituted, tmp, ft_arrlen(substituted));
-	if (!substituted)
-	{
-		substituted = ft_calloc(2, sizeof(char **));
-		substituted[0] = ft_strjoin(tmp, substituted[0]);
-	}
-	else if (ft_arrlen(substituted) > 1)
-	{
+	free(env_var);
+	if (ft_arrlen(substituted) > 1)
 		ft_arr_append_front(&substituted, tmp, ft_arrlen(substituted));
-	}
 	else
 	{
+		if (!substituted)
+		{
+			substituted = ft_calloc(2, sizeof(char **));
+			if (!substituted)
+				return (0);
+		}
 		temp = substituted[0];
 		substituted[0] = ft_strjoin(tmp, substituted[0]);
 		free(temp);
 	}
-	// result = ft_strjoin(tmp, substituted);
-	// free(substituted);
-	// free(env_var);
 	return (substituted);
 }

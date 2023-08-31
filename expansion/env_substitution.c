@@ -43,8 +43,6 @@ char	**handle_dollar_sign(char **in, char *tmp, char *quo, t_exec_info *info)
 		result = sub_env_var(in, tmp, quo);
 	else
 		result = trim_single_char(in, tmp);
-	// for (t_size i = 0; result && result[i]; i++)
-	// 	printf("result[%llu]: %s\n", i, result[i]);
 	// free(tmp);	
 	return (result);
 }
@@ -78,10 +76,7 @@ char	**check_env_var(char *cmd_arg, t_exec_info *info)
 	}
 	while (*cmd_arg && state != END)
 	{
-		// tmp = result;
 		substr = state_fn[state](&cmd_arg, info);
-		// if (!substr)
-		// 	return (result);
 		if (ft_arrlen(substr) > 1 || !len)
 			len = ft_arrcat(&result, substr, len);
 		else
@@ -90,9 +85,6 @@ char	**check_env_var(char *cmd_arg, t_exec_info *info)
 			result[len - 1] = ft_strjoin(result[len - 1], substr[0]);
 			free(tmp);
 		}
-		// result = ft_strjoin(result, substr);
-		// free(substr);
-		// free(tmp);
 		state = update_state(*cmd_arg);
 	}
 	return (result);
