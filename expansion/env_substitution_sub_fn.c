@@ -171,6 +171,7 @@ char	**sub_exit_code(char **in, char *tmp, t_exec_info *info)
 		substituted = ft_itoa(info->prev_exit_code);
 		result[0] = ft_strjoin(tmp, substituted);
 		free(substituted);
+		free(tmp);
 		// ft_arr_append_back(&result, substituted, 1);
 		// result = ft_strjoin(tmp, substituted);
 		// result[1] = substituted;
@@ -214,6 +215,7 @@ char	**sub_env_var(char **in, char *tmp, char *quote)
 		// ft_arrfree(prev);
 		// free(substituted);
 		free(temp);
+		// free(tmp);
 	}
 	return (substituted);
 }
