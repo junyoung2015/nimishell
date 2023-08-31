@@ -91,7 +91,10 @@ char	**process_env_dquote(char **in, char **res, char **s, t_exec_info *info)
 	}
 	*s = *in;
 	if (!res)
+	{
+		free(tmp);
 		return (0);
+	}
 	return (res);
 }
 
