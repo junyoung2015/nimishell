@@ -57,8 +57,11 @@ char	**env_squote(char **in, t_exec_info *info)
 	while (**in && !is_squote(**in))
 		(*in)++;
 	result[0] = ft_substr(start, 0, *in - start + is_squote(**in));
-	if (!result)
+	if (!result[0])
+	{
+		free(result);
 		return (0);
+	}
 	if (is_squote(**in))
 		(*in)++;
 	return (result);
