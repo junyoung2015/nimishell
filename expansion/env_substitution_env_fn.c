@@ -106,6 +106,7 @@ char	**env_dquote(char **in, t_exec_info *info)
 {
 	char	*start;
 	char	*end;
+	char	*temp;
 	char	**tmp;
 	char	**result;
 	t_size	len;
@@ -123,8 +124,9 @@ char	**env_dquote(char **in, t_exec_info *info)
 	while (**in && start < end)
 	{
 		tmp = process_env_dquote(in, &result[len], &start, info);
+		temp = tmp[0];
 		result[len] = ft_strjoin(tmp[0], "\"");
-		// free(tmp[0]);
+		free(temp);
 		// ft_arrfree(tmp);
 		len = ft_arr_append_back(&result, result[len], len);
 		// free(tmp);
