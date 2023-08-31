@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_substitution.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 20:35:09 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/30 18:04:07 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/31 20:57:53 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ char	**handle_dollar_sign(char **in, char *tmp, char *quo, t_exec_info *info)
 	else if (result && !**in)
 	{
 		result[0] = ft_strjoin(tmp, *in - 1);
-		free(tmp);
 	}
 	else if (is_env_var(**in))
 	{

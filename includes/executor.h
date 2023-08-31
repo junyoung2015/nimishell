@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/31 01:05:26 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/31 20:39:09 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ t_bool	is_env_var(char ch);
 t_bool	is_dollar(char ch);
 char	**env_str(char **in, t_exec_info *info);
 char	**env_squote(char **in, t_exec_info *info);
-char	**process_env_dquote(char **in, char **res, char **s, t_exec_info *info);
+char	*process_env_dquote(char **in, char *res, char **s, t_exec_info *info);
 char	**env_dquote(char **in, t_exec_info *info);
 char	*ft_getenv(char *env_var);
 char	**substitute(char *env_var, char *quote);
