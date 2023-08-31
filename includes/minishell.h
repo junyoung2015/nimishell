@@ -176,6 +176,10 @@ extern char					**g_env;
 # define ANDOR					4
 # define REDIR					4
 
+# define OLDPWD					"OLDPWD="
+# define SHLVL					"SHLVL="
+# define SHLVL_INIT				"SHLVL=1"
+
 /* ============= GENERAL MACRO =============== */
 # define MINISHELL				"minishell: "
 # define COLON					": "
@@ -243,8 +247,13 @@ char			*ft_strdup(char *src);
 char			*ft_substr(char const *s, t_size start, t_size len);
 char			*ft_strjoin(char const *s1, char const *s2);
 
+/* ================ STR_ITOA ================= */
 char			*ft_itoa(int n);
+int				ft_atoi(const char *str);
 char			**ft_split(char const *str, char c);
+
+/* ============= ENV_SUB_CMP_FN ============== */
+t_bool			is_number(int c);
 
 /* ================ EXPANSION ================ */
 int				cmp_ascii(void *a, void *b);

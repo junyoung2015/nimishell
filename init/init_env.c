@@ -12,65 +12,58 @@
 
 #include "minishell.h"
 
-void	plus_shllv(char *str)
+char	*handle_shlvl(char *env_var)
 {
 	t_size	i;
+	char	*tmp;
+	char	*shlvl;
 
+	tmp = ft_strchr(env_var, '=');
+	if (!tmp)
+		return (ft_strdup(SHLVL_INIT));
+	tmp++;
 	i = 0;
-	while (str[i])
+	while (tmp[i] && is_number(tmp[i]))
 		i++;
-	while (str[--i] == '9')
-		str[i] = '0';
-	str[i] += 1;
-}
-
-void	dup_env(char **envp, t_sh_info *info, t_size oldpwd, t_size shlvl)
-{
-	t_size	i;
-	t_size	j;
-
-	g_env = ft_calloc((info->env_cnt + 1), sizeof(char *));
-	if (!g_env)
-		exit_err_msg(1, 0, MALLOC_ERR, 0);
-	i = 0;
-	j = 0;
-	while (i < info->env_cnt)
+	if (i == ft_strlen(tmp))
 	{
-		if (i == oldpwd)
-			j++;
-		else
-		{
-			g_env[i] = ft_strdup(envp[i+j]);
-			if (!g_env[i])
-				exit_err_msg(1, 0, MALLOC_ERR, 0);
-			if (i+j == shlvl)
-				plus_shllv(g_env[i]);
-		}
-		i++;
+		shlvl = ft_itoa(ft_atoi(tmp) + 1);
+		if (!shlvl)
+			exit_err_msg(1, 0, MALLOC_ERR, 0);
+		tmp = ft_strjoin(SHLVL, shlvl);
+		free(shlvl);
+		if (!tmp)
+			exit_err_msg(1, 0, MALLOC_ERR, 0);
 	}
-	g_env[i] = NULL;
+	else
+		tmp = ft_strdup(SHLVL_INIT);
+	return (tmp);
 }
 
 void	init_env(char **envp, t_sh_info *info)
 {
+	char	*tmp;
 	t_bool	flag;
-	t_size	oldpwd_idx;
-	t_size	shlvl_idx;
 
-	info->env_cnt = 0;
 	flag = FALSE;
 	while (envp && envp[info->env_cnt])
 	{
-		if (!strncmp(envp[info->env_cnt], "OLDPWD=", 7))
+		if (!strncmp(envp[info->env_cnt], OLDPWD, 7))
 		{
-			oldpwd_idx = info->env_cnt;
 			flag = TRUE;
+			info->env_cnt++;
+			continue ;
 		}
-		else if (!strncmp(envp[info->env_cnt], "SHLVL=", 6))
-			shlvl_idx = info->env_cnt;
-		info->env_cnt++;
+		if (!strncmp(envp[info->env_cnt], SHLVL, 6))
+			tmp = handle_shlvl(envp[info->env_cnt]);
+		else
+			tmp = ft_strdup(envp[info->env_cnt]);
+		if (!tmp)
+			exit_err_msg(1, 0, MALLOC_ERR, 0);
+		info->env_cnt = ft_arr_append_back(&g_env, tmp, info->env_cnt);
+		if (!g_env)
+			exit_err_msg(1, 0, MALLOC_ERR, 0);
 	}
-	if (flag)
-		info->env_cnt--;
-	dup_env(envp, info, oldpwd_idx, shlvl_idx);
+	if (!flag)
+		info->env_cnt++;
 }

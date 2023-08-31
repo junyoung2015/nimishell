@@ -18,7 +18,9 @@ static void	init_sh_info(int ac, char **av, char **envp, t_sh_info *info)
 {
 	(void) ac;
 	(void) av;
+	g_env = 0;
 	info->ast = 0;
+	info->env_cnt = 0;
 	info->exit_code = 0;
 	init_env(envp, info);
 }
