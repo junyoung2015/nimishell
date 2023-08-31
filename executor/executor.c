@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/28 20:37:19 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/31 00:50:34 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,6 @@ void	close_fd(t_exec_info *info)
 		close(info->fd_out);
 }
 
-void	set_sh_info(t_exec_info *info, t_sh_info *sh_info)
-{
-	clear_all(sh_info->ast);
-	sh_info->ast = NULL;
-	sh_info->env_cnt = info->env_cnt;
-}
-
 int	get_exit_code(t_exec_info info)
 {
 	int	status;
@@ -77,15 +70,25 @@ int	get_exit_code(t_exec_info info)
 	return (info.exit_code);
 }
 
-int	executor(t_sh_info *sh_info)
+int	execute(t_sh_info *sh_info)
 {
 	t_exec_info	info;	
 
 	init_exec_info(&info, sh_info);
 	ast_search(info.ast, &info);
 	close_fd(&info);
-	set_sh_info(&info, sh_info);
+	clear_all(sh_info->ast);
+	sh_info->ast = NULL;
+	sh_info->env_cnt = info.env_cnt;
 	if (!info.fork_cnt)
 		return (info.exit_code);
 	return (get_exit_code(info));
+}
+
+int	executor(t_sh_info *info)
+{
+	if (check_heredoc(info->ast))
+		return (execute(info));
+	write(STDOUT_FILENO, "\n", 1);
+	return (EXIT_FAILURE);	
 }

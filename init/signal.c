@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 20:10:56 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/28 20:12:43 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/08/31 00:44:48 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,8 @@ void	sig_handler(int signal)
 	}
 }
 
-void	set_signal(pid_t pid, t_bool flag)
+void	set_signal(pid_t pid)
 {
-	if (flag)
-		return ;
 	if (!pid)
 	{
 		signal(SIGQUIT, SIG_DFL);

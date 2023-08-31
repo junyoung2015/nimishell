@@ -66,6 +66,7 @@ SRCS = ./minishell.c							\
 		$(EXPANSION)env_substitution_cmp_fn.c	\
 		$(EXPANSION)env_substitution_env_fn.c	\
 		$(EXPANSION)env_substitution_sub_fn.c	\
+		$(EXECUTOR_DIR)util.c					\
 		$(EXECUTOR_DIR)path.c					\
 		$(EXECUTOR_DIR)command.c				\
 		$(EXECUTOR_DIR)error.c					\

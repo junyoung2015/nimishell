@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 20:38:34 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/28 20:38:35 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/31 00:53:08 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	check_subshell_child(t_node *node, t_exec_info *info)
 	node->left = NULL;
 	subshell.env_cnt = info->env_cnt;
 	subshell.exit_code = info->prev_exit_code;
-	exit_code = executor(&subshell);
+	exit_code = execute(&subshell);
 	clear_all(info->ast);
 	exit(exit_code);
 }

@@ -6,7 +6,7 @@
 /*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 20:34:17 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/28 20:35:15 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/31 00:45:20 by sejinkim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ pid_t	is_fork(t_node *node, t_exec_info *info)
 		err("minishell: fork", info);
 	else
 	{
-		set_signal(pid, 0);
+		set_signal(pid);
 		info->fork_cnt += 1;
 		info->is_fork = TRUE;
 		info->pid = pid;
