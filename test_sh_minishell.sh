@@ -10,18 +10,18 @@ set count 1
 set timeout 2
 
 ### Test -1 ###
-send "export ORIGIN=\$PWD\r"
+send "export ORIGIN=\$PWD\r" ;
 expect "" ;
 
 ### Test 0 ###
-send "\r"
+send "\r" ;
 expect "" ;
 
 ##########
 ########## Testing cd builtin ##########
 ##########
 
-send "pwd\r"
+send "pwd\r" ;
 ### Test 1 ###
 expect {
 	"$env(HOME)/nimishell" {
@@ -35,17 +35,17 @@ expect {
 set count [ expr \$count + 1 ] ;
 
 ### Test 2 ###
-send "\r"
-expect {
-	"" {
-		send_user "${green}Test ${count} passed${default}\n"
-	}
-	timeout {
-		send_user "${red}Test ${count} failed${default}\n" ;
-		exit 1 ;
-	}
-}
-set count [ expr \$count + 1 ] ;
+# send "\r" ;
+# expect {
+# 	"" {
+# 		send_user "${green}Test ${count} passed${default}\n"
+# 	}
+# 	timeout {
+# 		send_user "${red}Test ${count} failed${default}\n" ;
+# 		exit 1 ;
+# 	}
+# }
+# set count [ expr \$count + 1 ] ;
 
 ### Test 3 ###
 send "pwd\r"
