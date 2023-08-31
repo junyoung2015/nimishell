@@ -21,6 +21,7 @@ expect "" ;
 ########## Testing cd builtin ##########
 ##########
 
+send "pwd\r"
 ### Test 1 ###
 expect {
 	"$env(HOME)/nimishell" {
