@@ -35,7 +35,7 @@ expect {
 set count [ expr \$count + 1 ] ;
 
 ### Test 2 ###
-send "cd includes\r"
+send "\r"
 expect {
 	"" {
 		send_user "${green}Test ${count} passed${default}\n"
