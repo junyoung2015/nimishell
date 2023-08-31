@@ -67,7 +67,7 @@ char	**env_squote(char **in, t_exec_info *info)
 	return (result);
 }
 
-char	*process_env_dquote(char **in, char **res, char **s, t_exec_info *info)
+char	**process_env_dquote(char **in, char **res, char **s, t_exec_info *info)
 {
 	char	*tmp;
 	char	*prev;
@@ -92,7 +92,7 @@ char	*process_env_dquote(char **in, char **res, char **s, t_exec_info *info)
 	*s = *in;
 	if (!res)
 		return (0);
-	return (*res);
+	return (res);
 }
 
 /**
@@ -106,7 +106,7 @@ char	**env_dquote(char **in, t_exec_info *info)
 {
 	char	*start;
 	char	*end;
-	char	*tmp;
+	char	**tmp;
 	char	**result;
 	t_size	len;
 
@@ -123,9 +123,11 @@ char	**env_dquote(char **in, t_exec_info *info)
 	while (**in && start < end)
 	{
 		tmp = process_env_dquote(in, &result[len], &start, info);
-		result[len] = ft_strjoin(result[len], "\"");
-		free(tmp);
+		result[len] = ft_strjoin(tmp[0], "\"");
+		// free(tmp[0]);
+		// ft_arrfree(tmp);
 		len = ft_arr_append_back(&result, result[len], len);
+		// free(tmp);
 	}
 	// tmp = result;
 	// free(tmp);

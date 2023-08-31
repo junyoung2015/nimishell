@@ -109,7 +109,7 @@ t_size	split_env_substituted(char ***splitted, char *env_var)
 			end++;
 		start = end;
 	}
-	// free(env_var);
+	free(env_var);
 	return (len);
 }
 
