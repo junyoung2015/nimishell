@@ -83,7 +83,8 @@ char	*process_env_dquote(char **in, char **res, char **s, t_exec_info *info)
 		free(*res);
 		*res = tmp;
 		if (tmp && is_dollar(**in))
-			res = handle_dollar_sign(in, tmp, "\"", info);
+			res = handle_dollar_sign(in, *res, "\"", info);
+		// free(tmp);
 	}
 	*s = *in;
 	if (!res)
@@ -119,9 +120,9 @@ char	**env_dquote(char **in, t_exec_info *info)
 	while (**in && start < end)
 	{
 		tmp = process_env_dquote(in, &result[len], &start, info);
-		// result[len] = ft_strjoin(tmp, "\"");
-		// free(tmp);
-		len = ft_arr_append_back(&result, tmp, len);
+		result[len] = ft_strjoin(result[len], "\"");
+		free(tmp);
+		len = ft_arr_append_back(&result, result[len], len);
 	}
 	// tmp = result;
 	// free(tmp);

@@ -84,6 +84,7 @@ char	**check_env_var(char *cmd_arg, t_exec_info *info)
 			tmp = result[len - 1];
 			result[len - 1] = ft_strjoin(result[len - 1], substr[0]);
 			free(tmp);
+			free(substr[0]);
 		}
 		state = update_state(*cmd_arg);
 	}

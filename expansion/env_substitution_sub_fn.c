@@ -134,7 +134,9 @@ char	**substitute(char *env_var, char *quote)
 		if (!result)
 			return (0);
 		else if (is_split_required(result))
+		{
 			len = split_env_substituted(&splitted, result);
+		}
 		else
 		{
 			splitted = ft_calloc(2, sizeof(char **));
@@ -181,10 +183,12 @@ char	**sub_exit_code(char **in, char *tmp, t_exec_info *info)
 char	**sub_env_var(char **in, char *tmp, char *quote)
 {
 	char	**substituted;
+	// char	**prev;
 	char	*env_var;
 	char	*start;
 	char	*temp;
 
+	// prev = 0;
 	start = *in;
 	while (**in && is_env_var(**in))
 		(*in)++;
@@ -203,8 +207,12 @@ char	**sub_env_var(char **in, char *tmp, char *quote)
 			if (!substituted)
 				return (0);
 		}
+		// else
+		// 	prev = substituted;
 		temp = substituted[0];
 		substituted[0] = ft_strjoin(tmp, substituted[0]);
+		// ft_arrfree(prev);
+		// free(substituted);
 		free(temp);
 	}
 	return (substituted);
