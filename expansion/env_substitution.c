@@ -41,7 +41,7 @@ char	**handle_dollar_sign(char **in, char *tmp, char *quo, t_exec_info *info)
 	else if (result && !**in)
 	{
 		result[0] = ft_strjoin(tmp, *in - 1);
-		free(tmp);
+		// free(tmp);
 	}
 	else if (is_env_var(**in))
 	{
@@ -49,7 +49,7 @@ char	**handle_dollar_sign(char **in, char *tmp, char *quo, t_exec_info *info)
 	}
 	else
 		result = trim_single_char(in, tmp);
-	// free(tmp);	
+	// free(tmp);
 	return (result);
 }
 

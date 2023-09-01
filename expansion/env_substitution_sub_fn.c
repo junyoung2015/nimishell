@@ -117,6 +117,7 @@ char	**substitute(char *env_var, char *quote)
 {
 	char	*result;
 	char	*key;
+	// char	*tmp;
 	char	*value;
 	char	**splitted;
 	t_size	len;
@@ -144,8 +145,9 @@ char	**substitute(char *env_var, char *quote)
 		}
 		for (t_size i = 0; i < len; i ++)
 		{
+			// tmp = splitted[i];
 			splitted[i] = wrap_env_var(splitted[i], quote);
-			// free(splitted[i]);
+			// free(tmp);
 		}
 		// result = wrap_env_var(result, quote);
 	}
@@ -171,7 +173,7 @@ char	**sub_exit_code(char **in, char *tmp, t_exec_info *info)
 		substituted = ft_itoa(info->prev_exit_code);
 		result[0] = ft_strjoin(tmp, substituted);
 		free(substituted);
-		free(tmp);
+		// free(tmp);
 		// ft_arr_append_back(&result, substituted, 1);
 		// result = ft_strjoin(tmp, substituted);
 		// result[1] = substituted;

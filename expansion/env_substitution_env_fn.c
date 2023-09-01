@@ -39,7 +39,7 @@ char	**env_str(char **in, t_exec_info *info)
 	if (!**in || !is_dollar(**in))
 		return (result);
 	result = handle_dollar_sign(in, result[0], 0, info);
-	ft_arrfree(prev);
+	free(prev);
 	return (result);
 }
 
@@ -67,35 +67,44 @@ char	**env_squote(char **in, t_exec_info *info)
 	return (result);
 }
 
-char	**process_env_dquote(char **in, char **res, char **s, t_exec_info *info)
+char	**process_env_dquote(char **in, char ***res, char **s, t_exec_info *info)
 {
 	char	*tmp;
+	char	*copied;
 	char	*prev;
+	t_size	len;
 
+	len = ft_arrlen(*res);
+	if (!len)
+		len = 1;
 	while (**in && !is_dquote(**in) && !is_dollar(**in))
 		(*in)++;
 	if (*in > *s || is_dquote(**in) || is_dollar(**in))
 	{
-		prev = *res;
+		prev = (*res)[len - 1];
 		tmp = ft_substr(*s, 0, *in - *s);
 		if (!tmp)
 			return (0);
-		*res = tmp;
+		(*res)[len - 1] = tmp;
 		tmp = ft_strjoin(prev, tmp);
 		free(prev);
-		free(*res);
-		*res = tmp;
+		// free((*res)[len - 1]);
+		copied = tmp;
 		if (tmp && is_dollar(**in))
-			res = handle_dollar_sign(in, *res, "\"", info);
+		{
+			*res = handle_dollar_sign(in, copied, "\"", info);
+		}
+		// else
+		// 	(*res)[len - 1] = tmp;
 		// free(tmp);
 	}
 	*s = *in;
-	if (!res)
+	if (!*res)
 	{
 		free(tmp);
 		return (0);
 	}
-	return (res);
+	return (*res);
 }
 
 /**
@@ -107,17 +116,16 @@ char	**process_env_dquote(char **in, char **res, char **s, t_exec_info *info)
  */
 char	**env_dquote(char **in, t_exec_info *info)
 {
+	t_size	len;
 	char	*start;
 	char	*end;
-	char	*temp;
-	char	**tmp;
+	char	*tmp;
+	char	*prev;
 	char	**result;
-	t_size	len;
 
-	tmp = 0;
 	len = 0;
-	result = 0;
-	start = (*in)++;
+	// prev = 0;
+	start = ++(*in);
 	end = *in;
 	result = ft_calloc(2, sizeof(char **));
 	if (!result)
@@ -126,16 +134,46 @@ char	**env_dquote(char **in, t_exec_info *info)
 		end++;
 	while (**in && start < end)
 	{
-		tmp = process_env_dquote(in, &result[len], &start, info);
-		// temp = tmp[0];
-		temp = ft_strjoin(tmp[0], "\"");
-		free(tmp[0]);
-		// free(temp);
-		len = ft_arr_append_back(&result, temp, len);
-		// ft_arrfree(tmp);
+		while (**in && !is_dquote(**in) && !is_dollar(**in))
+			(*in)++;
+		if (*in > start || is_dquote(**in) || is_dollar(**in))
+		{
+			if (len > 0)
+				prev = result[len - 1];
+			else
+				prev = 0;
+			tmp = ft_substr(start, 0, *in - start);
+			if (!tmp)
+				return (0);
+			// printf("tmp: |%s|\n", tmp);
+			tmp = ft_strjoin(prev, tmp);
+			free(prev);
+			if (!tmp)
+				return (0);
+			if (tmp && is_dollar(**in))
+			{
+				result = handle_dollar_sign(in, tmp, "\"", info);
+				free(tmp);
+				len = ft_arrlen(result);
+			}
+			else
+			{
+				if (len > 0)
+				{
+					// prev = result[len - 1];
+					result[len - 1] = tmp;
+					// free(prev);
+				}
+				else
+				{
+					free(result[len]);
+					result[len] = tmp;
+				}
+			}
+		}
+		start = *in;
+		// (*in)++;
 	}
-	// tmp = result;
-	// free(tmp);
 	(*in)++;
 	return (result);
 }

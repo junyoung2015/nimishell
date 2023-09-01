@@ -40,6 +40,8 @@ t_size	ft_arrlen(char **arr)
 	t_size	len;
 
 	len = 0;
+	if (!arr || !*arr)
+		return (0);
 	while (arr && arr[len])
 		len++;
 	return (len);
