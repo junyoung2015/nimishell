@@ -134,9 +134,7 @@ char	**substitute(char *env_var, char *quote)
 		if (!result)
 			return (0);
 		else if (is_split_required(result))
-		{
 			len = split_env_substituted(&splitted, result);
-		}
 		else
 		{
 			splitted = ft_calloc(2, sizeof(char **));
@@ -144,7 +142,6 @@ char	**substitute(char *env_var, char *quote)
 		}
 		for (t_size i = 0; i < len; i ++)
 			splitted[i] = wrap_env_var(splitted[i], quote);
-		// result = wrap_env_var(result, quote);
 	}
 	else
 	{

@@ -25,7 +25,6 @@ char	**trim_single_char(char **in, char *tmp)
 	if (!character)
 		return (result);
 	result[0] = ft_strjoin(tmp, character);
-	// free(tmp);
 	free(character);
 	return (result);
 }
@@ -39,17 +38,11 @@ char	**handle_dollar_sign(char **in, char *tmp, char *quo, t_exec_info *info)
 	if (**in == '?')
 		result = sub_exit_code(in, tmp, info);
 	else if (result && !**in)
-	{
 		result[0] = ft_strjoin(tmp, *in - 1);
-		// free(tmp);
-	}
 	else if (is_env_var(**in))
-	{
 		result = sub_env_var(in, tmp, quo);
-	}
 	else
 		result = trim_single_char(in, tmp);
-	// free(tmp);
 	return (result);
 }
 
