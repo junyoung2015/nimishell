@@ -68,6 +68,42 @@ char	**env_squote(char **in, t_exec_info *info)
 	return (result);
 }
 
+char	**process_env_dquote(char **in, char ***res, char **s, t_exec_info *info)
+{
+	char	*tmp;
+	char	*copied;
+	char	*prev;
+	t_size	len;
+
+	len = ft_arrlen(*res);
+	if (!len)
+		len = 1;
+	while (**in && !is_dquote(**in) && !is_dollar(**in))
+		(*in)++;
+	if (*in > *s || is_dquote(**in) || is_dollar(**in))
+	{
+		prev = (*res)[len - 1];
+		tmp = ft_substr(*s, 0, *in - *s);
+		if (!tmp)
+			return (0);
+		(*res)[len - 1] = tmp;
+		tmp = ft_strjoin(prev, tmp);
+		free(prev);
+		copied = tmp;
+		if (tmp && is_dollar(**in))
+		{
+			*res = handle_dollar_sign(in, copied, "\"", info);
+		}
+	}
+	*s = *in;
+	if (!*res)
+	{
+		free(tmp);
+		return (0);
+	}
+	return (*res);
+}
+
 /**
  * @brief Process double-quoted string, substituting environment variables.
  * 
