@@ -122,6 +122,7 @@ char	**env_dquote(char **in, t_exec_info *info)
 	char	*end;
 	char	*tmp;
 	char	*temp;
+	char	**dummy;
 	char	*prev;
 	char	**result;
 
@@ -156,8 +157,10 @@ char	**env_dquote(char **in, t_exec_info *info)
 				return (0);
 			if (tmp && is_dollar(**in))
 			{
+				dummy = result;
 				result = handle_dollar_sign(in, tmp, "\"", info);
 				free(tmp);
+				free(dummy);	
 				len = ft_arrlen(result);
 			}
 			else
