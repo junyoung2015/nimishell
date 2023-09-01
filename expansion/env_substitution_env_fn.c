@@ -39,6 +39,7 @@ char	**env_str(char **in, t_exec_info *info)
 	if (!**in || !is_dollar(**in))
 		return (result);
 	result = handle_dollar_sign(in, result[0], 0, info);
+	free(prev[0]);
 	free(prev);
 	return (result);
 }
@@ -120,6 +121,7 @@ char	**env_dquote(char **in, t_exec_info *info)
 	char	*start;
 	char	*end;
 	char	*tmp;
+	char	*temp;
 	char	*prev;
 	char	**result;
 
@@ -145,8 +147,10 @@ char	**env_dquote(char **in, t_exec_info *info)
 			tmp = ft_substr(start, 0, *in - start);
 			if (!tmp)
 				return (0);
+			temp = tmp;
 			// printf("tmp: |%s|\n", tmp);
 			tmp = ft_strjoin(prev, tmp);
+			free(temp);
 			free(prev);
 			if (!tmp)
 				return (0);
