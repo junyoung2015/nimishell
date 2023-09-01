@@ -727,7 +727,7 @@ set count [ expr \$count + 1 ] ;
 send "cd \$ORIGIN\r";
 send "echo *\r";
 expect {
-	"GRAMMAR LICENSE Makefile README.md bin builtin executor expansion include includes init lexer lib memory minishell minishell.c minishell.en.subject.pdf minishell.o parser readline-8.2 readline-8.2.tar.gz share str test_sh_minishell.sh" {
+	"GRAMMAR LICENSE Makefile README.md bin builtin executor expansion include includes init lexer lib memory minishell minishell.c minishell.en.subject.pdf minishell.o parser readline-8.2.tar.gz share str test_sh_minishell.sh" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
@@ -740,7 +740,7 @@ set count [ expr \$count + 1 ] ;
 ### Test 50 ###
 send "echo ./*\r";
 expect {
-	"./GRAMMAR ./LICENSE ./Makefile ./README.md ./bin ./builtin ./executor ./expansion ./include ./includes ./init ./lexer ./lib ./memory ./minishell ./minishell.c ./minishell.en.subject.pdf ./minishell.o ./parser ./readline-8.2 ./readline-8.2.tar.gz ./share ./str ./test_sh_minishell.sh" {
+	"./GRAMMAR ./LICENSE ./Makefile ./README.md ./bin ./builtin ./executor ./expansion ./include ./includes ./init ./lexer ./lib ./memory ./minishell ./minishell.c ./minishell.en.subject.pdf ./minishell.o ./parser ./readline-8.2.tar.gz ./share ./str ./test_sh_minishell.sh" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
@@ -753,7 +753,7 @@ set count [ expr \$count + 1 ] ;
 ### Test 51 ###
 send "echo .*\r";
 expect {
-	". .. .git .github .gitignore .idea .vscode" {
+	". .. .git .github .gitignore .vscode" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
@@ -792,7 +792,7 @@ set count [ expr \$count + 1 ] ;
 ### Test 54 ###
 send "echo ./.*\r";
 expect {
-	"./. ./.. ./.git ./.github ./.gitignore ./.idea ./.vscode" {
+	"./. ./.. ./.git ./.github ./.gitignore ./.vscode" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
@@ -808,7 +808,7 @@ send "export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki\
 ### Test 55 ###
 send "(ls) | wc\r";
 expect {
-	"      24      24     235" {
+	"      23      23     222" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
@@ -821,7 +821,7 @@ set count [ expr \$count + 1 ] ;
 ### Test 56 ###
 send "ls | (wc)\r";
 expect {
-	"      24      24     235" {
+	"      23      23     222" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
@@ -860,7 +860,9 @@ set count [ expr \$count + 1 ] ;
 ### Test 59 ###
 send "abcde || echo test && echo and\r";
 expect {
-	"minishell: abcde: command not found\ntest\nand" {
+	"minishell: abcde: command not found
+test
+and" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
