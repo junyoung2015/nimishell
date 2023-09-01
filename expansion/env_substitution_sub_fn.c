@@ -117,7 +117,6 @@ char	**substitute(char *env_var, char *quote)
 {
 	char	*result;
 	char	*key;
-	// char	*tmp;
 	char	*value;
 	char	**splitted;
 	t_size	len;
@@ -144,11 +143,7 @@ char	**substitute(char *env_var, char *quote)
 			splitted[0] = result;
 		}
 		for (t_size i = 0; i < len; i ++)
-		{
-			// tmp = splitted[i];
 			splitted[i] = wrap_env_var(splitted[i], quote);
-			// free(tmp);
-		}
 		// result = wrap_env_var(result, quote);
 	}
 	else
@@ -156,7 +151,6 @@ char	**substitute(char *env_var, char *quote)
 		splitted = ft_calloc(2, sizeof(char **));
 		splitted[0] = ft_strdup("");
 	}
-	// return (result);
 	return (splitted);
 }
 
@@ -173,12 +167,7 @@ char	**sub_exit_code(char **in, char *tmp, t_exec_info *info)
 		substituted = ft_itoa(info->prev_exit_code);
 		result[0] = ft_strjoin(tmp, substituted);
 		free(substituted);
-		// free(tmp);
-		// ft_arr_append_back(&result, substituted, 1);
-		// result = ft_strjoin(tmp, substituted);
-		// result[1] = substituted;
 		(*in)++;
-		// free(substituted);
 	}
 	return (result);
 }
@@ -186,12 +175,10 @@ char	**sub_exit_code(char **in, char *tmp, t_exec_info *info)
 char	**sub_env_var(char **in, char *tmp, char *quote)
 {
 	char	**substituted;
-	// char	**prev;
 	char	*env_var;
 	char	*start;
 	char	*temp;
 
-	// prev = 0;
 	start = *in;
 	while (**in && is_env_var(**in))
 		(*in)++;
@@ -210,14 +197,9 @@ char	**sub_env_var(char **in, char *tmp, char *quote)
 			if (!substituted)
 				return (0);
 		}
-		// else
-		// 	prev = substituted;
 		temp = substituted[0];
 		substituted[0] = ft_strjoin(tmp, substituted[0]);
-		// ft_arrfree(prev);
-		// free(substituted);
 		free(temp);
-		// free(tmp);
 	}
 	return (substituted);
 }

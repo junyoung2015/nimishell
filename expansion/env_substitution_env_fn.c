@@ -68,46 +68,6 @@ char	**env_squote(char **in, t_exec_info *info)
 	return (result);
 }
 
-char	**process_env_dquote(char **in, char ***res, char **s, t_exec_info *info)
-{
-	char	*tmp;
-	char	*copied;
-	char	*prev;
-	t_size	len;
-
-	len = ft_arrlen(*res);
-	if (!len)
-		len = 1;
-	while (**in && !is_dquote(**in) && !is_dollar(**in))
-		(*in)++;
-	if (*in > *s || is_dquote(**in) || is_dollar(**in))
-	{
-		prev = (*res)[len - 1];
-		tmp = ft_substr(*s, 0, *in - *s);
-		if (!tmp)
-			return (0);
-		(*res)[len - 1] = tmp;
-		tmp = ft_strjoin(prev, tmp);
-		free(prev);
-		// free((*res)[len - 1]);
-		copied = tmp;
-		if (tmp && is_dollar(**in))
-		{
-			*res = handle_dollar_sign(in, copied, "\"", info);
-		}
-		// else
-		// 	(*res)[len - 1] = tmp;
-		// free(tmp);
-	}
-	*s = *in;
-	if (!*res)
-	{
-		free(tmp);
-		return (0);
-	}
-	return (*res);
-}
-
 /**
  * @brief Process double-quoted string, substituting environment variables.
  * 
@@ -127,7 +87,6 @@ char	**env_dquote(char **in, t_exec_info *info)
 	char	**result;
 
 	len = 0;
-	// prev = 0;
 	start = ++(*in);
 	end = *in;
 	result = ft_calloc(2, sizeof(char **));
@@ -149,7 +108,6 @@ char	**env_dquote(char **in, t_exec_info *info)
 			if (!tmp)
 				return (0);
 			temp = tmp;
-			// printf("tmp: |%s|\n", tmp);
 			tmp = ft_strjoin(prev, tmp);
 			free(temp);
 			free(prev);
@@ -166,11 +124,7 @@ char	**env_dquote(char **in, t_exec_info *info)
 			else
 			{
 				if (len > 0)
-				{
-					// prev = result[len - 1];
 					result[len - 1] = tmp;
-					// free(prev);
-				}
 				else
 				{
 					free(result[len]);
@@ -179,7 +133,6 @@ char	**env_dquote(char **in, t_exec_info *info)
 			}
 		}
 		start = *in;
-		// (*in)++;
 	}
 	(*in)++;
 	return (result);
