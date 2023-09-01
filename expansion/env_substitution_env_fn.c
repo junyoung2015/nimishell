@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_substitution_env_fn.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 20:47:18 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/31 20:59:04 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/08/30 16:57:45 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,31 +67,35 @@ char	**env_squote(char **in, t_exec_info *info)
 	return (result);
 }
 
-char	*process_env_dquote(char **in, char *res, char **s, t_exec_info *info)
+char	**process_env_dquote(char **in, char **res, char **s, t_exec_info *info)
 {
 	char	*tmp;
-	char	*dol;
-	char	*result;
+	char	*prev;
 
-	result = NULL;
 	while (**in && !is_dquote(**in) && !is_dollar(**in))
 		(*in)++;
 	if (*in > *s || is_dquote(**in) || is_dollar(**in))
 	{
-		dol = ft_substr(*s, 0, *in - *s);
-		if (!dol)
-			return (0);
-		tmp = ft_strjoin(res, dol);
-		free(res);
-		free(dol);
+		prev = *res;
+		tmp = ft_substr(*s, 0, *in - *s);
 		if (!tmp)
 			return (0);
-		if (is_dollar(**in))
-			result = *handle_dollar_sign(in, tmp, "\"", info);
-		free(tmp);
+		*res = tmp;
+		tmp = ft_strjoin(prev, tmp);
+		free(prev);
+		free(*res);
+		*res = tmp;
+		if (tmp && is_dollar(**in))
+			res = handle_dollar_sign(in, *res, "\"", info);
+		// free(tmp);
 	}
 	*s = *in;
-	return (result);
+	if (!res)
+	{
+		free(tmp);
+		return (0);
+	}
+	return (res);
 }
 
 /**
@@ -106,7 +110,7 @@ char	**env_dquote(char **in, t_exec_info *info)
 	char	*start;
 	char	*end;
 	char	*temp;
-	char	*tmp;
+	char	**tmp;
 	char	**result;
 	t_size	len;
 
@@ -122,12 +126,13 @@ char	**env_dquote(char **in, t_exec_info *info)
 		end++;
 	while (**in && start < end)
 	{
-		tmp = process_env_dquote(in, result[len], &start, info);
-		temp = ft_strjoin(tmp, "\"");
-		free(tmp);
+		tmp = process_env_dquote(in, &result[len], &start, info);
+		// temp = tmp[0];
+		temp = ft_strjoin(tmp[0], "\"");
+		free(tmp[0]);
+		// free(temp);
 		len = ft_arr_append_back(&result, temp, len);
-		// free(tmp[0]);
-		// free(tmp);
+		// ft_arrfree(tmp);
 	}
 	// tmp = result;
 	// free(tmp);
