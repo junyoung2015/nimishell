@@ -72,13 +72,15 @@ t_bool	append_env_str(char ***result, char **substrs, t_size *len)
  * @param cmd_arg	argument to check
  * @return
  */
-char	**check_env_var(t_size len, char **substrs, char *cmd_arg,  t_exec_info *info)
+char	**check_env_var(char *cmd_arg,  t_exec_info *info)
 {
-	// char			*tmp;
 	char			**result;
+	char			**substrs;
+	t_size			len;
 	t_state			state;
 	const t_env_fn	state_fn[] = {env_str, env_squote, env_dquote, env_str};
 
+	len = 0;
 	result = ft_calloc(2, sizeof(char **));
 	if (!result)
 		return (0);
@@ -121,7 +123,7 @@ char	**env_substitution(t_node *node, t_exec_info *info)
 		return (0);
 	while (++idx < node->num_args)
 	{
-		tmp = check_env_var(0, 0, node->cmd_args[idx], info);
+		tmp = check_env_var(node->cmd_args[idx], info);
 		if (!tmp)
 			ft_arrfree(result);
 		if (!tmp)
