@@ -123,8 +123,8 @@ char	**env_dquote(char **in, t_exec_info *info)
 	char	**result;
 
 	len = 0;
-	start = ++(*in);
-	end = *in;
+	start = *in;
+	end = ++(*in);
 	result = ft_calloc(2, sizeof(char **));
 	if (!result)
 		return (0);
