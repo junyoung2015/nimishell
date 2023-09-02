@@ -66,6 +66,7 @@ SRCS = ./minishell.c							\
 		$(EXPANSION)env_substitution_cmp_fn.c	\
 		$(EXPANSION)env_substitution_env_fn.c	\
 		$(EXPANSION)env_substitution_sub_fn.c	\
+		$(EXPANSION)env_substitution_env_utils.c\
 		$(EXECUTOR_DIR)util.c					\
 		$(EXECUTOR_DIR)path.c					\
 		$(EXECUTOR_DIR)command.c				\
@@ -86,26 +87,91 @@ SRCS = ./minishell.c							\
 		$(BUILTIN_DIR)cd.c						\
 		$(BUILTIN_DIR)cd_util.c
 
+# ------------ BO_SRCS  ------------- #
+BO_SRCS = ./minishell_bonus.c							\
+		$(INIT_DIR)logo_bonus.c							\
+		$(INIT_DIR)prompt_bonus.c						\
+		$(INIT_DIR)signal_bonus.c						\
+		$(INIT_DIR)init_env_bonus.c						\
+		$(LEXER_DIR)tokenizer_bonus.c					\
+		$(LEXER_DIR)tokenizer_err_handling_bonus.c		\
+		$(LEXER_DIR)tokenizer_utils_bonus.c				\
+		$(LEXER_DIR)tokenizer_realloc_bonus.c			\
+		$(LEXER_DIR)tokenizer_split_bonus.c				\
+		$(LEXER_DIR)tokenize_states_bonus.c				\
+		$(LEXER_DIR)cmp_func_quote_bonus.c				\
+		$(LEXER_DIR)cmp_func_meta_bonus.c				\
+		$(MEMORY_DIR)mem_utils_bonus.c					\
+		$(PARSER_DIR)ast_utils_bonus.c					\
+		$(PARSER_DIR)parser_bonus.c						\
+		$(PARSER_DIR)parser_utils_bonus.c				\
+		$(PARSER_DIR)parser_state_utils_bonus.c			\
+		$(PARSER_DIR)parse_err_bonus.c					\
+		$(PARSER_DIR)parse_list_bonus.c					\
+		$(PARSER_DIR)parse_pipeline_bonus.c				\
+		$(PARSER_DIR)parse_redir_list_bonus.c			\
+		$(PARSER_DIR)parse_simple_cmd_bonus.c			\
+		$(PARSER_DIR)parse_subshell_bonus.c				\
+		$(PARSER_DIR)parse_word_list_bonus.c			\
+		$(STR_DIR)str_itoa_bonus.c						\
+		$(STR_DIR)str_utils_bonus.c						\
+		$(STR_DIR)str_utils2_bonus.c					\
+		$(STR_DIR)str_split_bonus.c						\
+		$(STR_DIR)str_utils_create_bonus.c				\
+		$(EXPANSION)2darray_utils_bonus.c				\
+		$(EXPANSION)quote_removal_bonus.c				\
+		$(EXPANSION)file_expansion_bonus.c				\
+		$(EXPANSION)file_expansion_utils_bonus.c		\
+		$(EXPANSION)file_expansion_info_bonus.c			\
+		$(EXPANSION)file_expansion_match_bonus.c		\
+		$(EXPANSION)file_expansion_split_bonus.c		\
+		$(EXPANSION)file_expansion_pattern_bonus.c		\
+		$(EXPANSION)ft_qsort_bonus.c					\
+		$(EXPANSION)env_substitution_bonus.c			\
+		$(EXPANSION)env_substitution_cmp_fn_bonus.c		\
+		$(EXPANSION)env_substitution_env_fn_bonus.c		\
+		$(EXPANSION)env_substitution_sub_fn_bonus.c		\
+		$(EXPANSION)env_substitution_env_utils_bonus.c	\
+		$(EXECUTOR_DIR)util_bonus.c						\
+		$(EXECUTOR_DIR)path_bonus.c						\
+		$(EXECUTOR_DIR)command_bonus.c					\
+		$(EXECUTOR_DIR)error_bonus.c					\
+		$(EXECUTOR_DIR)executor_bonus.c					\
+		$(EXECUTOR_DIR)ast_search_bonus.c				\
+		$(EXECUTOR_DIR)pipe_bonus.c						\
+		$(EXECUTOR_DIR)heredoc_bonus.c					\
+		$(EXECUTOR_DIR)redirection_bonus.c				\
+		$(EXECUTOR_DIR)builtin_bonus.c					\
+		$(EXECUTOR_DIR)subshell_bonus.c					\
+		$(BUILTIN_DIR)export_bonus.c					\
+		$(BUILTIN_DIR)unset_bonus.c						\
+		$(BUILTIN_DIR)env_bonus.c						\
+		$(BUILTIN_DIR)pwd_bonus.c						\
+		$(BUILTIN_DIR)echo_bonus.c						\
+		$(BUILTIN_DIR)arg_bonus.c						\
+		$(BUILTIN_DIR)cd_bonus.c						\
+		$(BUILTIN_DIR)cd_util_bonus.c
+
 CFLAGS = -Wall -Wextra -Werror -g2 -fsanitize=address
-# ----------- BONUS SRCS  ----------- #
-# BO_SRCS = ./minishell_bonus.c
+
 HEADER = \
 	$(INCLUDES)minishell.h	\
 	$(INCLUDES)executor.h	\
 	$(INCLUDES)builtin.h
-# BO_HEADER = minishell_bonus.h
+BO_HEADER = \
+	$(INCLUDES)minishell_bonus.h	\
+	$(INCLUDES)executor_bonus.h		\
+	$(INCLUDES)builtin_bonus.h
 
 # -------------- OBJS  -------------- #
 OBJS := $(SRCS:.c=.o)
 BO_OBJS := $(BO_SRCS:.c=.o)
-# BO_INCLUDES = ./bonus/includes/
 
 # -------------- BONUS -------------- #
 ifdef BONUS
     SRCS := $(BO_SRCS)
     OBJS := $(BO_OBJS)
     HEADER := $(BO_HEADER)
-    # INCLUDES := $(BO_INCLUDES)
 endif
 
 # ------------- RULES  -------------- #
@@ -114,17 +180,20 @@ endif
 all:
 	$(MAKE) readline
 	$(MAKE) mini
+	touch $@
 
 readline:
 	tar -xzf ./readline-8.2.tar.gz
-	cd readline-8.2 && sh ./configure --prefix="$$(cd .. && pwd)" && make && make install
+	cd readline-8.2 && sh ./configure --prefix="$$(cd .. && pwd)" && make && make install && touch $@
 	touch $@
 
 ### make minishell, without re-make of readline ###
 mini: $(NAME)
 
-bonus: $(BO_SRCS) $(INCLUDES)$(BO_HEADER)
+bonus: $(SRCS) $(HEADER)
 	@$(MAKE) BONUS=1 all
+	touch $@
+
 
 $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) -I$(INCLUDES) -I$(INCLUDE_READLINE) $(OBJS) -o $@ $(READLINE_OPT) 
@@ -143,6 +212,7 @@ clean:
 	rm -rf tmp
 	rm -rf readline-8.2
 	rm -f readline
+	rm -f bonus all readline
 	rm -rf ${OBJS} ${BO_OBJS}
 
 fclean:
@@ -154,4 +224,4 @@ re:
 	$(MAKE) fclean
 	$(MAKE) all
 
-.PHONY: all clean fclean re mini readline
+.PHONY: all clean fclean re bonus mini readline
