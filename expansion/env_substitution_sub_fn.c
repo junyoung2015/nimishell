@@ -174,7 +174,6 @@ char	**sub_env_var(char **in, char *tmp, char *quote)
 	char	**substituted;
 	char	*env_var;
 	char	*start;
-	char	*temp;
 
 	start = *in;
 	while (**in && is_env_var(**in))
@@ -189,14 +188,12 @@ char	**sub_env_var(char **in, char *tmp, char *quote)
 	else
 	{
 		if (!substituted)
-		{
 			substituted = ft_calloc(2, sizeof(char **));
-			if (!substituted)
-				return (0);
-		}
-		temp = substituted[0];
+		if (!substituted)
+			return (0);
+		start = substituted[0];
 		substituted[0] = ft_strjoin(tmp, substituted[0]);
-		free(temp);
+		free(start);
 	}
 	return (substituted);
 }
