@@ -304,7 +304,7 @@ set count [ expr \$count + 1 ] ;
 send "echo \"\'\$USER\'\"\r"
 # expect "'$env(USER)'" ;
 expect {
-	"$env(USER)" {
+	"'$env(USER)'" {
 		send_user "${green}Test ${count} passed${default}\n" ;
 	}
 	timeout {
