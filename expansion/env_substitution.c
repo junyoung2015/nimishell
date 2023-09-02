@@ -84,16 +84,17 @@ char	**check_env_var(char *cmd_arg,  t_exec_info *info)
 	result = ft_calloc(2, sizeof(char **));
 	if (!result)
 		return (0);
-	if (!*cmd_arg)
+	state = update_state(*cmd_arg);
+	if (state == END)
 		*result = ft_strdup(cmd_arg);
 	while (*cmd_arg && state != END)
 	{
-		state = update_state(*cmd_arg);
 		substrs = state_fn[state](&cmd_arg, info);
 		if (!substrs)
 			return (0);
 		if (!append_env_str(&result, substrs, &len))
 			return (0);
+		state = update_state(*cmd_arg);
 	}
 	return (result);
 }

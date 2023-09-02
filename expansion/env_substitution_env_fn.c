@@ -65,40 +65,55 @@ char	**env_squote(char **in, t_exec_info *info)
 	return (result);
 }
 
-char	**process_env_dquote(char **in, char ***res, char **s, t_exec_info *info)
+t_bool	process_env_dquote(char **in, char ***res, char **s, t_exec_info *info)
 {
+	char	**dummy;
 	char	*tmp;
-	char	*copied;
+	char	*temp;
 	char	*prev;
 	t_size	len;
 
 	len = ft_arrlen(*res);
-	if (!len)
-		len = 1;
 	while (**in && !is_dquote(**in) && !is_dollar(**in))
 		(*in)++;
 	if (*in > *s || is_dquote(**in) || is_dollar(**in))
 	{
-		prev = (*res)[len - 1];
+		if (len > 0)
+			prev = (*res)[len - 1];
+		else
+			prev = 0;
 		tmp = ft_substr(*s, 0, *in - *s);
 		if (!tmp)
-			return (0);
-		(*res)[len - 1] = tmp;
+			return (FALSE);
+		temp = tmp;
 		tmp = ft_strjoin(prev, tmp);
+		free(temp);
 		free(prev);
-		copied = tmp;
+		if (!tmp)
+			return (FALSE);
 		if (tmp && is_dollar(**in))
 		{
-			*res = handle_dollar_sign(in, copied, "\"", info);
+			dummy = *res;
+			*res = handle_dollar_sign(in, tmp, "\"", info);
+			free(tmp);
+			free(dummy);	
+			if (!*res)
+				return (FALSE);
+			len = ft_arrlen(*res);
+		}
+		else
+		{
+			if (len > 0)
+				(*res)[len - 1] = tmp;
+			else
+			{
+				free((*res)[len]);
+				(*res)[len] = tmp;
+			}
 		}
 	}
 	*s = *in;
-	if (!*res)
-	{
-		free(tmp);
-		return (0);
-	}
-	return (*res);
+	return (TRUE);
 }
 
 /**
@@ -176,6 +191,7 @@ char	**env_dquote(char **in, t_exec_info *info)
 	tmp = ft_strjoin(*dummy, "\"");
 	free(*dummy);
 	*dummy = tmp;
-	(*in)++;
+	if (is_dquote(**in))
+		(*in)++;
 	return (result);
 }
