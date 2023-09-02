@@ -14,13 +14,11 @@
 
 char	**env_str(char **in, t_exec_info *info)
 {
-	t_size	len;
 	char	*start;
 	char	*tmp;
 	char	**prev;
 	char	**result;
 
-	len = 0;
 	tmp = 0;
 	start = *in;
 	result = ft_calloc(2, sizeof(char **));
@@ -34,13 +32,12 @@ char	**env_str(char **in, t_exec_info *info)
 		if (!tmp)
 			return (0);
 	}
-	len = ft_arr_append_back(&result, tmp, len);
+	ft_arr_append_back(&result, tmp, 0);
 	prev = result;
 	if (!**in || !is_dollar(**in))
 		return (result);
 	result = handle_dollar_sign(in, result[0], 0, info);
-	free(prev[0]);
-	free(prev);
+	ft_arrfree(prev);
 	return (result);
 }
 
