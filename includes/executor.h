@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:04:54 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/31 01:05:26 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/09/02 15:34:03 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,13 @@ char	**substitute(char *env_var, char *quote);
 char	**sub_exit_code(char **in, char *tmp, t_exec_info *info);
 char	**sub_env_var(char **in, char *tmp, char *quote);
 char	**trim_single_char(char **in, char *tmp);
-char	**handle_dollar_sign(char **in, char *tmp, char *quo, t_exec_info *info);
+char	**handle_dollar_sign(char **in, char *tmp, char *quo, \
+t_exec_info *info);
 char	**check_env_var(char *cmd_arg, t_exec_info *info);
+char	*ft_getenv(char *env_var);
+char	*wrap_env_var(char *env_var, char *quote);
+t_bool	is_split_required(char *cmd_arg);
+
 typedef char	**(*t_env_fn)(char **, t_exec_info *);
 
 /* pipe */

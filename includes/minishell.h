@@ -254,6 +254,10 @@ char			**ft_split(char const *str, char c);
 
 /* ============= ENV_SUB_CMP_FN ============== */
 t_bool			is_number(int c);
+t_bool			is_alpha(int c);
+t_bool			is_alnum(int c);
+t_bool			is_env_var(char ch);
+t_bool			is_dollar(char ch);
 
 /* ================ EXPANSION ================ */
 int				cmp_ascii(void *a, void *b);
