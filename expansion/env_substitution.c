@@ -46,6 +46,25 @@ char	**handle_dollar_sign(char **in, char *tmp, char *quo, t_exec_info *info)
 	return (result);
 }
 
+t_bool	append_env_str(char ***result, char **substrs, t_size *len)
+{
+	char	*tmp;
+
+	if (ft_arrlen(substrs) > 1 || !*len)
+		*len = ft_arrcat(result, substrs, *len);
+	else
+	{
+		tmp = (*result)[*len - 1];
+		(*result)[*len - 1] = ft_strjoin((*result)[*len - 1], substrs[0]);
+		free(tmp);
+		if (!(*result)[*len - 1])
+			return (FALSE);
+		ft_arrfree(substrs);
+	}
+	return (TRUE);
+}
+
+
 /**
  * @brief	Look for $ in the cmg_args, while checking if it's quoted or not.
  * 			Keep join the string using ft_strjoin. If it is a valid env var,
@@ -55,7 +74,7 @@ char	**handle_dollar_sign(char **in, char *tmp, char *quo, t_exec_info *info)
  */
 char	**check_env_var(t_size len, char **substrs, char *cmd_arg,  t_exec_info *info)
 {
-	char			*tmp;
+	// char			*tmp;
 	char			**result;
 	t_state			state;
 	const t_env_fn	state_fn[] = {env_str, env_squote, env_dquote, env_str};
@@ -69,15 +88,10 @@ char	**check_env_var(t_size len, char **substrs, char *cmd_arg,  t_exec_info *in
 	{
 		state = update_state(*cmd_arg);
 		substrs = state_fn[state](&cmd_arg, info);
-		if (ft_arrlen(substrs) > 1 || !len)
-			len = ft_arrcat(&result, substrs, len);
-		else
-		{
-			tmp = result[len - 1];
-			result[len - 1] = ft_strjoin(result[len - 1], substrs[0]);
-			free(tmp);
-			ft_arrfree(substrs);
-		}
+		if (!substrs)
+			return (0);
+		if (!append_env_str(&result, substrs, &len))
+			return (0);
 	}
 	return (result);
 }
