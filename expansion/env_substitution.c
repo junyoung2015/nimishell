@@ -53,28 +53,21 @@ char	**handle_dollar_sign(char **in, char *tmp, char *quo, t_exec_info *info)
  * @param cmd_arg	argument to check
  * @return
  */
-char	**check_env_var(char *cmd_arg, t_exec_info *info)
+char	**check_env_var(t_size len, char **substrs, char *cmd_arg,  t_exec_info *info)
 {
 	char			*tmp;
 	char			**result;
-	char			**substrs;
-	t_size			len;
 	t_state			state;
 	const t_env_fn	state_fn[] = {env_str, env_squote, env_dquote, env_str};
 
-	len = 0;
-	result = 0;
-	state = update_state(*cmd_arg);
-	if (state == END)
-	{
-		result = ft_calloc(2, sizeof(char **));
-		if (!result)
-			return (0);
+	result = ft_calloc(2, sizeof(char **));
+	if (!result)
+		return (0);
+	if (!*cmd_arg)
 		*result = ft_strdup(cmd_arg);
-		return (result);
-	}
 	while (*cmd_arg && state != END)
 	{
+		state = update_state(*cmd_arg);
 		substrs = state_fn[state](&cmd_arg, info);
 		if (ft_arrlen(substrs) > 1 || !len)
 			len = ft_arrcat(&result, substrs, len);
@@ -85,7 +78,6 @@ char	**check_env_var(char *cmd_arg, t_exec_info *info)
 			free(tmp);
 			ft_arrfree(substrs);
 		}
-		state = update_state(*cmd_arg);
 	}
 	return (result);
 }
@@ -101,10 +93,10 @@ char	**check_env_var(char *cmd_arg, t_exec_info *info)
  */
 char	**env_substitution(t_node *node, t_exec_info *info)
 {
-	t_size	idx;
-	t_size	len;
 	char	**tmp;
 	char	**result;
+	t_size	idx;
+	t_size	len;
 
 	len = 0;
 	idx = -1;
@@ -115,12 +107,11 @@ char	**env_substitution(t_node *node, t_exec_info *info)
 		return (0);
 	while (++idx < node->num_args)
 	{
-		tmp = check_env_var(node->cmd_args[idx], info);
+		tmp = check_env_var(0, 0, node->cmd_args[idx], info);
 		if (!tmp)
-		{
 			ft_arrfree(result);
+		if (!tmp)
 			return (0);
-		}
 		len = ft_arrcat(&result, tmp, len);
 	}
 	ft_arrfree(node->cmd_args);

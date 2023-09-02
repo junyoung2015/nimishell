@@ -57,7 +57,7 @@ char	**sub_exit_code(char **in, char *tmp, t_exec_info *info);
 char	**sub_env_var(char **in, char *tmp, char *quote);
 char	**trim_single_char(char **in, char *tmp);
 char	**handle_dollar_sign(char **in, char *tmp, char *quo, t_exec_info *info);
-char	**check_env_var(char *cmd_arg, t_exec_info *info);
+char	**check_env_var(t_size len, char **substrs, char *cmd_arg, t_exec_info *info);
 typedef char	**(*t_env_fn)(char **, t_exec_info *);
 
 /* pipe */
