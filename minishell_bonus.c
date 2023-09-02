@@ -1,0 +1,98 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell_bonus.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/09/02 15:54:18 by jusohn            #+#    #+#             */
+/*   Updated: 2023/09/02 15:54:18 by jusohn           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell_bonus.h"
+
+char	**g_env;
+
+static void	init_sh_info(int ac, char **av, char **envp, t_sh_info *info)
+{
+	(void) ac;
+	(void) av;
+	g_env = 0;
+	info->ast = 0;
+	info->env_cnt = 0;
+	info->exit_code = 0;
+	init_env(envp, info);
+}
+
+void	init_terminal(void)
+{
+	struct termios	term;
+	int				status;
+
+	status = tcgetattr(0, &term);
+	if (status == -1)
+		exit_err_msg(1, "tcgetattr", strerror(errno), 0);
+	term.c_lflag &= ~ECHOCTL;
+	status = tcsetattr(0, 0, &term);
+	if (status == -1)
+		exit_err_msg(1, "tcgetattr", strerror(errno), 0);
+	print_logo();
+}
+
+void	init_prompt(t_sh_info *info)
+{
+	info->tokens = 0;
+	info->num_tokens = 0;
+	set_parent_signal();
+	info->pwd = get_prompt();
+	if (!info->pwd)
+		exit_err_msg(1, 0, MALLOC_ERR, 0);
+	info->line = readline(info->pwd);
+}
+
+void	handle_input(t_sh_info *info)
+{
+	add_history(info->line);
+	if (*(info->line))
+	{
+		info->tokens = tokenize_input(info->line, 0, &info->num_tokens);
+		if (!info->tokens || info->num_tokens == 0)
+		{
+			free(info->line);
+			free(info->pwd);
+			return ;
+		}
+		else if (info->num_tokens >= 1 && \
+			info->tokens[info->num_tokens - 1].type == TOKEN_ERROR)
+			write(STD_ERR, info->tokens[info->num_tokens - 1].val, \
+			ft_strlen(info->tokens[info->num_tokens - 1].val));
+		else
+		{
+			info->ast = parse_tokens(info->tokens, info->num_tokens);
+			info->exit_code = executor(info);
+		}
+	}
+	if (info->tokens)
+		free_tokens(info->tokens, info->num_tokens);
+	free(info->line);
+	free(info->pwd);
+}
+
+int	main(int ac, char **av, char **envp)
+{
+	t_sh_info	info;
+
+	init_sh_info(ac, av, envp, &info);
+	init_terminal();
+	while (TRUE)
+	{
+		init_prompt(&info);
+		if (info.line)
+			handle_input(&info);
+		else
+			break ;
+	}
+	exit(info.exit_code);
+	return (0);
+}

@@ -1,0 +1,141 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_redir_list_bonus.c                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/08/15 12:56:38 by jusohn            #+#    #+#             */
+/*   Updated: 2023/09/02 15:57:45 by jusohn           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell_bonus.h"
+
+t_node	*parse_heredoc_cmd(t_parser *parser, t_node *parent, t_node *heredoc)
+{
+	t_node	*cmd_node;
+
+	cmd_node = parse_simple_cmd_element(parser, parent);
+	if (!cmd_node)
+		return (0);
+	append_child_node(cmd_node, heredoc);
+	return (cmd_node);
+}
+
+t_node	*parse_heredoc(t_parser *parser, t_node *parent)
+{
+	t_node	*heredoc;
+
+	heredoc = create_node(AST_HEREDOC);
+	if (!heredoc)
+		return (0);
+	heredoc->cmd_args = ft_calloc(2, sizeof(char *));
+	if (!heredoc->cmd_args)
+	{
+		free(heredoc);
+		return (0);
+	}
+	if (is_word_token(parser))
+		heredoc->cmd_args[(heredoc->num_args)++] = parse_word(parser);
+	else
+	{
+		free(heredoc->cmd_args);
+		free(heredoc);
+		return (p_err(parser, parent));
+	}
+	advance(parser);
+	if (is_word_token(parser))
+		return (parse_heredoc_cmd(parser, parent, heredoc));
+	return (heredoc);
+}
+
+/**
+ * @brief Parse function for <REDIRECTION>. '<, >, >>, <<' should be the root
+ *		node, and filename should be at the left node (<, <<) or right (>, >>).
+ *		Bash only consider the first redirection-in, ignoring the rest, and
+ *		the last redirection-out. So, we should consider the same.
+ *
+ * @param parser 	paresr struct
+ * @return t_node*	root node of the <REDIRECTION>
+ */
+t_node	*parse_redir(t_parser *parser, t_node *parent)
+{
+	t_node	*redir_node;
+	t_type	type;
+
+	redir_node = 0;
+	if (is_redir_token(parser))
+	{
+		type = cur_type(parser);
+		advance(parser);
+		if (type == TOKEN_HEREDOC)
+			return (parse_heredoc(parser, parent));
+		else
+		{
+			if (is_word_token(parser))
+			{
+				redir_node = parse_word_list(parser, parent);
+				redir_node->type = (t_node_type)(type - REDIR);
+			}
+			else
+				redir_node = p_err(parser, parent);
+		}
+	}
+	return (redir_node);
+}
+
+/**
+ * @brief Parse function for <REDIRECTION-LIST-TAIL>, calling <REDIRECTION> or
+ *		indicate the end of the <REDIRECTION-LIST-TAIL>.
+ * 
+ * @param parser	parser struct
+ * @return t_node*	root node of <REDIRECTION-LIST-TAIL>
+ */
+t_node	*p_redir_l_tail(t_parser *parser, t_node *parent)
+{
+	t_node	*redir_node;
+	t_node	*redir_list_tail_node;
+
+	redir_list_tail_node = 0;
+	if (is_redir_token(parser))
+	{
+		redir_list_tail_node = parse_redir(parser, parent);
+		if (!redir_list_tail_node)
+			return (0);
+		append_child_node(parent, redir_list_tail_node);
+		if (is_redir_token(parser))
+		{
+			redir_node = p_redir_l_tail(parser, redir_list_tail_node);
+			if (!redir_node)
+				return (0);
+		}
+	}
+	return (redir_list_tail_node);
+}
+
+/**
+ * @brief Parse function for <REDIRECTION-LIST>, calling <REDIRECTION> and
+ * 		<REDIRECTION-LIST-TAIL>.
+ * 
+ * @param parser	parser struct
+ * @return t_node*	root node of <REDIRECTION-LIST>
+ */
+t_node	*p_redir_l(t_parser *parser, t_node *parent)
+{
+	t_node	*redir_list_node;
+	t_node	*redir_list_tail_node;
+
+	redir_list_node = parse_redir(parser, parent);
+	if (!redir_list_node)
+		return (0);
+	else if (redir_list_node->type == AST_ERR)
+		return (redir_list_node);
+	if (is_redir_token(parser))
+	{
+		redir_list_tail_node = p_redir_l_tail(parser, redir_list_node);
+		if (!redir_list_tail_node)
+			return (0);
+	}
+	return (redir_list_node);
+}
