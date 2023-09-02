@@ -155,6 +155,8 @@ char	**env_dquote(char **in, t_exec_info *info)
 				result = handle_dollar_sign(in, tmp, "\"", info);
 				free(tmp);
 				free(dummy);	
+				if (!result)
+					return (0);
 				len = ft_arrlen(result);
 			}
 			else
@@ -170,6 +172,13 @@ char	**env_dquote(char **in, t_exec_info *info)
 		}
 		start = *in;
 	}
+	if (len > 0)
+		dummy = &result[len - 1];
+	else
+		dummy = &result[len];
+	tmp = ft_strjoin(*dummy, "\"");
+	free(*dummy);
+	*dummy = tmp;
 	(*in)++;
 	return (result);
 }
