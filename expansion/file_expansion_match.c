@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 20:39:31 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/30 15:33:48 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/09/02 15:31:18 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ t_size	match_middle(t_search *info, char *pattern, t_size *idx, t_size *size)
 			info->prev_pos[*idx] = ft_strnstr(info->files[*idx] + \
 			info->prev_pos[*idx], pattern, ft_strlen(info->files[*idx]) - \
 			info->prev_pos[*idx]) - info->files[*idx] + 1;
-			*size = ft_arr_append_back(&info->res, ft_strdup(info->files[*idx]), \
-			*size);
+			*size = ft_arr_append_back(&info->res, \
+			ft_strdup(info->files[*idx]), *size);
 			if (!*size)
 				return (0);
 		}
@@ -104,7 +104,8 @@ t_size	match_pattern_first(t_search *info, char *pattern)
 		{
 			info->prev_pos[idx] = ft_strnstr(info->files[idx], pattern, \
 			ft_strlen(info->files[idx])) - info->files[idx] + 1;
-			size = ft_arr_append_back(&result, ft_strdup(info->files[idx]), size);
+			size = ft_arr_append_back(&result, \
+			ft_strdup(info->files[idx]), size);
 			if (!size)
 				return (0);
 		}

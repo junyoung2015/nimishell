@@ -6,85 +6,11 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 20:50:40 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/30 18:02:03 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/09/02 15:42:23 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "executor.h"
-
-char	*ft_getenv(char *env_var)
-{
-	t_size	i;
-	char	*start;
-	char	*end;
-	char	*tmp;
-
-	i = 0;
-	while (g_env && g_env[i])
-	{
-		start = g_env[i];
-		if (start)
-			end = ft_strchr(start, '=');
-		else
-			return (0);
-		if (!end)
-			return (0);
-		tmp = ft_substr(start, 0, end - start);
-		if (tmp && ft_strcmp(tmp, env_var) == 0)
-		{
-			free(tmp);
-			return (start);
-		}
-		free(tmp);
-		i++;
-	}
-	return (0);
-}
-
-char	*wrap_env_var(char *env_var, char *quote)
-{
-	char	*tmp;
-	char	*wrapper;
-
-	tmp = env_var;
-	if (is_squote(*env_var))
-		wrapper = "\"";
-	else
-		wrapper = "'";
-	env_var = ft_strjoin(wrapper, env_var);
-	free(tmp);
-	tmp = env_var;
-	env_var = ft_strjoin(env_var, wrapper);
-	free(tmp);
-	if (quote)
-	{
-		tmp = env_var;
-		env_var = ft_strjoin(env_var, quote);
-		free(tmp);
-		tmp = env_var;
-		env_var = ft_strjoin(quote, env_var);
-		free(tmp);
-	}
-	return (env_var);
-}
-
-t_bool	is_split_required(char *cmd_arg)
-{
-	char	*tmp;
-	t_bool	in_quotes;
-
-	tmp = cmd_arg;
-	in_quotes = FALSE;
-	while (*tmp)
-	{
-		if (is_quote(*tmp))
-			in_quotes = !in_quotes;
-		if (is_space(*tmp) && !in_quotes)
-			return (TRUE);
-		tmp++;
-	}
-	return (FALSE);
-}
 
 t_size	split_env_substituted(char ***splitted, char *env_var)
 {
@@ -113,15 +39,35 @@ t_size	split_env_substituted(char ***splitted, char *env_var)
 	return (len);
 }
 
+t_bool	substitute_env_var(char *quot, char *val, char *result, char ***split)
+{
+	t_size	len;
+	t_size	idx;
+
+	len = 0;
+	result = ft_strtrim(val + 1, " ");
+	if (!result)
+		return (FALSE);
+	else if (is_split_required(result))
+		len = split_env_substituted(split, result);
+	else
+	{
+		*split = ft_calloc(2, sizeof(char **));
+		(*split)[0] = result;
+	}
+	idx = -1;
+	while (++idx < len)
+		(*split)[idx] = wrap_env_var((*split)[idx], quot);
+	return (TRUE);
+}
+
 char	**substitute(char *env_var, char *quote)
 {
 	char	*result;
 	char	*key;
 	char	*value;
 	char	**splitted;
-	t_size	len;
 
-	len = 0;
 	result = 0;
 	splitted = 0;
 	key = ft_getenv(env_var);
@@ -130,18 +76,8 @@ char	**substitute(char *env_var, char *quote)
 	value = ft_strchr(key, '=');
 	if (value)
 	{
-		result = ft_strtrim(value + 1, " ");
-		if (!result)
+		if (!substitute_env_var(quote, value, result, &splitted))
 			return (0);
-		else if (is_split_required(result))
-			len = split_env_substituted(&splitted, result);
-		else
-		{
-			splitted = ft_calloc(2, sizeof(char **));
-			splitted[0] = result;
-		}
-		for (t_size i = 0; i < len; i ++)
-			splitted[i] = wrap_env_var(splitted[i], quote);
 	}
 	else
 	{

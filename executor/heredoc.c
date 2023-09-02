@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 20:37:34 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/31 01:18:40 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/09/02 15:28:29 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ int	heredoc(t_node *node)
 t_bool	check_heredoc(t_node *node)
 {
 	int	result;
-	
+
 	if (!node)
 		return (TRUE);
 	if (node->type == AST_HEREDOC)

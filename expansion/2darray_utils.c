@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 20:33:49 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/30 15:34:55 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/09/03 00:56:52 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ t_size	ft_arr_append_front(char ***arr, char *str, t_size size)
 	tmp[idx++] = str;
 	while (idx <= size)
 	{
-		tmp[idx] = (*arr)[idx];
+		tmp[idx] = (*arr)[idx - 1];
 		idx++;
 	}
 	if (*arr)

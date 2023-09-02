@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sejinkim <sejinkim@student.42seoul.kr>     +#+  +:+       +#+        */
+/*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/01 22:05:19 by sejinkim          #+#    #+#             */
-/*   Updated: 2023/08/31 00:50:34 by sejinkim         ###   ########.fr       */
+/*   Updated: 2023/09/02 15:28:21 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,5 +90,5 @@ int	executor(t_sh_info *info)
 	if (check_heredoc(info->ast))
 		return (execute(info));
 	write(STDOUT_FILENO, "\n", 1);
-	return (EXIT_FAILURE);	
+	return (EXIT_FAILURE);
 }

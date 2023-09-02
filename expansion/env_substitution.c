@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 20:35:09 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/30 18:04:07 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/09/03 00:58:21 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,24 @@ char	**handle_dollar_sign(char **in, char *tmp, char *quo, t_exec_info *info)
 	(*in)++;
 	result = 0;
 	if (**in == '?')
+	{
 		result = sub_exit_code(in, tmp, info);
+		free(tmp);
+	}
 	else if (result && !**in)
+	{
 		result[0] = ft_strjoin(tmp, *in - 1);
+		free(tmp);
+	}
 	else if (is_env_var(**in))
+	{
 		result = sub_env_var(in, tmp, quo);
+	}
 	else
+	{
 		result = trim_single_char(in, tmp);
+		free(tmp);
+	}
 	return (result);
 }
 
@@ -64,7 +75,6 @@ t_bool	append_env_str(char ***result, char **substrs, t_size *len)
 	return (TRUE);
 }
 
-
 /**
  * @brief	Look for $ in the cmg_args, while checking if it's quoted or not.
  * 			Keep join the string using ft_strjoin. If it is a valid env var,
@@ -72,7 +82,7 @@ t_bool	append_env_str(char ***result, char **substrs, t_size *len)
  * @param cmd_arg	argument to check
  * @return
  */
-char	**check_env_var(char *cmd_arg,  t_exec_info *info)
+char	**check_env_var(char *cmd_arg, t_exec_info *info)
 {
 	char			**result;
 	char			**substrs;

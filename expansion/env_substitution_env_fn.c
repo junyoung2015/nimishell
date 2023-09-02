@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 20:47:18 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/30 16:57:45 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/09/03 00:43:37 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ char	**env_squote(char **in, t_exec_info *info)
 	return (result);
 }
 
-t_bool	append_or_concat_str(char *tmp, char **in, char ***res, t_exec_info *info)
+t_bool	append_or_concat_str(char *tmp, char **in, char ***res, t_exec_info *i)
 {
 	char	**arr;
 	t_size	len;
@@ -71,8 +71,8 @@ t_bool	append_or_concat_str(char *tmp, char **in, char ***res, t_exec_info *info
 	if (tmp && is_dollar(**in))
 	{
 		arr = *res;
-		*res = handle_dollar_sign(in, tmp, "\"", info);
-		free(tmp);
+		*res = handle_dollar_sign(in, tmp, "\"", i);
+		// free(tmp);
 		free(arr);
 		if (!*res)
 			return (FALSE);

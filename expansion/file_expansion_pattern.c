@@ -6,7 +6,7 @@
 /*   By: jusohn <jusohn@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 20:38:45 by jusohn            #+#    #+#             */
-/*   Updated: 2023/08/30 15:33:48 by jusohn           ###   ########.fr       */
+/*   Updated: 2023/09/02 15:31:05 by jusohn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ t_size	handle_normal(char ***result, char **start, char **end, t_size size)
 	*end = *start + 1;
 	while (**end && !is_wsplit(**end))
 		(*end)++;
-	size = ft_arr_append_back(result, ft_substr(*start, 0, *end - *start), size);
+	size = ft_arr_append_back(result, ft_substr(*start, 0, \
+	*end - *start), size);
 	*start = *end;
 	return (size);
 }
