@@ -78,10 +78,9 @@ t_bool	process_env_dquote(char **in, char ***res, char **s, t_exec_info *info)
 		(*in)++;
 	if (*in > *s || is_dquote(**in) || is_dollar(**in))
 	{
+		prev = 0;
 		if (len > 0)
 			prev = (*res)[len - 1];
-		else
-			prev = 0;
 		tmp = ft_substr(*s, 0, *in - *s);
 		if (!tmp)
 			return (FALSE);
@@ -125,16 +124,12 @@ t_bool	process_env_dquote(char **in, char ***res, char **s, t_exec_info *info)
  */
 char	**env_dquote(char **in, t_exec_info *info)
 {
-	t_size	len;
 	char	*start;
 	char	*end;
 	char	*tmp;
-	char	*temp;
 	char	**dummy;
-	char	*prev;
 	char	**result;
 
-	len = 0;
 	start = *in;
 	end = ++(*in);
 	result = ft_calloc(2, sizeof(char **));
@@ -143,51 +138,11 @@ char	**env_dquote(char **in, t_exec_info *info)
 	while (*end && !is_dquote(*end))
 		end++;
 	while (**in && start < end)
-	{
-		while (**in && !is_dquote(**in) && !is_dollar(**in))
-			(*in)++;
-		if (*in > start || is_dquote(**in) || is_dollar(**in))
-		{
-			if (len > 0)
-				prev = result[len - 1];
-			else
-				prev = 0;
-			tmp = ft_substr(start, 0, *in - start);
-			if (!tmp)
-				return (0);
-			temp = tmp;
-			tmp = ft_strjoin(prev, tmp);
-			free(temp);
-			free(prev);
-			if (!tmp)
-				return (0);
-			if (tmp && is_dollar(**in))
-			{
-				dummy = result;
-				result = handle_dollar_sign(in, tmp, "\"", info);
-				free(tmp);
-				free(dummy);	
-				if (!result)
-					return (0);
-				len = ft_arrlen(result);
-			}
-			else
-			{
-				if (len > 0)
-					result[len - 1] = tmp;
-				else
-				{
-					free(result[len]);
-					result[len] = tmp;
-				}
-			}
-		}
-		start = *in;
-	}
-	if (len > 0)
-		dummy = &result[len - 1];
-	else
-		dummy = &result[len];
+		if (!process_env_dquote(in, &result, &start, info))
+			return (0);
+	dummy = &result[ft_arrlen(result)];
+	if (ft_arrlen(result) > 0)
+		dummy = &result[ft_arrlen(result) - 1];
 	tmp = ft_strjoin(*dummy, "\"");
 	free(*dummy);
 	*dummy = tmp;
