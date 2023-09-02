@@ -37,7 +37,8 @@ char	**env_str(char **in, t_exec_info *info)
 	if (!**in || !is_dollar(**in))
 		return (result);
 	result = handle_dollar_sign(in, result[0], 0, info);
-	ft_arrfree(prev);
+	free(prev[0]);
+	free(prev);
 	return (result);
 }
 
